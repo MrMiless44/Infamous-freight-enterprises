@@ -8,9 +8,12 @@
     "start": "NODE_ENV=production node src/server.js",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate deploy",
+    "prisma:migrate:dev": "npx prisma migrate dev",
+    "seed": "npx prisma db seed",
     "validate:env": "node scripts/env.validation.js"
   },
   "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
     "@prisma/client": "^5.11.0",
     "axios": "^1.7.0",
     "cors": "^2.8.5",
@@ -19,9 +22,13 @@
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "rate-limiter-flexible": "^8.3.0"
+    "rate-limiter-flexible": "^8.3.0",
+    "stripe": "^14.21.0"
   },
   "devDependencies": {
     "prisma": "^5.11.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

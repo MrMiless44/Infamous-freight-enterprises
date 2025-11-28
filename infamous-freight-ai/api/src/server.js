@@ -5,6 +5,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const healthRoutes = require("./routes/health");
 const aiRoutes = require("./routes/ai.commands");
+const paymentRoutes = require("./routes/payments");
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(morgan("combined"));
 
 app.use("/api", healthRoutes);
 app.use("/api", aiRoutes);
+app.use("/api", paymentRoutes);
 
 app.post("/internal/ai-sim", (req, res) => {
   const { command, payload, meta } = req.body || {};

@@ -28,9 +28,20 @@ Inside the api container:
 
 ```bash
 docker compose run api npm run prisma:generate
+docker compose run api npm run prisma:migrate:dev
+docker compose run api npm run seed
 ```
 
-Later you can add migrations with Prisma migrate.
+`npm run prisma:migrate` (without `:dev`) is ready for production deploy pipelines.
+
+## Payments
+
+- `POST /api/payments/intent` creates a Stripe Payment Intent (amount in cents).
+- `POST /api/payments/paypal/order` provisions a PayPal order and returns the approval links.
+- `POST /api/payments/paypal/:orderId/capture` finalizes PayPal orders after approval.
+- Webhook receivers live at `/api/payments/webhook/stripe` and `/api/payments/webhook/paypal`.
+
+Set the Stripe and PayPal environment variables in `.env` (or your secret manager) before using these routes.
 
 ## Notes
 
