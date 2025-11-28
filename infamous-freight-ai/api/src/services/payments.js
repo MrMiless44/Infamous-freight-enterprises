@@ -15,7 +15,7 @@ function getStripeClient() {
   }
   if (!stripeClient) {
     stripeClient = new Stripe(stripeSecret, {
-      apiVersion: "2023-10-16"
+      apiVersion: "2023-10-16",
     });
   }
   return stripeClient;
@@ -26,9 +26,10 @@ function getPayPalClient() {
     return null;
   }
   if (!paypalClient) {
-    const Environment = paypalEnv === "live"
-      ? paypalSdk.core.LiveEnvironment
-      : paypalSdk.core.SandboxEnvironment;
+    const Environment =
+      paypalEnv === "live"
+        ? paypalSdk.core.LiveEnvironment
+        : paypalSdk.core.SandboxEnvironment;
     const environment = new Environment(paypalClientId, paypalClientSecret);
     paypalClient = new paypalSdk.core.PayPalHttpClient(environment);
   }
@@ -44,7 +45,7 @@ async function createStripeIntent({ amount, currency = "usd", metadata = {} }) {
     amount,
     currency,
     metadata,
-    automatic_payment_methods: { enabled: true }
+    automatic_payment_methods: { enabled: true },
   });
 }
 
@@ -61,10 +62,10 @@ async function createPayPalOrder({ amount, currency = "USD", referenceId }) {
         reference_id: referenceId,
         amount: {
           currency_code: currency,
-          value: amount
-        }
-      }
-    ]
+          value: amount,
+        },
+      },
+    ],
   });
 
   const response = await client.execute(request);
@@ -108,5 +109,5 @@ module.exports = {
   createStripeIntent,
   createPayPalOrder,
   capturePayPalOrder,
-  buildStripeWebhook
+  buildStripeWebhook,
 };

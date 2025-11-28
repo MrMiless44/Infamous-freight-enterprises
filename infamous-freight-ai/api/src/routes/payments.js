@@ -7,7 +7,7 @@ const {
   createStripeIntent,
   createPayPalOrder,
   capturePayPalOrder,
-  buildStripeWebhook
+  buildStripeWebhook,
 } = require("../services/payments");
 
 const router = express.Router();
@@ -27,7 +27,11 @@ router.post(
 
     try {
       const intent = await createStripeIntent({ amount, currency, metadata });
-      res.json({ ok: true, intentId: intent.id, clientSecret: intent.client_secret });
+      res.json({
+        ok: true,
+        intentId: intent.id,
+        clientSecret: intent.client_secret,
+      });
     } catch (err) {
       if (err.message === "STRIPE_NOT_CONFIGURED") {
         return res.status(501).json({ error: "Stripe is not configured yet" });
