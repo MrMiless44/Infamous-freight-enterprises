@@ -5,13 +5,13 @@ module.exports = function scopeGuard(requiredScopes) {
 
   return (req, res, next) => {
     const current = req.auth?.scopes || [];
-    const ok = requiredScopes.every((s) => current.includes(s));
+    const ok = requiredScopes.every(s => current.includes(s));
     if (!ok) {
       return res.status(403).json({
         error: "Forbidden",
         message: "Insufficient scopes",
         required: requiredScopes,
-        current,
+        current
       });
     }
     next();

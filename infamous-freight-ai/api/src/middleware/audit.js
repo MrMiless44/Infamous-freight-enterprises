@@ -2,7 +2,7 @@ function audit(req, res, next) {
   const start = Date.now();
   const originalJson = res.json.bind(res);
 
-  res.json = (body) => {
+  res.json = body => {
     const ms = Date.now() - start;
     const entry = {
       ts: new Date().toISOString(),
@@ -11,7 +11,7 @@ function audit(req, res, next) {
       status: res.statusCode,
       durationMs: ms,
       authMode: req.auth?.mode,
-      subject: req.auth?.subject,
+      subject: req.auth?.subject
     };
     console.log("AUDIT", JSON.stringify(entry));
     return originalJson(body);

@@ -11,7 +11,7 @@ router.get("/health/full", (req, res) => {
     ok: true,
     uptimeSec: Math.round(process.uptime()),
     rss: usage.rss,
-    heapUsed: usage.heapUsed,
+    heapUsed: usage.heapUsed
   });
 });
 

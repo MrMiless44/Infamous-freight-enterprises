@@ -8,15 +8,15 @@ async function sendCommand(command, payload, meta = {}) {
   const body = {
     command,
     payload,
-    meta,
+    meta
   };
 
   const res = await axios.post(url, body, {
     headers: {
       "x-api-key": apiKey,
-      "x-security-mode": securityMode,
+      "x-security-mode": securityMode
     },
-    timeout: 15000,
+    timeout: 15000
   });
 
   return res.data;

@@ -22,7 +22,6 @@ model Driver {
   phone       String?
   status      String   @default("inactive")
   avatarCode  String?  // links to AI avatar theme
-  shipments   Shipment[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

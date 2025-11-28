@@ -23,13 +23,13 @@ router.post(
     try {
       const result = await sendCommand(command, payload || {}, {
         subject: req.auth?.subject,
-        mode: req.auth?.mode,
+        mode: req.auth?.mode
       });
 
       res.json({
         ok: true,
         command,
-        result,
+        result
       });
     } catch (e) {
       console.error("AI command error:", e.message);

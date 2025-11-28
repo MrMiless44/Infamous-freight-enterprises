@@ -10,7 +10,7 @@ function authHybrid(req, res, next) {
     req.auth = {
       mode: "api-key",
       scopes: ["ai:query", "data:read", "system:admin"],
-      subject: "ai-synthetic-engine",
+      subject: "ai-synthetic-engine"
     };
     return next();
   }
@@ -22,7 +22,7 @@ function authHybrid(req, res, next) {
       req.auth = {
         mode: "jwt",
         subject: decoded.sub || decoded.id,
-        scopes: decoded.scopes || ["user:basic"],
+        scopes: decoded.scopes || ["user:basic"]
       };
       return next();
     } catch (e) {
