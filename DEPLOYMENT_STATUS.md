@@ -239,3 +239,9 @@ vercel --prod
 ```
 
 **Your platform will be live! 🚀**
+
+## 🚧 Deployment Attempt Log (current session)
+- Added GitHub remote `origin` pointing to `https://github.com/MrMiless44/Infamous-Freight-Enterprises.git` to enable CI pushes.
+- `git push origin main` was blocked because GitHub credentials were not available in the environment, so CI could not be triggered.
+- Fly.io deployment not attempted beyond checking the CLI; `flyctl` is not installed and no Fly.io auth token is available, so the API could not be deployed.
+- Vercel production deployment not run because login credentials/tokens are not present and `NEXT_PUBLIC_API_BASE` could not be set without a deployed Fly.io URL.
