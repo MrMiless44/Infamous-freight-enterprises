@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered freight management platform for modern carriers. Route optimization, driver coordination, and voice AI copilot.">
+    <title>Infæmous Freight - AI Freight Management</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a33 100%);
+            color: #f9fafb;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            text-align: center;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            background: conic-gradient(from 220deg, #ffcc33, #ff3366, #ffcc33);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #050509;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffcc33, #ff3366);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            font-size: 1.5rem;
+            color: rgba(249, 250, 251, 0.8);
+            margin-bottom: 3rem;
+        }
+        .status {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: rgba(255, 204, 51, 0.1);
+            border: 2px solid #ffcc33;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .feature {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .cta {
+            display: inline-block;
+            padding: 1.25rem 3rem;
+            background: linear-gradient(135deg, #ffcc33, #ff3366);
+            color: #050509;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 0.5rem;
+            transition: transform 0.2s;
+        }
+        .cta:hover {
+            transform: scale(1.05);
+        }
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #f9fafb;
+        }
+        .links {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .link {
+            color: #ffcc33;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+        .pricing {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        .price-tag {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .price-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffcc33;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">IF</div>
+        
+        <h1>Infæmous Freight ♊</h1>
+        <p class="subtitle">AI Synthetic Intelligence for Global Freight</p>
+        
+        <div class="status">
+            ✅ Production Ready • Accepting Customers
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🚚</div>
+                <h3>Smart Routing</h3>
+                <p>AI-optimized routes save 15-30% on fuel</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎙️</div>
+                <h3>Voice Copilot</h3>
+                <p>Hands-free driver coordination</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <h3>Real-Time Analytics</h3>
+                <p>Fleet insights that drive decisions</p>
+            </div>
+        </div>
+
+        <div class="pricing">
+            <div class="price-tag">
+                <div>Starter</div>
+                <div class="price-amount">$149/mo</div>
+            </div>
+            <div class="price-tag">
+                <div>Professional</div>
+                <div class="price-amount">$399/mo</div>
+            </div>
+            <div class="price-tag">
+                <div>Enterprise</div>
+                <div class="price-amount">$1,299/mo</div>
+            </div>
+        </div>
+
+        <div>
+            <a href="/pricing" class="cta">Start Free Trial</a>
+            <a href="/dashboard" class="cta cta-secondary">View Dashboard</a>
+        </div>
+
+        <div class="links">
+            <a href="https://github.com/MrMiless44/Infamous-Freight-Enterprises" class="link">GitHub</a>
+            <a href="/api/health" class="link">API Status</a>
+            <a href="mailto:sales@infamousfreight.ai" class="link">Contact Sales</a>
+        </div>
+
+        <div style="margin-top: 3rem; opacity: 0.6; font-size: 0.9rem;">
+            <p>14-Day Free Trial • No Credit Card Required • Cancel Anytime</p>
+        </div>
+    </div>
+</body>
+</html>
