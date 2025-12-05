@@ -23,4 +23,4 @@
 - `WHISPER_API_KEY=` (optional)
 
 ## CI/CD name alignment
-Use the exact variable names above so Fly secrets, GitHub Actions (`fly-deploy.yml`), and `.env.example` all match. That alignment keeps `flyctl deploy` and any remote builds consistent with the local `.env`.
+Use the exact variable names above so that Fly secrets, GitHub Actions (`fly-deploy.yml`), and `.env.example` all match. That alignment keeps `flyctl deploy` and any remote builds consistent with the local `.env`.
