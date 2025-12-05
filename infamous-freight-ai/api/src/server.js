@@ -7,6 +7,8 @@ const { RateLimiterMemory } = require("rate-limiter-flexible");
 const healthRoutes = require("./routes/health");
 const aiRoutes = require("./routes/ai.commands");
 const aiMaintenanceRoutes = require("./routes/ai.maintenance");
+const billingRoutes = require("./routes/billing");
+const paymentsRoutes = require("./routes/payments");
 
 const app = express();
 
@@ -39,6 +41,8 @@ app.use(rateLimiterMiddleware);
 app.use("/api", healthRoutes);
 app.use("/api", aiRoutes);
 app.use("/api", aiMaintenanceRoutes);
+app.use("/api", billingRoutes);
+app.use("/api", paymentsRoutes);
 
 app.post("/internal/ai-sim", (req, res) => {
   const { command, payload, meta } = req.body || {};

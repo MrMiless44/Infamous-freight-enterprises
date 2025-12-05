@@ -9,6 +9,7 @@ RUN npm ci
 RUN mkdir -p public
 COPY . .
 
+ENV NODE_ENV=production
 RUN npm run build
 
 FROM node:20-alpine AS runner
@@ -22,7 +23,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.mjs ./next.config.mjs
 COPY --from=builder /app/node_modules ./node_modules
 
-RUN npm prune --omit=dev && addgroup -S nodejs && adduser -S node -G nodejs && chown -R node:node /app
+RUN npm prune --omit=dev && chown -R node:node /app
 USER node
 
 EXPOSE 3000
