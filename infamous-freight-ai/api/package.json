@@ -5,6 +5,7 @@
   "type": "commonjs",
   "scripts": {
     "dev": "node src/server.js",
+    "prestart": "node scripts/startup.js",
     "start": "NODE_ENV=production node src/server.js",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate deploy",
@@ -19,9 +20,7 @@
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "prisma": "^5.11.0",
     "rate-limiter-flexible": "^5.0.0"
-  },
-  "devDependencies": {
-    "prisma": "^5.11.0"
   }
 }
