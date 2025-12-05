@@ -8,8 +8,8 @@
 - `JWT_SECRET` – matches the API secret for end-to-end tests
 
 ## Optional
-- `STRIPE_PUBLIC_KEY=`
-- `PAYPAL_CLIENT_ID=`
+- `STRIPE_PUBLIC_KEY=` (currently unused; placeholder for future Stripe integration)
+- `PAYPAL_CLIENT_ID=` (currently unused; placeholder for future PayPal integration)
 - AI provider keys for client-side features:
   - `AI_PROVIDER`
   - `OPENAI_API_KEY`
