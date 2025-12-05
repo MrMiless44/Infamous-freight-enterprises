@@ -24,6 +24,7 @@ const runMigrationsWithRetry = () => {
 
 try {
   run("Validating environment", "node scripts/env.validation.js");
+  run("Generating Prisma client", "npx prisma generate");
   runMigrationsWithRetry();
   console.log("Startup checks complete.");
 } catch (err) {
