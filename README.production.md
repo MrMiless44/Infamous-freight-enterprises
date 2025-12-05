@@ -71,6 +71,8 @@ cd web && vercel --prod
 # Connect repo at https://render.com
 ```
 
+Render's blueprint flow will auto-detect the `render.yaml` after you connect your GitHub repository and provision the Postgres database, API service, and web frontend together.
+
 ## Tech Stack
 
 ### API

@@ -98,6 +98,8 @@ vercel --prod
 # 5. Render will detect render.yaml and deploy automatically
 ```
 
+The blueprint will pick up `render.yaml` after you connect the GitHub repository and provision the Postgres database, API, and web frontend services together.
+
 ---
 
 ## 🗄️ Database Setup
