@@ -6,8 +6,12 @@
 app = 'infamous-freight-enterprises'
 primary_region = 'lax'
 
+[build]
+  dockerfile = 'api/Dockerfile'
+  context = 'api'
+
 [http_service]
-  internal_port = 8080
+  internal_port = 4000
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true

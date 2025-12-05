@@ -195,18 +195,18 @@ To enable automatic deployments:
    flyctl auth token
    ```
 
-2. **Get Vercel Token:**
-   - Go to: https://vercel.com/account/tokens
-   - Create new token
+2. **Get Vercel Credentials:**
+   - Token: https://vercel.com/account/tokens
+   - Org ID & Project ID: https://vercel.com/docs/deployments/git/vercel-for-github#environment-variables
 
 3. **Add to GitHub Secrets:**
    - Go to: https://github.com/MrMiless44/Infamous-Freight-Enterprises/settings/secrets/actions
    - Add `FLY_API_TOKEN`
-   - Add `VERCEL_TOKEN`
+   - Add `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
 
 4. **Workflows will auto-run on push to main:**
-   - `.github/workflows/deploy-api.yml` → Deploys to Fly.io
-   - `.github/workflows/deploy-web.yml` → Deploys to Vercel
+   - `.github/workflows/fly-deploy.yml` → Deploys API Docker image (builds from `api` Dockerfile, exposes port 4000)
+   - `.github/workflows/vercel-deploy.yml` → Deploys Web via Vercel CLI from `/web`
 
 ---
 
@@ -226,12 +226,12 @@ To enable automatic deployments:
 
 **Deploy everything in 5 minutes:**
 
-```bash
-# Terminal 1: Deploy API
-cd /tmp/vscode-github-mrmiles44-infamous-freight-enterprises
-flyctl launch --config deploy/fly.toml --no-deploy
-flyctl secrets set JWT_SECRET="$(openssl rand -base64 32)" DATABASE_URL="..."
-flyctl deploy
+ ```bash
+ # Terminal 1: Deploy API
+ cd /tmp/vscode-github-mrmiles44-infamous-freight-enterprises
+ flyctl launch --config fly.toml --no-deploy
+ flyctl secrets set JWT_SECRET="$(openssl rand -base64 32)" DATABASE_URL="..."
+ flyctl deploy
 
 # Terminal 2: Deploy Web
 cd /tmp/vscode-github-mrmiles44-infamous-freight-enterprises/web
