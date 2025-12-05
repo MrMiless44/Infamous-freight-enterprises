@@ -17,5 +17,5 @@
 
 ## Notes
 - Only the web app is deployed to Vercel; the API URL should point to Fly.io/Render.
-- Keep the variable names identical to Fly and `.env.example` so GitHub Actions (`vercel-deploy.yml`) and dashboard configuration stay in sync.
+- Keep the variable names identical to those in Fly and `.env.example` so GitHub Actions (`vercel-deploy.yml`) and dashboard configuration stay in sync.
 - Add custom-domain rewrites in `vercel.json` if you map a vanity domain.
