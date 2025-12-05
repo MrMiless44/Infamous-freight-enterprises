@@ -32,6 +32,10 @@
 
 ## 🚀 Ready for Production Deployment
 
+### 🚧 Fly.io Deployment Attempt (2025-12-05)
+- Tried to install `flyctl` via the official install script to run deployment steps, but the request failed with a `403` response when fetching `https://fly.io/install.sh`, indicating outbound network restrictions in the current environment. As a result, `flyctl` is not available in this container and no Fly.io commands (secrets, deploy, status, logs) could be executed.
+- Because `flyctl` could not be installed, the Fly.io secrets (`JWT_SECRET`, `NODE_ENV`, `DATABASE_URL`) remain unset and the API was not deployed. Once network access is available, rerun the Fly.io steps below.
+
 ### Option A: Deploy to Fly.io (API) - RECOMMENDED
 
 **Prerequisites:**
