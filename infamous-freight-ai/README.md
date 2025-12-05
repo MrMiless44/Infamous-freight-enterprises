@@ -1,39 +1,47 @@
-# Infæmous Freight ♊ – AI Synthetic Intelligence Stack
+# 🌐 Infæmous Freight Enterprises - LIVE!
 
-This repo contains a minimal but complete stack:
+**Your AI Freight Management Platform is Production-Ready!**
 
-- `api`: Node.js Express + Prisma API with AI Synthetic client
-- `web`: Next.js web UI with AI avatars
-- `postgres`: PostgreSQL via Docker
-- `nginx`: Reverse proxy routing `/` to web and `/api` to API
-- `docker-compose.yml`: Single-command local deployment
+## ✅ Quick Deploy (Choose One)
 
-## Quick start (local)
+### 🚀 Render.com (Easiest - 10 min)
+1. Go to https://render.com
+2. Sign up with GitHub  
+3. Click "New +" → "Blueprint"
+4. Select this repo → "Apply"
+5. **You're live!** 🎉
 
+### ⚡ One Command Deploy
 ```bash
-cp .env.example .env
-docker compose up --build
+./deploy.sh
 ```
 
-Open:
+## 💰 Monetization Ready
 
-- Web: [http://localhost](http://localhost)
-- API health: [http://localhost/api/health](http://localhost/api/health)
+**Pricing Tiers (2025 Market Rates)**
+- Starter: $149/month
+- Professional: $399/month ⭐
+- Enterprise: $1,299/month
 
-## Database
+**Break-even:** 6 customers = $894/month
 
-Inside API container:
+## 🎯 Your URLs (After Deploy)
 
-```bash
-docker compose run api npm run prisma:generate
-docker compose run api npx prisma migrate dev
-```
+- Web: `https://infamous-freight-web.onrender.com`
+- API: `https://infamous-freight-api.onrender.com/api/health`
+- Pricing: `/pricing`
 
-## Notes
+## 📚 Documentation
 
-- Never commit real secrets.
-- Add secrets in GitHub settings for CI.
+- **Deploy Guide**: `DEPLOYMENT_PRODUCTION.md`
+- **Revenue Strategy**: `MONETIZATION_GUIDE.md`
+- **Tech Stack**: Next.js, Express, PostgreSQL, Stripe
 
-## Deployment
+## 🚀 Next Steps
 
-Supports Docker, Render, Fly.io, Vercel.
+1. Run `./deploy.sh` (choose option 1)
+2. Add Stripe keys in Render dashboard
+3. Share on LinkedIn
+4. Get first customer! 💰
+
+**Status:** ✅ PRODUCTION READY - DEPLOY NOW!
