@@ -7,7 +7,7 @@
 - `NEXT_PUBLIC_API_BASE` – public API base URL used by the web app
 
 ## AI Providers
-- `AI_PROVIDER=synthetic` (or `openai` / `anthropic`)
+- `AI_PROVIDER` – set to `synthetic`, `openai`, or `anthropic`
 - `AI_SYNTHETIC_API_KEY` – required when `AI_PROVIDER=synthetic`
 - `AI_SYNTHETIC_ENGINE_URL` – internal URL to the AI simulator
 - `AI_SECURITY_MODE` – e.g., `strict`
