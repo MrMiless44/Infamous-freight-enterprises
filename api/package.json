@@ -1,35 +1,33 @@
 {
-  "name": "api",
-  "version": "1.0.0",
-  "description": "Infamous Freight API service",
+  "name": "infamous-freight-api",
+  "version": "2.0.0",
   "main": "src/server.js",
+  "type": "commonjs",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon src/server.js",
-    "start": "node src/server.js",
-    "lint": "eslint src --ext .js",
-    "build": "npm run lint"
-  },
-  "keywords": [
-    "freight",
-    "api"
-  ],
-  "author": "",
-  "license": "ISC",
-  "engines": {
-    "node": ">=20"
+    "dev": "node src/server.js",
+    "start": "NODE_ENV=production node src/server.js",
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate": "npx prisma migrate deploy",
+    "prisma:studio": "npx prisma studio",
+    "validate:env": "node scripts/env.validation.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.20.0",
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "@prisma/client": "^5.11.0",
+    "axios": "^1.7.0",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1"
+    "dotenv": "^16.4.0",
+    "express": "^4.19.0",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.0.0",
+    "rate-limiter-flexible": "^2.4.2",
+    "stripe": "^12.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "eslint": "^9.39.1",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-n": "^17.23.1",
-    "eslint-plugin-promise": "^7.2.1",
-    "globals": "^16.5.0",
-    "nodemon": "^3.1.11"
+    "prisma": "^5.11.0"
   }
 }

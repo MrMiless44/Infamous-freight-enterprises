@@ -1,34 +1,31 @@
-const express = require('express')
-const cors = require('cors')
-require('dotenv').config()
+require("dotenv").config();
+const express = require("express");
+const helmet = require("helmet");
+const cors = require("cors");
+const morgan = require("morgan");
+const healthRoutes = require("./routes/health");
+const aiRoutes = require("./routes/ai.commands");
+const billingRoutes = require("./routes/billing");
+const voiceRoutes = require("./routes/voice");
+const aiSimRoutes = require("./routes/aiSim.internal");
 
-const app = express()
-const PORT = Number(process.env.API_PORT || 4000)
-const HOST = process.env.API_HOST || '0.0.0.0'
-const API_BASE_PATH = process.env.API_BASE_PATH || '/api'
+const app = express();
 
-app.use(cors())
-app.use(express.json())
+app.use(helmet());
+app.use(cors());
+app.use(express.json({ limit: "12mb" }));
+app.use(morgan("combined"));
 
-const healthHandler = (req, res) => {
-  res.json({
-    status: 'ok',
-    service: 'api',
-    timestamp: new Date().toISOString()
-  })
-}
+// Routes
+app.use("/api", healthRoutes);
+app.use("/api", aiRoutes);
+app.use("/api", billingRoutes);
+app.use("/api", voiceRoutes);
 
-const healthPaths = ['/health', `${API_BASE_PATH}/health`]
-healthPaths.forEach((path) => app.get(path, healthHandler))
+// Internal synthetic engine simulator
+app.use("/internal", aiSimRoutes);
 
-app.get(`${API_BASE_PATH}/ping`, (req, res) => {
-  res.json({ pong: true, timestamp: new Date().toISOString() })
-})
-
-app.use((req, res) => {
-  res.status(404).json({ error: 'Not Found' })
-})
-
-app.listen(PORT, HOST, () => {
-  console.log(`API server listening on http://${HOST}:${PORT}`)
-})
+const port = process.env.PORT || 4000;
+app.listen(port, () => {
+  console.log(`Infamous Freight API listening on ${port}`);
+});
