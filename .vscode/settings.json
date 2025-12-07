@@ -6,5 +6,6 @@
         "{**/.c4z/.extsrcs/*.PROTSYM.cbl,**/.c4z/.extsrcs/*.PROTSYM.listing}": true
     },
     "idf.pythonInstallPath": "/home/codespace/.python/current/bin/python",
-    "robotcode.disableExtension": true
+    "robotcode.disableExtension": true,
+    "remote.autoForwardPortsFallback": 0
 }
