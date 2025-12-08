@@ -3,7 +3,6 @@ version: "3.9"
 services:
   postgres:
     image: postgres:15
-    container_name: infamous_pg
     restart: always
     environment:
       POSTGRES_USER: infamous
@@ -11,48 +10,31 @@ services:
       POSTGRES_DB: infamous_freight
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
 
   api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    container_name: infamous_api
+    build: ./api
     restart: always
-    env_file:
-      - .env
+    env_file: .env
     depends_on:
       - postgres
     ports:
       - "4000:4000"
-    volumes:
-      - ./api:/app
-    command: sh -c "npm install && npm run dev"
 
   web:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    container_name: infamous_web
+    build: ./web
     restart: always
-    env_file:
-      - .env
+    env_file: .env
     depends_on:
       - api
     ports:
       - "3000:3000"
-    volumes:
-      - ./web:/app
-    command: sh -c "npm install && npm run dev"
 
   nginx:
     image: nginx:stable-alpine
-    container_name: infamous_nginx
     restart: always
     depends_on:
-      - web
       - api
+      - web
     ports:
       - "80:80"
     volumes:
