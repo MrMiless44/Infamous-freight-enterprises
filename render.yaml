@@ -1,33 +1,47 @@
 services:
 - type: web
-  name: infamous-web
-  env: static
-  repo: https://github.com/you/infamous-freight-ai
-  buildCommand: cd web && npm install && npm run build
-  staticPublishPath: web/.next
-  envVars:
-  - key: NEXT_PUBLIC_API_BASE
-    value: https://infamous-api.onrender.com/api
-
-- type: web
-  name: infamous-api
+  name: infamous-freight
   env: docker
-  repo: https://github.com/you/infamous-freight-ai
-  branch: main
-  dockerfilePath: api/Dockerfile
+  dockerfilePath: ./Dockerfile
+  plan: starter
   envVars:
   - key: NODE_ENV
     value: production
   - key: PORT
-    value: "4000"
+    value: "8080"
   - key: DATABASE_URL
     fromDatabase:
       name: infamous-db
       property: connectionString
   - key: JWT_SECRET
     generateValue: true
+  - key: AI_SYNTHETIC_ENGINE_URL
+    value: http://localhost:4000/internal/ai-sim
+  - key: AI_SYNTHETIC_API_KEY
+    sync: false
+  - key: AI_SECURITY_MODE
+    value: strict
+  - key: API_BASE_URL
+    value: http://localhost:4000/api
+  - key: NEXT_PUBLIC_API_BASE
+    value: /api
+  - key: STRIPE_SECRET_KEY
+    sync: false
+  - key: STRIPE_PUBLISHABLE_KEY
+    sync: false
+  - key: STRIPE_WEBHOOK_SECRET
+    sync: false
+  - key: CORS_ORIGINS
+    sync: false
+  - key: SENTRY_DSN
+    sync: false
+  - key: REDIS_URL
+    sync: false
+  healthCheckPath: /health
 
 databases:
 - name: infamous-db
   databaseName: infamous_freight
   user: infamous
+  plan: starter
+  postgresMajorVersion: "15"

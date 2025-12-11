@@ -115,7 +115,7 @@ vercel --prod
 # Add: NEXT_PUBLIC_API_BASE=https://infamous-freight-api.fly.dev/api
 ```
 
-### Option C: Deploy Full Stack to Render
+### Option C: Deploy Full Stack to Render (root Dockerfile on port 8080)
 
 **Steps:**
 ```bash
@@ -123,18 +123,27 @@ vercel --prod
 
 # 2. Go to: https://render.com
 
-# 3. Click "New" → "Blueprint"
+# 3. Click "New" → "Blueprint" and select repo: MrMiless44/Infamous-Freight-Enterprises
 
-# 4. Connect your GitHub repository
+# 4. Render will build from the root Dockerfile (multi-service image) and provision:
+#    - Web service listening on PORT=8080
+#    - PostgreSQL database
 
-# 5. Select repo: MrMiless44/Infamous-Freight-Enterprises
+# 5. Confirm environment variables match render.yaml:
+#    DATABASE_URL (from the Render DB)
+#    JWT_SECRET (generated)
+#    AI_SYNTHETIC_API_KEY (secret)
+#    AI_SYNTHETIC_ENGINE_URL=http://localhost:4000/internal/ai-sim
+#    API_BASE_URL=http://localhost:4000/api
+#    NEXT_PUBLIC_API_BASE=/api
+#    STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET
+#    CORS_ORIGINS (your allowed origins)
+#    Optional: SENTRY_DSN, REDIS_URL
 
-# 6. Render will detect render.yaml and create:
-   - PostgreSQL database
-   - API service
-   - Web service
+# 6. Deploy the blueprint
 
-# 7. Set environment variables in Render dashboard
+# 7. After the service is healthy, run the smoke test against Render:
+SMOKE_BASE=https://<your-host> npm run test:proxy
 ```
 
 ---

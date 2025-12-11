@@ -10,7 +10,7 @@ const voiceRouter = require('./routes/voice');
 const aiSimRouter = require('./routes/aiSim.internal');
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.API_PORT || process.env.PORT || 4000;
 
 // Middleware
 app.use(helmet());
