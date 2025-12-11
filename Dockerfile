@@ -8,9 +8,11 @@ RUN apk add --no-cache openssl nginx
 FROM base AS api-builder
 WORKDIR /app/api
 COPY api/package*.json ./
-RUN npm ci --only=production
+# Install all dependencies so Prisma CLI is available for generate
+RUN npm ci
 COPY api/ ./
-RUN npx prisma generate
+RUN npx prisma generate \
+  && npm prune --production
 
 # Build Web
 FROM base AS web-builder
