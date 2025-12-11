@@ -1,12 +1,9 @@
-const { FlatCompat } = require("@eslint/eslintrc");
-
-const compat = new FlatCompat({ baseDirectory: __dirname });
+const nextConfig = require("eslint-config-next");
 
 module.exports = [
+  ...nextConfig,
   {
-    ignores: ["node_modules", ".next"],
+    // Explicitly ignore local build artefacts.
+    ignores: ["node_modules", "out"],
   },
-  compat.config({
-    extends: ["next/core-web-vitals"],
-  }),
 ];
