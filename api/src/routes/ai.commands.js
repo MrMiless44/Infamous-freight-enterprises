@@ -1,23 +1,31 @@
 const express = require("express");
+const { body } = require("express-validator");
 const { sendCommand } = require("../services/aiSyntheticClient");
 const {
-  rateLimit,
   authenticate,
   requireScope,
   auditLog
 } = require("../middleware/security");
+const {
+  validateString,
+  handleValidationErrors
+} = require("../middleware/validation");
 
 const router = express.Router();
 
 router.post(
   "/ai/command",
-  rateLimit,
   authenticate,
   requireScope("ai:command"),
   auditLog,
-  async (req, res) => {
+  [
+    validateString("command", { min: 1, max: 200 }),
+    body("payload").optional().isObject().withMessage("payload must be an object"),
+    body("meta").optional().isObject().withMessage("meta must be an object"),
+    handleValidationErrors
+  ],
+  async (req, res, next) => {
     const { command, payload = {}, meta = {} } = req.body || {};
-    if (!command) return res.status(400).json({ error: "command required" });
 
     try {
       const response = await sendCommand(command, payload, {
@@ -26,8 +34,7 @@ router.post(
       });
       res.json({ ok: true, response });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: err.message });
+      next(err);
     }
   }
 );
