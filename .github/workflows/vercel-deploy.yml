@@ -10,34 +10,37 @@ jobs:
     if: ${{ secrets.VERCEL_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 10
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "pnpm"
-
       - name: Install dependencies
         run: pnpm -w install --frozen-lockfile
-
-      - name: Approve required build scripts (pnpm >=10)
-        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
+      - name: Lint web
+        run: pnpm --filter web lint
         continue-on-error: true
-
+      - name: Approve required build scripts (pnpm >=10)
+        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma
+          @scarf/scarf unrs-resolver
+        continue-on-error: true
       - name: Generate Prisma client
         run: pnpm -w exec prisma generate
         continue-on-error: true
-
       - name: Pull Vercel Environment Information
-        run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
+        run: npx vercel pull --yes --environment=production --token=${{
+          secrets.VERCEL_TOKEN }}
       - name: Build Project
         run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy
-        run: npx vercel deploy --prod --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy to Vercel
+        run: npx vercel deploy --prod --prebuilt --token=${{
+          secrets.VERCEL_TOKEN }}
+      - name: Deployment Complete
+        if: always()
+        run: |
+          echo "✅ Vercel Deployment: ${{ job.status }}"
+          echo "📍 URL: https://infamous-freight.vercel.app"
