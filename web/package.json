@@ -13,7 +13,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@infamous-freight/shared": "workspace:*",
+    "@infamous-freight/shared": "file:../packages/shared",
     "next": "^14.2.35",
     "react": "18.2.0",
     "react-dom": "18.2.0",

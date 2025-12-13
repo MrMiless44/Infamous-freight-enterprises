@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.0",
-    "@infamous-freight/shared": "workspace:*",
+    "@infamous-freight/shared": "file:../packages/shared",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@prisma/client": "^5.11.0",
     "@sentry/node": "^7.100.0",
