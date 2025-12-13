@@ -7,7 +7,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const base = process.env.NEXT_PUBLIC_API_BASE || "http://localhost/api";
+    const base = process.env.NEXT_PUBLIC_API_BASE || "/api";
     fetch(`${base}/health`)
       .then(res => res.json())
       .then(data => setStatus(data))

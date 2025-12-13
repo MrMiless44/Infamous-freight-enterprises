@@ -11,8 +11,25 @@ const aiSimRoutes = require("./routes/aiSim.internal");
 
 const app = express();
 
+app.set("trust proxy", 1);
+
+const defaultOrigins = ["http://localhost:3000"];
+const allowedOrigins = (process.env.CORS_ORIGINS || defaultOrigins.join(","))
+  .split(",")
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(null, false);
+    },
+    credentials: true
+  })
+);
 app.use(express.json({ limit: "12mb" }));
 app.use(morgan("combined"));
 

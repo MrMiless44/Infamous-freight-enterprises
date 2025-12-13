@@ -9,12 +9,17 @@ export function BillingPanel() {
   async function createStripe() {
     const res = await api.post("/billing/stripe/session");
     setStripeSession(res.sessionId);
-    window.location.href = `https://checkout.stripe.com/pay/${res.sessionId}`;
+    if (res.url) {
+      window.location.href = res.url;
+    }
   }
 
   async function createPayPal() {
     const res = await api.post("/billing/paypal/order");
     setPaypalOrder(res.orderId);
+    if (res.approvalUrl) {
+      window.location.href = res.approvalUrl;
+    }
   }
 
   return (
