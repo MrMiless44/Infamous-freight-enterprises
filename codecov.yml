@@ -1,7 +1,8 @@
 codecov:
   require_ci_to_pass: yes
   branch: main
-  max_report_age: off
+  max_report_age: "12h" # equates to 12 hours
+  # max_report_age can be listed in hours '#h' (hours) or '#d' (days)
 
 coverage:
   precision: 2
