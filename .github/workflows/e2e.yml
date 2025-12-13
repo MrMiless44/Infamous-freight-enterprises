@@ -29,14 +29,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm -w install --frozen-lockfile
+
+      - name: Approve required build scripts (pnpm >=10)
+        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
+        continue-on-error: true
+
+      - name: Generate Prisma client
+        run: pnpm -w exec prisma generate
+        continue-on-error: true
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps ${{ matrix.browser }}
@@ -44,9 +57,9 @@ jobs:
       - name: Start API server
         working-directory: api
         run: |
-          npm ci
-          npm run build 2>/dev/null || true
-          npm start &
+          pnpm install --frozen-lockfile
+          pnpm build 2>/dev/null || true
+          pnpm start &
         timeout-minutes: 5
 
       - name: Wait for API to be ready
