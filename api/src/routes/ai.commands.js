@@ -4,7 +4,8 @@ const { sendCommand } = require("../services/aiSyntheticClient");
 const {
   authenticate,
   requireScope,
-  auditLog
+  auditLog,
+  limiters
 } = require("../middleware/security");
 const {
   validateString,
@@ -15,6 +16,7 @@ const router = express.Router();
 
 router.post(
   "/ai/command",
+  limiters.ai, // Apply AI rate limiter
   authenticate,
   requireScope("ai:command"),
   auditLog,

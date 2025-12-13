@@ -107,12 +107,16 @@ jobs:
         run: npm test -- --coverage --passWithNoTests 2>/dev/null || true
         continue-on-error: true
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          files: ./${{ matrix.directory }}/coverage/coverage-final.json
-          flags: ${{ matrix.directory }}
-          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   smoke-tests:
     name: Smoke Tests

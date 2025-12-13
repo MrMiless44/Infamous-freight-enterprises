@@ -5,6 +5,8 @@ const cors = require("cors");
 const { httpLogger, logger } = require("./middleware/logger");
 const { rateLimit } = require("./middleware/security");
 const errorHandler = require("./middleware/errorHandler");
+const { securityHeaders, handleCSPViolation } = require("./middleware/securityHeaders");
+const { initSentry, attachErrorHandler } = require("./config/sentry");
 const config = require("./config");
 const healthRoutes = require("./routes/health");
 const aiRoutes = require("./routes/ai.commands");
@@ -13,6 +15,9 @@ const voiceRoutes = require("./routes/voice");
 const aiSimRoutes = require("./routes/aiSim.internal");
 
 const app = express();
+
+// Initialize Sentry for error tracking (must be early)
+initSentry(app);
 
 app.set("trust proxy", 1);
 
@@ -34,7 +39,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(helmet());
+// Apply enhanced security headers
+securityHeaders(app);
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -55,6 +62,9 @@ app.use("/api", aiRoutes);
 app.use("/api", billingRoutes);
 app.use("/api", voiceRoutes);
 
+// CSP Violation Report Handler
+app.post("/api/csp-violation", handleCSPViolation);
+
 // Internal synthetic engine simulator
 app.use("/internal", aiSimRoutes);
 
@@ -63,8 +73,11 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-// Error handler (must be last)
+// Error handler (must be last, after Sentry)
 app.use(errorHandler);
+
+// Attach Sentry error handler (must be after all other middleware)
+attachErrorHandler(app);
 
 const apiConfig = config.getApiConfig();
 const port = apiConfig.port;

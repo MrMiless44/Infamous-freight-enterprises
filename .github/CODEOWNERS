@@ -1,0 +1,46 @@
+# GitHub CODEOWNERS
+# This file defines which users or teams should review pull requests
+# for specific files and directories.
+# 
+# For more information, see:
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global default for all files
+* @MrMiless44
+
+# API service
+/api/ @MrMiless44
+/api/src/ @MrMiless44
+/api/prisma/ @MrMiless44
+/api/__tests__/ @MrMiless44
+
+# Web application
+/web/ @MrMiless44
+/web/components/ @MrMiless44
+/web/pages/ @MrMiless44
+/web/hooks/ @MrMiless44
+/web/styles/ @MrMiless44
+
+# Deployment and infrastructure
+/docker-compose.*.yml @MrMiless44
+/Dockerfile @MrMiless44
+/nginx/ @MrMiless44
+/.github/workflows/ @MrMiless44
+/.github/dependabot.yml @MrMiless44
+
+# Documentation
+/docs/ @MrMiless44
+/README.md @MrMiless44
+/DEPLOYMENT_GUIDE.md @MrMiless44
+
+# Project configuration
+/.github/ @MrMiless44
+/package.json @MrMiless44
+/.eslintrc.* @MrMiless44
+/tsconfig.json @MrMiless44
+
+# Infamous Freight AI subdirectory
+/infamous-freight-ai/ @MrMiless44
+/infamous-freight-ai/api/ @MrMiless44
+/infamous-freight-ai/web/ @MrMiless44
+/infamous-freight-ai/mobile/ @MrMiless44

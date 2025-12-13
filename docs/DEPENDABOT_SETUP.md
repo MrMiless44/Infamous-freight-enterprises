@@ -91,6 +91,18 @@ These will run on:
 - Every push to `main` or `develop`
 - Every pull request to `main` or `develop`
 
+### Uploading Test Results to Codecov
+
+To upload test results to Codecov, add the following step in your GitHub Actions workflow:
+
+```yaml
+- name: Upload test results to Codecov
+  if: ${{ !cancelled() }}
+  uses: codecov/test-results-action@v1
+  with:
+    token: ${{ secrets.CODECOV_TOKEN }}
+```
+
 ## Best Practices
 
 1. **Review Dependabot PRs promptly** - They help maintain security
