@@ -6,8 +6,28 @@ on:
   pull_request:
 
 jobs:
+  validate-html:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Install tidy
+        run: sudo apt-get update && sudo apt-get install -y tidy
+      
+      - name: Validate HTML files
+        run: |
+          echo "Validating HTML files..."
+          find . -name "*.html" -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./.next/*" | while read htmlfile; do
+            echo "Validating $htmlfile"
+            tidy -e -q "$htmlfile" || exit 1
+          done
+          echo "All HTML files validated successfully!"
+
   build:
     runs-on: ubuntu-latest
+    needs: validate-html
 
     steps:
       - name: Checkout
