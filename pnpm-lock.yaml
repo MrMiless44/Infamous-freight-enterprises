@@ -35,7 +35,7 @@ importers:
         specifier: ^0.20.0
         version: 0.20.9
       "@infamous-freight/shared":
-        specifier: workspace:*
+        specifier: file:../packages/shared
         version: link:../packages/shared
       "@paypal/checkout-server-sdk":
         specifier: ^1.0.3
@@ -185,7 +185,7 @@ importers:
   web:
     dependencies:
       "@infamous-freight/shared":
-        specifier: workspace:*
+        specifier: file:../packages/shared
         version: link:../packages/shared
       next:
         specifier: ^14.2.35
