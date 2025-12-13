@@ -1,0 +1,13 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run lint-staged on staged files
+npx lint-staged
+
+# Exit with error if lint-staged fails
+if [ $? -ne 0 ]; then
+  echo "❌ Lint-staged checks failed. Commit aborted."
+  exit 1
+fi
+
+echo "✅ Pre-commit checks passed!"
