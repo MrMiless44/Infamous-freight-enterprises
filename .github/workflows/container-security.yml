@@ -6,20 +6,20 @@ on:
       - main
       - develop
     paths:
-      - 'api/Dockerfile'
-      - 'web/Dockerfile'
-      - '**/package.json'
+      - "api/Dockerfile"
+      - "web/Dockerfile"
+      - "**/package.json"
   pull_request:
     branches:
       - main
       - develop
     paths:
-      - 'api/Dockerfile'
-      - 'web/Dockerfile'
-      - '**/package.json'
+      - "api/Dockerfile"
+      - "web/Dockerfile"
+      - "**/package.json"
   schedule:
     # Daily security scan at 1 AM UTC
-    - cron: '0 1 * * *'
+    - cron: "0 1 * * *"
 
 jobs:
   build-api-image:
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image-tag: ${{ steps.meta.outputs.tags }}
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,7 +38,7 @@ jobs:
       - name: Build API image
         uses: docker/build-push-action@v5
         with:
-          context: ./api
+          context: .
           file: ./api/Dockerfile
           push: false
           load: true
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image-tag: ${{ steps.meta.outputs.tags }}
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -71,7 +71,7 @@ jobs:
       - name: Build Web image
         uses: docker/build-push-action@v5
         with:
-          context: ./web
+          context: .
           file: ./web/Dockerfile
           push: false
           load: true
@@ -92,31 +92,31 @@ jobs:
     name: Scan API Image with Trivy
     runs-on: ubuntu-latest
     needs: build-api-image
-    
+
     steps:
       - name: Run Trivy scan for API
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'image'
-          image-ref: 'infamous-freight-api:latest'
-          format: 'sarif'
-          output: 'api-trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
+          scan-type: "image"
+          image-ref: "infamous-freight-api:latest"
+          format: "sarif"
+          output: "api-trivy-results.sarif"
+          severity: "CRITICAL,HIGH"
 
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v2
         if: always()
         with:
-          sarif_file: 'api-trivy-results.sarif'
-          category: 'trivy-api'
+          sarif_file: "api-trivy-results.sarif"
+          category: "trivy-api"
 
       - name: Run Trivy scan for API (table format)
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'image'
-          image-ref: 'infamous-freight-api:latest'
-          format: 'table'
-          output: 'api-trivy-results.txt'
+          scan-type: "image"
+          image-ref: "infamous-freight-api:latest"
+          format: "table"
+          output: "api-trivy-results.txt"
 
       - name: Print Trivy results
         run: cat api-trivy-results.txt
@@ -136,31 +136,31 @@ jobs:
     name: Scan Web Image with Trivy
     runs-on: ubuntu-latest
     needs: build-web-image
-    
+
     steps:
       - name: Run Trivy scan for Web
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'image'
-          image-ref: 'infamous-freight-web:latest'
-          format: 'sarif'
-          output: 'web-trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
+          scan-type: "image"
+          image-ref: "infamous-freight-web:latest"
+          format: "sarif"
+          output: "web-trivy-results.sarif"
+          severity: "CRITICAL,HIGH"
 
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v2
         if: always()
         with:
-          sarif_file: 'web-trivy-results.sarif'
-          category: 'trivy-web'
+          sarif_file: "web-trivy-results.sarif"
+          category: "trivy-web"
 
       - name: Run Trivy scan for Web (table format)
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'image'
-          image-ref: 'infamous-freight-web:latest'
-          format: 'table'
-          output: 'web-trivy-results.txt'
+          scan-type: "image"
+          image-ref: "infamous-freight-web:latest"
+          format: "table"
+          output: "web-trivy-results.txt"
 
       - name: Print Trivy results
         run: cat web-trivy-results.txt
@@ -180,23 +180,23 @@ jobs:
     name: Generate SBOM
     runs-on: ubuntu-latest
     needs: [build-api-image, build-web-image]
-    
+
     steps:
       - name: Generate SBOM for API
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'image'
-          image-ref: 'infamous-freight-api:latest'
-          format: 'cyclonedx'
-          output: 'api-sbom.json'
+          scan-type: "image"
+          image-ref: "infamous-freight-api:latest"
+          format: "cyclonedx"
+          output: "api-sbom.json"
 
       - name: Generate SBOM for Web
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'image'
-          image-ref: 'infamous-freight-web:latest'
-          format: 'cyclonedx'
-          output: 'web-sbom.json'
+          scan-type: "image"
+          image-ref: "infamous-freight-web:latest"
+          format: "cyclonedx"
+          output: "web-sbom.json"
 
       - name: Upload SBOMs
         uses: actions/upload-artifact@v4
@@ -212,7 +212,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [scan-api-with-trivy, scan-web-with-trivy]
     if: always()
-    
+
     steps:
       - name: Check scan results
         run: |
