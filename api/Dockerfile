@@ -10,7 +10,7 @@ WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY api/package.json ./api/
 COPY packages/shared/package.json ./packages/shared/
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --filter=api --filter=@infamous-freight/shared
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 # Build shared package
 FROM base AS builder-shared
@@ -32,9 +32,8 @@ COPY pnpm-workspace.yaml package.json ./
 COPY --from=builder-shared /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder-shared /app/packages/shared/package.json ./packages/shared/
 
-# Copy API dependencies and source
+# Copy dependencies and API source
 COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=dependencies /app/api/node_modules ./api/node_modules
 COPY api ./api
 
 WORKDIR /app/api
