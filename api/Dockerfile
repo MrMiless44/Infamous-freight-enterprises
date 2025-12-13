@@ -1,14 +1,46 @@
-FROM node:22-alpine AS dependencies
-WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm ci --only=production
+# syntax=docker/dockerfile:1.4
+FROM node:22-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-FROM node:22-alpine AS final
+# Install dependencies for all workspaces
+FROM base AS dependencies
+WORKDIR /app
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY api/package.json ./api/
+COPY packages/shared/package.json ./packages/shared/
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --filter=api --filter=@infamous-freight/shared
+
+# Build shared package
+FROM base AS builder-shared
+WORKDIR /app
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=dependencies /app/packages ./packages
+COPY packages/shared ./packages/shared
+RUN pnpm --filter=@infamous-freight/shared build
+
+# Production stage
+FROM base AS final
 WORKDIR /app
 ENV NODE_ENV=production
+
+# Copy root package.json and workspace config
+COPY pnpm-workspace.yaml package.json ./
+
+# Copy shared package build
+COPY --from=builder-shared /app/packages/shared/dist ./packages/shared/dist
+COPY --from=builder-shared /app/packages/shared/package.json ./packages/shared/
+
+# Copy API dependencies and source
 COPY --from=dependencies /app/node_modules ./node_modules
-COPY . .
-EXPOSE 4000
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:4000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+COPY --from=dependencies /app/api/node_modules ./api/node_modules
+COPY api ./api
+
+WORKDIR /app/api
+EXPOSE 3001
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1
+
 CMD ["node", "src/server.js"]

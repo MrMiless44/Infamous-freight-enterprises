@@ -189,13 +189,47 @@ cd api && npm run validate:env
 
 ## 🐳 Docker
 
-### Development with Docker
+### Quick Start with Docker
 
 ```bash
-docker-compose -f docker-compose.dev.yml up
+# Development environment
+docker-compose up
+
+# Build and start in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
 ```
 
-### Production Build
+### Individual Services
+
+```bash
+# Start only database
+docker-compose up postgres
+
+# Start API + database
+docker-compose up api postgres
+
+# Rebuild after code changes
+docker-compose up --build
+```
+
+### Docker Features
+
+- **Multi-stage builds** for optimized image sizes
+- **BuildKit caching** with pnpm store mounts
+- **Healthchecks** for service dependency management
+- **Named volumes** for cache persistence:
+  - `pnpm-store` - Shared pnpm cache
+  - `node-modules-*` - Service-specific dependencies
+  - `nextjs-cache` - Next.js build cache
+- **Environment overrides** via `.env.local`
+
+### Production Deployment
 
 ```bash
 docker-compose -f docker-compose.prod.yml up

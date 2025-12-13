@@ -1,11 +1,55 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system",
-    "python-envs.pythonProjects": [],
-    "terminal.integrated.shellIntegration.enabled": false,
-    "files.readonlyInclude": {
-        "{**/.c4z/.extsrcs/*.PROTSYM.cbl,**/.c4z/.extsrcs/*.PROTSYM.listing}": true
-    },
-    "idf.pythonInstallPath": "/home/codespace/.python/current/bin/python",
-    "robotcode.disableExtension": true,
-    "remote.autoForwardPortsFallback": 0
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "python-envs.pythonProjects": [],
+  "terminal.integrated.shellIntegration": false,
+  "files.readonlyInclude": {
+    "{**/.c4z/.extsrcs/*.PROTSYM.cbl,**/.c4z/.extsrcs/*.PROTSYM.listing}": true
+  },
+  "idf.pythonInstallPath": "/home/codespace/.python/current/bin/python",
+  "robotcode.disableExtension": true,
+  "remote.autoForwardPortsFallback": 0,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.workingDirectories": ["./api", "./web", "./packages/shared"],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/coverage": true,
+    "**/build": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/coverage": true,
+    "**/build": true,
+    "pnpm-lock.yaml": true
+  },
+  "files.associations": {
+    ".env.example": "dotenv",
+    ".env.local": "dotenv",
+    ".lintstagedrc": "json"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+"npm.packageManager": "pnpm",
+"[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+}
 }
