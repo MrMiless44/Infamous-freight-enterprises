@@ -1,14 +1,19 @@
 {
   "version": 2,
+  "buildCommand": "pnpm install && pnpm --filter web build",
+  "installCommand": "pnpm install --frozen-lockfile",
   "builds": [{ "src": "web/next.config.mjs", "use": "@vercel/next" }],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://YOUR_API_DOMAIN/api/$1"
+      "dest": "https://infamous-freight-api.fly.dev/api/$1"
     },
     {
       "src": "/(.*)",
       "dest": "/web/$1"
     }
-  ]
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_BASE": "https://infamous-freight-api.fly.dev"
+  }
 }
