@@ -26,14 +26,14 @@ export function VoicePanel() {
         marginTop: "2rem",
         padding: "1rem",
         borderRadius: "12px",
-        background: "#0b0b12"
+        background: "#0b0b12",
       }}
     >
       <h3 style={{ marginTop: 0 }}>Voice / Command Input</h3>
 
       <textarea
         value={text}
-        onChange={event => setText(event.target.value)}
+        onChange={(event) => setText(event.target.value)}
         rows={3}
         style={{
           width: "100%",
@@ -41,7 +41,7 @@ export function VoicePanel() {
           padding: "0.6rem",
           background: "#111",
           color: "#fff",
-          border: "1px solid #222"
+          border: "1px solid #222",
         }}
       />
 
@@ -56,7 +56,7 @@ export function VoicePanel() {
           fontWeight: 600,
           color: "#050509",
           border: "none",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         {loading ? "Sending…" : "Send to AI"}
@@ -69,7 +69,7 @@ export function VoicePanel() {
             padding: "1rem",
             background: "#111",
             borderRadius: "8px",
-            fontSize: "0.85rem"
+            fontSize: "0.85rem",
           }}
         >
           {JSON.stringify(result, null, 2)}

@@ -4,11 +4,11 @@ const paypal = require("@paypal/checkout-server-sdk");
 const {
   authenticate,
   requireScope,
-  auditLog
+  auditLog,
 } = require("../middleware/security");
 const {
   validateString,
-  handleValidationErrors
+  handleValidationErrors,
 } = require("../middleware/validation");
 
 const router = express.Router();
@@ -21,7 +21,7 @@ let paypalClient = null;
 if (process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_SECRET) {
   const env = new paypal.core.SandboxEnvironment(
     process.env.PAYPAL_CLIENT_ID,
-    process.env.PAYPAL_SECRET
+    process.env.PAYPAL_SECRET,
   );
   paypalClient = new paypal.core.PayPalHttpClient(env);
 }
@@ -44,7 +44,9 @@ router.post(
       const successUrl = process.env.STRIPE_SUCCESS_URL;
       const cancelUrl = process.env.STRIPE_CANCEL_URL;
       if (!successUrl || !cancelUrl) {
-        return next(createError("Stripe success/cancel URLs not configured", 503));
+        return next(
+          createError("Stripe success/cancel URLs not configured", 503),
+        );
       }
 
       const session = await stripe.checkout.sessions.create({
@@ -56,18 +58,18 @@ router.post(
             price_data: {
               currency: "usd",
               product_data: { name: "Infamous Freight AI" },
-              unit_amount: 4900
+              unit_amount: 4900,
             },
-            quantity: 1
-          }
-        ]
+            quantity: 1,
+          },
+        ],
       });
 
       res.json({ ok: true, sessionId: session.id, url: session.url });
     } catch (err) {
       next(err);
     }
-  }
+  },
 );
 
 router.post(
@@ -84,19 +86,20 @@ router.post(
         intent: "CAPTURE",
         purchase_units: [
           {
-            amount: { currency_code: "USD", value: "49.00" }
-          }
-        ]
+            amount: { currency_code: "USD", value: "49.00" },
+          },
+        ],
       });
 
       const order = await paypalClient.execute(request);
       const approvalUrl =
-        order.result.links?.find(link => link.rel === "approve")?.href || null;
+        order.result.links?.find((link) => link.rel === "approve")?.href ||
+        null;
       res.json({ ok: true, orderId: order.result.id, approvalUrl });
     } catch (err) {
       next(err);
     }
-  }
+  },
 );
 
 router.post(
@@ -104,10 +107,7 @@ router.post(
   authenticate,
   requireScope("billing:write"),
   auditLog,
-  [
-    validateString("orderId", { min: 1, max: 128 }),
-    handleValidationErrors
-  ],
+  [validateString("orderId", { min: 1, max: 128 }), handleValidationErrors],
   async (req, res, next) => {
     if (!paypalClient) return next(createError("PayPal not configured", 503));
 
@@ -120,7 +120,7 @@ router.post(
     } catch (err) {
       next(err);
     }
-  }
+  },
 );
 
 module.exports = router;

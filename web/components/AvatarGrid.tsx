@@ -6,22 +6,24 @@ const cards = [
     title: "Genesis Core",
     subtitle: "Logistics AI Navigator",
     description: "Optimizes routes, loads, ETAs and capacity across fleets.",
-    color: "linear-gradient(135deg,#ffcc33,#ff3366)"
+    color: "linear-gradient(135deg,#ffcc33,#ff3366)",
   },
   {
     id: "aurum",
     title: "Aurum Dispatch",
     subtitle: "Dispatcher Co-pilot",
-    description: "Monitors lanes, suggests bids and protects margins in real time.",
-    color: "linear-gradient(135deg,#ff9966,#ff5e62)"
+    description:
+      "Monitors lanes, suggests bids and protects margins in real time.",
+    color: "linear-gradient(135deg,#ff9966,#ff5e62)",
   },
   {
     id: "noir",
     title: "Noir Guardian",
     subtitle: "Risk and Compliance",
-    description: "Watches for anomalies, fraud and safety risks across the network.",
-    color: "linear-gradient(135deg,#3a1c71,#d76d77)"
-  }
+    description:
+      "Watches for anomalies, fraud and safety risks across the network.",
+    color: "linear-gradient(135deg,#3a1c71,#d76d77)",
+  },
 ];
 
 export function AvatarGrid() {
@@ -31,10 +33,10 @@ export function AvatarGrid() {
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
         gap: "1.5rem",
-        marginTop: "2rem"
+        marginTop: "2rem",
       }}
     >
-      {cards.map(card => (
+      {cards.map((card) => (
         <div
           key={card.id}
           style={{
@@ -44,7 +46,7 @@ export function AvatarGrid() {
             border: "1px solid rgba(255,255,255,0.07)",
             boxShadow: "0 18px 45px rgba(0,0,0,0.6)",
             position: "relative",
-            overflow: "hidden"
+            overflow: "hidden",
           }}
         >
           <div
@@ -53,7 +55,7 @@ export function AvatarGrid() {
               inset: "-40%",
               background: card.color,
               opacity: 0.2,
-              filter: "blur(30px)"
+              filter: "blur(30px)",
             }}
           />
           <div style={{ position: "relative" }}>
@@ -69,7 +71,7 @@ export function AvatarGrid() {
                 fontSize: "1.4rem",
                 fontWeight: 700,
                 marginBottom: "0.9rem",
-                color: "#050509"
+                color: "#050509",
               }}
             >
               {card.title[0]}
@@ -78,7 +80,7 @@ export function AvatarGrid() {
               style={{
                 margin: 0,
                 fontSize: "1.2rem",
-                fontWeight: 700
+                fontWeight: 700,
               }}
             >
               {card.title}
@@ -89,7 +91,7 @@ export function AvatarGrid() {
                 fontSize: "0.85rem",
                 letterSpacing: "0.06em",
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.6)"
+                color: "rgba(255,255,255,0.6)",
               }}
             >
               {card.subtitle}
@@ -99,7 +101,7 @@ export function AvatarGrid() {
                 margin: 0,
                 fontSize: "0.9rem",
                 color: "rgba(255,255,255,0.75)",
-                lineHeight: 1.5
+                lineHeight: 1.5,
               }}
             >
               {card.description}

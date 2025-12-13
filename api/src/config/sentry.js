@@ -9,11 +9,11 @@
  * - NODE_ENV: Environment (development, staging, production)
  */
 
-const Sentry = require('@sentry/node');
-const { nodeProfilingIntegration } = require('@sentry/profiling-node');
+const Sentry = require("@sentry/node");
+const { nodeProfilingIntegration } = require("@sentry/profiling-node");
 
 function initSentry(app) {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === "production";
   const sentryDsn = process.env.SENTRY_DSN;
 
   // Only initialize Sentry if DSN is provided and in production
@@ -29,7 +29,7 @@ function initSentry(app) {
         new Sentry.Integrations.Express({
           request: true,
           serverName: false,
-          transaction: 'name',
+          transaction: "name",
           version: false,
           paths: [],
         }),
@@ -37,12 +37,12 @@ function initSentry(app) {
       // Ignore certain errors that aren't useful
       ignoreErrors: [
         // Browser extensions
-        'top.GLOBALS',
-        'chrome-extension://',
-        'moz-extension://',
+        "top.GLOBALS",
+        "chrome-extension://",
+        "moz-extension://",
         // Network timeouts
-        'NetworkError',
-        'Network request failed',
+        "NetworkError",
+        "Network request failed",
       ],
     });
 
@@ -50,11 +50,11 @@ function initSentry(app) {
     app.use(Sentry.Handlers.requestHandler());
     app.use(Sentry.Handlers.tracingHandler());
 
-    console.log('✓ Sentry error tracking initialized');
+    console.log("✓ Sentry error tracking initialized");
   } else if (!isProduction) {
-    console.log('ℹ Sentry disabled in development/test environment');
+    console.log("ℹ Sentry disabled in development/test environment");
   } else {
-    console.warn('⚠ Sentry DSN not configured - error tracking disabled');
+    console.warn("⚠ Sentry DSN not configured - error tracking disabled");
   }
 }
 
@@ -65,7 +65,7 @@ function initSentry(app) {
 function attachErrorHandler(app) {
   const sentryDsn = process.env.SENTRY_DSN;
 
-  if (sentryDsn && process.env.NODE_ENV === 'production') {
+  if (sentryDsn && process.env.NODE_ENV === "production") {
     // Error handler middleware - must come last
     app.use(Sentry.Handlers.errorHandler());
   }
@@ -92,7 +92,7 @@ function captureException(error, context = {}) {
  * Manually capture messages
  * Use this for informational logging to Sentry
  */
-function captureMessage(message, level = 'info') {
+function captureMessage(message, level = "info") {
   if (process.env.SENTRY_DSN) {
     Sentry.captureMessage(message, level);
   }

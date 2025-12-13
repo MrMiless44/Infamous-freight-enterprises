@@ -21,15 +21,15 @@ if (!isProduction) {
       options: {
         colorize: true,
         translateTime: "SYS:standard",
-        ignore: "pid,hostname"
-      }
+        ignore: "pid,hostname",
+      },
     };
   }
 }
 
 const logger = pino({
   level,
-  transport
+  transport,
 });
 
 const httpLogger = pinoHttp({

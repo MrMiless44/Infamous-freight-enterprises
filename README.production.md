@@ -45,6 +45,7 @@ open http://localhost
 ### Production Deployment
 
 #### Option 1: Fly.io (Recommended for API)
+
 ```bash
 # Install flyctl
 brew install flyctl
@@ -57,6 +58,7 @@ flyctl deploy --config fly.toml
 ```
 
 #### Option 2: Vercel (Recommended for Web)
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -66,6 +68,7 @@ cd web && vercel --prod
 ```
 
 #### Option 3: Render (All-in-One)
+
 ```bash
 # Push render.yaml to your repo
 # Connect repo at https://render.com
@@ -74,6 +77,7 @@ cd web && vercel --prod
 ## Tech Stack
 
 ### API
+
 - Node.js 20 + Express
 - Prisma ORM + PostgreSQL
 - OpenAI / Anthropic / Synthetic AI
@@ -82,6 +86,7 @@ cd web && vercel --prod
 - Voice command processing
 
 ### Web
+
 - Next.js 14
 - TypeScript
 - React 18
@@ -89,6 +94,7 @@ cd web && vercel --prod
 - Tailwind-inspired inline styles
 
 ### DevOps
+
 - Docker + Docker Compose
 - Nginx reverse proxy
 - GitHub Actions CI/CD
@@ -163,6 +169,7 @@ infamous-freight-ai/
 See `.env.example` for all required and optional environment variables.
 
 Key variables:
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `JWT_SECRET` - Secret for JWT tokens
 - `AI_PROVIDER` - `synthetic` | `openai` | `anthropic`
@@ -184,9 +191,11 @@ cd api && npm run smoke:health
 ## API Endpoints
 
 ### Health
+
 - `GET /api/health` - Service health check
 
 ### AI Commands
+
 - `POST /api/ai/command` - Execute AI command
   ```json
   {
@@ -197,10 +206,12 @@ cd api && npm run smoke:health
   ```
 
 ### Voice
+
 - `POST /api/voice/ingest` - Upload audio file
 - `POST /api/voice/command` - Text command processing
 
 ### Billing
+
 - `POST /api/billing/stripe/session` - Create Stripe checkout
 - `POST /api/billing/paypal/order` - Create PayPal order
 - `POST /api/billing/paypal/capture` - Capture PayPal payment
@@ -208,6 +219,7 @@ cd api && npm run smoke:health
 ## Database Migrations
 
 ### Development
+
 ```bash
 cd api
 npm run prisma:generate
@@ -216,6 +228,7 @@ npx prisma studio  # Open database GUI
 ```
 
 ### Production
+
 ```bash
 cd api
 npm run prisma:generate
@@ -223,6 +236,7 @@ npm run prisma:migrate
 ```
 
 ### Seed Database
+
 ```bash
 node api/prisma/seed.js
 ```
@@ -250,6 +264,7 @@ curl -X POST http://localhost/api/ai/command \
 ### Required Secrets
 
 Add these to your GitHub repository secrets:
+
 - `FLY_API_TOKEN` - Fly.io API token
 - `VERCEL_TOKEN` - Vercel deployment token
 
@@ -284,6 +299,7 @@ See LICENSE file.
 ## Support
 
 For issues and questions:
+
 - GitHub Issues: [your-repo/issues]
 - Email: support@infamous.ai
 

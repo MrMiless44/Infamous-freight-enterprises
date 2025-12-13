@@ -4,11 +4,11 @@ const { sendCommand } = require("../services/aiSyntheticClient");
 const {
   authenticate,
   requireScope,
-  auditLog
+  auditLog,
 } = require("../middleware/security");
 const {
   validateString,
-  handleValidationErrors
+  handleValidationErrors,
 } = require("../middleware/validation");
 
 const parsedMaxMb = parseInt(process.env.VOICE_MAX_FILE_SIZE_MB || "10", 10);
@@ -21,7 +21,7 @@ const allowedMimeTypes = [
   "audio/x-m4a",
   "audio/aac",
   "audio/webm",
-  "audio/ogg"
+  "audio/ogg",
 ];
 
 const upload = multer({
@@ -34,7 +34,7 @@ const upload = multer({
     const err = new Error("Unsupported audio format");
     err.status = 400;
     return cb(err);
-  }
+  },
 });
 
 const createError = (message, status = 400) => {
@@ -61,7 +61,7 @@ router.post(
     } catch (err) {
       next(err);
     }
-  }
+  },
 );
 
 router.post(
@@ -69,10 +69,7 @@ router.post(
   authenticate,
   requireScope("voice:command"),
   auditLog,
-  [
-    validateString("text", { min: 1, max: 1000 }),
-    handleValidationErrors
-  ],
+  [validateString("text", { min: 1, max: 1000 }), handleValidationErrors],
   async (req, res, next) => {
     const { text } = req.body || {};
 
@@ -82,7 +79,7 @@ router.post(
     } catch (err) {
       next(err);
     }
-  }
+  },
 );
 
 module.exports = router;

@@ -11,8 +11,8 @@ async function main() {
     create: {
       email: "admin@infamous.ai",
       name: "System Admin",
-      role: "admin"
-    }
+      role: "admin",
+    },
   });
 
   const dispatcher = await prisma.user.upsert({
@@ -21,8 +21,8 @@ async function main() {
     create: {
       email: "dispatch@infamous.ai",
       name: "Primary Dispatcher",
-      role: "dispatcher"
-    }
+      role: "dispatcher",
+    },
   });
 
   const driver1 = await prisma.driver.create({
@@ -30,8 +30,8 @@ async function main() {
       name: "Michael Reyes",
       phone: "+1-202-555-0123",
       status: "active",
-      avatarCode: "genesis"
-    }
+      avatarCode: "genesis",
+    },
   });
 
   const driver2 = await prisma.driver.create({
@@ -39,8 +39,8 @@ async function main() {
       name: "Jada Kingsley",
       phone: "+1-202-555-0199",
       status: "active",
-      avatarCode: "aurum"
-    }
+      avatarCode: "aurum",
+    },
   });
 
   await prisma.shipment.create({
@@ -49,8 +49,8 @@ async function main() {
       origin: "Los Angeles, CA",
       destination: "Dallas, TX",
       status: "in_transit",
-      driverId: driver1.id
-    }
+      driverId: driver1.id,
+    },
   });
 
   await prisma.shipment.create({
@@ -59,22 +59,22 @@ async function main() {
       origin: "Chicago, IL",
       destination: "Atlanta, GA",
       status: "created",
-      driverId: driver2.id
-    }
+      driverId: driver2.id,
+    },
   });
 
   await prisma.aiEvent.create({
     data: {
       type: "seed",
-      payload: { message: "Seed completed" }
-    }
+      payload: { message: "Seed completed" },
+    },
   });
 
   console.log("Seed completed.");
 }
 
 main()
-  .catch(err => {
+  .catch((err) => {
     console.error("Seed error", err);
     process.exit(1);
   })

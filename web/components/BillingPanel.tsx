@@ -28,7 +28,7 @@ export function BillingPanel() {
         marginTop: "2rem",
         padding: "1rem",
         borderRadius: "12px",
-        background: "#0b0b12"
+        background: "#0b0b12",
       }}
     >
       <h3>Billing</h3>
@@ -42,7 +42,7 @@ export function BillingPanel() {
           color: "#050509",
           border: "none",
           fontWeight: 600,
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         Purchase w/ Stripe
@@ -58,7 +58,7 @@ export function BillingPanel() {
           color: "#050509",
           border: "none",
           fontWeight: 600,
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         Purchase w/ PayPal

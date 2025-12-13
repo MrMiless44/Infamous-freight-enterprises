@@ -1,4 +1,4 @@
-import { test as base } from '@playwright/test';
+import { test as base } from "@playwright/test";
 
 /**
  * Fixtures for E2E tests
@@ -12,11 +12,13 @@ export const test = base.extend({
     const testPassword = process.env.TEST_PASSWORD;
 
     if (!testEmail || !testPassword) {
-      throw new Error('TEST_EMAIL and TEST_PASSWORD environment variables are required');
+      throw new Error(
+        "TEST_EMAIL and TEST_PASSWORD environment variables are required",
+      );
     }
 
     // Navigate to login
-    await page.goto('/');
+    await page.goto("/");
     await page.locator('button:has-text("Login")').click();
 
     // Login
@@ -46,32 +48,32 @@ export const test = base.extend({
       // Helper to make authenticated API calls
       async call(method, endpoint, body = null) {
         const response = await page.request[method.toLowerCase()](
-          `${process.env.BASE_URL || 'http://localhost:3000'}/api${endpoint}`,
+          `${process.env.BASE_URL || "http://localhost:3000"}/api${endpoint}`,
           {
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             data: body ? JSON.stringify(body) : undefined,
-          }
+          },
         );
         return response.json();
       },
 
       // Get request
-      get: (endpoint) => apiHelper.call('GET', endpoint),
+      get: (endpoint) => apiHelper.call("GET", endpoint),
 
       // Post request
-      post: (endpoint, body) => apiHelper.call('POST', endpoint, body),
+      post: (endpoint, body) => apiHelper.call("POST", endpoint, body),
 
       // Put request
-      put: (endpoint, body) => apiHelper.call('PUT', endpoint, body),
+      put: (endpoint, body) => apiHelper.call("PUT", endpoint, body),
 
       // Delete request
-      delete: (endpoint) => apiHelper.call('DELETE', endpoint),
+      delete: (endpoint) => apiHelper.call("DELETE", endpoint),
     };
 
     await use(apiHelper);
   },
 });
 
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";

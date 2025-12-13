@@ -11,16 +11,16 @@ delete process.env.STRIPE_CANCEL_URL;
 
 const app = require("../src/server");
 
-const makeToken = scopes =>
+const makeToken = (scopes) =>
   jwt.sign(
     {
       sub: "test-user",
-      scopes
+      scopes,
     },
-    process.env.JWT_SECRET
+    process.env.JWT_SECRET,
   );
 
-const authHeader = token => `Bearer ${token}`;
+const authHeader = (token) => `Bearer ${token}`;
 
 describe("Route validation and error handling", () => {
   test("rejects disallowed origins with 403", async () => {
@@ -84,11 +84,13 @@ describe("Route validation and error handling", () => {
       .set("Authorization", authHeader(token))
       .attach("audio", Buffer.from("hello"), {
         filename: "test.txt",
-        contentType: "text/plain"
+        contentType: "text/plain",
       });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Validation Error");
-    expect(String(res.body.details || res.body.message)).toMatch(/Unsupported audio format/);
+    expect(String(res.body.details || res.body.message)).toMatch(
+      /Unsupported audio format/,
+    );
   });
 });

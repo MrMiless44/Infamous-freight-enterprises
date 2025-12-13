@@ -62,6 +62,7 @@ curl https://api.infamous-freight.com/health
 ### 1. Review Code Coverage Reports
 
 **Access Codecov Dashboard:**
+
 ```
 https://app.codecov.io/gh/MrMiless44/Infamous-freight-enterprises
 ```
@@ -209,8 +210,8 @@ tail -1000 /var/log/infamous-freight-api.log | \
 psql $DATABASE_URL
 
 -- Check slow queries
-SELECT query, mean_exec_time, calls 
-FROM pg_stat_statements 
+SELECT query, mean_exec_time, calls
+FROM pg_stat_statements
 WHERE mean_exec_time > 100  -- 100ms threshold
 ORDER BY mean_exec_time DESC LIMIT 5;
 
@@ -218,7 +219,7 @@ ORDER BY mean_exec_time DESC LIMIT 5;
 SELECT pg_stat_statements_reset();
 
 -- Check table sizes
-SELECT 
+SELECT
   schemaname,
   tablename,
   pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
@@ -374,7 +375,7 @@ WHERE idx_scan = 0
 ORDER BY pg_relation_size(relid) DESC;
 
 -- Check table health
-SELECT schemaname, tablename, 
+SELECT schemaname, tablename,
   round(100.0*live_tuples/(live_tuples+dead_tuples)) AS ratio
 FROM pg_stat_user_tables
 WHERE (live_tuples + dead_tuples) > 0
@@ -409,25 +410,30 @@ SELECT COUNT(*) FROM orders;
 ## Infamous Freight - Weekly Review
 
 📊 **Metrics**
+
 - Coverage: 60% (was 58%)
 - Error rate: 0.5% (was 1.2%)
 - Uptime: 99.95%
 - Performance: OK
 
 🔒 **Security**
+
 - Dependabot: 5 PRs merged
 - Vulnerabilities: 0 active
 - Secrets: All clear
 
 🐛 **Issues**
+
 - Issue #145: Slow API response (in progress)
 - Issue #156: High memory usage (assigned)
 
 📝 **Upcoming**
+
 - Deploy payment reconciliation (next week)
 - Migrate to PostgreSQL 15 (planning)
 
 👥 **Team**
+
 - All hands present
 - No blockers
 ```
@@ -613,16 +619,19 @@ Recommended tools:
 ## Escalation Path
 
 **Level 1: Developer (5-15 min response)**
+
 - Triage and investigate
 - Attempt quick fix
 - Document findings
 
 **Level 2: Tech Lead (15-30 min response)**
+
 - If Level 1 can't resolve
 - Mobilize additional developers
 - Make architectural decisions
 
 **Level 3: Engineering Manager (30+ min response)**
+
 - For critical incidents
 - Customer communication
 - Post-incident review

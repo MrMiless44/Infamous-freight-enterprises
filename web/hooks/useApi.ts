@@ -14,7 +14,7 @@ export function useApi() {
 
   async function get(path: string) {
     const res = await fetch(base + path, {
-      headers: buildHeaders()
+      headers: buildHeaders(),
     });
     if (!res.ok) throw new Error(await res.text());
     return res.json();
@@ -24,7 +24,7 @@ export function useApi() {
     const res = await fetch(base + path, {
       method: "POST",
       headers: buildHeaders({ "Content-Type": "application/json" }),
-      body: body ? JSON.stringify(body) : undefined
+      body: body ? JSON.stringify(body) : undefined,
     });
     if (!res.ok) throw new Error(await res.text());
     return res.json();

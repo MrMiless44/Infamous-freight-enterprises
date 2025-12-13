@@ -5,6 +5,7 @@ NEXT_PUBLIC_APP_NAME=Infamous Freight
 NEXT_PUBLIC_ENV=production
 
 # API Environment
+
 DATABASE_URL=auto (from Render database)
 JWT_SECRET=generate_a_secret
 AI_PROVIDER=synthetic

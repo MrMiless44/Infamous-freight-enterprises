@@ -7,7 +7,7 @@ This guide explains how container vulnerability scanning works and what to do wh
 **What**: Automated scanning of Docker images for known vulnerabilities  
 **How**: Trivy scanner in GitHub Actions  
 **When**: On every Dockerfile change, package.json update, and daily  
-**Why**: Prevent deploying vulnerable dependencies to production  
+**Why**: Prevent deploying vulnerable dependencies to production
 
 ## How It Works
 
@@ -32,6 +32,7 @@ Block Deployment if Critical Found
 ### Scanning Coverage
 
 **Images Scanned**:
+
 1. **API** (`api/Dockerfile`)
    - Node.js runtime
    - npm dependencies
@@ -44,12 +45,12 @@ Block Deployment if Critical Found
 
 ## Vulnerability Severity Levels
 
-| Severity | CVSS Score | Action | Block CI? |
-|----------|-----------|--------|-----------|
-| **CRITICAL** | 9.0-10.0 | Fix immediately | ✅ Yes |
-| **HIGH** | 7.0-8.9 | Fix before release | ✅ Yes |
-| **MEDIUM** | 4.0-6.9 | Plan fix | ❌ No |
-| **LOW** | 0.1-3.9 | Monitor | ❌ No |
+| Severity     | CVSS Score | Action             | Block CI? |
+| ------------ | ---------- | ------------------ | --------- |
+| **CRITICAL** | 9.0-10.0   | Fix immediately    | ✅ Yes    |
+| **HIGH**     | 7.0-8.9    | Fix before release | ✅ Yes    |
+| **MEDIUM**   | 4.0-6.9    | Plan fix           | ❌ No     |
+| **LOW**      | 0.1-3.9    | Monitor            | ❌ No     |
 
 ## Responding to Vulnerabilities
 
@@ -116,6 +117,7 @@ If no fix exists or fix has breaking changes:
    - Risk mitigation steps
 
 3. Create `.trivyignore` file:
+
 ```
 # .trivyignore
 # Ignoring CVE-2024-1234 in vulnerable-package
@@ -139,6 +141,7 @@ After updating:
 ### What is it?
 
 Complete inventory of all components in Docker image:
+
 - Direct dependencies (npm packages)
 - Transitive dependencies (dependencies of dependencies)
 - System packages (from Alpine/Debian base)
@@ -155,6 +158,7 @@ Complete inventory of all components in Docker image:
 ### Using SBOM
 
 **License Compliance:**
+
 ```bash
 # View licenses in image
 grep -i "license" api-sbom.json
@@ -164,12 +168,14 @@ grep -i "GPL" api-sbom.json
 ```
 
 **Dependency Updates:**
+
 ```bash
 # See all versions used
 cat api-sbom.json | jq '.components[] | .name + "@" + .version'
 ```
 
 **Supply Chain Security:**
+
 - Keep SBOM for audit trails
 - Share with security/compliance team
 - Use for vulnerability impact analysis
@@ -177,6 +183,7 @@ cat api-sbom.json | jq '.components[] | .name + "@" + .version'
 ## Automated Scanning Schedule
 
 Scans run:
+
 - **On Push**: Every Dockerfile or package.json change to main/develop
 - **On PR**: When code changes to validate security before merge
 - **Daily**: 2 AM UTC to catch new vulnerabilities
@@ -195,6 +202,7 @@ View schedule in [`.github/workflows/container-security.yml`](.github/workflows/
 ### Caching
 
 Docker layers are cached to speed up builds:
+
 - First scan: ~5 minutes
 - Subsequent scans: ~2-3 minutes
 
@@ -272,11 +280,11 @@ CMD ["node", "server.js"]
 ```json
 {
   "dependencies": {
-    "express": "4.18.2",        // ✅ Exact version
-    "lodash": "~4.17.21"        // ✅ Patch updates only
+    "express": "4.18.2", // ✅ Exact version
+    "lodash": "~4.17.21" // ✅ Patch updates only
   },
   "devDependencies": {
-    "jest": "^29.5.0"           // ✅ Minor/patch updates
+    "jest": "^29.5.0" // ✅ Minor/patch updates
   }
 }
 ```
@@ -296,6 +304,7 @@ npm audit fix --force   # Fix vulnerabilities (breaking changes possible)
 **Problem**: Deployment blocked by new critical CVE
 
 **Solution**:
+
 1. Review vulnerability details in Security tab
 2. Run locally: `npm audit` to see details
 3. Update vulnerable package
@@ -314,6 +323,7 @@ git push
 **Problem**: Trivy reports vulnerability that's not exploitable in your context
 
 **Solution**:
+
 1. Document in GitHub Issue why it's not applicable
 2. Add to `.trivyignore` with explanation
 3. Plan long-term fix
@@ -332,6 +342,7 @@ CVE-2024-1234
 **Problem**: Container scanning job timeout
 
 **Solution**:
+
 - Check job timeout in workflow (currently 30 min)
 - Reduce Docker image size
 - Enable caching (already enabled)
@@ -342,6 +353,7 @@ CVE-2024-1234
 **Problem**: SBOM artifact not generated
 
 **Solution**:
+
 - Verify Dockerfile exists
 - Check workflow permissions (needs to write artifacts)
 - Re-run workflow manually
@@ -354,15 +366,20 @@ CVE-2024-1234
 ## Container Security Report - Week of [DATE]
 
 ### Critical Vulnerabilities: 0
+
 ### High Vulnerabilities: 0
+
 ### Medium Vulnerabilities: [X]
+
 ### Low Vulnerabilities: [X]
 
 ### Actions Taken
+
 - [Updated package X to patch CVE-XXXX]
 - [Added .trivyignore entry for CVE-YYYY]
 
 ### Upcoming Work
+
 - [Plan to update Node.js base image by DATE]
 - [Monitor CVE-ZZZZ pending patch release]
 ```
@@ -370,6 +387,7 @@ CVE-2024-1234
 ### Annual Audit
 
 Keep record of:
+
 - All vulnerabilities discovered
 - Time to patch each severity
 - Incidents caused by known vulnerabilities

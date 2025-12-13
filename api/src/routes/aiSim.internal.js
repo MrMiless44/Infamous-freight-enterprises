@@ -9,7 +9,7 @@ router.post("/ai-sim", (req, res) => {
     message: "Synthetic AI simulation",
     suggestedAction: "Route optimization / risk scoring",
     payload,
-    meta
+    meta,
   });
 });
 

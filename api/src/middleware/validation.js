@@ -17,8 +17,7 @@ const handleValidationErrors = (req, res, next) => {
 /**
  * Input sanitization validators
  */
-const validateEmail = () =>
-  body("email").isEmail().normalizeEmail().trim();
+const validateEmail = () => body("email").isEmail().normalizeEmail().trim();
 
 const validateString = (field, options = {}) =>
   body(field)
@@ -27,13 +26,12 @@ const validateString = (field, options = {}) =>
     .notEmpty()
     .withMessage(`${field} is required`)
     .isLength({ min: options.min || 1, max: options.max || 500 })
-    .withMessage(`${field} must be between ${options.min || 1} and ${options.max || 500} characters`);
+    .withMessage(
+      `${field} must be between ${options.min || 1} and ${options.max || 500} characters`,
+    );
 
 const validatePhone = () =>
-  body("phone")
-    .optional()
-    .isMobilePhone()
-    .withMessage("Invalid phone number");
+  body("phone").optional().isMobilePhone().withMessage("Invalid phone number");
 
 const validateUUID = (field) =>
   body(field).isUUID().withMessage(`${field} must be a valid UUID`);

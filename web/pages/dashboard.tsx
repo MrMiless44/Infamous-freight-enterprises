@@ -9,8 +9,8 @@ export default function Dashboard() {
   useEffect(() => {
     const base = process.env.NEXT_PUBLIC_API_BASE || "/api";
     fetch(`${base}/health`)
-      .then(res => res.json())
-      .then(data => setStatus(data))
+      .then((res) => res.json())
+      .then((data) => setStatus(data))
       .catch(() => setStatus({ ok: false }))
       .finally(() => setLoading(false));
   }, []);
@@ -26,7 +26,7 @@ export default function Dashboard() {
             background: "#0b0b12",
             padding: "1rem",
             borderRadius: "12px",
-            border: "1px solid rgba(255,255,255,0.05)"
+            border: "1px solid rgba(255,255,255,0.05)",
           }}
         >
           {JSON.stringify(status, null, 2)}

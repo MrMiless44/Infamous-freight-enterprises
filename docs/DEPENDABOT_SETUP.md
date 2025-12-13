@@ -29,7 +29,7 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "MrMiless44"
-    
+
   # API service
   - package-ecosystem: "npm"
     directory: "/api"
@@ -40,7 +40,7 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "MrMiless44"
-    
+
   # Web application
   - package-ecosystem: "npm"
     directory: "/web"
@@ -51,7 +51,7 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "MrMiless44"
-    
+
   # Infamous-freight-ai subdirectories
   - package-ecosystem: "npm"
     directory: "/infamous-freight-ai/api"
@@ -60,7 +60,7 @@ updates:
       day: "tuesday"
       time: "03:00"
     open-pull-requests-limit: 3
-    
+
   - package-ecosystem: "npm"
     directory: "/infamous-freight-ai/web"
     schedule:
@@ -68,7 +68,7 @@ updates:
       day: "tuesday"
       time: "03:30"
     open-pull-requests-limit: 3
-    
+
   - package-ecosystem: "npm"
     directory: "/infamous-freight-ai/mobile"
     schedule:
@@ -88,6 +88,7 @@ Your CI/CD pipeline in `.github/workflows/ci.yml` now includes:
 - **Lint & Build**: Ensures code quality
 
 These will run on:
+
 - Every push to `main` or `develop`
 - Every pull request to `main` or `develop`
 
@@ -114,6 +115,7 @@ To upload test results to Codecov, add the following step in your GitHub Actions
 ## Monitoring
 
 Check your project's security status:
+
 - GitHub → Security tab → Dependabot alerts
 - GitHub → Actions tab → CI workflow status
 - Codecov dashboard (if integrated): codecov.io/github/MrMiless44/Infamous-freight-enterprises

@@ -7,7 +7,7 @@ End-to-End (E2E) tests validate complete user workflows across the entire applic
 **What**: Tests that simulate real user interactions (clicking, typing, navigation)  
 **Where**: `e2e/tests/` directory  
 **How**: Playwright test framework  
-**Why**: Catch regressions that unit tests miss, validate full workflows  
+**Why**: Catch regressions that unit tests miss, validate full workflows
 
 ## Quick Start
 
@@ -49,6 +49,7 @@ npx playwright show-report
 ### Authentication Test (`e2e/tests/auth.spec.js`)
 
 Tests the login workflow:
+
 - Landing page loads
 - Login page accessible
 - Form validation
@@ -59,6 +60,7 @@ Tests the login workflow:
 ### Billing Test (`e2e/tests/billing.spec.js`)
 
 Tests billing functionality:
+
 - Billing page loads
 - Payment methods display
 - Invoice listing
@@ -69,6 +71,7 @@ Tests billing functionality:
 ### Core Features Test (`e2e/tests/core-features.spec.js`)
 
 Tests general application features:
+
 - Dashboard loads
 - Data display
 - Refresh functionality
@@ -83,20 +86,20 @@ Tests general application features:
 ### Basic Test Structure
 
 ```javascript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Feature Name', () => {
+test.describe("Feature Name", () => {
   test.beforeEach(async ({ page }) => {
     // Setup before each test
-    await page.goto('/');
+    await page.goto("/");
   });
 
-  test('should do something', async ({ page }) => {
+  test("should do something", async ({ page }) => {
     // Test steps
-    await page.locator('button').click();
-    
+    await page.locator("button").click();
+
     // Assertions
-    await expect(page.locator('text=Success')).toBeVisible();
+    await expect(page.locator("text=Success")).toBeVisible();
   });
 });
 ```
@@ -104,24 +107,28 @@ test.describe('Feature Name', () => {
 ### Locating Elements
 
 **Text locators:**
+
 ```javascript
-page.locator('text=Click me')      // Exact text match
-page.locator('text=/click/i')      // Regex match
+page.locator("text=Click me"); // Exact text match
+page.locator("text=/click/i"); // Regex match
 ```
 
 **CSS selectors:**
+
 ```javascript
-page.locator('button.primary')
-page.locator('#submit-button')
-page.locator('[data-testid="login-btn"]')
+page.locator("button.primary");
+page.locator("#submit-button");
+page.locator('[data-testid="login-btn"]');
 ```
 
 **XPath:**
+
 ```javascript
-page.locator('//button[contains(text(), "Login")]')
+page.locator('//button[contains(text(), "Login")]');
 ```
 
 **Best practice: Use data-testid attributes:**
+
 ```html
 <!-- In your app -->
 <button data-testid="login-button">Login</button>
@@ -134,16 +141,16 @@ page.locator('[data-testid="login-button"]')
 
 ```javascript
 // Navigate
-await page.goto('/dashboard');
+await page.goto("/dashboard");
 
 // Click
-await page.locator('button').click();
+await page.locator("button").click();
 
 // Type
-await page.locator('input[type="email"]').fill('test@example.com');
+await page.locator('input[type="email"]').fill("test@example.com");
 
 // Select
-await page.locator('select').selectOption('option1');
+await page.locator("select").selectOption("option1");
 
 // Check checkbox
 await page.locator('input[type="checkbox"]').check();
@@ -152,48 +159,48 @@ await page.locator('input[type="checkbox"]').check();
 await page.locator('input[type="checkbox"]').uncheck();
 
 // Upload file
-await page.locator('input[type="file"]').uploadFile('path/to/file');
+await page.locator('input[type="file"]').uploadFile("path/to/file");
 
 // Wait for element
-await page.locator('text=Loading...').waitFor();
+await page.locator("text=Loading...").waitFor();
 
 // Wait for URL
-await page.waitForURL('/dashboard');
+await page.waitForURL("/dashboard");
 
 // Wait for navigation
-await page.waitForLoadState('networkidle');
+await page.waitForLoadState("networkidle");
 ```
 
 ### Common Assertions
 
 ```javascript
 // Visibility
-await expect(page.locator('text=Success')).toBeVisible();
-await expect(page.locator('text=Error')).not.toBeVisible();
+await expect(page.locator("text=Success")).toBeVisible();
+await expect(page.locator("text=Error")).not.toBeVisible();
 
 // Text content
-await expect(page.locator('h1')).toHaveText('Dashboard');
-await expect(page.locator('p')).toContainText('Welcome');
+await expect(page.locator("h1")).toHaveText("Dashboard");
+await expect(page.locator("p")).toContainText("Welcome");
 
 // Input value
-await expect(page.locator('input')).toHaveValue('john@example.com');
+await expect(page.locator("input")).toHaveValue("john@example.com");
 
 // Attribute
-await expect(page.locator('button')).toHaveAttribute('disabled');
+await expect(page.locator("button")).toHaveAttribute("disabled");
 
 // CSS class
-await expect(page.locator('div')).toHaveClass('active');
+await expect(page.locator("div")).toHaveClass("active");
 
 // Count
-await expect(page.locator('li')).toHaveCount(3);
+await expect(page.locator("li")).toHaveCount(3);
 
 // URL
-await expect(page).toHaveURL('/dashboard');
-await expect(page).toHaveTitle('Dashboard');
+await expect(page).toHaveURL("/dashboard");
+await expect(page).toHaveTitle("Dashboard");
 
 // Element enabled/disabled
-await expect(page.locator('button')).toBeEnabled();
-await expect(page.locator('button')).toBeDisabled();
+await expect(page.locator("button")).toBeEnabled();
+await expect(page.locator("button")).toBeDisabled();
 ```
 
 ## Environment Setup
@@ -208,6 +215,7 @@ BASE_URL=http://localhost:3000
 ```
 
 For CI/CD, set these as GitHub Secrets:
+
 ```
 Settings → Secrets and variables → Actions
 TEST_EMAIL
@@ -219,6 +227,7 @@ TEST_PASSWORD
 ### Option 1: Use Test User Account
 
 Create a dedicated test user in your database:
+
 ```sql
 INSERT INTO users (email, password, name)
 VALUES ('test@example.com', 'hashed_password', 'Test User');
@@ -227,6 +236,7 @@ VALUES ('test@example.com', 'hashed_password', 'Test User');
 ### Option 2: API Setup
 
 Use API calls to setup test data:
+
 ```javascript
 test.beforeEach(async ({ request }) => {
   // Create test order via API
@@ -242,6 +252,7 @@ test.beforeEach(async ({ request }) => {
 ### Option 3: Database Reset
 
 Reset test database before running tests:
+
 ```bash
 npm run db:reset:test
 ```
@@ -268,22 +279,24 @@ export class LoginPage {
 }
 
 // In test
-test('should login', async ({ page }) => {
+test("should login", async ({ page }) => {
   const loginPage = new LoginPage(page);
-  await loginPage.login('test@example.com', 'password');
-  await expect(page).toHaveURL('/dashboard');
+  await loginPage.login("test@example.com", "password");
+  await expect(page).toHaveURL("/dashboard");
 });
 ```
 
 ### 2. Test Critical User Flows Only
 
 Focus on:
+
 - Authentication
 - Payments/Billing
 - Data operations (create, read, update, delete)
 - Error cases
 
 Skip:
+
 - Minor UI changes
 - Styling details
 - Individual component interaction (use unit tests instead)
@@ -291,23 +304,25 @@ Skip:
 ### 3. Use Meaningful Assertions
 
 ❌ Bad:
+
 ```javascript
-await page.waitForTimeout(1000);  // Never use arbitrary waits
+await page.waitForTimeout(1000); // Never use arbitrary waits
 ```
 
 ✅ Good:
+
 ```javascript
-await page.locator('text=Loading...').waitFor();  // Wait for element
-await page.waitForLoadState('networkidle');      // Wait for network
+await page.locator("text=Loading...").waitFor(); // Wait for element
+await page.waitForLoadState("networkidle"); // Wait for network
 ```
 
 ### 4. Handle Flakiness
 
 ```javascript
 // Retry on specific errors
-test('should handle flaky network', async ({ page }) => {
+test("should handle flaky network", async ({ page }) => {
   try {
-    await page.goto('/dashboard');
+    await page.goto("/dashboard");
   } catch {
     // Retry once
     await page.reload();
@@ -315,15 +330,17 @@ test('should handle flaky network', async ({ page }) => {
 });
 
 // Use proper timeouts
-test('should load data', async ({ page }) => {
-  await expect(page.locator('[data-testid="data"]'))
-    .toBeVisible({ timeout: 10000 });  // 10 seconds
+test("should load data", async ({ page }) => {
+  await expect(page.locator('[data-testid="data"]')).toBeVisible({
+    timeout: 10000,
+  }); // 10 seconds
 });
 ```
 
 ## CI/CD Integration
 
 Tests run automatically in GitHub Actions on:
+
 - Every push to `main` or `develop`
 - Every pull request
 - Daily schedule (2 AM UTC)
@@ -361,10 +378,10 @@ touch e2e/tests/feature.spec.js
 ### Step 2: Write Test
 
 ```javascript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Feature', () => {
-  test('should do something', async ({ page }) => {
+test.describe("Feature", () => {
+  test("should do something", async ({ page }) => {
     // Test implementation
   });
 });
@@ -387,12 +404,14 @@ git push
 ## Performance Testing
 
 Tests track these metrics:
+
 - Page load time (should be < 3 seconds)
 - API response time
 - Memory usage
 - CSS/JavaScript parsing time
 
 If tests fail due to performance:
+
 1. Review browser console for errors
 2. Check network tab for slow requests
 3. Profile with DevTools (`page.pause()` in debug mode)
@@ -403,6 +422,7 @@ If tests fail due to performance:
 
 **Problem**: Tests take too long  
 **Solution**: Increase timeout in playwright.config.js
+
 ```javascript
 timeout: 60000,  // 60 seconds
 ```
@@ -415,7 +435,8 @@ timeout: 60000,  // 60 seconds
 ### Flaky Tests
 
 **Problem**: Tests pass sometimes, fail other times  
-**Solution**: 
+**Solution**:
+
 - Wait for elements explicitly (not timeouts)
 - Avoid hardcoded delays
 - Check for race conditions
@@ -424,6 +445,7 @@ timeout: 60000,  // 60 seconds
 
 **Problem**: `page.locator()` can't find element  
 **Solution**:
+
 - Add `data-testid` attributes to elements
 - Use `page.pause()` to debug
 - Run in headed mode: `npx playwright test --headed`

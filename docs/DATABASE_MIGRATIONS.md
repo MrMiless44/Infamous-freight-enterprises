@@ -16,6 +16,7 @@ Migrations move your database schema from one state to another in a controlled w
 ## Types of Migrations
 
 ### Safe Migrations (No Data Loss)
+
 ✅ Adding new nullable columns
 ✅ Adding new tables
 ✅ Adding columns with default values
@@ -23,6 +24,7 @@ Migrations move your database schema from one state to another in a controlled w
 ✅ Relaxing constraints
 
 ### Dangerous Migrations (Requires Strategy)
+
 ⚠️ Removing columns
 ⚠️ Removing tables
 ⚠️ Changing column types
@@ -30,6 +32,7 @@ Migrations move your database schema from one state to another in a controlled w
 ⚠️ Adding unique constraints to populated columns
 
 ### Very Risky (Requires Approval)
+
 ❌ Dropping entire tables with data
 ❌ Major schema restructuring
 ❌ Changing column primary keys
@@ -57,6 +60,7 @@ cat prisma/migrations/<timestamp>_<name>/migration.sql
 ```
 
 **What to look for:**
+
 - All changes are intentional
 - No unexpected column drops
 - Proper constraint ordering
@@ -222,7 +226,7 @@ ALTER TABLE users DROP COLUMN role_id CASCADE;
 DROP TABLE roles CASCADE;
 
 -- Update migration history
-DELETE FROM _prisma_migrations 
+DELETE FROM _prisma_migrations
 WHERE migration_name = 'YYYYMMDD000001_add_user_roles';
 ```
 
@@ -231,12 +235,14 @@ WHERE migration_name = 'YYYYMMDD000001_add_user_roles';
 ### Adding Required Column to Populated Table
 
 ❌ **Wrong approach:**
+
 ```sql
 ALTER TABLE users ADD COLUMN status VARCHAR NOT NULL;
 -- FAILS: Existing rows have no default value
 ```
 
 ✅ **Correct approach:**
+
 ```sql
 -- Step 1: Add column with default
 ALTER TABLE users ADD COLUMN status VARCHAR NOT NULL DEFAULT 'active';
@@ -248,7 +254,7 @@ UPDATE users SET status = 'inactive' WHERE last_login < NOW() - INTERVAL '1 year
 ALTER TABLE users ALTER COLUMN status DROP DEFAULT;
 
 -- Step 4: Optionally add constraint
-ALTER TABLE users ADD CONSTRAINT status_check 
+ALTER TABLE users ADD CONSTRAINT status_check
   CHECK (status IN ('active', 'inactive', 'suspended'));
 ```
 
@@ -261,7 +267,7 @@ Use Prisma's rename feature:
 model User {
   id    Int     @id @default(autoincrement())
   email String  @db.VarChar(255) // Old name
-  
+
   @@map("users") // Map to existing table
 }
 ```
@@ -278,8 +284,8 @@ npx prisma migrate dev --name rename_email_to_email_address
 ```bash
 # Development: Test locally
 npx prisma db execute --stdin <<EOF
-ALTER TABLE users 
-  ALTER COLUMN created_at TYPE timestamp with time zone 
+ALTER TABLE users
+  ALTER COLUMN created_at TYPE timestamp with time zone
   USING created_at AT TIME ZONE 'UTC';
 EOF
 
@@ -293,47 +299,47 @@ git commit -m "chore(db): change created_at to timestamp with timezone"
 Create `scripts/pre-migration-check.js`:
 
 ```javascript
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function preMigrationChecks() {
-  console.log('Running pre-migration checks...');
-  
+  console.log("Running pre-migration checks...");
+
   // 1. Check database connectivity
   try {
     const version = await prisma.$queryRaw`SELECT version();`;
-    console.log('✓ Database connected:', version[0].version);
+    console.log("✓ Database connected:", version[0].version);
   } catch (error) {
-    console.error('✗ Database connection failed:', error.message);
+    console.error("✗ Database connection failed:", error.message);
     process.exit(1);
   }
-  
+
   // 2. Check backup exists
   // (Implementation depends on your backup system)
-  
+
   // 3. Verify no active connections
   const activeConnections = await prisma.$queryRaw`
     SELECT count(*) as count FROM pg_stat_activity 
     WHERE datname = current_database() AND pid != pg_backend_pid();
   `;
-  
+
   if (activeConnections[0].count > 0) {
-    console.warn('⚠ Active database connections detected');
-    console.warn('  Migrations may cause locks');
+    console.warn("⚠ Active database connections detected");
+    console.warn("  Migrations may cause locks");
   } else {
-    console.log('✓ No active connections');
+    console.log("✓ No active connections");
   }
-  
+
   // 4. Check Prisma status
-  const status = await exec('npx prisma migrate status');
-  console.log('✓ Prisma status OK');
-  
-  console.log('\n✅ All pre-migration checks passed');
+  const status = await exec("npx prisma migrate status");
+  console.log("✓ Prisma status OK");
+
+  console.log("\n✅ All pre-migration checks passed");
   process.exit(0);
 }
 
-preMigrationChecks().catch(error => {
-  console.error('Pre-migration check failed:', error);
+preMigrationChecks().catch((error) => {
+  console.error("Pre-migration check failed:", error);
   process.exit(1);
 });
 ```
@@ -413,16 +419,16 @@ npm run validate:data
 
 ```sql
 -- Check for table locks
-SELECT * FROM pg_stat_activity 
+SELECT * FROM pg_stat_activity
 WHERE query LIKE '%ALTER%' OR query LIKE '%CREATE%';
 
 -- Check index status
-SELECT * FROM pg_stat_user_indexes 
+SELECT * FROM pg_stat_user_indexes
 ORDER BY idx_scan DESC;
 
 -- Monitor slow queries
-SELECT query, mean_exec_time, calls 
-FROM pg_stat_statements 
+SELECT query, mean_exec_time, calls
+FROM pg_stat_statements
 ORDER BY mean_exec_time DESC LIMIT 10;
 ```
 
@@ -538,16 +544,19 @@ npx prisma migrate deploy
 **Rollback Time:** <5 minutes if issues detected
 
 **What Changes:**
+
 - New `roles` table created
 - New `role_id` column added to users table (nullable, defaults to null)
 - All existing users unaffected
 
 **Testing:**
+
 - Migration tested in development and staging
 - No data loss
 - All tests passing
 
 **Post-Deployment Verification:**
+
 - Health checks passing
 - APIs responding normally
 - Smoke tests running successfully
@@ -563,6 +572,7 @@ npx prisma migrate deploy
 ## Support & Questions
 
 For migration questions or issues:
+
 1. Check this documentation
 2. Review Prisma official docs
 3. Run `npx prisma migrate status` for current state

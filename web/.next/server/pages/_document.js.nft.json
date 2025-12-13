@@ -1,9 +1,0 @@
-{
-  "version": 1,
-  "files": [
-    "../webpack-runtime.js",
-    "../chunks/172.js",
-    "../../../../package.json",
-    "../../../../node_modules/.pnpm/next@14.2.35_@babel+core@7.28.5_@playwright+test@1.57.0_react-dom@18.2.0_react@18.2.0__react@18.2.0/node_modules/next/dist/pages/_document.js"
-  ]
-}
