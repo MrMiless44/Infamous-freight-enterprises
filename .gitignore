@@ -1,17 +1,35 @@
+# Dependencies
 node_modules/
 **/node_modules/
+pnpm-lock.yaml
+
+# Build outputs
 dist/
 build/
 coverage/
+.next/
+**/junit.xml
+
+# Environment files
 .env
 .env.*
 !.env.example
+.env.local
+
+# Logs
 npm-debug.log*
+npm-error.log*
+pnpm-error.log*
+*.log
+
+# IDE and OS
+.vscode/settings.json
 .DS_Store
-.vscode/
+.idea/
+*.swp
+*.swo
 
 # Temporary files
-*.log
 *.yaml~
 *.json~
 *.md~
@@ -21,9 +39,17 @@ install.log
 npm\ install\ -g\ *.yaml
 ✅\ *.md
 
-# pnpm specific
-pnpm-error.log*
-
-# Package manager temporary files
+# Package manager backups
 package.json.backup
 package.json.pnpm
+
+# Build artifacts and caches
+web/.next/analyze/
+web/.vercel/
+**/dist/
+**/build/
+.cache/
+
+# Test artifacts
+junit.xml
+coverage/

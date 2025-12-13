@@ -1,0 +1,23 @@
+{
+  "recommendations": [
+    "ms-vscode.remote-server",
+    "github.codespaces",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "prisma.prisma",
+    "ms-playwright.playwright",
+    "bradlc.vscode-tailwindcss",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "eamodio.gitlens",
+    "github.copilot",
+    "github.copilot-chat",
+    "ms-vscode.vscode-typescript-next",
+    "usernamehw.errorlens",
+    "mikestead.dotenv",
+    "yoavbls.pretty-ts-errors",
+    "VisualStudioExptTeam.vscodeintellicode",
+    "ms-dotnettools.vscode-dotnet-pack",
+    "sarthikbhat.json-server"
+  ]
+}
