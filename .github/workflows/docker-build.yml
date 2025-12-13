@@ -20,12 +20,18 @@ jobs:
       
       - name: Validate HTML files
         run: |
-          set -e
           echo "Validating HTML files..."
-          for html_file in $(find . -name "*.html" -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./.next/*"); do
+          failed=0
+          while IFS= read -r -d '' html_file; do
             echo "Validating $html_file"
-            tidy -e -q "$html_file"
-          done
+            if ! tidy -e -q "$html_file"; then
+              failed=1
+            fi
+          done < <(find . -name "*.html" -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./.next/*" -type f -print0)
+          if [ $failed -eq 1 ]; then
+            echo "HTML validation failed!"
+            exit 1
+          fi
           echo "All HTML files validated successfully!"
 
   build:
