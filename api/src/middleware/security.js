@@ -1,14 +1,23 @@
 const jwt = require("jsonwebtoken");
 const { RateLimiterMemory } = require("rate-limiter-flexible");
+const { logger } = require("./logger");
 
-const limiter = new RateLimiterMemory({ points: 30, duration: 60 });
+const configuredPoints = parseInt(process.env.RATE_LIMIT_POINTS || "100", 10);
+const configuredDuration = parseInt(process.env.RATE_LIMIT_DURATION || "60", 10);
+
+const limiter = new RateLimiterMemory({
+  points: Number.isFinite(configuredPoints) ? configuredPoints : 100,
+  duration: Number.isFinite(configuredDuration) ? configuredDuration : 60
+});
 
 async function rateLimit(req, res, next) {
   try {
     await limiter.consume(req.ip || req.connection.remoteAddress || "global");
     next();
   } catch (err) {
-    res.status(429).json({ error: "Too many requests" });
+    const rateLimitError = new Error("Too many requests");
+    rateLimitError.status = 429;
+    next(rateLimitError);
   }
 }
 
@@ -49,15 +58,13 @@ function requireScope(scope) {
 
 function auditLog(req, _res, next) {
   if (process.env.AUDIT_LOG !== "off") {
-    console.info(
-      JSON.stringify({
-        ts: new Date().toISOString(),
-        path: req.path,
-        method: req.method,
-        user: req.user?.sub,
-        ip: req.ip
-      })
-    );
+    logger.info({
+      ts: new Date().toISOString(),
+      path: req.path,
+      method: req.method,
+      user: req.user?.sub,
+      ip: req.ip
+    });
   }
   next();
 }
