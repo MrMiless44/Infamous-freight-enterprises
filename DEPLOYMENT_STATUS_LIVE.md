@@ -1,4 +1,6 @@
-# 🚀 INFAMOUS FREIGHT ENTERPRISES - PRODUCTION DEPLOYMENT STATUS
+curl https://infamous-freight-api.fly.dev/health
+curl https://infamous-freight-api.fly.dev/api/health # If on different path
+fly logs --app infamous-freight-api --no-tail# 🚀 INFAMOUS FREIGHT ENTERPRISES - PRODUCTION DEPLOYMENT STATUS
 
 **Last Updated**: December 13, 2025 - 16:46 UTC  
 **Status**: ✅ **DOCKER BUILD ISSUES FIXED - REDEPLOYING**
@@ -204,3 +206,34 @@ flyctl status --app infamous-freight-api
 **🎉 You're in the final stretch! Both platforms are configured and deploying. Machines are initializing.**
 
 **Next Step**: Wait 2-3 minutes for API to fully initialize, then test the health endpoint.
+
+```tsx
+// pages/_app.tsx or app/layout.tsx
+import { Analytics } from "@vercel/analytics/react";
+import { track } from "@vercel/analytics";
+
+export default function App({ Component, pageProps }) {
+  return (
+    <>
+      <Component {...pageProps} />
+      <Analytics />
+    </>
+  );
+}
+
+track("shipment_created", { shipment_id: "123" });
+track("user_signup", { plan: "pro" });
+track("homepage_visited"); // When user lands on homepage
+track("dashboard_link_clicked"); // When user clicks "Launch Dashboard"
+track("billing_link_clicked"); // When user clicks "Billing"
+track('dashboard_visited')          // When dashboard loads
+track('api_health_check')           // Health status of API
+track('api_health_error')           // If API is unreachable
+track('payment_initiated')          // When Stripe/PayPal payment started
+  - method: 'stripe' | 'paypal'
+  - sessionId/orderId: transaction ID
+
+track('payment_error')              // If payment fails
+  - method: 'stripe' | 'paypal'
+  - error: error message
+```

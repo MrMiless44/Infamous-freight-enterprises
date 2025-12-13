@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { track } from "@vercel/analytics";
 import { useApi } from "../hooks/useApi";
 
 export function BillingPanel() {
@@ -7,18 +8,40 @@ export function BillingPanel() {
   const [paypalOrder, setPaypalOrder] = useState<string | null>(null);
 
   async function createStripe() {
-    const res = await api.post("/billing/stripe/session");
-    setStripeSession(res.sessionId);
-    if (res.url) {
-      window.location.href = res.url;
+    try {
+      const res = await api.post("/billing/stripe/session");
+      setStripeSession(res.sessionId);
+      track("payment_initiated", {
+        method: "stripe",
+        sessionId: res.sessionId,
+      });
+      if (res.url) {
+        window.location.href = res.url;
+      }
+    } catch (error) {
+      track("payment_error", {
+        method: "stripe",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   }
 
   async function createPayPal() {
-    const res = await api.post("/billing/paypal/order");
-    setPaypalOrder(res.orderId);
-    if (res.approvalUrl) {
-      window.location.href = res.approvalUrl;
+    try {
+      const res = await api.post("/billing/paypal/order");
+      setPaypalOrder(res.orderId);
+      track("payment_initiated", {
+        method: "paypal",
+        orderId: res.orderId,
+      });
+      if (res.approvalUrl) {
+        window.location.href = res.approvalUrl;
+      }
+    } catch (error) {
+      track("payment_error", {
+        method: "paypal",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   }
 

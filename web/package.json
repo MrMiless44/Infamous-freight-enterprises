@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@infamous-freight/shared": "file:../packages/shared",
+    "@vercel/analytics": "^1.4.0",
     "next": "^14.2.35",
     "react": "18.2.0",
     "react-dom": "18.2.0",

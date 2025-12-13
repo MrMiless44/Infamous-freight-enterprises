@@ -1,8 +1,30 @@
+import { useEffect } from "react";
 import Link from "next/link";
+import { track } from "@vercel/analytics";
 import { AvatarGrid } from "../components/AvatarGrid";
 
 export default function Home() {
   const appName = process.env.NEXT_PUBLIC_APP_NAME || "Infamous Freight AI";
+
+  useEffect(() => {
+    // Track homepage visit
+    track("homepage_visited", {
+      app: appName,
+      timestamp: new Date().toISOString(),
+    });
+  }, [appName]);
+
+  const handleDashboardClick = () => {
+    track("dashboard_link_clicked", {
+      source: "homepage",
+    });
+  };
+
+  const handleBillingClick = () => {
+    track("billing_link_clicked", {
+      source: "homepage",
+    });
+  };
 
   return (
     <main
@@ -32,6 +54,7 @@ export default function Home() {
         <div style={{ marginTop: "1.5rem", display: "flex", gap: "1rem" }}>
           <Link
             href="/dashboard"
+            onClick={handleDashboardClick}
             style={{
               padding: "0.8rem 1.8rem",
               borderRadius: "999px",
@@ -44,6 +67,7 @@ export default function Home() {
           </Link>
           <Link
             href="/billing"
+            onClick={handleBillingClick}
             style={{
               padding: "0.8rem 1.8rem",
               borderRadius: "999px",

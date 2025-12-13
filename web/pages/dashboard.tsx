@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { track } from "@vercel/analytics";
 import { VoicePanel } from "../components/VoicePanel";
 import { BillingPanel } from "../components/BillingPanel";
 
@@ -7,11 +8,26 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Track page view
+    track("dashboard_visited", {
+      timestamp: new Date().toISOString(),
+    });
+
     const base = process.env.NEXT_PUBLIC_API_BASE || "/api";
     fetch(`${base}/health`)
       .then((res) => res.json())
-      .then((data) => setStatus(data))
-      .catch(() => setStatus({ ok: false }))
+      .then((data) => {
+        setStatus(data);
+        track("api_health_check", {
+          status: data.ok ? "healthy" : "unhealthy",
+        });
+      })
+      .catch((error) => {
+        setStatus({ ok: false });
+        track("api_health_error", {
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      })
       .finally(() => setLoading(false));
   }, []);
 
