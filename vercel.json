@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "cd web && npm install && npm run build",
-  "installCommand": "npm install",
+  "buildCommand": "pnpm install && pnpm --filter @infamous-freight/shared build && pnpm --filter infamous-freight-web build",
+  "installCommand": "pnpm install",
   "outputDirectory": "web/.next",
   "routes": [
     {

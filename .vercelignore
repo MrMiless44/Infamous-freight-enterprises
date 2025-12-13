@@ -1,6 +1,32 @@
-.next
+# Dependencies
 node_modules
-.git
+pnpm-lock.yaml.orig
+
+# Build outputs
+.next
+dist
+build
+coverage
+
+# Development
 .env.local
 .env.*.local
+.git
+.gitignore
+
+# Logs and temporary
 *.log
+.DS_Store
+
+# IDE
+.vscode
+.idea
+
+# Test files
+__tests__
+*.test.ts
+*.test.js
+junit.xml
+
+# Archives
+archive
