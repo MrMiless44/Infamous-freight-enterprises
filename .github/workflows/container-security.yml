@@ -1,0 +1,226 @@
+name: Container Security Scanning
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'api/Dockerfile'
+      - 'web/Dockerfile'
+      - '**/package.json'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'api/Dockerfile'
+      - 'web/Dockerfile'
+      - '**/package.json'
+  schedule:
+    # Daily security scan at 1 AM UTC
+    - cron: '0 1 * * *'
+
+jobs:
+  build-api-image:
+    name: Build API Docker Image
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api
+          file: ./api/Dockerfile
+          push: false
+          load: true
+          tags: infamous-freight-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Save image for scanning
+        run: docker save infamous-freight-api:latest > /tmp/api-image.tar
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-image
+          path: /tmp/api-image.tar
+
+  build-web-image:
+    name: Build Web Docker Image
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Web image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./web
+          file: ./web/Dockerfile
+          push: false
+          load: true
+          tags: infamous-freight-web:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Save image for scanning
+        run: docker save infamous-freight-web:latest > /tmp/web-image.tar
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-image
+          path: /tmp/web-image.tar
+
+  scan-api-with-trivy:
+    name: Scan API Image with Trivy
+    runs-on: ubuntu-latest
+    needs: build-api-image
+    
+    steps:
+      - name: Run Trivy scan for API
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: 'infamous-freight-api:latest'
+          format: 'sarif'
+          output: 'api-trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'api-trivy-results.sarif'
+          category: 'trivy-api'
+
+      - name: Run Trivy scan for API (table format)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: 'infamous-freight-api:latest'
+          format: 'table'
+          output: 'api-trivy-results.txt'
+
+      - name: Print Trivy results
+        run: cat api-trivy-results.txt
+
+      - name: Check for critical vulnerabilities in API
+        run: |
+          OUTPUT=$(cat api-trivy-results.txt)
+          if echo "$OUTPUT" | grep -q "CRITICAL"; then
+            echo "❌ Critical vulnerabilities found in API image!"
+            echo "$OUTPUT"
+            exit 1
+          else
+            echo "✅ No critical vulnerabilities in API image"
+          fi
+
+  scan-web-with-trivy:
+    name: Scan Web Image with Trivy
+    runs-on: ubuntu-latest
+    needs: build-web-image
+    
+    steps:
+      - name: Run Trivy scan for Web
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: 'infamous-freight-web:latest'
+          format: 'sarif'
+          output: 'web-trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'web-trivy-results.sarif'
+          category: 'trivy-web'
+
+      - name: Run Trivy scan for Web (table format)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: 'infamous-freight-web:latest'
+          format: 'table'
+          output: 'web-trivy-results.txt'
+
+      - name: Print Trivy results
+        run: cat web-trivy-results.txt
+
+      - name: Check for critical vulnerabilities in Web
+        run: |
+          OUTPUT=$(cat web-trivy-results.txt)
+          if echo "$OUTPUT" | grep -q "CRITICAL"; then
+            echo "❌ Critical vulnerabilities found in Web image!"
+            echo "$OUTPUT"
+            exit 1
+          else
+            echo "✅ No critical vulnerabilities in Web image"
+          fi
+
+  sbom-generation:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    needs: [build-api-image, build-web-image]
+    
+    steps:
+      - name: Generate SBOM for API
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: 'infamous-freight-api:latest'
+          format: 'cyclonedx'
+          output: 'api-sbom.json'
+
+      - name: Generate SBOM for Web
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: 'infamous-freight-web:latest'
+          format: 'cyclonedx'
+          output: 'web-sbom.json'
+
+      - name: Upload SBOMs
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-reports
+          path: |
+            api-sbom.json
+            web-sbom.json
+          retention-days: 90
+
+  security-summary:
+    name: Security Scan Summary
+    runs-on: ubuntu-latest
+    needs: [scan-api-with-trivy, scan-web-with-trivy]
+    if: always()
+    
+    steps:
+      - name: Check scan results
+        run: |
+          if [ "${{ needs.scan-api-with-trivy.result }}" == "failure" ] || [ "${{ needs.scan-web-with-trivy.result }}" == "failure" ]; then
+            echo "❌ Security scan found critical vulnerabilities"
+            echo "Review the uploaded SARIF files in GitHub Security tab"
+            exit 1
+          else
+            echo "✅ All security scans passed"
+            echo "No critical vulnerabilities detected"
+          fi
