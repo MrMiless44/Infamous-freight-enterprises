@@ -12,6 +12,15 @@ function errorHandler(err, req, res, next) {
     method: req.method,
   });
 
+  // File upload errors
+  if (err.name === "MulterError" || err.code === "LIMIT_FILE_SIZE") {
+    return res.status(400).json({
+      success: false,
+      error: "File Upload Error",
+      message: err.message || "Invalid file upload",
+    });
+  }
+
   // Validation errors
   if (err.status === 400 || err.array) {
     return res.status(400).json({
@@ -48,11 +57,16 @@ function errorHandler(err, req, res, next) {
     });
   }
 
-  // Generic server error
-  res.status(err.status || 500).json({
+  const status = Number.isInteger(err.status) ? err.status : 500;
+  const isServerError = status >= 500;
+
+  res.status(status).json({
     success: false,
-    error: "Server Error",
-    message: process.env.NODE_ENV === "production" ? "Internal server error" : err.message,
+    error: isServerError ? "Server Error" : "Request Error",
+    message:
+      isServerError && process.env.NODE_ENV === "production"
+        ? "Internal server error"
+        : err.message || "Unexpected error",
   });
 }
 
