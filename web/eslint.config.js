@@ -4,6 +4,6 @@ module.exports = [
   ...nextConfig,
   {
     // Explicitly ignore local build artefacts.
-    ignores: ["node_modules", "out"],
+    ignores: ["node_modules", ".next", "out"],
   },
 ];
