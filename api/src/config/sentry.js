@@ -10,7 +10,15 @@
  */
 
 const Sentry = require("@sentry/node");
-const { nodeProfilingIntegration } = require("@sentry/profiling-node");
+
+let profilingIntegrationFactory = null;
+try {
+  ({
+    nodeProfilingIntegration: profilingIntegrationFactory,
+  } = require("@sentry/profiling-node"));
+} catch (error) {
+  profilingIntegrationFactory = null;
+}
 
 function initSentry(app) {
   const isProduction = process.env.NODE_ENV === "production";
@@ -24,7 +32,7 @@ function initSentry(app) {
       tracesSampleRate: 0.1, // Sample 10% of transactions
       profilesSampleRate: 0.1, // Sample 10% of profiles
       integrations: [
-        nodeProfilingIntegration(),
+        profilingIntegrationFactory ? profilingIntegrationFactory() : null,
         new Sentry.Integrations.Http({ tracing: true }),
         new Sentry.Integrations.Express({
           request: true,
@@ -33,7 +41,7 @@ function initSentry(app) {
           version: false,
           paths: [],
         }),
-      ],
+      ].filter(Boolean),
       // Ignore certain errors that aren't useful
       ignoreErrors: [
         // Browser extensions

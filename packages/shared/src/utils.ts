@@ -1,6 +1,9 @@
 // Common utility functions
 export function formatDate(date: Date | string): string {
   const d = typeof date === "string" ? new Date(date) : date;
+  if (Number.isNaN(d.getTime())) {
+    return "Invalid Date";
+  }
   return d.toISOString().split("T")[0];
 }
 
@@ -16,9 +19,15 @@ export function formatCurrency(
 
 export function generateTrackingNumber(): string {
   const prefix = "IFE";
-  const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return `${prefix}-${timestamp}-${random}`;
+  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let payload = "";
+
+  while (payload.length < 12) {
+    const index = Math.floor(Math.random() * charset.length);
+    payload += charset[index];
+  }
+
+  return `${prefix}-${payload}`;
 }
 
 export function slugify(text: string): string {

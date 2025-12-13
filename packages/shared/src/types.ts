@@ -3,7 +3,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "admin" | "user" | "driver";
+  role: "admin" | "driver" | "customer";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,10 +21,9 @@ export interface Shipment {
 
 export type ShipmentStatus =
   | "pending"
-  | "in-transit"
+  | "in_transit"
   | "delivered"
-  | "cancelled"
-  | "delayed";
+  | "cancelled";
 
 export interface ApiResponse<T = any> {
   success: boolean;

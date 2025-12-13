@@ -11,16 +11,15 @@ export const REFRESH_TOKEN_EXPIRES_IN = "30d";
 
 export const SHIPMENT_STATUSES = {
   PENDING: "pending",
-  IN_TRANSIT: "in-transit",
+  IN_TRANSIT: "in_transit",
   DELIVERED: "delivered",
   CANCELLED: "cancelled",
-  DELAYED: "delayed",
 } as const;
 
 export const USER_ROLES = {
   ADMIN: "admin",
-  USER: "user",
   DRIVER: "driver",
+  CUSTOMER: "customer",
 } as const;
 
 export const HTTP_STATUS = {
@@ -35,6 +34,7 @@ export const HTTP_STATUS = {
   UNPROCESSABLE_ENTITY: 422,
   TOO_MANY_REQUESTS: 429,
   INTERNAL_SERVER_ERROR: 500,
+  INTERNAL_ERROR: 500,
   SERVICE_UNAVAILABLE: 503,
 } as const;
 

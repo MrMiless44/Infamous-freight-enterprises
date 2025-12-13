@@ -57,7 +57,14 @@ describe("generateTrackingNumber", () => {
 });
 
 describe("debounce", () => {
-  jest.useFakeTimers();
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
 
   it("should delay function execution", () => {
     const mockFn = jest.fn();
@@ -91,6 +98,4 @@ describe("debounce", () => {
 
     expect(mockFn).toHaveBeenCalledWith("test", 123);
   });
-
-  jest.useRealTimers();
 });
