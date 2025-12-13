@@ -36,7 +36,8 @@
         "GitHub.codespaces",
         "YoavBls.pretty-ts-errors",
         "christian-kohler.path-intellisense",
-        "ms-playwright.playwright"
+        "ms-playwright.playwright",
+        "ms-dotnettools.dotnet-interactive-vscode"
       ]
     }
   },

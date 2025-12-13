@@ -13,7 +13,11 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "eslint.workingDirectories": ["./api", "./web", "./packages/shared"],
+  "eslint.workingDirectories": [
+    "./api",
+    "./web",
+    "./packages/shared"
+  ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "files.exclude": {
@@ -48,8 +52,14 @@
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-"npm.packageManager": "pnpm",
-"[jsonc]": {
+  "npm.packageManager": "pnpm",
+  "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features"
-}
+  },
+  "github.codespaces.defaultExtensions": [
+    "GitHub.copilot",
+    "GitHub.codespaces",
+    "GitHub.vscode-pull-request-github",
+    "Github.copilot"
+  ]
 }
