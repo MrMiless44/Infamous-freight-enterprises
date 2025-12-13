@@ -12,6 +12,9 @@ jobs:
   analyze:
     name: Analyze Code
     runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: "20"
+      PNPM_VERSION: "10"
     permissions:
       actions: read
       contents: read
@@ -26,14 +29,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           queries: +security-extended,security-and-quality
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build workspace
+        run: pnpm build
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

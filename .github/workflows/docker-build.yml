@@ -16,6 +16,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Prepare registry owner
+        run: echo "REGISTRY_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -28,11 +31,11 @@ jobs:
         with:
           context: ./api
           push: false
-          tags: ghcr.io/${{ toLower(github.repository_owner) }}/infamous-freight-api:test
+          tags: ghcr.io/${{ env.REGISTRY_OWNER }}/infamous-freight-api:test
 
       - name: Build WEB image
         uses: docker/build-push-action@v5
         with:
           context: ./web
           push: false
-          tags: ghcr.io/${{ toLower(github.repository_owner) }}/infamous-freight-web:test
+          tags: ghcr.io/${{ env.REGISTRY_OWNER }}/infamous-freight-web:test

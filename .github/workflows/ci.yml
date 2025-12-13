@@ -41,6 +41,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Approve required build scripts (pnpm >=10)
+        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
+        continue-on-error: true
+
       - name: Run security audit
         run: pnpm audit --audit-level=moderate
         continue-on-error: true
@@ -55,7 +59,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -65,6 +69,16 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Approve required build scripts (pnpm >=10)
+        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
+        continue-on-error: true
+
+      - name: Generate Prisma client
+        run: pnpm -w exec prisma generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        continue-on-error: true
 
       - name: Lint all services
         run: pnpm lint
@@ -103,7 +117,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -114,6 +128,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Approve required build scripts (pnpm >=10)
+        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
+        continue-on-error: true
+
+      - name: Generate Prisma client
+        run: pnpm -w exec prisma generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        continue-on-error: true
+
       - name: Run all tests with coverage
         run: pnpm test:coverage
         env:
@@ -122,6 +146,7 @@ jobs:
           NODE_ENV: test
 
       - name: Upload coverage to Codecov
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -130,7 +155,7 @@ jobs:
           name: codecov-umbrella
 
       - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
+        if: ${{ secrets.CODECOV_TOKEN != '' && !cancelled() }}
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -155,6 +180,10 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Approve required build scripts (pnpm >=10)
+        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
+        continue-on-error: true
 
       - name: Run health check
         working-directory: api
