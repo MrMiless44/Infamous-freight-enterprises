@@ -2,10 +2,15 @@ require("dotenv").config();
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
 const { httpLogger, logger } = require("./middleware/logger");
 const { rateLimit } = require("./middleware/security");
 const errorHandler = require("./middleware/errorHandler");
-const { securityHeaders, handleCSPViolation } = require("./middleware/securityHeaders");
+const {
+  securityHeaders,
+  handleCSPViolation,
+} = require("./middleware/securityHeaders");
 const { initSentry, attachErrorHandler } = require("./config/sentry");
 const config = require("./config");
 const healthRoutes = require("./routes/health");
@@ -24,7 +29,7 @@ app.set("trust proxy", 1);
 const defaultOrigins = ["http://localhost:3000"];
 const allowedOrigins = (process.env.CORS_ORIGINS || defaultOrigins.join(","))
   .split(",")
-  .map(origin => origin.trim())
+  .map((origin) => origin.trim())
   .filter(Boolean);
 const allowedOriginsSet = new Set(allowedOrigins);
 
@@ -33,7 +38,8 @@ app.use((req, res, next) => {
   if (origin && !allowedOriginsSet.has(origin)) {
     return res.status(403).json({
       error: "CORS Rejected",
-      message: "Origin is not allowed. Update CORS_ORIGINS to permit this origin.",
+      message:
+        "Origin is not allowed. Update CORS_ORIGINS to permit this origin.",
     });
   }
   next();
@@ -49,12 +55,22 @@ app.use(
       if (allowedOriginsSet.has(origin)) return callback(null, true);
       return callback(null, false);
     },
-    credentials: true
-  })
+    credentials: true,
+  }),
 );
 app.use(httpLogger);
 app.use(rateLimit);
 app.use(express.json({ limit: "12mb" }));
+
+// Swagger API Documentation
+app.use(
+  "/api/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCss: ".swagger-ui .topbar { display: none }",
+    customSiteTitle: "Infamous Freight API Docs",
+  }),
+);
 
 // Routes
 app.use("/api", healthRoutes);

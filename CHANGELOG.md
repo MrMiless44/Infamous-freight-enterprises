@@ -1,0 +1,140 @@
+# Changelog
+
+All notable changes to Infamous Freight Enterprises will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [2.0.0] - 2024-12-13
+
+### Added (Phase 2 - Developer Experience & Tooling)
+
+- **VS Code Workspace Configuration**
+  - Multi-root workspace file with 6 folders
+  - 19 recommended extensions (ESLint, Prettier, Prisma, Playwright, GitLens, GitHub Copilot, etc.)
+  - Enhanced settings with format-on-save, linting, TypeScript configuration
+- **Contributing Guide**
+  - Comprehensive 1,586-line CONTRIBUTING.md
+  - Covers setup, workflow, code standards, testing, PR process
+- **Security Automation**
+  - CodeQL workflow for automated vulnerability scanning
+  - Runs on push, PR, and weekly schedule
+  - Security-extended query pack
+- **Documentation**
+  - GitHub repository settings guide (branch protection, labels, security)
+  - Phase 2 improvements summary document
+  - This CHANGELOG
+
+- **Docker Optimization**
+  - Multi-stage Dockerfiles with BuildKit caching
+  - pnpm workspace support in docker-compose.yml
+  - Healthchecks for service dependencies
+  - Named volumes for cache persistence (pnpm-store, node_modules, nextjs-cache)
+  - Standalone Next.js output for smaller images
+  - .dockerignore for optimized build contexts
+
+- **Developer Tools**
+  - .nvmrc file for Node.js version consistency (v20)
+  - Enhanced health check endpoints with version, uptime, environment info
+  - Quality check scripts (check:types, check:all, format:check)
+- **Testing Infrastructure**
+  - Jest configuration for monorepo structure
+  - Next.js preset for web tests
+  - Test suite for shared package (utils, env, constants)
+  - ts-jest for TypeScript testing
+
+### Changed
+
+- **Fixed** Duplicate rateLimit function in api/src/middleware/security.js
+- **Updated** Husky hook format (removed deprecated v9 lines)
+- **Updated** ESLint 9 flat config for web package
+- **Updated** Babel configuration (removed custom config, using Next.js SWC)
+- **Improved** Health check responses with version and service info
+
+### Added (Phase 1 - Monorepo Architecture)
+
+- **Monorepo Structure**
+  - Converted to pnpm workspace monorepo
+  - Created shared package (@infamous-freight/shared)
+  - Organized services: api, web, mobile, packages/shared, e2e
+- **CI/CD**
+  - Enhanced GitHub Actions workflow
+  - PostgreSQL service for testing
+  - Codecov integration with multiple coverage files
+- **Documentation Structure**
+  - Consolidated documentation in docs/
+  - Deployment guides in docs/deployment/
+  - Project history in docs/history/
+  - Documentation index and quick reference
+
+- **Development Scripts**
+  - Automated setup.sh script
+  - Workspace-aware pnpm commands
+  - Pre-commit hooks with Husky v9
+  - Lint-staged for automatic formatting
+
+### Fixed
+
+- Pre-commit hook PATH issues in containerized environments
+- ESLint v9 migration warnings
+- Conventional commits validation
+- Build configuration for pnpm workspaces
+
+## [1.0.0] - 2024-11-XX
+
+### Added
+
+- Initial project structure
+- Express.js REST API backend
+- Next.js React frontend
+- React Native mobile app
+- PostgreSQL database with Prisma ORM
+- Authentication with JWT
+- Payment integration (Stripe, PayPal)
+- AI integration (OpenAI, Anthropic)
+- Voice capabilities
+- Deployment configurations (Fly.io, Render, Vercel)
+- E2E testing with Playwright
+- Docker containerization
+
+---
+
+## Release Notes
+
+### v2.0.0 - Developer Experience & Tooling
+
+**Focus:** Enhancing developer experience, security automation, and infrastructure optimization.
+
+**Highlights:**
+
+- 🎨 VS Code workspace with 19 recommended extensions
+- 📚 Comprehensive contributing guide (1,586 lines)
+- 🔒 Automated CodeQL security scanning
+- 🐳 Optimized Docker configuration for monorepo
+- ✅ Complete test suite for shared package
+- 📊 Enhanced health checks across all services
+
+**Breaking Changes:** None (backward compatible)
+
+**Migration:** See [PHASE2_IMPROVEMENTS.md](PHASE2_IMPROVEMENTS.md)
+
+### v1.0.0 - Initial Release
+
+**Focus:** Core platform functionality and feature parity.
+
+**Highlights:**
+
+- Full-stack freight management platform
+- Multi-platform support (web, mobile, API)
+- Payment processing and billing
+- AI-powered features
+- Real-time voice capabilities
+
+---
+
+## Links
+
+- [Project Repository](https://github.com/MrMiless44/Infamous-freight-enterprises)
+- [Contributing Guidelines](CONTRIBUTING.md)
+- [Documentation](docs/)
+- [Deployment Guide](DEPLOYMENT_GUIDE.md)

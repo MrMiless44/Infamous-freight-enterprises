@@ -1,1 +1,80 @@
-(()=>{var e={};e.id=702,e.ids=[702],e.modules={145:e=>{"use strict";e.exports=require("next/dist/compiled/next-server/pages-api.runtime.prod.js")},3816:()=>{throw Error('Module build failed (from ./node_modules/next/dist/build/babel/loader/index.js):\nSyntaxError: /workspaces/Infamous-Freight-Enterprises/web/pages/api/status.ts: Unexpected token, expected "from" (1:12)\n\n> 1 | import type { NextApiRequest, NextApiResponse } from "next";\n    |             ^\n  2 |\n  3 | export default function handler(_req: NextApiRequest, res: NextApiResponse) {\n  4 |   res.status(200).json({ ok: true, service: "web" });\n    at instantiate (/workspaces/Infamous-Freight-Enterprises/web/node_modules/next/dist/compiled/babel/bundle.js:1848:7920)\n    at constructor (/workspaces/Infamous-Freight-Enterprises/web/node_modules/next/dist/compiled/babel/bundle.js:1848:24792)\n    at JSXParserMixin.raise (/workspaces/Infamous-Freight-Enterprises/web/node_modules/next/dist/compiled/babel/bundle.js:1848:78469)\n    at JSXParserMixin.unexpected (/workspaces/Infamous-Freight-Enterprises/web/node_modules/next/dist/compiled/babel/bundle.js:1848:78931)\n    at JSXParserMixin.expectContextual (/workspaces/Infamous-Freight-Enterprises/web/node_modules/next/dist/compiled/babel/bundle.js:1848:83639)\n    at JSXParserMixin.parseImportSpecifiersAndAfter (/workspaces/Infamous-Freight-Enterprises/web/node_modules/next/dist/compiled/babel/bundle.js:1848:305089)\n    at JSXParserMixin.parseImport (/workspaces/Infamous-Freight-Enterprises/web/node_modules/next/dist/compiled/babel/bundle.js:1848:304795)\n    at JSXParserMixin.parseStatementContent (/workspaces/Infamous-Freight-Enterprises/web/node_modules/next/dist/compiled/babel/bundle.js:1848:275269)\n    at JSXParserMixin.parseStatementLike (/workspaces/Infamous-Freight-Enterprises/web/node_modules/next/dist/compiled/babel/bundle.js:1848:272941)\n    at JSXParserMixin.parseModuleItem (/workspaces/Infamous-Freight-Enterprises/web/node_modules/next/dist/compiled/babel/bundle.js:1848:272502)')},6249:(e,t)=>{"use strict";Object.defineProperty(t,"l",{enumerable:!0,get:function(){return function e(t,s){return s in t?t[s]:"then"in t&&"function"==typeof t.then?t.then(t=>e(t,s)):"function"==typeof t&&"default"===s?t:void 0}}})},6261:(e,t,s)=>{"use strict";s.r(t),s.d(t,{config:()=>d,default:()=>a,routeModule:()=>u});var n=s(1802),r=s(7153),i=s(6249),o=s(3816);let a=(0,i.l)(o,"default"),d=(0,i.l)(o,"config"),u=new n.PagesAPIRouteModule({definition:{kind:r.x.PAGES_API,page:"/api/status",pathname:"/api/status",bundlePath:"",filename:""},userland:o})},7153:(e,t)=>{"use strict";var s;Object.defineProperty(t,"x",{enumerable:!0,get:function(){return s}}),function(e){e.PAGES="PAGES",e.PAGES_API="PAGES_API",e.APP_PAGE="APP_PAGE",e.APP_ROUTE="APP_ROUTE"}(s||(s={}))},1802:(e,t,s)=>{"use strict";e.exports=s(145)}};var t=require("../../webpack-api-runtime.js");t.C(e);var s=t(t.s=6261);module.exports=s})();
+"use strict";
+(() => {
+  var e = {};
+  ((e.id = 702),
+    (e.ids = [702]),
+    (e.modules = {
+      145: (e) => {
+        e.exports = require("next/dist/compiled/next-server/pages-api.runtime.prod.js");
+      },
+      980: (e, t) => {
+        Object.defineProperty(t, "l", {
+          enumerable: !0,
+          get: function () {
+            return function e(t, n) {
+              return n in t
+                ? t[n]
+                : "then" in t && "function" == typeof t.then
+                  ? t.then((t) => e(t, n))
+                  : "function" == typeof t && "default" === n
+                    ? t
+                    : void 0;
+            };
+          },
+        });
+      },
+      5237: (e, t, n) => {
+        (n.r(t),
+          n.d(t, { config: () => P, default: () => d, routeModule: () => f }));
+        var i = {};
+        (n.r(i), n.d(i, { default: () => s }));
+        var r = n(2742),
+          u = n(1898),
+          o = n(980);
+        let a = { i8: "2.0.0" };
+        function s(e, t) {
+          t.status(200).json({
+            status: "ok",
+            service: "infamous-freight-web",
+            version: a.i8 || "2.0.0",
+            timestamp: new Date().toISOString(),
+            environment: "production",
+          });
+        }
+        let d = (0, o.l)(i, "default"),
+          P = (0, o.l)(i, "config"),
+          f = new r.PagesAPIRouteModule({
+            definition: {
+              kind: u.x.PAGES_API,
+              page: "/api/status",
+              pathname: "/api/status",
+              bundlePath: "",
+              filename: "",
+            },
+            userland: i,
+          });
+      },
+      1898: (e, t) => {
+        var n;
+        (Object.defineProperty(t, "x", {
+          enumerable: !0,
+          get: function () {
+            return n;
+          },
+        }),
+          (function (e) {
+            ((e.PAGES = "PAGES"),
+              (e.PAGES_API = "PAGES_API"),
+              (e.APP_PAGE = "APP_PAGE"),
+              (e.APP_ROUTE = "APP_ROUTE"));
+          })(n || (n = {})));
+      },
+      2742: (e, t, n) => {
+        e.exports = n(145);
+      },
+    }));
+  var t = require("../../webpack-api-runtime.js");
+  t.C(e);
+  var n = t((t.s = 5237));
+  module.exports = n;
+})();

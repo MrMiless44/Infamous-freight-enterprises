@@ -18,4 +18,9 @@ module.exports = {
   coverageReporters: ["text", "lcov", "json", "html"],
   testMatch: ["**/__tests__/**/*.js", "**/?(*.)+(spec|test).js"],
   coveragePathIgnorePatterns: ["/node_modules/"],
+  // Handle ES modules in monorepo
+  transformIgnorePatterns: ["node_modules/(?!(@infamous-freight)/)"],
+  moduleNameMapper: {
+    "^@infamous-freight/shared$": "<rootDir>/../packages/shared/src/index.ts",
+  },
 };

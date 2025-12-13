@@ -1,6 +1,7 @@
 {
   "name": "infamous-freight-web",
   "version": "2.0.0",
+  "description": "Next.js React web application for freight management and logistics operations",
   "private": true,
   "scripts": {
     "dev": "next dev",

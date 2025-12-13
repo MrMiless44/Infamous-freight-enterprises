@@ -1,1 +1,9 @@
-{"version":1,"files":["../webpack-runtime.js","../../../pages/_app.tsx"]}
+{
+  "version": 1,
+  "files": [
+    "../webpack-runtime.js",
+    "../../../package.json",
+    "../../../../package.json",
+    "../../../pages/_app.tsx"
+  ]
+}
