@@ -44,3 +44,60 @@ jobs:
         run: |
           echo "✅ Vercel Deployment: ${{ job.status }}"
           echo "📍 URL: https://infamous-freight.vercel.app"
+
+      - name: Create GitHub Deployment Status
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const deploymentState = '${{ job.status }}' === 'success' ? 'success' : 'failure';
+            github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: context.payload.deployment?.id || 1,
+              state: deploymentState,
+              environment_url: 'https://infamous-freight.vercel.app',
+              description: deploymentState === 'success' ? 'Deployment successful' : 'Deployment failed'
+            });
+
+      - name: Comment on PR with Deployment Info
+        uses: actions/github-script@v7
+        if: github.event_name == 'push' && always()
+        with:
+          script: |
+            const fs = require('fs');
+            const commits = context.payload.commits || [];
+            const latestCommit = commits[commits.length - 1];
+            const status = '${{ job.status }}' === 'success' ? '✅' : '❌';
+            
+            const comment = `## ${status} Deployment to Vercel
+            
+**Build Status:** ${{ job.status }}
+**Commit:** [\`${context.sha.substring(0, 7)}\`](${latestCommit?.url || '#'})
+**Author:** ${latestCommit?.author.name || 'Unknown'}
+
+### Deployment Details
+- **Environment:** Production
+- **URL:** https://infamous-freight.vercel.app
+- **Timestamp:** ${new Date().toISOString()}
+
+${status === '✅' ? '✨ **Deployment successful!**' : '⚠️ **Deployment failed. Check logs above.**'}`;
+            
+            // Only comment if we can find a related PR
+            const { data: pullRequests } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed',
+              sort: 'updated',
+              direction: 'desc',
+              per_page: 1
+            });
+            
+            if (pullRequests.length > 0) {
+              github.rest.issues.createComment({
+                issue_number: pullRequests[0].number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }

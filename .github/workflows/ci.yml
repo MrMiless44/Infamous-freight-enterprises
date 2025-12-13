@@ -249,3 +249,73 @@ jobs:
           pnpm build
           echo "Build completed - checking bundle size..."
           du -sh .next
+
+  ci-status:
+    name: CI Status Check
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [security-audit, lint-build, test-coverage, smoke-tests, docker-build, performance-check]
+    steps:
+      - name: Check CI Status
+        run: |
+          if [[ "${{ needs.security-audit.result }}" == "failure" || \
+                "${{ needs.lint-build.result }}" == "failure" || \
+                "${{ needs.test-coverage.result }}" == "failure" ]]; then
+            echo "❌ CI Failed"
+            exit 1
+          fi
+          echo "✅ CI Passed"
+
+      - name: Create GitHub Status Check
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const allPassed = [
+              '${{ needs.security-audit.result }}',
+              '${{ needs.lint-build.result }}',
+              '${{ needs.test-coverage.result }}',
+              '${{ needs.smoke-tests.result }}'
+            ].every(status => status === 'success' || status === 'skipped');
+            
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: allPassed ? 'success' : 'failure',
+              description: allPassed ? 'All CI checks passed' : 'Some CI checks failed',
+              context: 'CI Pipeline'
+            });
+
+      - name: Comment on PR with Status
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request' && always()
+        with:
+          script: |
+            const allPassed = [
+              '${{ needs.security-audit.result }}',
+              '${{ needs.lint-build.result }}',
+              '${{ needs.test-coverage.result }}',
+              '${{ needs.smoke-tests.result }}'
+            ].every(status => status === 'success' || status === 'skipped');
+            
+            const status = allPassed ? '✅' : '❌';
+            const comment = `## ${status} CI Pipeline Status
+            
+| Check | Result |
+|-------|--------|
+| Security Audit | ${{ needs.security-audit.result }} |
+| Lint & Build | ${{ needs.lint-build.result }} |
+| Tests & Coverage | ${{ needs.test-coverage.result }} |
+| Smoke Tests | ${{ needs.smoke-tests.result }} |
+| Docker Build | ${{ needs.docker-build.result }} |
+| Performance | ${{ needs.performance-check.result }} |
+
+${allPassed ? '✅ **All checks passed! Ready for deployment.**' : '⚠️ **Some checks failed. Please review.**'}`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
