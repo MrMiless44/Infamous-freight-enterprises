@@ -8,6 +8,7 @@ module.exports = {
     "^@/(.*)$": "<rootDir>/$1",
   },
   testMatch: ["**/__tests__/**/*.{js,jsx,ts,tsx}", "**/?(*.)+(spec|test).{js,jsx,ts,tsx}"],
+  collectCoverage: true,
   collectCoverageFrom: [
     "components/**/*.{js,jsx,ts,tsx}",
     "pages/**/*.{js,jsx,ts,tsx}",
@@ -15,5 +16,15 @@ module.exports = {
     "!**/*.d.ts",
     "!**/node_modules/**",
     "!**/.next/**",
+    "!**/__tests__/**",
   ],
+  coverageThreshold: {
+    global: {
+      branches: 50,
+      functions: 50,
+      lines: 50,
+      statements: 50,
+    },
+  },
+  coverageReporters: ["text", "lcov", "json", "html"],
 };
