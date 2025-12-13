@@ -2,11 +2,14 @@ const express = require("express");
 const Stripe = require("stripe");
 const paypal = require("@paypal/checkout-server-sdk");
 const {
-  rateLimit,
   authenticate,
   requireScope,
   auditLog
 } = require("../middleware/security");
+const {
+  validateString,
+  handleValidationErrors
+} = require("../middleware/validation");
 
 const router = express.Router();
 
@@ -23,20 +26,31 @@ if (process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_SECRET) {
   paypalClient = new paypal.core.PayPalHttpClient(env);
 }
 
+const createError = (message, status = 500) => {
+  const err = new Error(message);
+  err.status = status;
+  return err;
+};
+
 router.post(
   "/billing/stripe/session",
-  rateLimit,
   authenticate,
   requireScope("billing:write"),
   auditLog,
-  async (_req, res) => {
-    if (!stripe) return res.status(500).json({ error: "Stripe not configured" });
+  async (_req, res, next) => {
+    if (!stripe) return next(createError("Stripe not configured", 503));
 
     try {
+      const successUrl = process.env.STRIPE_SUCCESS_URL;
+      const cancelUrl = process.env.STRIPE_CANCEL_URL;
+      if (!successUrl || !cancelUrl) {
+        return next(createError("Stripe success/cancel URLs not configured", 503));
+      }
+
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
-        success_url: process.env.STRIPE_SUCCESS_URL,
-        cancel_url: process.env.STRIPE_CANCEL_URL,
+        success_url: successUrl,
+        cancel_url: cancelUrl,
         line_items: [
           {
             price_data: {
@@ -51,20 +65,18 @@ router.post(
 
       res.json({ ok: true, sessionId: session.id, url: session.url });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: err.message });
+      next(err);
     }
   }
 );
 
 router.post(
   "/billing/paypal/order",
-  rateLimit,
   authenticate,
   requireScope("billing:write"),
   auditLog,
-  async (_req, res) => {
-    if (!paypalClient) return res.status(500).json({ error: "PayPal not configured" });
+  async (_req, res, next) => {
+    if (!paypalClient) return next(createError("PayPal not configured", 503));
 
     try {
       const request = new paypal.orders.OrdersCreateRequest();
@@ -82,33 +94,31 @@ router.post(
         order.result.links?.find(link => link.rel === "approve")?.href || null;
       res.json({ ok: true, orderId: order.result.id, approvalUrl });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: err.message });
+      next(err);
     }
   }
 );
 
 router.post(
   "/billing/paypal/capture",
-  rateLimit,
   authenticate,
   requireScope("billing:write"),
   auditLog,
-  async (req, res) => {
-    if (!paypalClient) return res.status(500).json({ error: "PayPal not configured" });
-
-    const { orderId } = req.body || {};
-    if (!orderId) return res.status(400).json({ error: "orderId required" });
+  [
+    validateString("orderId", { min: 1, max: 128 }),
+    handleValidationErrors
+  ],
+  async (req, res, next) => {
+    if (!paypalClient) return next(createError("PayPal not configured", 503));
 
     try {
-      const request = new paypal.orders.OrdersCaptureRequest(orderId);
+      const request = new paypal.orders.OrdersCaptureRequest(req.body.orderId);
       request.requestBody({});
 
       const capture = await paypalClient.execute(request);
       res.json({ ok: true, capture });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: err.message });
+      next(err);
     }
   }
 );
