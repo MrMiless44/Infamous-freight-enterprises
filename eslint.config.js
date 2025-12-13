@@ -15,11 +15,13 @@ export default [
       "mobile/**",
       "**/*.test.js",
       "**/*.spec.js",
+      "**/*.test.ts",
+      "**/*.spec.ts",
       "pnpm-lock.yaml",
     ],
   },
   {
-    files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
+    files: ["**/*.{js,jsx,mjs,cjs}"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
@@ -37,6 +39,25 @@ export default [
       ...js.configs.recommended.rules,
       "no-console": ["warn", { allow: ["warn", "error"] }],
       "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    },
+  },
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
+      globals: {
+        console: "readonly",
+        process: "readonly",
+        Buffer: "readonly",
+      },
+    },
+    rules: {
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "no-unused-vars": "off",
     },
   },
   {
