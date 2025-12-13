@@ -1,0 +1,22 @@
+{
+  "name": "@infamous-freight/shared",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src --ext .ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0",
+    "eslint": "^9.39.2",
+    "jest": "^30.2.0",
+    "@types/jest": "^30.0.0"
+  }
+}

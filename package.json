@@ -1,4 +1,28 @@
 {
+  "name": "infamous-freight-enterprises",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "api",
+    "web",
+    "packages/*",
+    "e2e"
+  ],
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:coverage": "pnpm -r test:coverage",
+    "lint": "pnpm -r lint",
+    "lint:fix": "pnpm -r lint:fix",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "prepare": "husky install",
+    "clean": "pnpm -r clean && rm -rf node_modules",
+    "api:dev": "pnpm --filter infamous-freight-api dev",
+    "web:dev": "pnpm --filter infamous-freight-web dev",
+    "e2e": "pnpm --filter e2e test"
+  },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "eslint": "^9.39.2",

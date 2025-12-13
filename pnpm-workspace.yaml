@@ -1,0 +1,6 @@
+packages:
+  - "api"
+  - "web"
+  - "mobile"
+  - "packages/*"
+  - "e2e"

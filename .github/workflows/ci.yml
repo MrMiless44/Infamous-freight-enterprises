@@ -14,26 +14,26 @@ jobs:
   security-audit:
     name: Security Audit
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        directory: ['.', 'api', 'web', 'infamous-freight-ai/api', 'infamous-freight-ai/web', 'infamous-freight-ai/mobile']
-      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
+          cache: "pnpm"
 
-      - name: Install dependencies (${{ matrix.directory }})
-        working-directory: ${{ matrix.directory }}
-        run: npm ci --ignore-scripts 2>/dev/null || true
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Run npm audit (${{ matrix.directory }})
-        working-directory: ${{ matrix.directory }}
-        run: npm audit --audit-level=moderate
+      - name: Run security audit
+        run: pnpm audit --audit-level=moderate
         continue-on-error: true
 
   lint-build:
@@ -43,74 +43,82 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: |
-            api/package-lock.json
-            web/package-lock.json
+          node-version: 20
+          cache: "pnpm"
 
-      - name: Install API deps
-        working-directory: api
-        run: npm ci
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Lint API
-        working-directory: api
-        run: npm run lint
+      - name: Lint all services
+        run: pnpm lint
+
+      - name: Build shared package
+        run: pnpm --filter @infamous-freight/shared build
 
       - name: Build API
-        working-directory: api
-        run: npm run build 2>/dev/null || true
-
-      - name: Install Web deps
-        working-directory: web
-        run: npm ci
-
-      - name: Lint Web
-        working-directory: web
-        run: npm run lint
+        run: pnpm --filter infamous-freight-api build
+        continue-on-error: true
 
       - name: Build Web
-        working-directory: web
-        run: npm run build
+        run: pnpm --filter infamous-freight-web build
 
   test-coverage:
     name: Tests & Coverage
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        directory: ['api', 'web']
-      fail-fast: false
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: ${{ matrix.directory }}/package-lock.json
+          node-version: 20
+          cache: "pnpm"
 
-      - name: Install dependencies (${{ matrix.directory }})
-        working-directory: ${{ matrix.directory }}
-        run: npm ci
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Run tests (${{ matrix.directory }})
-        working-directory: ${{ matrix.directory }}
-        run: npm test -- --passWithNoTests 2>/dev/null || true
+      - name: Run all tests with coverage
+        run: pnpm test:coverage
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          JWT_SECRET: test-secret
+          NODE_ENV: test
 
-      - name: Generate coverage (${{ matrix.directory }})
-        working-directory: ${{ matrix.directory }}
-        run: npm test -- --coverage --passWithNoTests 2>/dev/null || true
-        continue-on-error: true
-
-      - name: Upload coverage reports to Codecov
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./api/coverage/lcov.info,./web/coverage/lcov.info,./packages/shared/coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
@@ -125,16 +133,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
+          cache: "pnpm"
 
-      - name: Install API dependencies
-        working-directory: api
-        run: npm ci
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run health check
         working-directory: api
-        run: node scripts/smoke-health.js 2>/dev/null || true
+        run: node scripts/smoke-health.js
         continue-on-error: true
