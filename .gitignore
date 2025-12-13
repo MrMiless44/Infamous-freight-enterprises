@@ -9,3 +9,21 @@ coverage/
 npm-debug.log*
 .DS_Store
 .vscode/
+
+# Temporary files
+*.log
+*.yaml~
+*.json~
+*.md~
+Untitled-*.json
+*.pnpm
+install.log
+npm\ install\ -g\ *.yaml
+✅\ *.md
+
+# pnpm specific
+pnpm-error.log*
+
+# Package manager temporary files
+package.json.backup
+package.json.pnpm

@@ -16,7 +16,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 ### Prerequisites
 
 - Node.js 20+
-- pnpm 8+ (installed automatically by setup script)
+- pnpm 7.5.1 (managed automatically via Corepack)
 - PostgreSQL 14+ (or Docker)
 - Git
 
@@ -349,7 +349,54 @@ When reporting issues:
 - 🔍 Search existing issues
 - 💬 Ask in discussions
 
-## 📚 Additional Resources
+## � Troubleshooting
+
+### pnpm Version Management
+
+This project uses **Corepack** to automatically manage pnpm versions. The required version is specified in `package.json` (`pnpm@7.5.1`).
+
+**If pnpm is not found:**
+```bash
+corepack enable
+corepack prepare pnpm@7.5.1 --activate
+```
+
+**If you see "Failed to switch pnpm":**
+```bash
+# Install Corepack first
+sudo npm install -g corepack --force
+
+# Then enable and prepare pnpm
+corepack enable
+corepack prepare pnpm@7.5.1 --activate
+```
+
+**Pre-commit hooks failing with pnpm error:**
+- Ensure Corepack is enabled: `corepack enable`
+- Verify pnpm version: `pnpm --version` (should be 7.5.1)
+- If still failing, try: `git commit --no-verify` as a workaround while debugging
+
+### Other Common Issues
+
+**Module not found: @infamous-freight/shared**
+```bash
+pnpm --filter @infamous-freight/shared build
+```
+
+**Port already in use**
+```bash
+lsof -ti:3001 | xargs kill -9  # API port
+lsof -ti:3000 | xargs kill -9  # Web port
+```
+
+**Dependency issues**
+```bash
+# Clean and reinstall everything
+pnpm clean
+pnpm install
+```
+
+## �📚 Additional Resources
 
 - [README.md](README.md) - Project overview
 - [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - Command reference
