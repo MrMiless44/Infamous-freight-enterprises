@@ -18,10 +18,11 @@ jobs:
       
       - name: Validate HTML files
         run: |
+          set -e
           echo "Validating HTML files..."
-          find . -name "*.html" -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./.next/*" | while read htmlfile; do
-            echo "Validating $htmlfile"
-            tidy -e -q "$htmlfile" || exit 1
+          for html_file in $(find . -name "*.html" -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./.next/*"); do
+            echo "Validating $html_file"
+            tidy -e -q "$html_file"
           done
           echo "All HTML files validated successfully!"
 
