@@ -22,7 +22,7 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "check:types": "pnpm -r --filter \"./packages/*\" --filter ./web exec tsc --noEmit",
     "check:all": "pnpm lint && pnpm check:types && pnpm format:check",
-    "prepare": "husky install",
+    "prepare": "husky install || true",
     "clean": "pnpm -r clean && rm -rf node_modules",
     "api:dev": "pnpm --filter infamous-freight-api dev",
     "web:dev": "pnpm --filter infamous-freight-web dev",
