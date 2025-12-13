@@ -1,19 +1,12 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "web/next.config.mjs",
-      "use": "@vercel/next"
-    }
-  ],
+  "buildCommand": "cd web && npm install && npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": "web/.next",
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "https://infamous-freight-api.fly.dev/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/web/$1"
     }
   ],
   "env": {
