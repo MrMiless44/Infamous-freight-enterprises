@@ -1,7 +1,7 @@
 # 🚀 INFAMOUS FREIGHT ENTERPRISES - PRODUCTION DEPLOYMENT STATUS
 
-**Last Updated**: December 13, 2025 - 16:30 UTC  
-**Status**: ✅ **DEPLOYMENTS IN PROGRESS - FINAL SETUP PHASE**
+**Last Updated**: December 13, 2025 - 16:46 UTC  
+**Status**: ✅ **DOCKER BUILD ISSUES FIXED - REDEPLOYING**
 
 ---
 
@@ -55,10 +55,12 @@
 
 ```
 ✅ COMPLETED:
-  ✅ Fly.io API containerized, built, and deployed
+  ✅ Fixed Prisma schema missing error in Docker build
+  ✅ Regenerated pnpm-lock.yaml with correct file path dependencies
+  ✅ Improved healthcheck (using Node.js http module instead of wget)
+  ✅ Fly.io API containerized, built, and deploying
   ✅ PostgreSQL database provisioned
-  ✅ Fly.io machines started and running
-  ✅ API Docker image optimized (80MB)
+  ✅ API Docker image fixed and rebuilding
   ✅ Vercel project linked and configured
   ✅ Web package.json updated for npm compatibility
   ✅ GitHub Actions workflows created
@@ -67,13 +69,13 @@
   ✅ Bundle analyzer integrated
 
 🔄 IN PROGRESS:
-  🟠 Vercel web deployment building
-  🟠 Fly.io API health check stabilizing (machines just started)
+  🟠 Fly.io API redeploying with fixed Docker image
+  🟠 Waiting for machines to initialize with new build
 
 ⏳ NEXT ACTIONS:
-  ⏳ [ ] Wait for Fly.io machines to fully initialize (2-3 minutes)
-  ⏳ [ ] Test API health endpoint once ready
-  ⏳ [ ] Verify Vercel deployment completes
+  ⏳ [ ] Wait for Fly.io deployment to complete
+  ⏳ [ ] Test API health endpoint once deployed
+  ⏳ [ ] Verify Vercel deployment status
   ⏳ [ ] Test web app loads from Vercel
   ⏳ [ ] Test API integration from web frontend
 ```
@@ -96,7 +98,9 @@
 ## 📝 RECENT COMMITS
 
 ```
-8bed16a (HEAD) fix(vercel): specify correct output directory for Next.js
+4c2ca3e (HEAD) fix(dependencies): regenerate pnpm-lock.yaml with correct file path dependencies
+d2b7a3a fix(docker): ensure Prisma schema is included and improve healthcheck
+8bed16a (OLD) fix(vercel): specify correct output directory for Next.js
 ee05a6d fix(dependencies): use file paths instead of workspace protocol for npm
 ed42380 fix(vercel): remove pnpm requirement and use standard npm install
 194bccd fix(vercel): ensure pnpm-lock.yaml is included in root deployment
@@ -104,8 +108,6 @@ ed42380 fix(vercel): remove pnpm requirement and use standard npm install
 881c5c8 fix(build): specify pnpm as package manager for Vercel
 8d654df fix(vercel): configure pnpm and fix build command
 4193c54 fix(docker): ensure all dependencies including dotenv are installed
-a55559c fix(docker): simplify Dockerfile dependencies and update render.yaml repo
-cf53936 style(web): apply prettier formatting to next.config.mjs
 ```
 
 ---
