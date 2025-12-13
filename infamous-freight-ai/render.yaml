@@ -1,0 +1,55 @@
+# Infæmous Freight Enterprises - Production Deployment
+
+services:
+  - type: web
+    name: infamous-freight-web
+    runtime: docker
+    dockerfilePath: ./web/Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_APP_NAME
+        value: Infæmous Freight
+      - key: NEXT_PUBLIC_API_BASE
+        sync: false
+      - key: PORT
+        value: 3000
+    healthCheckPath: /
+    plan: starter
+
+  - type: web
+    name: infamous-freight-api
+    runtime: docker
+    dockerfilePath: ./api/Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: infamous-freight-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: AI_SYNTHETIC_ENGINE_URL
+        value: http://infamous-freight-api:4000/internal/ai-sim
+      - key: AI_SYNTHETIC_API_KEY
+        generateValue: true
+      - key: AI_SECURITY_MODE
+        value: strict
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://infamous-freight-web.onrender.com
+    healthCheckPath: /api/health
+    plan: starter
+
+databases:
+  - name: infamous-freight-db
+    databaseName: infamous_freight
+    user: infamous
+    plan: starter
+    postgresMajorVersion: "15"
