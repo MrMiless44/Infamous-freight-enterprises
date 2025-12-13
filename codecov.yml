@@ -1,11 +1,5 @@
 codecov:
   require_ci_to_pass: yes
-  precision: 2
-  round: down
-  layout: "reach,diff,flags,tree"
-  branches:
-    - main
-    - develop
 
 coverage:
   precision: 2
@@ -13,7 +7,7 @@ coverage:
   range: "70...100"
 
 comment:
-  layout: "reach,diff,flags,tree,reach"
+  layout: "reach,diff,flags,tree"
   behavior: default
   require_changes: no
   require_base: no
@@ -39,14 +33,3 @@ flags:
       - web/components
       - web/pages
       - web/hooks
-
-status:
-  project:
-    default:
-      target: 70
-      threshold: 5%
-      base: auto
-  patch:
-    default:
-      target: 80
-      threshold: 5%
