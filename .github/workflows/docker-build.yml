@@ -29,13 +29,15 @@ jobs:
       - name: Build API image
         uses: docker/build-push-action@v5
         with:
-          context: ./api
+          context: .
+          file: ./api/Dockerfile
           push: false
           tags: ghcr.io/${{ env.REGISTRY_OWNER }}/infamous-freight-api:test
 
       - name: Build WEB image
         uses: docker/build-push-action@v5
         with:
-          context: ./web
+          context: .
+          file: ./web/Dockerfile
           push: false
           tags: ghcr.io/${{ env.REGISTRY_OWNER }}/infamous-freight-web:test
