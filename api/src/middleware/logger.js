@@ -1,19 +1,35 @@
 const pino = require("pino");
 const pinoHttp = require("pino-http");
 
+const level = process.env.LOG_LEVEL || "info";
+const isProduction = process.env.NODE_ENV === "production";
+let transport;
+
+if (!isProduction) {
+  const hasPretty = (() => {
+    try {
+      require.resolve("pino-pretty");
+      return true;
+    } catch (_err) {
+      return false;
+    }
+  })();
+
+  if (hasPretty) {
+    transport = {
+      target: "pino-pretty",
+      options: {
+        colorize: true,
+        translateTime: "SYS:standard",
+        ignore: "pid,hostname"
+      }
+    };
+  }
+}
+
 const logger = pino({
-  level: process.env.LOG_LEVEL || "info",
-  transport:
-    process.env.NODE_ENV !== "production"
-      ? {
-          target: "pino-pretty",
-          options: {
-            colorize: true,
-            translateTime: "SYS:standard",
-            ignore: "pid,hostname",
-          },
-        }
-      : undefined,
+  level,
+  transport
 });
 
 const httpLogger = pinoHttp({
