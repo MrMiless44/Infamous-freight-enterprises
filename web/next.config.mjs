@@ -1,3 +1,9 @@
+import bundleAnalyzer from '@next/bundle-analyzer';
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone', // Enable standalone output for Docker optimization
@@ -13,4 +19,4 @@ const nextConfig = {
   swcMinify: true
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
