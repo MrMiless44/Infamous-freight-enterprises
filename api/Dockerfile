@@ -36,10 +36,13 @@ COPY --from=builder-shared /app/packages/shared/package.json ./packages/shared/
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY api ./api
 
+# Ensure Prisma schema is available for Prisma Client
+COPY api/prisma ./api/prisma
+
 WORKDIR /app/api
 EXPOSE 3001
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=5 \
+  CMD node -e "require('http').get('http://localhost:3001/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})" || exit 1
 
 CMD ["node", "src/server.js"]
