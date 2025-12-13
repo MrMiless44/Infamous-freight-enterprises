@@ -3,6 +3,7 @@
 ## Project Overview
 
 This is a modern full-stack freight management platform built as a pnpm monorepo with:
+
 - **Backend**: Node.js/Express API with PostgreSQL/Prisma
 - **Frontend**: Next.js/React with TypeScript
 - **Mobile**: React Native/Expo application
@@ -11,6 +12,7 @@ This is a modern full-stack freight management platform built as a pnpm monorepo
 ## Development Workflow
 
 ### Initial Setup ✓
+
 - [x] Project scaffolded and configured
 - [x] Monorepo structure with pnpm workspaces
 - [x] Shared package created
@@ -27,6 +29,7 @@ When working on new features or fixes:
   - Review shared package for reusable code
 
 - [ ] **Setup Development Environment**
+
   ```bash
   pnpm install              # Install dependencies
   pnpm dev                  # Start all services (or api:dev, web:dev)
@@ -49,6 +52,7 @@ When working on new features or fixes:
   - Run: `pnpm test` or `pnpm --filter <package> test`
 
 - [ ] **Code Quality Checks**
+
   ```bash
   pnpm lint                 # Check for issues
   pnpm lint:fix             # Auto-fix linting issues
@@ -87,6 +91,7 @@ When working on new features or fixes:
 ## Common Development Tasks
 
 ### Working with Shared Package
+
 ```bash
 # After modifying packages/shared
 cd packages/shared
@@ -96,6 +101,7 @@ pnpm --filter @infamous-freight/shared build
 ```
 
 ### Database Changes
+
 ```bash
 cd api
 pnpm prisma:migrate:dev   # Create and run migration
@@ -104,6 +110,7 @@ pnpm prisma:studio        # Open database GUI
 ```
 
 ### Adding Dependencies
+
 ```bash
 pnpm --filter api add <package>           # To API
 pnpm --filter web add <package>           # To Web
@@ -112,6 +119,7 @@ pnpm add -w <package>                     # To workspace root
 ```
 
 ### Running Specific Services
+
 ```bash
 pnpm api:dev              # Backend only (port 3001)
 pnpm web:dev              # Frontend only (port 3000)
@@ -119,6 +127,7 @@ pnpm dev                  # All services
 ```
 
 ### Troubleshooting
+
 ```bash
 # Shared package not found
 pnpm --filter @infamous-freight/shared build
@@ -139,6 +148,7 @@ cd api && pnpm prisma:generate
 - **Documentation**: Update docs for API/feature changes
 
 ## Project Structure
+
 ```
 ├── api/                  # Backend API service
 │   ├── src/             # Source code
@@ -156,10 +166,10 @@ cd api && pnpm prisma:generate
 
 ## Helpful Resources
 
-- [README.md](../README.md) - Project overview
-- [CONTRIBUTING.md](../CONTRIBUTING.md) - Contribution guidelines
-- [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) - Command reference
-- [DOCUMENTATION_INDEX.md](../DOCUMENTATION_INDEX.md) - All documentation
+- [README.md](README.md) - Project overview
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+- [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - Command reference
+- [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) - All documentation
 
 ## Guidelines
 
