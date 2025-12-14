@@ -17,6 +17,8 @@ const aiRoutes = require("./routes/ai.commands");
 const billingRoutes = require("./routes/billing");
 const voiceRoutes = require("./routes/voice");
 const aiSimRoutes = require("./routes/aiSim.internal");
+const usersRoutes = require("./routes/users");
+const shipmentsRoutes = require("./routes/shipments");
 
 const app = express();
 
@@ -76,6 +78,8 @@ app.use("/api", healthRoutes);
 app.use("/api", aiRoutes);
 app.use("/api", billingRoutes);
 app.use("/api", voiceRoutes);
+app.use("/api", usersRoutes);
+app.use("/api", shipmentsRoutes);
 
 // CSP Violation Report Handler
 app.post("/api/csp-violation", handleCSPViolation);
