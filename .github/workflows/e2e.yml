@@ -43,9 +43,6 @@ jobs:
       - name: Install dependencies
         run: pnpm -w install --frozen-lockfile
 
-      - name: Approve required build scripts (pnpm >=10)
-        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
-        continue-on-error: true
 
       - name: Generate Prisma client
         run: pnpm -w exec prisma generate

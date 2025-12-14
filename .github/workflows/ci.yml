@@ -17,7 +17,7 @@ concurrency:
 
 env:
   NODE_VERSION: "20"
-  PNPM_VERSION: "10"
+  PNPM_VERSION: "7.5.1"
 
 jobs:
   security-audit:
@@ -40,10 +40,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Approve required build scripts (pnpm >=10)
-        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
-        continue-on-error: true
 
       - name: Run security audit
         run: pnpm audit --audit-level=moderate
@@ -69,10 +65,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Approve required build scripts (pnpm >=10)
-        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
-        continue-on-error: true
 
       - name: Generate Prisma client
         run: pnpm -w exec prisma generate
@@ -128,10 +120,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Approve required build scripts (pnpm >=10)
-        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
-        continue-on-error: true
-
       - name: Generate Prisma client
         run: pnpm -w exec prisma generate
         env:
@@ -182,10 +170,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Approve required build scripts (pnpm >=10)
-        run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
-        continue-on-error: true
 
       - name: Run health check
         working-directory: api
