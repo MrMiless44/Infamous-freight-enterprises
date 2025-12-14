@@ -169,4 +169,34 @@ router.delete(
   },
 );
 
+// Example of a transaction
+router.post(
+  "/users/transaction",
+  authenticate,
+  requireScope("users:write"),
+  auditLog,
+  async (req, res, next) => {
+    try {
+      const { usersData } = req.body;
+
+      await prisma.$transaction(
+        async (tx) => {
+          for (const userData of usersData) {
+            await tx.user.create({
+              data: userData,
+            });
+          }
+        },
+        {
+          timeout: 30000, // 30s
+        },
+      );
+
+      res.status(201).json({ ok: true, message: "Users created successfully" });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
 module.exports = router;
