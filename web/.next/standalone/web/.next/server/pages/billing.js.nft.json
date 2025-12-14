@@ -1,9 +1,1 @@
-{
-  "version": 1,
-  "files": [
-    "../webpack-runtime.js",
-    "../chunks/172.js",
-    "../../../package.json",
-    "../../../../package.json"
-  ]
-}
+{"version":1,"files":["../webpack-runtime.js","../chunks/218.js","../../../package.json","../../../../package.json"]}
