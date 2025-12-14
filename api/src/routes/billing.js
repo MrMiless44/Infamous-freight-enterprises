@@ -1,8 +1,7 @@
 const express = require("express");
 const Stripe = require("stripe");
 const paypal = require("@paypal/checkout-server-sdk");
-// TODO: Enable Prisma when OpenSSL issue is resolved
-// const prisma = require("../db/prisma");
+const { prisma } = require("../db/prisma");
 const {
   authenticate,
   requireScope,

@@ -1,53 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="17" failures="1" errors="0" time="4.683">
-  <testsuite name="__tests__/routes.validation.test.js" errors="0" failures="1" skipped="0" timestamp="2025-12-14T06:24:50" time="3.326" tests="6">
-    <testcase classname="Route validation and error handling" name="rejects disallowed origins with 403" time="0.084">
+<testsuites name="jest tests" tests="17" failures="0" errors="0" time="3.415">
+  <testsuite name="__tests__/routes.validation.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T07:02:22" time="2.631" tests="6">
+    <testcase classname="Route validation and error handling" name="rejects disallowed origins with 403" time="0.039">
     </testcase>
-    <testcase classname="Route validation and error handling" name="ai command validation fails when command missing" time="0.078">
+    <testcase classname="Route validation and error handling" name="ai command validation fails when command missing" time="0.031">
     </testcase>
-    <testcase classname="Route validation and error handling" name="billing stripe session returns 503 when not configured" time="0.014">
+    <testcase classname="Route validation and error handling" name="billing stripe session returns 503 when not configured" time="0.008">
     </testcase>
-    <testcase classname="Route validation and error handling" name="billing paypal capture requires orderId" time="0.018">
-      <failure>PrismaClientInitializationError: Unable to require(`/workspaces/Infamous-Freight-Enterprises/node_modules/.prisma/client/libquery_engine-linux-musl.so.node`).
-The Prisma engines do not seem to be compatible with your system. Please refer to the documentation about Prisma&apos;s system requirements: https://pris.ly/d/system-requirements
-
-Details: Error loading shared library libssl.so.1.1: No such file or directory (needed by /workspaces/Infamous-Freight-Enterprises/node_modules/.prisma/client/libquery_engine-linux-musl.so.node)
-    at Object.loadLibrary (/workspaces/Infamous-Freight-Enterprises/node_modules/@prisma/client/runtime/library.js:111:10243)
-    at _r.loadEngine (/workspaces/Infamous-Freight-Enterprises/node_modules/@prisma/client/runtime/library.js:112:448)
-    at _r.instantiateLibrary (/workspaces/Infamous-Freight-Enterprises/node_modules/@prisma/client/runtime/library.js:111:12599)</failure>
+    <testcase classname="Route validation and error handling" name="billing paypal capture requires orderId" time="0.004">
     </testcase>
-    <testcase classname="Route validation and error handling" name="voice command validation fails when text missing" time="0.007">
+    <testcase classname="Route validation and error handling" name="voice command validation fails when text missing" time="0.005">
     </testcase>
-    <testcase classname="Route validation and error handling" name="voice ingest rejects unsupported audio format" time="0.018">
+    <testcase classname="Route validation and error handling" name="voice ingest rejects unsupported audio format" time="0.01">
     </testcase>
   </testsuite>
-  <testsuite name="__tests__/routes.success.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T06:24:53" time="0.485" tests="3">
-    <testcase classname="Route success flows" name="ai command executes when payload is valid" time="0.015">
+  <testsuite name="__tests__/routes.success.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T07:02:25" time="0.282" tests="3">
+    <testcase classname="Route success flows" name="ai command executes when payload is valid" time="0.012">
     </testcase>
-    <testcase classname="Route success flows" name="voice command forwards text to AI service" time="0.01">
+    <testcase classname="Route success flows" name="voice command forwards text to AI service" time="0.004">
     </testcase>
-    <testcase classname="Route success flows" name="voice ingest accepts supported audio uploads" time="0.024">
-    </testcase>
-  </testsuite>
-  <testsuite name="src/services/__tests__/aiSyntheticClient.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T06:24:54" time="0.329" tests="5">
-    <testcase classname="aiSyntheticClient sendCommand" name="uses synthetic provider when configured" time="0.059">
-    </testcase>
-    <testcase classname="aiSyntheticClient sendCommand" name="throws helpful error when synthetic engine is missing" time="0.084">
-    </testcase>
-    <testcase classname="aiSyntheticClient sendCommand" name="surfaces upstream errors from synthetic engine" time="0.044">
-    </testcase>
-    <testcase classname="aiSyntheticClient sendCommand" name="routes through OpenAI when provider configured" time="0.047">
-    </testcase>
-    <testcase classname="aiSyntheticClient sendCommand" name="throws when OpenAI provider lacks configuration" time="0.023">
+    <testcase classname="Route success flows" name="voice ingest accepts supported audio uploads" time="0.009">
     </testcase>
   </testsuite>
-  <testsuite name="__tests__/server.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T06:24:54" time="0.187" tests="2">
-    <testcase classname="Server initialization" name="should load configuration" time="0.003">
+  <testsuite name="src/services/__tests__/aiSyntheticClient.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T07:02:25" time="0.175" tests="5">
+    <testcase classname="aiSyntheticClient sendCommand" name="uses synthetic provider when configured" time="0.027">
+    </testcase>
+    <testcase classname="aiSyntheticClient sendCommand" name="throws helpful error when synthetic engine is missing" time="0.034">
+    </testcase>
+    <testcase classname="aiSyntheticClient sendCommand" name="surfaces upstream errors from synthetic engine" time="0.027">
+    </testcase>
+    <testcase classname="aiSyntheticClient sendCommand" name="routes through OpenAI when provider configured" time="0.031">
+    </testcase>
+    <testcase classname="aiSyntheticClient sendCommand" name="throws when OpenAI provider lacks configuration" time="0.02">
+    </testcase>
+  </testsuite>
+  <testsuite name="__tests__/server.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T07:02:25" time="0.109" tests="2">
+    <testcase classname="Server initialization" name="should load configuration" time="0.006">
     </testcase>
     <testcase classname="Server initialization" name="should have development mode" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="src/routes/__tests__/health.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T06:24:54" time="0.048" tests="1">
+  <testsuite name="src/routes/__tests__/health.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T07:02:25" time="0.03" tests="1">
     <testcase classname="Health Route" name="should return ok status" time="0.001">
     </testcase>
   </testsuite>
