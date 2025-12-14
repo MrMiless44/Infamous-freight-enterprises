@@ -43,7 +43,6 @@ jobs:
       - name: Install dependencies
         run: pnpm -w install --frozen-lockfile
 
-
       - name: Generate Prisma client
         run: pnpm -w exec prisma generate
         continue-on-error: true
