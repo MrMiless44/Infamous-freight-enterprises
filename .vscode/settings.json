@@ -18,7 +18,7 @@
     "./web",
     "./packages/shared"
   ],
-  "terminal.integrated.shellIntegration.enabled": true,
+  "terminal.integrated.shellIntegration.enabled": false,
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "files.exclude": {
@@ -62,5 +62,8 @@
     "GitHub.codespaces",
     "GitHub.vscode-pull-request-github",
     "Github.copilot"
-  ]
+  ],
+  "terminal.integrated.shellIntegration.quickFixEnabled": false,
+  "terminal.integrated.stickyScroll.enabled": false,
+  "terminal.integrated.suggest.enabled": false
 }

@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="17" failures="0" errors="0" time="3.142">
-  <testsuite name="__tests__/routes.validation.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-13T15:12:16" time="1.781" tests="6">
-    <testcase classname="Route validation and error handling" name="rejects disallowed origins with 403" time="0.079">
+<testsuites name="jest tests" tests="17" failures="0" errors="0" time="4.374">
+  <testsuite name="__tests__/routes.validation.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T05:56:31" time="2.42" tests="6">
+    <testcase classname="Route validation and error handling" name="rejects disallowed origins with 403" time="0.173">
     </testcase>
-    <testcase classname="Route validation and error handling" name="ai command validation fails when command missing" time="0.061">
+    <testcase classname="Route validation and error handling" name="ai command validation fails when command missing" time="0.106">
     </testcase>
-    <testcase classname="Route validation and error handling" name="billing stripe session returns 503 when not configured" time="0.016">
+    <testcase classname="Route validation and error handling" name="billing stripe session returns 503 when not configured" time="0.062">
     </testcase>
-    <testcase classname="Route validation and error handling" name="billing paypal capture requires orderId" time="0.007">
+    <testcase classname="Route validation and error handling" name="billing paypal capture requires orderId" time="0.013">
     </testcase>
-    <testcase classname="Route validation and error handling" name="voice command validation fails when text missing" time="0.008">
+    <testcase classname="Route validation and error handling" name="voice command validation fails when text missing" time="0.017">
     </testcase>
-    <testcase classname="Route validation and error handling" name="voice ingest rejects unsupported audio format" time="0.017">
-    </testcase>
-  </testsuite>
-  <testsuite name="__tests__/routes.success.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-13T15:12:18" time="0.511" tests="3">
-    <testcase classname="Route success flows" name="ai command executes when payload is valid" time="0.021">
-    </testcase>
-    <testcase classname="Route success flows" name="voice command forwards text to AI service" time="0.007">
-    </testcase>
-    <testcase classname="Route success flows" name="voice ingest accepts supported audio uploads" time="0.019">
+    <testcase classname="Route validation and error handling" name="voice ingest rejects unsupported audio format" time="0.082">
     </testcase>
   </testsuite>
-  <testsuite name="src/services/__tests__/aiSyntheticClient.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-13T15:12:19" time="0.371" tests="5">
-    <testcase classname="aiSyntheticClient sendCommand" name="uses synthetic provider when configured" time="0.052">
+  <testsuite name="__tests__/routes.success.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T05:56:34" time="0.827" tests="3">
+    <testcase classname="Route success flows" name="ai command executes when payload is valid" time="0.063">
     </testcase>
-    <testcase classname="aiSyntheticClient sendCommand" name="throws helpful error when synthetic engine is missing" time="0.106">
+    <testcase classname="Route success flows" name="voice command forwards text to AI service" time="0.018">
     </testcase>
-    <testcase classname="aiSyntheticClient sendCommand" name="surfaces upstream errors from synthetic engine" time="0.05">
-    </testcase>
-    <testcase classname="aiSyntheticClient sendCommand" name="routes through OpenAI when provider configured" time="0.062">
-    </testcase>
-    <testcase classname="aiSyntheticClient sendCommand" name="throws when OpenAI provider lacks configuration" time="0.053">
+    <testcase classname="Route success flows" name="voice ingest accepts supported audio uploads" time="0.067">
     </testcase>
   </testsuite>
-  <testsuite name="__tests__/server.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-13T15:12:19" time="0.096" tests="2">
-    <testcase classname="Server initialization" name="should load configuration" time="0.004">
+  <testsuite name="src/services/__tests__/aiSyntheticClient.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T05:56:35" time="0.543" tests="5">
+    <testcase classname="aiSyntheticClient sendCommand" name="uses synthetic provider when configured" time="0.089">
     </testcase>
-    <testcase classname="Server initialization" name="should have development mode" time="0.003">
+    <testcase classname="aiSyntheticClient sendCommand" name="throws helpful error when synthetic engine is missing" time="0.078">
+    </testcase>
+    <testcase classname="aiSyntheticClient sendCommand" name="surfaces upstream errors from synthetic engine" time="0.12">
+    </testcase>
+    <testcase classname="aiSyntheticClient sendCommand" name="routes through OpenAI when provider configured" time="0.077">
+    </testcase>
+    <testcase classname="aiSyntheticClient sendCommand" name="throws when OpenAI provider lacks configuration" time="0.065">
     </testcase>
   </testsuite>
-  <testsuite name="src/routes/__tests__/health.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-13T15:12:19" time="0.104" tests="1">
+  <testsuite name="__tests__/server.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T05:56:36" time="0.149" tests="2">
+    <testcase classname="Server initialization" name="should load configuration" time="0.002">
+    </testcase>
+    <testcase classname="Server initialization" name="should have development mode" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/routes/__tests__/health.test.js" errors="0" failures="0" skipped="0" timestamp="2025-12-14T05:56:36" time="0.064" tests="1">
     <testcase classname="Health Route" name="should return ok status" time="0.001">
     </testcase>
   </testsuite>
