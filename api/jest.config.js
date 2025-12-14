@@ -16,21 +16,7 @@ module.exports = {
     },
   },
   coverageReporters: ["text", "lcov", "json", "html"],
-  reporters: [
-    "default",
-    [
-      "jest-junit",
-      {
-        outputDirectory: ".",
-        outputName: "junit.xml",
-        ancestorSeparator: " › ",
-        uniqueOutputName: "false",
-        suiteNameTemplate: "{filepath}",
-        classNameTemplate: "{classname}",
-        titleTemplate: "{title}",
-      },
-    ],
-  ],
+  reporters: ["default"],
   testMatch: ["**/__tests__/**/*.js", "**/?(*.)+(spec|test).js"],
   coveragePathIgnorePatterns: ["/node_modules/"],
   // Handle ES modules in monorepo

@@ -35,21 +35,7 @@ const customJestConfig = {
     },
   },
   coverageReporters: ["text", "lcov", "json", "html"],
-  reporters: [
-    "default",
-    [
-      "jest-junit",
-      {
-        outputDirectory: ".",
-        outputName: "junit.xml",
-        ancestorSeparator: " › ",
-        uniqueOutputName: "false",
-        suiteNameTemplate: "{filepath}",
-        classNameTemplate: "{classname}",
-        titleTemplate: "{title}",
-      },
-    ],
-  ],
+  reporters: ["default"],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
