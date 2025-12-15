@@ -20,7 +20,7 @@
     "validate:env": "node scripts/env.validation.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.20.0",
+    "@anthropic-ai/sdk": "^0.71.2",
     "@infamous-freight/shared": "file:../packages/shared",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@prisma/client": "^5.11.0",
