@@ -24,7 +24,7 @@
     "@infamous-freight/shared": "file:../packages/shared",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@prisma/client": "^5.11.0",
-    "@sentry/node": "^7.100.0",
+    "@sentry/node": "^10.30.0",
     "axios": "^1.7.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.0",
