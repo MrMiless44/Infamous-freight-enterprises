@@ -42,7 +42,7 @@
     ".lintstagedrc": "json"
   },
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -66,5 +66,14 @@
   "terminal.integrated.shellIntegration.quickFixEnabled": false,
   "terminal.integrated.stickyScroll.enabled": false,
   "terminal.integrated.suggest.enabled": false,
-  "prisma.pinToPrisma6": true
+  "prisma.pinToPrisma6": true,
+  "typescript.experimental.useTsgo": true,
+  "typescript.implementationsCodeLens.enabled": true,
+  "typescript.implementationsCodeLens.showOnAllClassMethods": true,
+  "typescript.implementationsCodeLens.showOnInterfaceMethods": true,
+  "typescript.preferGoToSourceDefinition": true,
+  "typescript.referencesCodeLens.enabled": true,
+  "typescript.referencesCodeLens.showOnAllFunctions": true,
+  "terminal.explorerKind": "both",
+  "terminal.integrated.accessibleViewFocusOnCommandExecution": true
 }

@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-push hook - Run tests before pushing
+echo "🧪 Running tests before push..."
+
+# Prioritize pnpm if available
+if command -v pnpm >/dev/null 2>&1; then
+  PNPM_HOME="${PNPM_HOME:-$HOME/.local/share/pnpm}"
+  export PATH="$PNPM_HOME:$PATH"
+  
+  echo "📦 Running API tests..."
+  cd api && pnpm test --bail --maxWorkers=50%
+  API_EXIT=$?
+  cd ..
+  
+  if [ $API_EXIT -ne 0 ]; then
+    echo "❌ API tests failed. Fix tests before pushing."
+    exit 1
+  fi
+  
+  echo "✅ All tests passed. Pushing..."
+else
+  echo "⚠️  pnpm not found. Skipping tests."
+fi

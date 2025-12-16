@@ -1124,28 +1124,7 @@
     "ghcr.io/ryanlua/features/rojo:0": {},
     "ghcr.io/tobiaschc/devcontainer-features/starship:1": {},
     "ghcr.io/joebowbeer/devcontainers-features/arkade-get:1": {},
-    "ghcr.io/joebowbeer/devcontainers-features/crossplane:1": {},
-    "ghcr.io/pirpedro/features/antidote:1": {},
-    "ghcr.io/pirpedro/features/chezmoi:1": {},
-    "ghcr.io/pirpedro/features/dev-gadgets:1": {},
-    "ghcr.io/pirpedro/features/just:1": {},
-    "ghcr.io/bullmastiffo/devcontainers-features/azurelinux-docker-outside-of-docker:1": {},
-    "ghcr.io/takahashinguyen/devcontainer-features/mailpit-homebrew:1": {},
-    "ghcr.io/takahashinguyen/devcontainer-features/minio-client-homebrew:1": {},
-    "ghcr.io/takahashinguyen/devcontainer-features/minio-homebrew:2": {},
-    "ghcr.io/olivierlemasle/devcontainers-features/jsonnet:1": {},
-    "ghcr.io/olivierlemasle/devcontainers-features/tauri:1": {},
-    "ghcr.io/navinkrishnan/devcontainer-features-btp/btp-cap-dev-stack:1": {},
-    "ghcr.io/navinkrishnan/devcontainer-features-btp/cds-dk:1": {},
-    "ghcr.io/navinkrishnan/devcontainer-features-btp/cf:1": {},
-    "ghcr.io/navinkrishnan/devcontainer-features-btp/helm:1": {},
-    "ghcr.io/navinkrishnan/devcontainer-features-btp/mbt:1": {},
-    "ghcr.io/navinkrishnan/devcontainer-features-btp/pack:1": {},
-    "ghcr.io/yassinedoghri/devcontainers/php-extensions-installer:1": {},
-    "ghcr.io/42atomys/devcontainers-features/dragonfly:1": {},
-    "ghcr.io/42atomys/devcontainers-features/meilisearch:1": {},
-    "ghcr.io/42atomys/devcontainers-features/minio-server:1": {},
-    "ghcr.io/42atomys/devcontainers-features/redis-cli:1": {}
+    "ghcr.io/joebowbeer/devcontainers-features/crossplane:1": {}
   }
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
   // "remoteUser": "root"

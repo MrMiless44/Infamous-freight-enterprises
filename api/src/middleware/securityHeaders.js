@@ -95,7 +95,7 @@ function securityHeaders(app) {
  * Route: POST /api/csp-violation
  */
 function handleCSPViolation(req, res) {
-  const violation = req.body;
+  const violation = req.body && req.body["csp-report"];
 
   // Handle null or empty body
   if (!violation) {
@@ -119,7 +119,7 @@ function handleCSPViolation(req, res) {
     });
   }
 
-  res.status(204).send(); // No content response
+  res.status(204).end();
 }
 
 module.exports = {

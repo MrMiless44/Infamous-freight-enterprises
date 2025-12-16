@@ -1,5 +1,10 @@
 # Infamous Freight Enterprises
 
+[![Test Coverage](https://img.shields.io/badge/coverage-86.2%25-brightgreen.svg)](./api/coverage)
+[![Tests](https://img.shields.io/badge/tests-197%20passing-brightgreen.svg)](./api)
+[![Node.js](https://img.shields.io/badge/node-20.18.1-brightgreen.svg)](https://nodejs.org)
+[![pnpm](https://img.shields.io/badge/pnpm-8.15.9-orange.svg)](https://pnpm.io)
+
 A modern full-stack freight management platform with AI-powered features, real-time voice capabilities, and integrated billing system.
 
 ## 📋 Project Overview

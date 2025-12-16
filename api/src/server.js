@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
-const { httpLogger, logger } = require("./middleware/logger");
+const { httpLogger, logger, correlationMiddleware, performanceMiddleware } = require("./middleware/logger");
 const { rateLimit } = require("./middleware/security");
 const errorHandler = require("./middleware/errorHandler");
 const {
@@ -59,6 +59,8 @@ app.use(
     credentials: true,
   }),
 );
+app.use(correlationMiddleware);
+app.use(performanceMiddleware);
 app.use(httpLogger);
 app.use(rateLimit);
 app.use(express.json({ limit: "12mb" }));

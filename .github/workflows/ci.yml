@@ -128,11 +128,17 @@ jobs:
 
       - name: Run all tests with coverage
         run: pnpm test:coverage
-        continue-on-error: true
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           JWT_SECRET: test-secret
           NODE_ENV: test
+
+      - name: Enforce coverage thresholds
+        run: |
+          echo "📊 Checking coverage thresholds..."
+          cd api
+          pnpm test:coverage -- --coverageReporters=text-summary
+          echo "✅ Coverage thresholds met (≥84%)"
 
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}
@@ -142,6 +148,7 @@ jobs:
           files: ./api/coverage/lcov.info,./web/coverage/lcov.info,./packages/shared/coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
+          fail_ci_if_error: false
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
@@ -149,6 +156,18 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./api/junit.xml,./web/junit.xml,./packages/shared/junit.xml
+
+      - name: Upload test results as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            api/junit.xml
+            api/coverage/
+            web/junit.xml
+            web/coverage/
+          retention-days: 30
 
   smoke-tests:
     name: Smoke Tests

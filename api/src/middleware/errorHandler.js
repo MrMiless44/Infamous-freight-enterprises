@@ -57,6 +57,14 @@ function errorHandler(err, req, res, next) {
     });
   }
 
+  // Service unavailable errors
+  if (err.status === 503) {
+    return res.status(503).json({
+      success: false,
+      error: err.message || "Service Unavailable",
+    });
+  }
+
   const status = Number.isInteger(err.status) ? err.status : 500;
   const isServerError = status >= 500;
 

@@ -1,5 +1,6 @@
 const express = require("express");
 const { prisma } = require("../db/prisma");
+const { body, validationResult } = require("express-validator");
 const {
   authenticate,
   requireScope,
@@ -74,8 +75,22 @@ router.post(
   authenticate,
   requireScope("users:write"),
   auditLog,
+  [
+    body("email").isEmail().withMessage("Invalid email format"),
+    body("name").optional().isString().trim().isLength({ min: 1, max: 100 }),
+    body("role").optional().isIn(["user", "admin", "driver"]).withMessage("Invalid role"),
+  ],
   async (req, res, next) => {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          ok: false,
+          error: "Validation Error",
+          details: errors.array(),
+        });
+      }
+
       const { email, name, role = "user" } = req.body;
 
       if (!email) {

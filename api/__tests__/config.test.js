@@ -8,20 +8,20 @@ describe("Config", () => {
   beforeEach(() => {
     // Save original environment
     originalEnv = { ...process.env };
-    
+
     // Clear all environment variables
     Object.keys(process.env).forEach((key) => {
-      if (key.startsWith("API_") || 
-          key.startsWith("DATABASE_") ||
-          key.startsWith("CORS_") ||
-          key.startsWith("OPENAI_") ||
-          key.startsWith("ANTHROPIC_") ||
-          key.startsWith("STRIPE_") ||
-          key.startsWith("PAYPAL_") ||
-          key.startsWith("AI_") ||
-          key.startsWith("JWT_") ||
-          key.startsWith("LOG_") ||
-          key === "NODE_ENV") {
+      if (key.startsWith("API_") ||
+        key.startsWith("DATABASE_") ||
+        key.startsWith("CORS_") ||
+        key.startsWith("OPENAI_") ||
+        key.startsWith("ANTHROPIC_") ||
+        key.startsWith("STRIPE_") ||
+        key.startsWith("PAYPAL_") ||
+        key.startsWith("AI_") ||
+        key.startsWith("JWT_") ||
+        key.startsWith("LOG_") ||
+        key === "NODE_ENV") {
         delete process.env[key];
       }
     });
@@ -47,13 +47,9 @@ describe("Config", () => {
     });
 
     test("should detect production environment", () => {
-      delete process.env.NODE_ENV;
       process.env.NODE_ENV = "production";
-      Object.keys(require.cache).forEach(key => {
-        if (key.includes("config.js")) {
-          delete require.cache[key];
-        }
-      });
+      // Clear all caches to force fresh module load
+      jest.resetModules();
       const config = require("../src/config");
       expect(config.nodeEnv).toBe("production");
       expect(config.isProduction).toBe(true);
@@ -66,7 +62,7 @@ describe("Config", () => {
       process.env.API_PORT = "4000";
       const config = require("../src/config");
       const apiConfig = config.getApiConfig();
-      
+
       expect(apiConfig.port).toBe("4000");
       expect(apiConfig.host).toBe("0.0.0.0");
       expect(apiConfig.basePath).toBe("/api");
@@ -78,7 +74,7 @@ describe("Config", () => {
       process.env.API_BASE_PATH = "/v1";
       const config = require("../src/config");
       const apiConfig = config.getApiConfig();
-      
+
       expect(apiConfig.port).toBe("5000");
       expect(apiConfig.host).toBe("localhost");
       expect(apiConfig.basePath).toBe("/v1");
@@ -135,10 +131,10 @@ describe("Config", () => {
       process.env.PAYPAL_SECRET = "paypal-secret-2";
       process.env.AI_SYNTHETIC_ENGINE_URL = "http://localhost:8000";
       process.env.AI_SYNTHETIC_API_KEY = "ai-key";
-      
+
       const config = require("../src/config");
       const keys = config.getApiKeys();
-      
+
       expect(keys.openai).toBe("openai-key");
       expect(keys.anthropic).toBe("anthropic-key");
       expect(keys.stripe).toBe("stripe-key");
@@ -169,14 +165,14 @@ describe("Config", () => {
   describe("getLogLevel", () => {
     test("should return debug log level in development", () => {
       process.env.NODE_ENV = "development";
-      delete require.cache[require.resolve("../src/config")];
+      jest.resetModules();
       const config = require("../src/config");
       expect(config.getLogLevel()).toBe("debug");
     });
 
     test("should return error log level in production", () => {
       process.env.NODE_ENV = "production";
-      delete require.cache[require.resolve("../src/config")];
+      jest.resetModules();
       const config = require("../src/config");
       expect(config.getLogLevel()).toBe("error");
     });

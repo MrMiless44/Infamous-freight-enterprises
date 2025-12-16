@@ -1,5 +1,4 @@
-// e2e/tests/shipment-workflow.spec.js
-test("complete shipment lifecycle", async () => {
-  // Create shipment → Update status → Track → Deliver
-  // Tests actual API + database interaction
+// Recommended: api/__tests__/contracts/stripe.contract.test.js
+test('Stripe API matches expected schema', async () => {
+  // Verify external API hasn't changed unexpectedly
 });

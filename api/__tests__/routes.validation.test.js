@@ -51,8 +51,7 @@ describe("Route validation and error handling", () => {
       .send({});
 
     expect(res.status).toBe(503);
-    expect(res.body.error).toBe("Server Error");
-    expect(res.body.message).toMatch(/Stripe not configured/);
+    expect(res.body.error).toBe("Stripe not configured");
   });
 
   test("billing paypal capture requires orderId", async () => {
