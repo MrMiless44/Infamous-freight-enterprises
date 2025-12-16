@@ -227,6 +227,41 @@ January+ (Session 3)
 
 ---
 
+## � Render API Commands
+
+**Get your API key**: https://dashboard.render.com/ → Profile → Account Settings → API Keys
+
+### List All Services
+```bash
+curl --header 'Authorization: Bearer YOUR_API_KEY' \
+     https://api.render.com/v1/services
+```
+
+### Trigger Database Backup
+```bash
+curl --request POST 'https://api.render.com/v1/services/dpg-d50s6gp5pdvs739a3g10-a/jobs' \
+     --header 'Authorization: Bearer YOUR_API_KEY' \
+     --header 'Content-Type: application/json' \
+     --data-raw '{
+        "startCommand": "pg_dump infamous_freight"
+     }'
+```
+
+**Backup schedule recommendation**: Weekly (every Sunday)
+
+### Other Useful Commands
+```bash
+# Check database status
+curl --header 'Authorization: Bearer YOUR_API_KEY' \
+     https://api.render.com/v1/services/dpg-d50s6gp5pdvs739a3g10-a
+
+# View service metrics
+curl --header 'Authorization: Bearer YOUR_API_KEY' \
+     https://api.render.com/v1/services/dpg-d50s6gp5pdvs739a3g10-a/metrics
+```
+
+---
+
 ## 💡 Pro Tips for Next Week
 
 1. **Log observations daily** - Even small issues add up
@@ -235,6 +270,7 @@ January+ (Session 3)
 4. **Note patterns** - Spikes, trends, correlations
 5. **Keep git history clean** - Small, focused commits
 6. **Review weekly** - Summary of what happened
+7. **Backup database weekly** - Use Render API command above
 
 ---
 
