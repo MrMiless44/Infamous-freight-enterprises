@@ -37,6 +37,7 @@ git push origin main
 ```
 
 **Or manually redeploy:**
+
 1. Go to Vercel dashboard
 2. Click **Deployments**
 3. Click the **3-dot menu** on latest deployment
@@ -52,20 +53,20 @@ Wait 2-3 minutes for build to complete:
 4. Test an API call in the browser:
 
 ```javascript
-fetch('https://infamous-freight-api.fly.dev/api/health')
-  .then(r => r.json())
-  .then(d => console.log(d))
+fetch("https://infamous-freight-api.fly.dev/api/health")
+  .then((r) => r.json())
+  .then((d) => console.log(d));
 ```
 
 ---
 
 ## Environment Variables Reference
 
-| Variable | Value | Location |
-|----------|-------|----------|
-| `NEXT_PUBLIC_API_BASE` | `https://infamous-freight-api.fly.dev` | Vercel Dashboard |
-| `NEXT_PUBLIC_APP_NAME` | `Infamous Freight` | Vercel Dashboard (optional) |
-| `NEXT_PUBLIC_ENV` | `production` | Vercel Dashboard (optional) |
+| Variable               | Value                                  | Location                    |
+| ---------------------- | -------------------------------------- | --------------------------- |
+| `NEXT_PUBLIC_API_BASE` | `https://infamous-freight-api.fly.dev` | Vercel Dashboard            |
+| `NEXT_PUBLIC_APP_NAME` | `Infamous Freight`                     | Vercel Dashboard (optional) |
+| `NEXT_PUBLIC_ENV`      | `production`                           | Vercel Dashboard (optional) |
 
 ---
 
@@ -83,6 +84,7 @@ fetch('https://infamous-freight-api.fly.dev/api/health')
 ### Build Fails with "Cannot find module @infamous-freight/shared"
 
 **Solution**: Shared package must be built before deployment
+
 ```bash
 pnpm --filter @infamous-freight/shared build
 git add packages/shared/dist
@@ -93,6 +95,7 @@ git push origin main
 ### API Calls Return 401 Unauthorized
 
 **Solution**: User is not authenticated
+
 - Check browser console for auth errors
 - Verify JWT token is being stored
 - Check `NEXT_PUBLIC_API_BASE` is correct in browser DevTools
@@ -100,6 +103,7 @@ git push origin main
 ### CORS Errors
 
 **Solution**: Update `CORS_ORIGINS` in Fly.io secrets
+
 ```bash
 flyctl secrets set CORS_ORIGINS="http://localhost:3000,https://your-vercel-domain.vercel.app" -a infamous-freight-api
 ```
@@ -107,6 +111,7 @@ flyctl secrets set CORS_ORIGINS="http://localhost:3000,https://your-vercel-domai
 ### Deployment Hangs or Times Out
 
 **Solution**: Clear Vercel cache and redeploy
+
 1. Go to Vercel dashboard
 2. Settings → Git
 3. Click **Clear Build Cache**
@@ -154,6 +159,7 @@ git push origin main
 ```
 
 Or in Vercel dashboard:
+
 1. **Deployments** → Select previous working deployment
 2. Click **3-dot menu** → **Promote to Production**
 
