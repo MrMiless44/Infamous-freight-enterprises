@@ -94,6 +94,35 @@ const performanceMiddleware = (req, res, next) => {
       logger.info(logData, "Request completed");
     }
 
+    // Optionally ship log to Datadog via HTTP intake (agentless)
+    if (process.env.DD_API_KEY && process.env.DD_LOGS_HTTP_ENABLED === "true") {
+      try {
+        // Lazy import to avoid hard dependency when disabled
+        const axios = require("axios");
+        axios.post(
+          "https://http-intake.logs.datadoghq.com/api/v2/logs",
+          [
+            {
+              ddsource: "node",
+              service: process.env.DD_SERVICE || "infamous-freight-api",
+              env: process.env.DD_ENV || process.env.NODE_ENV || "development",
+              message: "http_request",
+              ...logData,
+            },
+          ],
+          {
+            headers: {
+              "DD-API-KEY": process.env.DD_API_KEY,
+              "Content-Type": "application/json",
+            },
+            timeout: 1500,
+          },
+        ).catch(() => {});
+      } catch (_err) {
+        // ignore when axios not installed
+      }
+    }
+
     // Call original end function
     originalEnd.apply(res, args);
   };

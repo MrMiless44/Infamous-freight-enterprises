@@ -1,4 +1,16 @@
 require("dotenv").config();
+// Initialize Datadog APM early, before requiring Express internals
+if (process.env.DD_TRACE_ENABLED === "true") {
+  try {
+    require("dd-trace").init({
+      service: process.env.DD_SERVICE || "infamous-freight-api",
+      env: process.env.DD_ENV || process.env.NODE_ENV || "development",
+      runtimeMetrics: process.env.DD_RUNTIME_METRICS_ENABLED === "true",
+    });
+  } catch (e) {
+    // Fail open if dd-trace is not installed
+  }
+}
 const express = require("express");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
