@@ -1,4 +1,6 @@
 name: CI
+permissions:
+  contents: read
 
 on:
   push:
@@ -255,6 +257,8 @@ jobs:
 
   ci-status:
     name: CI Status Check
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     if: always()
     needs: [security-audit, lint-build, test-coverage, smoke-tests, docker-build, performance-check]
