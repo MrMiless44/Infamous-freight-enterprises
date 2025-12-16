@@ -74,7 +74,33 @@ curl https://infamous-freight-api.fly.dev/api/health
 - Check interval: 5 minutes
 - Alert if down for 5+ minutes
 
-#### 4. **Error Rate Monitoring**
+#### 4. **Database Performance (PGHero)**
+
+**Dashboard**: http://pghero-dpg-d50s6gp5pdvs739a3g10-a:10000
+
+**What to monitor:**
+- ✅ **Slow queries** - Any queries >1000ms
+- ✅ **Index usage** - Missing indexes causing table scans
+- ✅ **Connection pool** - Available vs. used connections
+- ✅ **Cache hit rate** - Should be >99%
+- ✅ **Database size** - Monitor growth trends
+- ✅ **Long-running queries** - Queries taking >5s
+
+**Key metrics to track:**
+```
+- Cache hit rate: Target >99%
+- Average query time: Target <50ms
+- Connection pool: Max 20, target usage <80%
+- Database size: Monitor daily growth
+```
+
+**Action if issue detected:**
+- Slow queries → Add indexes, optimize queries
+- Low cache hit rate → Increase shared_buffers
+- Connection pool exhausted → Check for connection leaks
+- Large table scans → Add missing indexes
+
+#### 5. **Error Rate Monitoring**
 
 **If Sentry is configured:**
 

@@ -20,15 +20,19 @@ curl https://infamous-freight-api.fly.dev/api/health
 flyctl status -a infamous-freight-api
 # Look for: All machines running
 
-# 3. Vercel Dashboard
+# 3. Database Performance (PGHero)
+# Open in browser: http://pghero-dpg-d50s6gp5pdvs739a3g10-a:10000
+# Check: Slow queries, index usage, connection pool
+
+# 4. Vercel Dashboard
 # Go to: https://vercel.com/dashboard
 # Check: Green status, no failed deployments
 
-# 4. Check Recent Logs
+# 5. Check Recent Logs
 flyctl logs -a infamous-freight-api | tail -20
 # Look for: No error messages
 
-# 5. Response Time Check
+# 6. Response Time Check
 time curl -s https://infamous-freight-api.fly.dev/api/users | head -c 100
 # Target: <500ms response time
 ```
