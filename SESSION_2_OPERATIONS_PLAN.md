@@ -232,12 +232,14 @@ January+ (Session 3)
 **Get your API key**: https://dashboard.render.com/ → Profile → Account Settings → API Keys
 
 ### List All Services
+
 ```bash
 curl --header 'Authorization: Bearer YOUR_API_KEY' \
      https://api.render.com/v1/services
 ```
 
 ### Trigger Database Backup
+
 ```bash
 curl --request POST 'https://api.render.com/v1/services/dpg-d50s6gp5pdvs739a3g10-a/jobs' \
      --header 'Authorization: Bearer YOUR_API_KEY' \
@@ -249,7 +251,33 @@ curl --request POST 'https://api.render.com/v1/services/dpg-d50s6gp5pdvs739a3g10
 
 **Backup schedule recommendation**: Weekly (every Sunday)
 
+### Check Job Status
+
+After triggering a backup or job, check its status:
+
+```bash
+curl --request GET 'https://api.render.com/v1/services/YOUR_SERVICE_ID/jobs/YOUR_JOB_ID' \
+    --header 'Authorization: Bearer YOUR_API_KEY'
+```
+
+**Example response:**
+```json
+{
+  "id": "job-c3rfdgg6n88pa7t3a6ag",
+  "serviceId": "crn-c24q2tmcie6so2aq3n90",
+  "startCommand": "pg_dump infamous_freight",
+  "planId": "plan-crn-002",
+  "createdAt": "2025-03-20T07:20:05.777035-07:00",
+  "startedAt": "2025-03-20T07:24:12.987032-07:00",
+  "finishedAt": "2025-03-20T07:27:14.234587-07:00",
+  "status": "succeeded"
+}
+```
+
+**Job statuses**: `pending`, `running`, `succeeded`, `failed`
+
 ### Other Useful Commands
+
 ```bash
 # Check database status
 curl --header 'Authorization: Bearer YOUR_API_KEY' \
