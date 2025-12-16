@@ -42,6 +42,7 @@ See [IMPROVEMENTS_COMPLETE.md](IMPROVEMENTS_COMPLETE.md) for full details.
 **Endpoint**: `https://infamous-freight-api.fly.dev`
 
 Test the live API:
+
 ```bash
 # Health check
 curl https://infamous-freight-api.fly.dev/api/health

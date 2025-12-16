@@ -15,6 +15,7 @@ curl https://infamous-freight-api.fly.dev/api/health
 ```
 
 **Expected Response** (200 OK):
+
 ```json
 {
   "uptime": 3600,
@@ -60,6 +61,7 @@ print(token)
 ```
 
 **Store token for reuse**:
+
 ```bash
 export TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
@@ -78,11 +80,13 @@ curl -H "Authorization: Bearer $TOKEN" \
 ```
 
 **Query Parameters**:
+
 - `page`: Page number (default: 1)
 - `limit`: Items per page (default: 10)
 - `role`: Filter by role (user|admin|driver)
 
 **Example with filters**:
+
 ```bash
 curl -H "Authorization: Bearer $TOKEN" \
   "https://infamous-freight-api.fly.dev/api/users?page=1&limit=5&role=admin"
@@ -96,6 +100,7 @@ curl -H "Authorization: Bearer $TOKEN" \
 ```
 
 **Query Parameters**:
+
 - `q`: Search query (searches email and name)
 - `page`: Page number (default: 1)
 - `limit`: Items per page (default: 10, max: 100)
@@ -104,6 +109,7 @@ curl -H "Authorization: Bearer $TOKEN" \
 - `order`: Sort order (asc|desc, default: desc)
 
 **Examples**:
+
 ```bash
 # Search for "john" in email/name
 curl -H "Authorization: Bearer $TOKEN" \
@@ -141,6 +147,7 @@ curl -X POST \
 ```
 
 **Required Fields**:
+
 - `email`: User email (must be unique)
 - `name`: Full name
 - `password`: Password (minimum 8 characters)
@@ -179,6 +186,7 @@ curl -H "Authorization: Bearer $TOKEN" \
 ```
 
 **Query Parameters**:
+
 - `page`: Page number
 - `limit`: Items per page
 - `status`: Filter by status (pending|in-transit|delivered|cancelled)
@@ -237,6 +245,7 @@ curl -X POST \
 ```
 
 **Required**:
+
 - `command`: AI command name
 - `payload`: Command-specific data
 
@@ -254,6 +263,7 @@ curl -X POST \
 ```
 
 **Expected Headers in Response**:
+
 ```
 X-RateLimit-Limit: 20
 X-RateLimit-Remaining: 19
@@ -319,6 +329,7 @@ X-RateLimit-Reset: 1702756800
 ```
 
 **Headers**:
+
 ```
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 0
@@ -425,6 +436,7 @@ echo "All tests passed! ✅"
 ```
 
 **Save as `test-api.sh`**:
+
 ```bash
 chmod +x test-api.sh
 ./test-api.sh
@@ -436,22 +448,22 @@ chmod +x test-api.sh
 
 **Expected Response Times** (from production):
 
-| Endpoint | Method | Time |
-|----------|--------|------|
-| `/api/health` | GET | <50ms |
-| `/api/users` | GET | <200ms |
-| `/api/users/search` | GET | <300ms |
-| `/api/users` | POST | <500ms |
-| `/api/ai/command` | POST | <5s |
+| Endpoint            | Method | Time   |
+| ------------------- | ------ | ------ |
+| `/api/health`       | GET    | <50ms  |
+| `/api/users`        | GET    | <200ms |
+| `/api/users/search` | GET    | <300ms |
+| `/api/users`        | POST   | <500ms |
+| `/api/ai/command`   | POST   | <5s    |
 
 **Rate Limits**:
 
-| Endpoint Type | Limit | Window |
-|---------------|-------|--------|
-| General | 100 | 15 min |
-| Authentication | 5 | 15 min |
-| AI Commands | 20 | 1 min |
-| Billing | 30 | 15 min |
+| Endpoint Type  | Limit | Window |
+| -------------- | ----- | ------ |
+| General        | 100   | 15 min |
+| Authentication | 5     | 15 min |
+| AI Commands    | 20    | 1 min  |
+| Billing        | 30    | 15 min |
 
 ---
 
@@ -462,6 +474,7 @@ chmod +x test-api.sh
 **Cause**: Missing or invalid JWT token
 
 **Fix**:
+
 ```bash
 # Ensure token is set
 echo $TOKEN
@@ -478,6 +491,7 @@ export TOKEN="new-jwt-token-here"
 **Cause**: Token lacks required scope for endpoint
 
 **Fix**: Include required scope in JWT token generation:
+
 ```bash
 # For /api/users/search, need 'users:read' scope
 # For /api/users (POST), need 'users:write' scope
@@ -489,6 +503,7 @@ export TOKEN="new-jwt-token-here"
 **Cause**: Rate limit exceeded
 
 **Fix**: Check `X-RateLimit-Reset` header
+
 ```bash
 curl -s -H "Authorization: Bearer $TOKEN" $API/api/users -i | grep X-RateLimit
 ```
@@ -500,6 +515,7 @@ Wait until reset timestamp, then retry.
 **Cause**: Resource doesn't exist
 
 **Fix**: Verify resource ID is correct
+
 ```bash
 # List all users to find valid IDs
 curl -H "Authorization: Bearer $TOKEN" $API/api/users | jq '.data.users[].id'
