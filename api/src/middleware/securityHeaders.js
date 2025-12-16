@@ -97,6 +97,12 @@ function securityHeaders(app) {
 function handleCSPViolation(req, res) {
   const violation = req.body;
 
+  // Handle null or empty body
+  if (!violation) {
+    res.status(204).end();
+    return;
+  }
+
   console.warn("CSP Violation detected:", {
     "violated-directive": violation["violated-directive"],
     "blocked-uri": violation["blocked-uri"],
