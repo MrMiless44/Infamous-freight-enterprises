@@ -121,4 +121,5 @@ module.exports = {
   auditLog,
   limiters,
   createLimiter,
+  limiter, // Exported for testing purposes
 };
