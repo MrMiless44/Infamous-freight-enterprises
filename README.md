@@ -22,18 +22,40 @@ Infamous Freight Enterprises is a comprehensive logistics and fleet management s
 
 ## ✨ Latest Updates (December 2025)
 
-🎉 **Major Architecture Improvements:**
+🎉 **Production Deployment Complete:**
 
+- ✅ **API live in production** at https://infamous-freight-api.fly.dev (Fly.io, iad region)
+- ✅ **Search endpoint** implemented with filtering, pagination, and sorting
+- ✅ **API documentation** with all endpoints, auth, rate limiting, curl examples
+- ✅ **Deployment runbook** created (see [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md))
 - ✅ Converted to **pnpm workspace monorepo** for better dependency management
 - ✅ Created **shared package** (`@infamous-freight/shared`) for code reuse
 - ✅ Added **mobile app** as workspace package
-- ✅ Enhanced **CI/CD pipeline** with better testing and coverage
-- ✅ Consolidated **documentation** and improved navigation
-- ✅ Automated **setup script** for streamlined onboarding
+- ✅ Enhanced **CI/CD pipeline** with testing and coverage
 
 See [IMPROVEMENTS_COMPLETE.md](IMPROVEMENTS_COMPLETE.md) for full details.
 
 ## 🚀 Quick Start
+
+### ⚡ Production API (Live)
+
+**Endpoint**: `https://infamous-freight-api.fly.dev`
+
+Test the live API:
+```bash
+# Health check
+curl https://infamous-freight-api.fly.dev/api/health
+
+# Response
+{
+  "uptime": 3600,
+  "timestamp": 1702756800000,
+  "status": "ok",
+  "database": "connected"
+}
+```
+
+**Full API Reference**: See [API_REFERENCE.md](API_REFERENCE.md) for all endpoints, auth, and curl examples
 
 ### Prerequisites
 

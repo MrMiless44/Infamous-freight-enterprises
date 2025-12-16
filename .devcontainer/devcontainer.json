@@ -40,7 +40,8 @@
         "ms-dotnettools.dotnet-interactive-vscode",
         "ms-vscode.remote-server",
         "esbenp.prettier-vscode",
-        "appland.appmap"
+        "appland.appmap",
+        "Prisma.prisma"
       ]
     }
   },

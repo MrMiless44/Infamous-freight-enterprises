@@ -38,6 +38,84 @@ router.get(
   },
 );
 
+// Search users with filtering and pagination
+router.get(
+  "/users/search",
+  authenticate,
+  requireScope("users:read"),
+  auditLog,
+  async (req, res, next) => {
+    try {
+      const {
+        q = "",
+        page = 1,
+        limit = 10,
+        role,
+        sortBy = "createdAt",
+        order = "desc",
+      } = req.query;
+
+      // Validate and sanitize inputs
+      const pageNum = Math.max(1, parseInt(page) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 10));
+      const validSortFields = ["name", "email", "createdAt"];
+      const sortField = validSortFields.includes(sortBy) ? sortBy : "createdAt";
+      const sortOrder = order === "asc" ? "asc" : "desc";
+
+      // Build filter conditions
+      const where = {};
+
+      // Full-text search on email and name
+      if (q.trim()) {
+        where.OR = [
+          { email: { contains: q.trim(), mode: "insensitive" } },
+          { name: { contains: q.trim(), mode: "insensitive" } },
+        ];
+      }
+
+      // Role filter
+      if (role && ["user", "admin", "driver"].includes(role)) {
+        where.role = role;
+      }
+
+      // Get total count for pagination
+      const total = await prisma.user.count({ where });
+      const totalPages = Math.ceil(total / limitNum);
+
+      // Fetch paginated results
+      const users = await prisma.user.findMany({
+        where,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { [sortField]: sortOrder },
+        skip: (pageNum - 1) * limitNum,
+        take: limitNum,
+      });
+
+      res.json({
+        success: true,
+        data: {
+          users,
+          pagination: {
+            page: pageNum,
+            limit: limitNum,
+            total,
+            totalPages,
+          },
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
 // Get user by ID
 router.get(
   "/users/:id",

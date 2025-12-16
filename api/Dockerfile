@@ -40,9 +40,9 @@ COPY api ./api
 COPY api/prisma ./api/prisma
 
 WORKDIR /app/api
-EXPOSE 3001
+EXPOSE 4000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=5 \
-  CMD node -e "require('http').get('http://localhost:3001/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})" || exit 1
+  CMD node -e "require('http').get('http://localhost:4000/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})" || exit 1
 
 CMD ["node", "src/server.js"]
