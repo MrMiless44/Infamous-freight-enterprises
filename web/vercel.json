@@ -3,6 +3,7 @@
   "installCommand": "npm install",
   "outputDirectory": ".next",
   "env": {
-    "NEXT_PUBLIC_API_BASE": "@api_base_url_prod"
+    "NEXT_PUBLIC_API_BASE": "@api_base_url_prod",
+    "NEXT_PUBLIC_ENV": "production"
   }
 }
