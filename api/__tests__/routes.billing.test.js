@@ -79,10 +79,10 @@ describe("Billing Routes", () => {
     delete require.cache[require.resolve("../src/routes/billing")];
     delete require.cache[require.resolve("../src/middleware/security")];
     delete require.cache[require.resolve("../src/middleware/errorHandler")];
-    
+
     const billingRouter = require("../src/routes/billing");
     const errorHandler = require("../src/middleware/errorHandler");
-    
+
     app = express();
     app.use(express.json());
     app.use("/api", billingRouter);
@@ -136,38 +136,39 @@ describe("Billing Routes", () => {
     });
 
     test("should return 503 when Stripe not configured", async () => {
+      // Save original value
+      const originalKey = process.env.STRIPE_SECRET_KEY;
       delete process.env.STRIPE_SECRET_KEY;
-      
-      // Re-require the route without Stripe configured
+
+      // Clear module caches
       delete require.cache[require.resolve("../src/routes/billing")];
+      delete require.cache[require.resolve("../src/middleware/security")];
+      delete require.cache[require.resolve("../src/middleware/errorHandler")];
+
+      // Re-require the route without Stripe configured
       const billingRouter = require("../src/routes/billing");
       const errorHandler = require("../src/middleware/errorHandler");
-      
-      app = express();
-      app.use(express.json());
-      app.use("/api", billingRouter);
-      app.use(errorHandler);
 
-      const response = await request(app)
+      const testApp = express();
+      testApp.use(express.json());
+      testApp.use("/api", billingRouter);
+      testApp.use(errorHandler);
+
+      const response = await request(testApp)
         .post("/api/billing/stripe/session")
         .set(authHeader(makeToken(["billing:write"])))
         .send({});
 
       expect(response.status).toBe(503);
       expect(response.body.error).toBe("Stripe not configured");
+
+      // Restore original value
+      process.env.STRIPE_SECRET_KEY = originalKey;
     });
 
     test("should return 503 when success URL not configured", async () => {
+      const originalUrl = process.env.STRIPE_SUCCESS_URL;
       delete process.env.STRIPE_SUCCESS_URL;
-      
-      delete require.cache[require.resolve("../src/routes/billing")];
-      const billingRouter = require("../src/routes/billing");
-      const errorHandler = require("../src/middleware/errorHandler");
-      
-      app = express();
-      app.use(express.json());
-      app.use("/api", billingRouter);
-      app.use(errorHandler);
 
       const response = await request(app)
         .post("/api/billing/stripe/session")
@@ -175,20 +176,16 @@ describe("Billing Routes", () => {
         .send({});
 
       expect(response.status).toBe(503);
-      expect(response.body.error).toBe("Stripe success/cancel URLs not configured");
+      expect(response.body.error).toBe(
+        "Stripe success/cancel URLs not configured"
+      );
+
+      process.env.STRIPE_SUCCESS_URL = originalUrl;
     });
 
     test("should return 503 when cancel URL not configured", async () => {
+      const originalUrl = process.env.STRIPE_CANCEL_URL;
       delete process.env.STRIPE_CANCEL_URL;
-      
-      delete require.cache[require.resolve("../src/routes/billing")];
-      const billingRouter = require("../src/routes/billing");
-      const errorHandler = require("../src/middleware/errorHandler");
-      
-      app = express();
-      app.use(express.json());
-      app.use("/api", billingRouter);
-      app.use(errorHandler);
 
       const response = await request(app)
         .post("/api/billing/stripe/session")
@@ -196,7 +193,11 @@ describe("Billing Routes", () => {
         .send({});
 
       expect(response.status).toBe(503);
-      expect(response.body.error).toBe("Stripe success/cancel URLs not configured");
+      expect(response.body.error).toBe(
+        "Stripe success/cancel URLs not configured"
+      );
+
+      process.env.STRIPE_CANCEL_URL = originalUrl;
     });
 
     test("should handle Stripe API errors", async () => {
@@ -281,11 +282,11 @@ describe("Billing Routes", () => {
 
     test("should return 503 when PayPal not configured", async () => {
       delete process.env.PAYPAL_CLIENT_ID;
-      
+
       delete require.cache[require.resolve("../src/routes/billing")];
       const billingRouter = require("../src/routes/billing");
       const errorHandler = require("../src/middleware/errorHandler");
-      
+
       app = express();
       app.use(express.json());
       app.use("/api", billingRouter);
@@ -301,9 +302,7 @@ describe("Billing Routes", () => {
     });
 
     test("should handle PayPal API errors", async () => {
-      paypalClientMock.execute.mockRejectedValue(
-        new Error("PayPal API error")
-      );
+      paypalClientMock.execute.mockRejectedValue(new Error("PayPal API error"));
 
       const response = await request(app)
         .post("/api/billing/paypal/order")
@@ -374,7 +373,7 @@ describe("Billing Routes", () => {
 
     test("should validate orderId max length", async () => {
       const longOrderId = "A".repeat(129);
-      
+
       const response = await request(app)
         .post("/api/billing/paypal/capture")
         .set(authHeader(makeToken(["billing:write"])))
@@ -385,11 +384,11 @@ describe("Billing Routes", () => {
 
     test("should return 503 when PayPal not configured", async () => {
       delete process.env.PAYPAL_CLIENT_ID;
-      
+
       delete require.cache[require.resolve("../src/routes/billing")];
       const billingRouter = require("../src/routes/billing");
       const errorHandler = require("../src/middleware/errorHandler");
-      
+
       app = express();
       app.use(express.json());
       app.use("/api", billingRouter);
