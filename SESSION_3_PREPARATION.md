@@ -10,6 +10,7 @@
 ### Daily Monitoring Tasks
 
 #### 1. **Vercel Analytics Dashboard**
+
 - **URL**: https://vercel.com/analytics
 - **Check these metrics**:
   - ✅ Page load time (LCP: <2.5s)
@@ -19,11 +20,13 @@
   - ✅ Build duration trends
 
 **Action if issue detected:**
+
 - Slow pages → Check Next.js bundle analysis
 - High build times → Review bundle size
 - Layout shifts → Check image/font loading
 
 #### 2. **Fly.io Logs & Status**
+
 ```bash
 # Watch logs in real-time
 flyctl logs -a infamous-freight-api
@@ -36,6 +39,7 @@ flyctl metrics -a infamous-freight-api
 ```
 
 **Look for:**
+
 - ✅ `Server listening on port 4000`
 - ✅ Successful PostgreSQL connections
 - ⚠️ Any error messages or exceptions
@@ -43,11 +47,13 @@ flyctl metrics -a infamous-freight-api
 - ⚠️ High CPU utilization
 
 **Action if issue detected:**
+
 - Memory spike → Check for leaks (heap dump)
 - High CPU → Review slow queries
 - Connection errors → Verify database connectivity
 
 #### 3. **API Health Monitoring**
+
 ```bash
 # Check every 5 minutes
 curl https://infamous-freight-api.fly.dev/api/health
@@ -62,19 +68,23 @@ curl https://infamous-freight-api.fly.dev/api/health
 ```
 
 **Set up automated monitoring:**
+
 - Use: UptimeRobot (free tier)
 - URL: `https://infamous-freight-api.fly.dev/api/health`
 - Check interval: 5 minutes
 - Alert if down for 5+ minutes
 
 #### 4. **Error Rate Monitoring**
+
 **If Sentry is configured:**
+
 - Dashboard: https://sentry.io
 - Check: Daily error count
 - Review: Most common error types
 - Identify: Patterns and trends
 
 **Basic monitoring:**
+
 ```bash
 # Check Fly.io logs for errors
 flyctl logs -a infamous-freight-api | grep -i error
@@ -92,36 +102,43 @@ When you encounter a problem, create an issue with this structure:
 ## Title: [Brief description of issue]
 
 ### Description
+
 [What is happening vs. what should happen]
 
 ### Steps to Reproduce
+
 1. Step 1
 2. Step 2
 3. Expected result
 4. Actual result
 
 ### Environment
+
 - API: Production (https://infamous-freight-api.fly.dev)
 - Web: Production (your Vercel domain)
 - Database: Render PostgreSQL
 - Date/Time: [When it occurred]
 
 ### Logs/Screenshots
+
 [Paste relevant logs or error messages]
 
 ### Severity
+
 - 🔴 **Critical**: API down, data loss, security issue
 - 🟠 **High**: Major feature broken, performance degradation
 - 🟡 **Medium**: Feature partially broken, minor performance issue
 - 🟢 **Low**: UI issue, documentation, nice-to-have
 
 ### Priority
+
 - 🚨 **P0**: Fix immediately
 - 🔥 **P1**: Fix today
 - ⚡ **P2**: Fix this week
 - 📋 **P3**: Fix this month
 
 ### Suggested Fix
+
 [If you know the solution, describe it]
 ```
 
@@ -151,6 +168,7 @@ Create labels in GitHub for easier filtering:
 **Timeline**: Week 1 (1-2 days)
 
 **Tasks**:
+
 1. **Sentry Integration**
    - Set `SENTRY_DSN` in Fly.io
    - Verify errors are being captured
@@ -184,6 +202,7 @@ Create labels in GitHub for easier filtering:
 **Timeline**: Week 2 (2-3 days)
 
 **Tasks**:
+
 1. **Database Optimization**
    - Run EXPLAIN on slow queries
    - Add indexes where needed
@@ -217,11 +236,13 @@ Create labels in GitHub for easier filtering:
 **Timeline**: Week 3 (2-3 days)
 
 **Tasks**:
+
 1. **Load Testing Setup**
+
    ```bash
    # Install k6
    npm install -g k6
-   
+
    # Create load test script
    # Run: k6 run load-test.js
    ```
@@ -253,6 +274,7 @@ Create labels in GitHub for easier filtering:
 **Timeline**: Week 4 (3-5 days)
 
 **Tasks**:
+
 1. **Build Setup**
    - Review mobile app code
    - Update API base URL
@@ -286,6 +308,7 @@ Create labels in GitHub for easier filtering:
 **Timeline**: Week 2 (2-3 days)
 
 **Tasks**:
+
 1. **OWASP Top 10 Audit**
    - SQL Injection testing
    - Authentication/Authorization review
@@ -300,10 +323,12 @@ Create labels in GitHub for easier filtering:
    - Track fixes
 
 3. **Dependency Audit**
+
    ```bash
    npm audit
    pnpm audit
    ```
+
    - Fix critical vulnerabilities
    - Update dependencies
    - Test for breaking changes
@@ -322,13 +347,13 @@ Create labels in GitHub for easier filtering:
 
 **Best approach: Run all 5 in parallel (week-by-week rotation)**
 
-| Week | Focus | Owner |
-|------|-------|-------|
-| **Week 1** | Monitoring & Observability | You |
-| **Week 2** | Performance Optimization | You |
-| **Week 3** | Scale Testing | You |
-| **Week 4** | Mobile Deployment | You |
-| **Ongoing** | Security Hardening | Continuous |
+| Week        | Focus                      | Owner      |
+| ----------- | -------------------------- | ---------- |
+| **Week 1**  | Monitoring & Observability | You        |
+| **Week 2**  | Performance Optimization   | You        |
+| **Week 3**  | Scale Testing              | You        |
+| **Week 4**  | Mobile Deployment          | You        |
+| **Ongoing** | Security Hardening         | Continuous |
 
 ---
 
@@ -342,23 +367,23 @@ Create a daily checklist:
 [ ] API Health Check
     curl https://infamous-freight-api.fly.dev/api/health
     → Status: ok, Database: connected
-    
+
 [ ] Fly.io Status
     flyctl status -a infamous-freight-api
     → All machines running
-    
+
 [ ] Vercel Dashboard
     https://vercel.com/dashboard
     → No failed deployments, green status
-    
+
 [ ] Error Count
     Check Sentry or logs
     → No new critical errors
-    
+
 [ ] Performance Check
     Vercel Analytics or lighthouse
     → LCP < 2.5s, FID < 100ms, CLS < 0.1
-    
+
 [ ] Database Health
     Check Render dashboard
     → Connection active, no resource issues
@@ -409,24 +434,28 @@ Notes: ___________________________________
 ## 📈 Key Metrics to Track
 
 ### API Performance
+
 - Average response time: Target <100ms
 - P95 response time: Target <500ms
 - Error rate: Target <0.1%
 - Uptime: Target 99.9%
 
 ### Web Performance
+
 - Largest Contentful Paint (LCP): Target <2.5s
 - First Input Delay (FID): Target <100ms
 - Cumulative Layout Shift (CLS): Target <0.1
 - Page load time: Target <3s
 
 ### Database Performance
+
 - Query response time: Target <50ms
 - Connection pool utilization: Target <80%
 - Slow queries: Monitor and optimize
 - Index hit ratio: Target >95%
 
 ### Business Metrics
+
 - User signups: Trend
 - API usage: Growth rate
 - Error spikes: Correlate with deploys
@@ -436,34 +465,35 @@ Notes: ___________________________________
 
 ## 🔗 Useful Tools for Session 3
 
-| Tool | Purpose | Free? |
-|------|---------|-------|
-| **Sentry** | Error tracking | Yes (limited) |
-| **DataDog** | Monitoring | Free trial |
-| **UptimeRobot** | Uptime monitoring | Yes |
-| **k6** | Load testing | Yes |
-| **Lighthouse** | Performance audit | Yes |
-| **LogRocket** | Session replay | Free tier |
-| **Render Dashboard** | Database monitoring | Yes |
-| **Vercel Analytics** | Web performance | Yes (included) |
+| Tool                 | Purpose             | Free?          |
+| -------------------- | ------------------- | -------------- |
+| **Sentry**           | Error tracking      | Yes (limited)  |
+| **DataDog**          | Monitoring          | Free trial     |
+| **UptimeRobot**      | Uptime monitoring   | Yes            |
+| **k6**               | Load testing        | Yes            |
+| **Lighthouse**       | Performance audit   | Yes            |
+| **LogRocket**        | Session replay      | Free tier      |
+| **Render Dashboard** | Database monitoring | Yes            |
+| **Vercel Analytics** | Web performance     | Yes (included) |
 
 ---
 
 ## 📞 Session 3 Support
 
-| Need | Action |
-|------|--------|
-| **Production Issue** | Check logs, create GitHub issue, escalate if critical |
-| **Performance Problem** | Run Lighthouse, profile with DevTools, optimize |
-| **Database Issue** | Check Render dashboard, verify connectivity |
-| **API Error** | Check Fly.io logs, review error in Sentry |
-| **Deployment Failure** | Check Vercel logs, revert if needed |
+| Need                    | Action                                                |
+| ----------------------- | ----------------------------------------------------- |
+| **Production Issue**    | Check logs, create GitHub issue, escalate if critical |
+| **Performance Problem** | Run Lighthouse, profile with DevTools, optimize       |
+| **Database Issue**      | Check Render dashboard, verify connectivity           |
+| **API Error**           | Check Fly.io logs, review error in Sentry             |
+| **Deployment Failure**  | Check Vercel logs, revert if needed                   |
 
 ---
 
 ## ✅ Ready for Session 3
 
 You now have:
+
 - ✅ Production system live
 - ✅ Monitoring plan documented
 - ✅ Issue tracking setup
@@ -477,6 +507,6 @@ You now have:
 
 **Production Status**: 🟢 **Operational**  
 **Monitoring**: ⏳ Ready to implement  
-**Session 3**: 📋 Planned  
+**Session 3**: 📋 Planned
 
 **Enjoy your live production system! See you in Session 3! 🎉**
