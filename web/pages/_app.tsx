@@ -6,7 +6,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont" }}>
       <Component {...pageProps} />
-      <Analytics />
+      {process.env.NODE_ENV === "production" && <Analytics />}
     </div>
   );
 }
