@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { track } from "@vercel/analytics";
 import { useApi } from "../hooks/useApi";
 
 export function VoicePanel() {
@@ -10,11 +11,29 @@ export function VoicePanel() {
   async function send() {
     if (!text.trim()) return;
     setLoading(true);
+    
+    track("voice_command_initiated", {
+      commandLength: text.length,
+      timestamp: new Date().toISOString(),
+    });
+    
     try {
       const response = await api.post("/voice/command", { text });
       setResult(response);
+      
+      track("voice_command_success", {
+        commandLength: text.length,
+        timestamp: new Date().toISOString(),
+      });
     } catch (err) {
-      setResult({ error: err instanceof Error ? err.message : String(err) });
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setResult({ error: errorMessage });
+      
+      track("voice_command_error", {
+        commandLength: text.length,
+        error: errorMessage,
+        timestamp: new Date().toISOString(),
+      });
     } finally {
       setLoading(false);
     }
