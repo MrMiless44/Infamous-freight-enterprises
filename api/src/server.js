@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./swagger");
+const swaggerSpec = require("./core/swagger");
 const { httpLogger, logger } = require("./middleware/logger");
 const { rateLimit } = require("./middleware/security");
 const errorHandler = require("./middleware/errorHandler");
@@ -10,15 +10,17 @@ const {
   securityHeaders,
   handleCSPViolation,
 } = require("./middleware/securityHeaders");
-const { initSentry, attachErrorHandler } = require("./config/sentry");
-const config = require("./config");
-const healthRoutes = require("./routes/health");
-const aiRoutes = require("./routes/ai.commands");
-const billingRoutes = require("./routes/billing");
-const voiceRoutes = require("./routes/voice");
-const aiSimRoutes = require("./routes/aiSim.internal");
-const usersRoutes = require("./routes/users");
-const shipmentsRoutes = require("./routes/shipments");
+const { initSentry, attachErrorHandler } = require("./core/config/sentry");
+const config = require("./core/config");
+const healthRoutes = require("./api/health");
+const aiRoutes = require("./api/ai.commands");
+const billingRoutes = require("./api/billing");
+const voiceRoutes = require("./api/voice");
+const aiSimRoutes = require("./api/aiSim.internal");
+const usersRoutes = require("./api/users");
+const shipmentsRoutes = require("./api/shipments");
+const metricsRoutes = require("./api/metrics");
+const { metricsMiddleware } = require("@infamous-freight/shared/metrics");
 
 const app = express();
 
@@ -62,6 +64,8 @@ app.use(
 app.use(httpLogger);
 app.use(rateLimit);
 app.use(express.json({ limit: "12mb" }));
+// Metrics instrumentation (request counters and duration)
+app.use(metricsMiddleware);
 
 // Swagger API Documentation
 app.use(
@@ -80,6 +84,7 @@ app.use("/api", billingRoutes);
 app.use("/api", voiceRoutes);
 app.use("/api", usersRoutes);
 app.use("/api", shipmentsRoutes);
+app.use("/api", metricsRoutes);
 
 // CSP Violation Report Handler
 app.post("/api/csp-violation", handleCSPViolation);

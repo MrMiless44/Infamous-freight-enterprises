@@ -9,7 +9,7 @@ These must be set for the application to function properly.
 ### API Configuration
 
 - `NODE_ENV` - Application environment (development, staging, production)
-- `JWT_SECRET` - Secret key for JWT token signing
+- `JWT_SECRET` - Secret key for JWT token signing (or use rotation pair: `JWT_SECRET_CURRENT` with optional `JWT_SECRET_PREVIOUS`)
 - `DATABASE_URL` - PostgreSQL connection string
 - `SENTRY_DSN` - Sentry error tracking DSN (optional but recommended)
 
@@ -51,9 +51,13 @@ These provide additional functionality but have sensible defaults.
 
 - `AI_SECURITY_MODE` - AI security mode (strict, moderate, lenient) - default: moderate
 - `AI_PROVIDER` - AI provider selection (openai, anthropic) - default: openai
-- `AI_SYNTHETIC_ENGINE_URL` - URL for synthetic AI engine
+- `AI_SYNTHETIC_ENGINE_URL` - URL for synthetic AI engine (alias accepted: `AI_ENGINE_URL`)
 - `AI_SYNTHETIC_API_KEY` - API key for synthetic AI engine
 - `AI_HTTP_TIMEOUT_MS` - HTTP timeout for AI requests - default: 30000
+
+### Queues & Workers (optional)
+
+- `REDIS_URL` - Redis connection URL for BullMQ/worker processes (e.g., `redis://redis:6379`)
 
 ## Environment-Specific Setup
 
@@ -69,6 +73,17 @@ STRIPE_SECRET_KEY=sk_test_xxx
 PAYPAL_CLIENT_ID=xxx
 PAYPAL_SECRET=xxx
 LOG_LEVEL=debug
+# Or rotation pair
+# JWT_SECRET_CURRENT=dev-secret-key-change-in-production
+# JWT_SECRET_PREVIOUS=previous-secret-if-rotating
+
+# Synthetic AI
+# AI_ENGINE_URL=http://localhost:8080  # legacy alias
+AI_SYNTHETIC_ENGINE_URL=http://localhost:8080
+AI_SYNTHETIC_API_KEY=sk-xxx
+
+# Optional Redis for workers/queues
+# REDIS_URL=redis://localhost:6379
 ```
 
 ### Staging
@@ -91,6 +106,9 @@ DATABASE_URL=(encrypted-production-connection)
 SENTRY_DSN=(production-sentry-dsn)
 OPENAI_API_KEY=(production-key)
 LOG_LEVEL=warn
+# Or rotation pair
+# JWT_SECRET_CURRENT=(current-rotating-secret)
+# JWT_SECRET_PREVIOUS=(previous-rotating-secret)
 ```
 
 ## Security Best Practices

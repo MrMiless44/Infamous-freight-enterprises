@@ -19,6 +19,20 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: infamous_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   api:
     build:
       context: ./api
@@ -32,8 +46,11 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://${POSTGRES_USER:-infamous}:${POSTGRES_PASSWORD:-infamouspass}@postgres:5432/${POSTGRES_DB:-infamous_freight}
+      REDIS_URL: redis://redis:6379
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     ports:
       - "${API_PORT:-3001}:3001"
@@ -55,6 +72,55 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  ai-service:
+    build:
+      context: ./packages/ai-service
+      dockerfile: ../../Dockerfile.ts-service
+    container_name: infamous_ai_service
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      NODE_ENV: production
+      PORT: 4001
+    depends_on:
+      - redis
+    ports:
+      - "${AI_SERVICE_PORT:-4001}:4001"
+    volumes:
+      - ./packages/ai-service:/app/ai-service
+      - ./packages/shared:/app/shared
+      - pnpm-store:/root/.local/share/pnpm/store
+      - node-modules-ai-service:/app/ai-service/node_modules
+    command: sh -c "cd /app && pnpm install && cd ai-service && pnpm dev"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  ai-worker:
+    build:
+      context: ./packages/ai-worker
+      dockerfile: ../../Dockerfile.ts-service
+    container_name: infamous_ai_worker
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://redis:6379
+      AI_QUEUE_NAME: ai-commands
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./packages/ai-worker:/app/ai-worker
+      - ./packages/shared:/app/shared
+      - pnpm-store:/root/.local/share/pnpm/store
+      - node-modules-ai-worker:/app/ai-worker/node_modules
+    command: sh -c "cd /app && pnpm install && cd ai-worker && pnpm dev"
 
   web:
     build:
@@ -96,9 +162,15 @@ services:
 volumes:
   pgdata:
     driver: local
+  redisdata:
+    driver: local
   pnpm-store:
     driver: local
   node-modules-api:
+    driver: local
+  node-modules-ai-service:
+    driver: local
+  node-modules-ai-worker:
     driver: local
   node-modules-web:
     driver: local

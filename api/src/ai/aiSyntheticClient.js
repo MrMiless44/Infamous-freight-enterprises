@@ -1,6 +1,7 @@
 const axios = require("axios");
 const OpenAI = require("openai");
 const Anthropic = require("@anthropic-ai/sdk");
+const CircuitBreaker = require("opossum");
 const { logger } = require("../middleware/logger");
 
 const mode = process.env.AI_PROVIDER || "synthetic";
@@ -181,4 +182,100 @@ async function sendCommand(command, payload = {}, meta = {}) {
   return sendSynthetic(command, payload, meta);
 }
 
-module.exports = { sendCommand };
+// Circuit Breaker Configuration
+const breakerOptions = {
+  timeout: 3000, // 3 seconds timeout
+  errorThresholdPercentage: 50, // Open circuit if 50% of requests fail
+  resetTimeout: 30000, // Try again after 30 seconds
+  rollingCountTimeout: 10000, // Rolling window of 10 seconds
+  rollingCountBuckets: 10, // Number of buckets in rolling window
+  name: "AI-Service-Circuit-Breaker",
+  volumeThreshold: 5, // Minimum number of requests before checking error percentage
+};
+
+// Create circuit breakers for each AI provider
+const syntheticBreaker = new CircuitBreaker(
+  async (command, payload, meta) => sendSynthetic(command, payload, meta),
+  { ...breakerOptions, name: "Synthetic-AI-Breaker" }
+);
+
+const openAIBreaker = new CircuitBreaker(
+  async (command, payload) => sendOpenAI(command, payload),
+  { ...breakerOptions, name: "OpenAI-Breaker" }
+);
+
+const anthropicBreaker = new CircuitBreaker(
+  async (command, payload) => sendAnthropic(command, payload),
+  { ...breakerOptions, name: "Anthropic-Breaker" }
+);
+
+// Circuit breaker event listeners
+[syntheticBreaker, openAIBreaker, anthropicBreaker].forEach(breaker => {
+  breaker.on("open", () => {
+    logger.warn(`Circuit breaker opened: ${breaker.name}`);
+  });
+
+  breaker.on("halfOpen", () => {
+    logger.info(`Circuit breaker half-open (testing): ${breaker.name}`);
+  });
+
+  breaker.on("close", () => {
+    logger.info(`Circuit breaker closed (recovered): ${breaker.name}`);
+  });
+
+  breaker.on("failure", (err) => {
+    logger.error(`Circuit breaker failure: ${breaker.name}`, {
+      error: err.message,
+      status: err.status
+    });
+  });
+
+  breaker.on("reject", () => {
+    logger.warn(`Circuit breaker rejected request: ${breaker.name}`);
+  });
+});
+
+// Wrapped sendCommand with circuit breaker
+async function sendCommandWithBreaker(command, payload = {}, meta = {}) {
+  try {
+    if (mode === "openai") {
+      return await openAIBreaker.fire(command, payload);
+    }
+    if (mode === "anthropic") {
+      return await anthropicBreaker.fire(command, payload);
+    }
+    return await syntheticBreaker.fire(command, payload, meta);
+  } catch (err) {
+    // Check if circuit is open
+    if (err.message && err.message.includes("Breaker is open")) {
+      const error = new Error("AI service temporarily unavailable (circuit breaker open)");
+      error.status = 503;
+      error.code = "CIRCUIT_OPEN";
+      throw error;
+    }
+    throw err;
+  }
+}
+
+// Export both versions for flexibility
+module.exports = { 
+  sendCommand: sendCommandWithBreaker,
+  sendCommandDirect: sendCommand, // Direct version without circuit breaker
+  getCircuitBreakerStats: () => ({
+    synthetic: {
+      name: syntheticBreaker.name,
+      state: syntheticBreaker.opened ? 'open' : syntheticBreaker.halfOpen ? 'half-open' : 'closed',
+      stats: syntheticBreaker.stats
+    },
+    openai: {
+      name: openAIBreaker.name,
+      state: openAIBreaker.opened ? 'open' : openAIBreaker.halfOpen ? 'half-open' : 'closed',
+      stats: openAIBreaker.stats
+    },
+    anthropic: {
+      name: anthropicBreaker.name,
+      state: anthropicBreaker.opened ? 'open' : anthropicBreaker.halfOpen ? 'half-open' : 'closed',
+      stats: anthropicBreaker.stats
+    }
+  })
+};

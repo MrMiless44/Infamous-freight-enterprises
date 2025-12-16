@@ -1,0 +1,37 @@
+# Multi-stage Dockerfile for TypeScript services (ai-service, ai-worker)
+FROM node:20-alpine as builder
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm@7.5.1
+
+# Copy workspace files
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code (assumes service is in packages/{service-name})
+COPY packages packages
+
+# Build all packages
+RUN pnpm build
+
+# Production stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN npm install -g pnpm@7.5.1
+
+# Copy workspace and built artifacts
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+COPY packages packages
+
+# Install production dependencies only
+RUN pnpm install --prod --frozen-lockfile
+
+EXPOSE 4001
+
+CMD ["node", "dist/worker.js"]

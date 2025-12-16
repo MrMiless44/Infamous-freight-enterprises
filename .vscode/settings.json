@@ -1,7 +1,7 @@
 {
   "python-envs.defaultEnvManager": "ms-python.python:system",
   "python-envs.pythonProjects": [],
-  "terminal.integrated.shellIntegration": false,
+  "terminal.integrated.shellIntegration": true,
   "files.readonlyInclude": {
     "{**/.c4z/.extsrcs/*.PROTSYM.cbl,**/.c4z/.extsrcs/*.PROTSYM.listing}": true
   },
@@ -18,7 +18,7 @@
     "./web",
     "./packages/shared"
   ],
-  "terminal.integrated.shellIntegration.enabled": false,
+  "terminal.integrated.shellIntegration.enabled": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "files.exclude": {
@@ -63,7 +63,8 @@
     "GitHub.vscode-pull-request-github",
     "Github.copilot"
   ],
-  "terminal.integrated.shellIntegration.quickFixEnabled": false,
-  "terminal.integrated.stickyScroll.enabled": false,
-  "terminal.integrated.suggest.enabled": false
+  "terminal.integrated.shellIntegration.quickFixEnabled": true,
+  "terminal.integrated.stickyScroll.enabled": true,
+  "terminal.integrated.suggest.enabled": true,
+  "chat.checkpoints.showFileChanges": true
 }

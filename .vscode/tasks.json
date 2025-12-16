@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "typescript",
+			"tsconfig": "archive/infamous-freight-ai-backup/web/tsconfig.json",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build",
+			"label": "tsc: build - archive/infamous-freight-ai-backup/web/tsconfig.json"
+		}
+	]
+}

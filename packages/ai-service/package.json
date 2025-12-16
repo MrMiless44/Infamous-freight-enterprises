@@ -1,0 +1,29 @@
+{
+  "name": "@infamous-freight/ai-service",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI microservice for executing AI commands (Express + Zod)",
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "lint": "echo 'Linting handled by root config'",
+    "test": "echo 'No tests yet' && exit 0"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.0",
+    "helmet": "^7.0.0",
+    "zod": "^3.22.4",
+    "@infamous-freight/shared": "file:../shared"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.0"
+  }
+}

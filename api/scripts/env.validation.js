@@ -8,14 +8,20 @@ function assertEnv(keys, label) {
 }
 
 try {
-  assertEnv(["DATABASE_URL", "JWT_SECRET"], "Core env variables");
+  const hasJwt = process.env.JWT_SECRET || process.env.JWT_SECRET_CURRENT;
+  assertEnv(["DATABASE_URL"], "Core env variables");
+  if (!hasJwt) {
+    throw new Error("Core env variables missing: JWT_SECRET or JWT_SECRET_CURRENT");
+  }
 
   const provider = process.env.AI_PROVIDER || "synthetic";
   if (provider === "synthetic") {
-    assertEnv(
-      ["AI_SYNTHETIC_ENGINE_URL", "AI_SYNTHETIC_API_KEY"],
-      "Synthetic AI configuration",
-    );
+    const aiUrl = process.env.AI_SYNTHETIC_ENGINE_URL || process.env.AI_ENGINE_URL;
+    if (!aiUrl || !process.env.AI_SYNTHETIC_API_KEY) {
+      throw new Error(
+        "Synthetic AI configuration missing: AI_SYNTHETIC_ENGINE_URL (or AI_ENGINE_URL) and AI_SYNTHETIC_API_KEY",
+      );
+    }
   } else if (provider === "openai") {
     assertEnv(["OPENAI_API_KEY"], "OpenAI configuration");
   } else if (provider === "anthropic") {

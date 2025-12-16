@@ -152,3 +152,88 @@ describe("aiSyntheticClient sendCommand", () => {
     });
   });
 });
+
+describe("Circuit Breaker", () => {
+  test("should provide circuit breaker statistics", async () => {
+    process.env.AI_SYNTHETIC_ENGINE_URL = "https://synthetic.test/command";
+    process.env.AI_SYNTHETIC_API_KEY = "synthetic-key";
+
+    mockLogger();
+    jest.doMock("axios", () => ({
+      create: jest.fn(() => ({
+        post: jest.fn(() => Promise.resolve({ data: { ok: true } })),
+      })),
+    }));
+
+    const { getCircuitBreakerStats } = require("../aiSyntheticClient");
+    const stats = getCircuitBreakerStats();
+
+    expect(stats).toHaveProperty("synthetic");
+    expect(stats).toHaveProperty("openai");
+    expect(stats).toHaveProperty("anthropic");
+    expect(stats.synthetic).toHaveProperty("name");
+    expect(stats.synthetic).toHaveProperty("state");
+    expect(stats.synthetic).toHaveProperty("stats");
+  });
+
+  test("should open circuit after repeated failures", async () => {
+    process.env.AI_SYNTHETIC_ENGINE_URL = "https://synthetic.test/command";
+    process.env.AI_SYNTHETIC_API_KEY = "synthetic-key";
+
+    const logger = {
+      error: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+    };
+
+    jest.doMock("../../middleware/logger", () => ({ logger }));
+
+    const failingPost = jest.fn(() =>
+      Promise.reject({ 
+        response: { status: 500, data: { error: "Internal Error" } },
+        code: "ERR_INTERNAL" 
+      })
+    );
+
+    jest.doMock("axios", () => ({
+      create: jest.fn(() => ({ post: failingPost })),
+    }));
+
+    const { sendCommand, getCircuitBreakerStats } = require("../aiSyntheticClient");
+
+    // Send multiple failing requests
+    for (let i = 0; i < 10; i++) {
+      try {
+        await sendCommand("test", {});
+      } catch (err) {
+        // Expected to fail
+      }
+    }
+
+    const stats = getCircuitBreakerStats();
+    
+    // Circuit should be open after repeated failures
+    expect(logger.warn).toHaveBeenCalledWith(
+      expect.stringContaining("Circuit breaker opened")
+    );
+  }, 10000);
+
+  test("should provide direct access without circuit breaker", async () => {
+    process.env.AI_SYNTHETIC_ENGINE_URL = "https://synthetic.test/command";
+    process.env.AI_SYNTHETIC_API_KEY = "synthetic-key";
+
+    mockLogger();
+    const postMock = jest.fn(() => Promise.resolve({ data: { result: "success" } }));
+
+    jest.doMock("axios", () => ({
+      create: jest.fn(() => ({ post: postMock })),
+    }));
+
+    const { sendCommandDirect } = require("../aiSyntheticClient");
+    const result = await sendCommandDirect("test", { data: "test" });
+
+    expect(result).toEqual({ result: "success" });
+    expect(postMock).toHaveBeenCalled();
+  });
+});
+

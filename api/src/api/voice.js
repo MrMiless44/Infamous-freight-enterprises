@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const { sendCommand } = require("../services/aiSyntheticClient");
+const { sendCommand } = require("../ai/aiSyntheticClient");
 const {
   authenticate,
   requireScope,

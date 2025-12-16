@@ -66,9 +66,10 @@ async function rateLimit(req, res, next) {
   }
 }
 
-function authenticate(req, res, next) {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
+async function authenticate(req, res, next) {
+  const currentSecret = process.env.JWT_SECRET || process.env.JWT_SECRET_CURRENT;
+  const previousSecret = process.env.JWT_SECRET_PREVIOUS;
+  if (!currentSecret) {
     return next();
   }
 
@@ -79,10 +80,58 @@ function authenticate(req, res, next) {
 
   try {
     const token = header.replace("Bearer ", "").trim();
-    req.user = jwt.verify(token, secret);
+    // Verify token with 1 hour max age for added security
+    try {
+      req.user = jwt.verify(token, currentSecret, { maxAge: "1h" });
+    } catch (primaryErr) {
+      // If signature invalid and a previous secret exists, try verifying with previous
+      if (
+        previousSecret &&
+        (primaryErr.name === "JsonWebTokenError" || primaryErr.name === "NotBeforeError" || primaryErr.name === "TokenExpiredError")
+      ) {
+        try {
+          req.user = jwt.verify(token, previousSecret, { maxAge: "1h" });
+        } catch (_secondaryErr) {
+          throw primaryErr; // rethrow original for consistent error handling
+        }
+      } else {
+        throw primaryErr;
+      }
+    }
     next();
   } catch (err) {
-    res.status(401).json({ error: "Invalid token" });
+    // Handle specific JWT errors with detailed responses
+    if (err.name === "TokenExpiredError") {
+      logger.warn(`Token expired for user attempt from IP: ${req.ip}`);
+      return res.status(401).json({ 
+        error: "Token expired", 
+        message: "Your session has expired. Please log in again.",
+        code: "TOKEN_EXPIRED"
+      });
+    }
+    if (err.name === "JsonWebTokenError") {
+      logger.warn(`Invalid JWT token: ${err.message}`);
+      return res.status(401).json({ 
+        error: "Invalid token", 
+        message: "Authentication token is invalid.",
+        code: "INVALID_TOKEN"
+      });
+    }
+    if (err.name === "NotBeforeError") {
+      logger.warn(`Token used before valid: ${err.message}`);
+      return res.status(401).json({ 
+        error: "Token not yet valid", 
+        message: "This token cannot be used yet.",
+        code: "TOKEN_NOT_ACTIVE"
+      });
+    }
+    // Catch-all for unexpected errors
+    logger.error(`Unexpected JWT verification error: ${err.message}`);
+    return res.status(401).json({ 
+      error: "Authentication failed", 
+      message: "Unable to verify authentication token.",
+      code: "AUTH_ERROR"
+    });
   }
 }
 
@@ -114,6 +163,55 @@ function auditLog(req, _res, next) {
   next();
 }
 
+/**
+ * Generate a JWT token with proper expiration
+ * @param {Object} payload - Token payload (user data)
+ * @param {string} [expiresIn='1h'] - Token expiration time
+ * @returns {string} Signed JWT token
+ */
+function generateToken(payload, expiresIn = "1h") {
+  const secret = process.env.JWT_SECRET || process.env.JWT_SECRET_CURRENT;
+  if (!secret) {
+    throw new Error("JWT_SECRET or JWT_SECRET_CURRENT is not configured");
+  }
+
+  return jwt.sign(payload, secret, {
+    expiresIn,
+    issuer: "infamous-freight-api",
+    audience: "infamous-freight-app",
+  });
+}
+
+/**
+ * Verify and decode a JWT token
+ * @param {string} token - JWT token to verify
+ * @returns {Object} Decoded token payload
+ */
+function verifyToken(token) {
+  const currentSecret = process.env.JWT_SECRET || process.env.JWT_SECRET_CURRENT;
+  const previousSecret = process.env.JWT_SECRET_PREVIOUS;
+  if (!currentSecret) {
+    throw new Error("JWT_SECRET or JWT_SECRET_CURRENT is not configured");
+  }
+
+  try {
+    return jwt.verify(token, currentSecret, {
+      maxAge: "1h",
+      issuer: "infamous-freight-api",
+      audience: "infamous-freight-app",
+    });
+  } catch (primaryErr) {
+    if (previousSecret) {
+      return jwt.verify(token, previousSecret, {
+        maxAge: "1h",
+        issuer: "infamous-freight-api",
+        audience: "infamous-freight-app",
+      });
+    }
+    throw primaryErr;
+  }
+}
+
 module.exports = {
   rateLimit,
   authenticate,
@@ -121,4 +219,6 @@ module.exports = {
   auditLog,
   limiters,
   createLimiter,
+  generateToken,
+  verifyToken,
 };

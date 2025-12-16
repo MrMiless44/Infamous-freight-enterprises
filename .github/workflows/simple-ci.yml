@@ -1,0 +1,110 @@
+name: Simple CI
+
+on:
+  push:
+    branches: ["main", "feat/*"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  PNPM_VERSION: 7.5.1
+  NODE_VERSION: 20
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/infamous-freight-api
+
+jobs:
+  tests:
+    name: Package tests (${{ matrix.package }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [infamous-freight-api, infamous-freight-web]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ${{ matrix.package }} tests
+        run: pnpm --filter ${{ matrix.package }} test
+
+  docker-publish:
+    name: Build and push images to GHCR
+    runs-on: ubuntu-latest
+    needs: tests
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+    strategy:
+      fail-fast: false
+      matrix:
+        component: [api, web]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Prepare registry owner (lowercase)
+        run: echo "REGISTRY_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute image tags
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMAGE_REPO="infamous-freight-${{ matrix.component }}"
+          echo "IMAGE_REPO=$IMAGE_REPO" >> $GITHUB_ENV
+
+          TAGS=""
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            TAGS+=" ghcr.io/${REGISTRY_OWNER}/${IMAGE_REPO}:latest"
+            TAGS+=" ghcr.io/${REGISTRY_OWNER}/${IMAGE_REPO}:${GITHUB_SHA}"
+          fi
+
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/}"
+            V_NO_V="${VERSION#v}"
+            MAJOR="${V_NO_V%%.*}"
+            REMAIN="${V_NO_V#*.}"
+            MINOR="${REMAIN%%.*}"
+            # Push vX.Y.Z, vX.Y, vX tags
+            TAGS+=" ghcr.io/${REGISTRY_OWNER}/${IMAGE_REPO}:v${V_NO_V}"
+            TAGS+=" ghcr.io/${REGISTRY_OWNER}/${IMAGE_REPO}:v${MAJOR}.${MINOR}"
+            TAGS+=" ghcr.io/${REGISTRY_OWNER}/${IMAGE_REPO}:v${MAJOR}"
+          fi
+
+          {
+            echo "tags<<EOF"
+            for t in ${TAGS}; do echo "$t"; done
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build and push ${{ matrix.component }} image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.component }}
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ${{ steps.meta.outputs.tags }}

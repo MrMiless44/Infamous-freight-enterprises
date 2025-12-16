@@ -12,7 +12,8 @@ class Config {
   // API Configuration
   getApiConfig() {
     return {
-      port: this.requireEnv("API_PORT", 4000),
+      // Support PORT as an alias to API_PORT for compatibility with some platforms
+      port: Number(this.getEnv("API_PORT") || this.getEnv("PORT") || 4000),
       host: this.getEnv("API_HOST", "0.0.0.0"),
       basePath: this.getEnv("API_BASE_PATH", "/api"),
     };
@@ -39,14 +40,30 @@ class Config {
       paypalClientId: this.requireEnv("PAYPAL_CLIENT_ID"),
       paypalClientSecret: this.requireEnv("PAYPAL_CLIENT_SECRET"),
       paypalSecret: this.requireEnv("PAYPAL_SECRET"),
-      aiSyntheticUrl: this.requireEnv("AI_SYNTHETIC_ENGINE_URL"),
+      // Support legacy alias AI_ENGINE_URL for compatibility
+      aiSyntheticUrl:
+        this.getEnv("AI_SYNTHETIC_ENGINE_URL") || this.requireEnv("AI_ENGINE_URL"),
       aiSyntheticKey: this.requireEnv("AI_SYNTHETIC_API_KEY"),
     };
   }
 
   // JWT Configuration
   getJwtSecret() {
-    return this.requireEnv("JWT_SECRET");
+    // Prefer explicit rotation variable if provided
+    const current = this.getEnv("JWT_SECRET") || this.getEnv("JWT_SECRET_CURRENT");
+    if (!current) {
+      throw new Error("Missing required environment variable: JWT_SECRET or JWT_SECRET_CURRENT");
+    }
+    return current;
+  }
+
+  getJwtSecrets() {
+    const current = this.getEnv("JWT_SECRET") || this.getEnv("JWT_SECRET_CURRENT");
+    const previous = this.getEnv("JWT_SECRET_PREVIOUS") || "";
+    if (!current) {
+      throw new Error("Missing required environment variable: JWT_SECRET or JWT_SECRET_CURRENT");
+    }
+    return { current, previous };
   }
 
   // Logging Configuration
