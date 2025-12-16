@@ -21,6 +21,7 @@ PGPASSWORD=Ae5GguNrKQiIIIyPuBm7G1A4i5NMWHIn psql -h dpg-d50s6gp5pdvs739a3g10-a.o
 ```
 
 **Common psql commands:**
+
 ```sql
 -- List all tables
 \dt
@@ -39,6 +40,7 @@ SELECT * FROM "Shipment" ORDER BY "createdAt" DESC LIMIT 10;
 ```
 
 **Or use connection string:**
+
 ```bash
 psql "postgresql://infamous:Ae5GguNrKQiIIIyPuBm7G1A4i5NMWHIn@dpg-d50s6gp5pdvs739a3g10-a.oregon-postgres.render.com/infamous_freight"
 ```

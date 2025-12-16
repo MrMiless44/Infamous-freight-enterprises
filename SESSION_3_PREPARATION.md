@@ -79,6 +79,7 @@ curl https://infamous-freight-api.fly.dev/api/health
 **Dashboard**: http://pghero-dpg-d50s6gp5pdvs739a3g10-a:10000
 
 **What to monitor:**
+
 - ✅ **Slow queries** - Any queries >1000ms
 - ✅ **Index usage** - Missing indexes causing table scans
 - ✅ **Connection pool** - Available vs. used connections
@@ -87,6 +88,7 @@ curl https://infamous-freight-api.fly.dev/api/health
 - ✅ **Long-running queries** - Queries taking >5s
 
 **Key metrics to track:**
+
 ```
 - Cache hit rate: Target >99%
 - Average query time: Target <50ms
@@ -95,6 +97,7 @@ curl https://infamous-freight-api.fly.dev/api/health
 ```
 
 **Action if issue detected:**
+
 - Slow queries → Add indexes, optimize queries
 - Low cache hit rate → Increase shared_buffers
 - Connection pool exhausted → Check for connection leaks
