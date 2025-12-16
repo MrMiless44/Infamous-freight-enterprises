@@ -18,7 +18,8 @@
     "./web",
     "./packages/shared"
   ],
-  "terminal.integrated.shellIntegration.enabled": false,
+  "terminal.integrated.shellIntegration.enabled": true,
+  "terminal.integrated.shellIntegration.decorationsEnabled": "both",
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "files.exclude": {
