@@ -39,6 +39,16 @@ time curl -s https://infamous-freight-api.fly.dev/api/users | head -c 100
 
 **Time commitment**: 5 minutes/day
 
+**Weekly Task (Every Sunday)**:
+
+```bash
+# Database Backup (automated script)
+export RENDER_API_KEY="your-key-here"
+./scripts/backup-database.sh
+```
+
+**Time commitment**: 2 minutes/week
+
 ---
 
 ### ⏳ This Week: Document Issues
@@ -261,6 +271,7 @@ curl --request GET 'https://api.render.com/v1/services/YOUR_SERVICE_ID/jobs/YOUR
 ```
 
 **Example response:**
+
 ```json
 {
   "id": "job-c3rfdgg6n88pa7t3a6ag",
@@ -275,6 +286,48 @@ curl --request GET 'https://api.render.com/v1/services/YOUR_SERVICE_ID/jobs/YOUR
 ```
 
 **Job statuses**: `pending`, `running`, `succeeded`, `failed`
+
+### Complete Backup Workflow
+
+**Step-by-step process:**
+
+```bash
+# 1. Start backup
+RESPONSE=$(curl -s --request POST 'https://api.render.com/v1/services/dpg-d50s6gp5pdvs739a3g10-a/jobs' \
+     --header 'Authorization: Bearer YOUR_API_KEY' \
+     --header 'Content-Type: application/json' \
+     --data-raw '{"startCommand": "pg_dump infamous_freight"}')
+
+# Returns: {"id": "job-abc123", ...}
+echo "Backup started: $RESPONSE"
+
+# 2. Extract job ID (using grep)
+JOB_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+echo "Job ID: $JOB_ID"
+
+# 3. Check status (use job ID from response)
+curl --request GET "https://api.render.com/v1/services/dpg-d50s6gp5pdvs739a3g10-a/jobs/$JOB_ID" \
+    --header 'Authorization: Bearer YOUR_API_KEY'
+
+# Returns: {"status": "succeeded", ...}
+```
+
+**Or use the automated script:**
+
+```bash
+# Set your API key
+export RENDER_API_KEY="your-key-here"
+
+# Run backup script (handles all steps automatically)
+./scripts/backup-database.sh
+```
+
+The script will:
+
+- ✅ Trigger the backup job
+- ✅ Poll for completion (up to 5 minutes)
+- ✅ Show progress and final status
+- ✅ Log results to `backups/backup-history.log`
 
 ### Other Useful Commands
 
