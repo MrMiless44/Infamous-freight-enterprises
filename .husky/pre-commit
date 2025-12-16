@@ -22,10 +22,9 @@ run_lint_staged() {
   echo "🔍 Running lint-staged..."
   if ensure_pnpm; then
     (cd "$REPO_ROOT" && pnpm lint-staged)
-  elif command -v npx >/dev/null 2>&1; then
-    (cd "$REPO_ROOT" && npx lint-staged)
   else
-    (cd "$REPO_ROOT" && npm run lint-staged)
+    echo "❌ pnpm not found. Install with: corepack enable && corepack prepare pnpm@8.15.9 --activate"
+    exit 1
   fi
 }
 
