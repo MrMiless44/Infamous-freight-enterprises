@@ -65,5 +65,6 @@
   ],
   "terminal.integrated.shellIntegration.quickFixEnabled": false,
   "terminal.integrated.stickyScroll.enabled": false,
-  "terminal.integrated.suggest.enabled": false
+  "terminal.integrated.suggest.enabled": false,
+  "prisma.pinToPrisma6": true
 }

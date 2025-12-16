@@ -1,0 +1,3 @@
+# .github/workflows/ci.yml
+- name: Run tests with coverage
+  run: cd api && npm test -- --coverage --coverageThreshold='{"global":{"branches":75,"functions":80,"lines":84,"statements":84}}'
