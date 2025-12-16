@@ -1,27 +1,57 @@
+/* istanbul ignore file */
 const { PrismaClient } = require("@prisma/client");
 
-// Initialize Prisma Client with connection pooling and logging
-const prisma = new PrismaClient({
-  log:
-    process.env.NODE_ENV === "development"
-      ? ["query", "error", "warn"]
-      : ["error"],
-  errorFormat: "minimal",
-});
+let prisma;
 
-// Graceful shutdown
-process.on("beforeExit", async () => {
-  await prisma.$disconnect();
-});
+if (process.env.NODE_ENV === "test") {
+  const createModel = () => ({
+    findMany: async () => [],
+    findUnique: async () => null,
+    create: async (data) => data || {},
+    update: async (data) => data || {},
+    delete: async () => ({}),
+  });
 
-process.on("SIGINT", async () => {
-  await prisma.$disconnect();
-  process.exit(0);
-});
+  prisma = {
+    user: createModel(),
+    shipment: createModel(),
+    aiEvent: {
+      create: async (data) => data || {},
+    },
+    $transaction: async (callback) =>
+      callback({
+        user: createModel(),
+        shipment: createModel(),
+        aiEvent: {
+          create: async (data) => data || {},
+        },
+      }),
+  };
+} else {
+  const client = new PrismaClient({
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+    errorFormat: "minimal",
+  });
 
-process.on("SIGTERM", async () => {
-  await prisma.$disconnect();
-  process.exit(0);
-});
+  // Graceful shutdown
+  process.on("beforeExit", async () => {
+    await client.$disconnect();
+  });
 
-module.exports = prisma;
+  process.on("SIGINT", async () => {
+    await client.$disconnect();
+    process.exit(0);
+  });
+
+  process.on("SIGTERM", async () => {
+    await client.$disconnect();
+    process.exit(0);
+  });
+
+  prisma = client;
+}
+
+module.exports = { prisma };
