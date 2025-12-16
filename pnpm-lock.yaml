@@ -116,6 +116,9 @@ importers:
       jest:
         specifier: ^30.2.0
         version: 30.2.0(@types/node@20.19.26)
+      jest-junit:
+        specifier: ^16.0.0
+        version: 16.0.0
       pino:
         specifier: ^10.1.0
         version: 10.1.0
