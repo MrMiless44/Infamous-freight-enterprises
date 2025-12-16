@@ -1,25 +1,40 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+set -euo pipefail
 
 # Pre-push hook - Run tests before pushing
 echo "🧪 Running tests before push..."
 
-# Prioritize pnpm if available
-if command -v pnpm >/dev/null 2>&1; then
-  PNPM_HOME="${PNPM_HOME:-$HOME/.local/share/pnpm}"
-  export PATH="$PNPM_HOME:$PATH"
-  
-  echo "📦 Running API tests..."
-  cd api && pnpm test --bail --maxWorkers=50%
-  API_EXIT=$?
-  cd ..
-  
-  if [ $API_EXIT -ne 0 ]; then
-    echo "❌ API tests failed. Fix tests before pushing."
-    exit 1
+# Resolve repo root relative to this script so it works from any CWD
+REPO_ROOT="$(cd -- "$(dirname "$0")/.." && pwd -P)"
+
+# Ensure pnpm is available (prefer Corepack) and fall back to npm if needed
+ensure_pnpm() {
+  if command -v pnpm >/dev/null 2>&1; then
+    # Verify pnpm actually works; if not, try to repair via corepack
+    if pnpm --version >/dev/null 2>&1; then
+      return 0
+    fi
   fi
-  
+  if command -v corepack >/dev/null 2>&1; then
+    corepack enable >/dev/null 2>&1 || true
+    corepack prepare pnpm@8.15.9 --activate >/dev/null 2>&1 || true
+  fi
+  pnpm --version >/dev/null 2>&1
+}
+
+RUN_API_TESTS() {
+  echo "📦 Running API tests..."
+  if ensure_pnpm; then
+    (cd "$REPO_ROOT/api" && pnpm test --bail --maxWorkers=50%)
+  else
+    echo "⚠️ pnpm unavailable; using npm fallback for API tests"
+    (cd "$REPO_ROOT/api" && npm test --silent)
+  fi
+}
+
+if RUN_API_TESTS; then
   echo "✅ All tests passed. Pushing..."
 else
-  echo "⚠️  pnpm not found. Skipping tests."
+  echo "❌ API tests failed. Fix tests before pushing."
+  exit 1
 fi

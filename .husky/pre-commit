@@ -1,20 +1,37 @@
-# Add pnpm to PATH if it exists
-export PNPM_HOME="/home/vscode/.local/share/pnpm"
-[ -d "$PNPM_HOME" ] && export PATH="$PNPM_HOME:$PATH"
+#!/usr/bin/env sh
+set -euo pipefail
 
-# Run lint-staged on staged files
-if command -v pnpm >/dev/null 2>&1; then
-  pnpm lint-staged
-elif command -v npx >/dev/null 2>&1; then
-  npx lint-staged
+# Resolve repo root relative to this script so it works from any CWD
+REPO_ROOT="$(cd -- "$(dirname "$0")/.." && pwd -P)"
+
+# Ensure pnpm is available (prefer Corepack) and fall back to npx/npm
+ensure_pnpm() {
+  if command -v pnpm >/dev/null 2>&1; then
+    if pnpm --version >/dev/null 2>&1; then
+      return 0
+    fi
+  fi
+  if command -v corepack >/dev/null 2>&1; then
+    corepack enable >/dev/null 2>&1 || true
+    corepack prepare pnpm@8.15.9 --activate >/dev/null 2>&1 || true
+  fi
+  pnpm --version >/dev/null 2>&1
+}
+
+run_lint_staged() {
+  echo "🔍 Running lint-staged..."
+  if ensure_pnpm; then
+    (cd "$REPO_ROOT" && pnpm lint-staged)
+  elif command -v npx >/dev/null 2>&1; then
+    (cd "$REPO_ROOT" && npx lint-staged)
+  else
+    (cd "$REPO_ROOT" && npm run lint-staged)
+  fi
+}
+
+if run_lint_staged; then
+  echo "✅ Pre-commit checks passed!"
 else
-  npm run lint-staged
-fi
-
-# Exit with error if lint-staged fails
-if [ $? -ne 0 ]; then
   echo "❌ Lint-staged checks failed. Commit aborted."
   exit 1
 fi
-
-echo "✅ Pre-commit checks passed!"
