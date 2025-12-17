@@ -117,7 +117,7 @@ const performanceMiddleware = (req, res, next) => {
             },
             timeout: 1500,
           },
-        ).catch(() => {});
+        ).catch(() => { });
       } catch (_err) {
         // ignore when axios not installed
       }
