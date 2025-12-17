@@ -1,0 +1,14 @@
+[
+    {
+        "key": "ctrl+shift+c",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Codex: Start",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+x",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Codex: Exec (prompt)",
+        "when": "editorTextFocus"
+    }
+]

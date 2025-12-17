@@ -23,11 +23,25 @@ pnpm web:dev          # Web only (port 3000)
 
 ### Testing
 
-```bash
+````bash
 pnpm test             # All tests
 pnpm test:coverage    # With coverage
 pnpm e2e              # E2E tests
-```
+
+### Codex CLI
+
+```bash
+# Verify Codex CLI
+codex --version
+
+# Start interactive agent
+codex
+
+# Non-interactive exec (see docs)
+codex exec --help
+````
+
+````
 
 ### Code Quality
 
@@ -35,7 +49,7 @@ pnpm e2e              # E2E tests
 pnpm lint             # Check all code
 pnpm lint:fix         # Auto-fix issues
 pnpm format           # Format code
-```
+````
 
 ### Building
 

@@ -64,11 +64,12 @@
 - Tests: `pnpm test`, coverage HTML in `api/coverage/`. API coverage thresholds enforced in CI (≈75–84%).
 - Lint/format: `pnpm lint && pnpm format`. Type check: `pnpm check:types`.
 - Prisma: edit `api/prisma/schema.prisma` → `cd api && pnpm prisma:migrate:dev --name <change>` → optional `pnpm prisma:studio` → `pnpm prisma:generate`.
+- Codex CLI: AI coding agent available in devcontainer. Run `codex` for interactive mode, or use keyboard shortcut `Ctrl+Shift+C` in VS Code. See [QUICK_REFERENCE.md](QUICK_REFERENCE.md#codex-cli).
 
 ## File/Dir References
 
 - API routes: `api/src/routes/` (e.g., `health.js`, `shipments.js`, `ai.commands.js`, `voice.js`, `billing.js`).
-- Middleware: `api/src/middleware/` ([security.js](api/src/middleware/security.js), [validation.js](api/src/middleware/validation.js), `errorHandler.js`, `logger.js`, `securityHeaders.js`).
+- Middleware: `api/src/middleware/` ([security.js](../api/src/middleware/security.js), [validation.js](../api/src/middleware/validation.js), `errorHandler.js`, `logger.js`, `securityHeaders.js`).
 - Services: `api/src/services/` (e.g., `aiSyntheticClient.js` with OpenAI/Anthropic/synthetic modes).
 - Shared: `packages/shared/src/` (`types.ts`, `constants.ts`, `utils.ts`, `env.ts`). Build outputs to `packages/shared/dist/`.
 - Web: `web/pages/`, `web/components/`. Use `ApiResponse<T>` and `SHIPMENT_STATUSES` from shared.
@@ -79,11 +80,11 @@
   ```js
   router.post(
     "/action",
-    limiters.general, // see limiters preset: [security.js](api/src/middleware/security.js#L32)
-    authenticate, // [authenticate()](api/src/middleware/security.js#L69)
-    requireScope("scope:name"), // [requireScope()](api/src/middleware/security.js#L89)
+    limiters.general, // see limiters preset: [security.js](../api/src/middleware/security.js#L32)
+    authenticate, // [authenticate()](../api/src/middleware/security.js#L69)
+    requireScope("scope:name"), // [requireScope()](../api/src/middleware/security.js#L89)
     auditLog,
-    [validateString("field"), handleValidationErrors], // [handleValidationErrors](api/src/middleware/validation.js#L6)
+    [validateString("field"), handleValidationErrors], // [handleValidationErrors](../api/src/middleware/validation.js#L6)
     async (req, res, next) => {
       try {
         const result = await service.doAction(req.body);
@@ -106,30 +107,31 @@
   ```
 
 - Helpful deep links:
-  - Limiters preset: [security.js](api/src/middleware/security.js#L32)
-  - `authenticate()`: [security.js](api/src/middleware/security.js#L69)
-  - `requireScope()`: [security.js](api/src/middleware/security.js#L89)
-  - `auditLog`: [security.js](api/src/middleware/security.js#L104)
-  - `handleValidationErrors`: [validation.js](api/src/middleware/validation.js#L6)
-  - Real route demonstrating order: [ai.commands.js](api/src/routes/ai.commands.js#L17-L38)
-  - Logger performance levels: [logger.js](api/src/middleware/logger.js#L90-L94)
-  - Billing route rate-limited: [billing.js](api/src/routes/billing.js#L38-L68)
+  - Limiters preset: [security.js](../api/src/middleware/security.js#L32)
+  - `authenticate()`: [security.js](../api/src/middleware/security.js#L69)
+  - `requireScope()`: [security.js](../api/src/middleware/security.js#L89)
+  - `auditLog`: [security.js](../api/src/middleware/security.js#L104)
+  - `handleValidationErrors`: [validation.js](../api/src/middleware/validation.js#L6)
+  - Real route demonstrating order: [ai.commands.js](../api/src/routes/ai.commands.js#L17-L38)
+  - Logger performance levels: [logger.js](../api/src/middleware/logger.js#L90-L94)
+  - Billing route rate-limited: [billing.js](../api/src/routes/billing.js#L38-L68)
 
 ## Integration & Config
 
 - AI: `api/src/services/aiSyntheticClient.js` selected via `AI_PROVIDER` (`openai|anthropic|synthetic`); uses retry; synthetic fallback when keys missing.
 - Billing: Stripe/PayPal under `api/src/routes/billing.js` with dedicated rate limits.
 - Voice: `api/src/routes/voice.js` using Multer (size via `VOICE_MAX_FILE_SIZE_MB`), scopes `voice:ingest`/`voice:command`.
-- Security: JWT via [security.js](api/src/middleware/security.js), CORS via `CORS_ORIGINS` (see [.env.example](.env.example#L24)), Helmet headers via `securityHeaders.js`, Sentry in server and `errorHandler.js`. Error responses handled centrally in [errorHandler.js](api/src/middleware/errorHandler.js#L22).
-  - JWT: [security.js](api/src/middleware/security.js)
-  - CORS: configure `CORS_ORIGINS` (see [.env.example](.env.example#L24))
-  - Voice upload size: `VOICE_MAX_FILE_SIZE_MB` default `10` (see [.env.example](.env.example#L42) and [voice.js](api/src/routes/voice.js#L14))
+- Security: JWT via [security.js](../api/src/middleware/security.js), CORS via `CORS_ORIGINS` (see [.env.example](../.env.example#L24)), Helmet headers via `securityHeaders.js`, Sentry in server and `errorHandler.js`. Error responses handled centrally in [errorHandler.js](../api/src/middleware/errorHandler.js#L22).
+- Web performance: Vercel Analytics and Speed Insights wired in [web/pages/\_app.tsx](../web/pages/_app.tsx). `SpeedInsights` renders in production. Datadog RUM initialized when `NEXT_PUBLIC_ENV=production` with `NEXT_PUBLIC_DD_APP_ID`, `NEXT_PUBLIC_DD_CLIENT_TOKEN`, `NEXT_PUBLIC_DD_SITE` (see [.env.example](../.env.example#L36-L40)).
+  - JWT: [security.js](../api/src/middleware/security.js)
+  - CORS: configure `CORS_ORIGINS` (see [.env.example](../.env.example#L24))
+  - Voice upload size: `VOICE_MAX_FILE_SIZE_MB` default `10` (see [.env.example](../.env.example#L42) and [voice.js](../api/src/routes/voice.js#L14))
 
 ## Gotchas
 
 - Shared changes require: `pnpm --filter @infamous-freight/shared build` then restart services.
-- API in Docker maps to 3001; standalone defaults to 4000 (`API_PORT`, see [.env.example](.env.example#L5)); Web defaults to 3000 (see [.env.example](.env.example#L10)).
-  - Defaults: `API_PORT=4000` (see [.env.example](.env.example#L5)), `WEB_PORT=3000` (see [.env.example](.env.example#L10)).
+- API in Docker maps to 3001; standalone defaults to 4000 (`API_PORT`, see [.env.example](../.env.example#L5)); Web defaults to 3000 (see [.env.example](../.env.example#L10)).
+  - Defaults: `API_PORT=4000` (see [.env.example](../.env.example#L5)), `WEB_PORT=3000` (see [.env.example](../.env.example#L10)).
 - Always use shared enums (e.g., `SHIPMENT_STATUSES`) instead of string literals.
 - Jest tests assume `process.env.JWT_SECRET = "test-secret"` and mock external services.
 
@@ -139,8 +141,9 @@
 - Run API tests only: `pnpm --filter api test`
 - Prisma generate: `cd api && pnpm prisma:generate`
 - Kill ports: `lsof -ti:3001 | xargs kill -9` (API), `lsof -ti:3000 | xargs kill -9` (Web)
-- Env defaults: `AI_PROVIDER=synthetic` (see [.env.example](.env.example#L27)), `VOICE_MAX_FILE_SIZE_MB=10` (see [.env.example](.env.example#L42))
-- Env defaults: `AI_PROVIDER=synthetic` (see [.env.example](.env.example#L27))
+- Env defaults: `AI_PROVIDER=synthetic` (see [.env.example](../.env.example#L27)), `VOICE_MAX_FILE_SIZE_MB=10` (see [.env.example](../.env.example#L42))
+- Env defaults: `AI_PROVIDER=synthetic` (see [.env.example](../.env.example#L27))
+- Production: Web deployed to https://infamous-freight-enterprises-git-f34b9b-santorio-miles-projects.vercel.app (Vercel)
 
 ---
 
@@ -404,7 +407,7 @@ npx lighthouse http://localhost:3000 --view
 
 ## �📖 Additional Resources
 
-- [README.md](../README.md) - Project overview & architecture
-- [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) - Command cheat sheet
-- [CONTRIBUTING.md](../CONTRIBUTING.md) - Development guidelines
-- [DOCUMENTATION_INDEX.md](../DOCUMENTATION_INDEX.md) - All documentation
+- [README.md](README.md) - Project overview & architecture
+- [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - Command cheat sheet
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Development guidelines
+- [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) - All documentation

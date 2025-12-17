@@ -29,6 +29,9 @@ pnpm-error.log*
 *.swp
 *.swo
 
+# Codex CLI personal config
+.codex/config.toml
+
 # Temporary files
 *.yaml~
 *.json~
@@ -53,3 +56,5 @@ web/.vercel/
 # Test artifacts
 junit.xml
 coverage/
+
+.fake

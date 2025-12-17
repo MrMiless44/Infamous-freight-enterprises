@@ -205,6 +205,23 @@ npm run lint             # Run ESLint
 - **Generate Client**: `cd api && npm run prisma:generate`
 - **Seed Database**: `cd api && npx prisma db seed`
 
+### AI Coding Assistant
+
+**Codex CLI** is available in the devcontainer:
+
+```bash
+codex                 # Start interactive Codex agent
+codex --version       # Check version
+codex exec --help     # Non-interactive mode
+```
+
+**Keyboard Shortcuts** (VS Code):
+
+- `Ctrl+Shift+C` - Start Codex interactive mode
+- `Ctrl+Shift+X` - Run Codex exec
+
+See [QUICK_REFERENCE.md](QUICK_REFERENCE.md#codex-cli) for more details.
+
 ### Code Quality
 
 ```bash

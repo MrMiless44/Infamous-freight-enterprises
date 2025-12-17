@@ -39,7 +39,7 @@ jobs:
         if: always()
         run: |
           echo "✅ Vercel Deployment: ${{ job.status }}"
-          echo "📍 URL: https://infamous-freight.vercel.app"
+          echo "📍 URL: https://infamous-freight-enterprises-git-f34b9b-santorio-miles-projects.vercel.app"
 
       - name: Create GitHub Deployment Status
         uses: actions/github-script@v7
@@ -52,7 +52,7 @@ jobs:
               repo: context.repo.repo,
               deployment_id: context.payload.deployment?.id || 1,
               state: deploymentState,
-              environment_url: 'https://infamous-freight.vercel.app',
+              environment_url: 'https://infamous-freight-enterprises-git-f34b9b-santorio-miles-projects.vercel.app',
               description: deploymentState === 'success' ? 'Deployment successful' : 'Deployment failed'
             });
 
@@ -74,7 +74,7 @@ jobs:
 
 ### Deployment Details
 - **Environment:** Production
-- **URL:** https://infamous-freight.vercel.app
+- **URL:** https://infamous-freight-enterprises-git-f34b9b-santorio-miles-projects.vercel.app
 - **Timestamp:** ${new Date().toISOString()}
 
 ${status === '✅' ? '✨ **Deployment successful!**' : '⚠️ **Deployment failed. Check logs above.**'}`;

@@ -16,8 +16,8 @@ export default function App({ Component, pageProps }: AppProps) {
         site: process.env.NEXT_PUBLIC_DD_SITE || "datadoghq.com",
         service: "infamous-freight-web",
         env: "production",
-        sampleRate: 100,
-        trackInteractions: true,
+        sessionSampleRate: 100,
+        trackUserInteractions: true,
         defaultPrivacyLevel: "mask-user-input",
       });
       datadogRum.startSessionReplayRecording();
@@ -28,8 +28,12 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div style={{ fontFamily: "system-ui, -apple-system, BlinkMacSystemFont" }}>
       <Component {...pageProps} />
-      {process.env.NEXT_PUBLIC_ENV === "production" && <Analytics />}
-      <SpeedInsights />
+      {process.env.NEXT_PUBLIC_ENV === "production" && (
+        <>
+          <Analytics />
+          <SpeedInsights />
+        </>
+      )}
     </div>
   );
 }

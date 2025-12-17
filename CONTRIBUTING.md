@@ -112,6 +112,20 @@ After changing shared package:
 pnpm --filter @infamous-freight/shared build
 ```
 
+### AI Coding Assistant
+
+The devcontainer includes **Codex CLI** for AI-assisted development:
+
+```bash
+codex                 # Interactive AI coding agent
+codex exec "task"     # Non-interactive mode
+```
+
+**VS Code Integration:**
+
+- Run Task: Terminal → Run Task → "Codex: Start"
+- Keyboard: `Ctrl+Shift+C` for interactive mode
+
 ### Creating a Branch
 
 Follow this naming convention:
@@ -144,17 +158,20 @@ These run automatically on commit via Husky hooks.
 ### Testing Requirements
 
 **Coverage Thresholds** (enforced in CI):
+
 - Branches: ≥75%
 - Functions: ≥80%
 - Lines: ≥84%
 - Statements: ≥84%
 
 **Before submitting a PR:**
+
 1. Run full test suite: `cd api && pnpm test`
 2. Check coverage: `cd api && pnpm test:coverage`
 3. Review uncovered code - is it intentional? See [COVERAGE_GAPS.md](./docs/COVERAGE_GAPS.md)
 
 **Writing Tests:**
+
 - Follow patterns in [TESTING.md](./docs/TESTING.md)
 - Test happy paths AND error scenarios
 - Mock external dependencies (Stripe, OpenAI, etc.)
@@ -163,6 +180,7 @@ These run automatically on commit via Husky hooks.
 
 **When to Skip Tests:**
 See [COVERAGE_GAPS.md](./docs/COVERAGE_GAPS.md) for guidance on:
+
 - Process signal handlers
 - Database connection failures
 - External API retry logic

@@ -3,6 +3,9 @@
   "version": "2.0.0",
   "description": "Next.js React web application for freight management and logistics operations",
   "private": true,
+  "engines": {
+    "node": ">=20.18.1 <21"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,6 +16,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@datadog/browser-rum": "^4.53.0",
     "@infamous-freight/shared": "file:../packages/shared",
     "@vercel/analytics": "^1.4.0",
     "@vercel/speed-insights": "^1.0.0",

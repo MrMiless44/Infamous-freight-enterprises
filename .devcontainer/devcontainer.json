@@ -42,7 +42,8 @@
         "esbenp.prettier-vscode",
         "appland.appmap",
         "Prisma.prisma",
-        "ms-edgedevtools.vscode-edge-devtools"
+        "ms-edgedevtools.vscode-edge-devtools",
+        "Ionide.Ionide-fsharp"
       ]
     }
   },
@@ -55,6 +56,7 @@
   // }
   // postCreateCommand.sh parameters: $1=SA password, $2=dacpac path, $3=sql script(s) path
   "postCreateCommand": "bash .devcontainer/mssql/postCreateCommand.sh 'P@ssw0rd' './bin/Debug/' './.devcontainer/mssql/'",
+  "postStartCommand": "bash .devcontainer/postStartCommand.sh",
   "features": {
     "ghcr.io/devcontainers/features/anaconda:1": {},
     "ghcr.io/devcontainers/features/aws-cli:1": {},
