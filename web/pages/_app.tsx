@@ -5,7 +5,10 @@ import { datadogRum } from "@datadog/browser-rum";
 import "../styles/global.css";
 
 export default function App({ Component, pageProps }: AppProps) {
-  if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_ENV === "production") {
+  if (
+    typeof window !== "undefined" &&
+    process.env.NEXT_PUBLIC_ENV === "production"
+  ) {
     try {
       datadogRum.init({
         applicationId: process.env.NEXT_PUBLIC_DD_APP_ID || "",
