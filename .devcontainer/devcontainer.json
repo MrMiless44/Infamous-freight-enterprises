@@ -41,7 +41,8 @@
         "ms-vscode.remote-server",
         "esbenp.prettier-vscode",
         "appland.appmap",
-        "Prisma.prisma"
+        "Prisma.prisma",
+        "ms-edgedevtools.vscode-edge-devtools"
       ]
     }
   },
