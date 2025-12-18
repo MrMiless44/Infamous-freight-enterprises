@@ -14,10 +14,20 @@ const nextConfig = {
   },
   // Image optimization for Core Web Vitals
   images: {
-    domains: ['localhost', 'infamous-freight.fly.dev', 'vercel.app'],
+    domains: ['localhost', 'infamous-freight.fly.dev', 'infamous-freight-ai.fly.dev', 'vercel.app'],
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year for optimized images
   },
+  // Rewrites: forward API calls to Fly after filesystem routes
+  // Using afterFiles ensures Next API routes like /api/proxy/* remain intact
+  rewrites: async () => ({
+    afterFiles: [
+      {
+        source: '/api/:path*',
+        destination: 'https://infamous-freight-ai.fly.dev/api/:path*',
+      },
+    ],
+  }),
   // Response headers for caching and security
   headers: async () => [
     {
