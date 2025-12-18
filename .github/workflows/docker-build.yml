@@ -59,3 +59,5 @@ jobs:
           file: ./web/Dockerfile
           push: false
           tags: ghcr.io/${{ env.REGISTRY_OWNER }}/infamous-freight-web:test
+          build-args: |
+            DATABASE_URL=postgres://postgres:postgres@localhost:51214/template1?sslmode=disable

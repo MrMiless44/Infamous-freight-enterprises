@@ -25,6 +25,9 @@ FROM base AS builder
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# Inject database URL during build to satisfy env validation in shared package
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
 
 # Copy workspace configuration
 COPY pnpm-workspace.yaml package.json ./
