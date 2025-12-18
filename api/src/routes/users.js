@@ -240,7 +240,7 @@ router.patch(
         },
       });
 
-      res.json({ ok: true, user });
+      res.json({ success: true, data: user, message: "User updated successfully" });
     } catch (err) {
       if (err.code === "P2025") {
         return res.status(404).json({ ok: false, error: "User not found" });
@@ -262,7 +262,7 @@ router.delete(
         where: { id: req.params.id },
       });
 
-      res.json({ ok: true, message: "User deleted successfully" });
+      res.json({ success: true, message: "User deleted successfully" });
     } catch (err) {
       if (err.code === "P2025") {
         return res.status(404).json({ ok: false, error: "User not found" });
