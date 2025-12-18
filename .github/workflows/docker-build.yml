@@ -13,6 +13,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install OpenSSL for Prisma
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssl
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
