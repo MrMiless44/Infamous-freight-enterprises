@@ -71,6 +71,52 @@ jest.mock("./src/db/prisma.js", () => {
     });
   });
 
+  const mockShipmentCreate = jest.fn((args) => {
+    const { data } = args;
+    return Promise.resolve({
+      id: "shipment-" + Date.now(),
+      reference: data.reference,
+      origin: data.origin,
+      destination: data.destination,
+      driverId: data.driverId || null,
+      status: data.status || 'created',
+      trackingNumber: 'TRK-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      driver: null,
+    });
+  });
+
+  const mockShipmentFindMany = jest.fn(() =>
+    Promise.resolve([
+      {
+        id: 'shipment-1',
+        reference: 'REF-001',
+        origin: 'New York, NY',
+        destination: 'Los Angeles, CA',
+        status: 'created',
+        trackingNumber: 'TRK-ABC123',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        driver: null,
+      },
+    ]),
+  );
+
+  const mockShipmentFindUnique = jest.fn(() =>
+    Promise.resolve({
+      id: 'shipment-1',
+      reference: 'REF-001',
+      origin: 'New York, NY',
+      destination: 'Los Angeles, CA',
+      status: 'created',
+      trackingNumber: 'TRK-ABC123',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      driver: null,
+    }),
+  );
+
   const mockPrismaInstance = {
     user: {
       create: mockUserCreate,
@@ -80,12 +126,31 @@ jest.mock("./src/db/prisma.js", () => {
       delete: jest.fn(() => Promise.resolve({})),
     },
     shipment: {
-      findMany: jest.fn(() => Promise.resolve([])),
-      findUnique: jest.fn(() => Promise.resolve({})),
-      create: jest.fn(() => Promise.resolve({})),
+      findMany: mockShipmentFindMany,
+      findUnique: mockShipmentFindUnique,
+      create: mockShipmentCreate,
       update: jest.fn(() => Promise.resolve({})),
       delete: jest.fn(() => Promise.resolve({})),
     },
+    aiEvent: {
+      create: jest.fn(() => Promise.resolve({})),
+    },
+    $transaction: jest.fn((cb) => {
+      // Mock $transaction to call the callback with a mock tx object
+      const mockTx = {
+        shipment: {
+          create: mockShipmentCreate,
+          findUnique: mockShipmentFindUnique,
+          findMany: mockShipmentFindMany,
+          update: jest.fn(() => Promise.resolve({})),
+          delete: jest.fn(() => Promise.resolve({})),
+        },
+        aiEvent: {
+          create: jest.fn(() => Promise.resolve({})),
+        },
+      };
+      return cb(mockTx);
+    }),
     $disconnect: jest.fn(),
   };
 
