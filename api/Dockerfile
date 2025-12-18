@@ -16,7 +16,6 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 FROM base AS builder-shared
 WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=dependencies /app/packages ./packages
 COPY packages/shared ./packages/shared
 RUN pnpm --filter=@infamous-freight/shared build
 
