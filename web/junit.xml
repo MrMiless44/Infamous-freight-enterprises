@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="1" failures="0" errors="0" time="2.753">
-  <testsuite name="components/__tests__/AvatarGrid.test.jsx" errors="0" failures="0" skipped="0" timestamp="2025-12-18T04:31:58" time="0.676" tests="1">
-    <testcase classname="Dashboard Component" name="should render without crashing" time="0.003">
+<testsuites name="jest tests" tests="1" failures="0" errors="0" time="0.815">
+  <testsuite name="components/__tests__/AvatarGrid.test.jsx" errors="0" failures="0" skipped="0" timestamp="2025-12-18T06:46:05" time="0.398" tests="1">
+    <testcase classname="Dashboard Component" name="should render without crashing" time="0.002">
     </testcase>
   </testsuite>
 </testsuites>

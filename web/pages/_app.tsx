@@ -10,17 +10,35 @@ import {
 } from "../lib/webVitalsMonitoring";
 import "../styles/global.css";
 
+/**
+ * Main App Component
+ *
+ * This component integrates multiple monitoring and analytics solutions:
+ * - Vercel Speed Insights: Tracks real-world performance metrics (Web Vitals)
+ * - Vercel Analytics: Provides basic analytics data
+ * - Datadog RUM: Advanced real user monitoring with session replay
+ * - Web Vitals: Tracks Core Web Vitals (CLS, FID, FCP, LCP, TTFB)
+ *
+ * All monitoring is enabled only in production to avoid development overhead.
+ *
+ * See: docs/SPEED_INSIGHTS_SETUP.md for detailed information about Speed Insights setup
+ */
+
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     // Track Core Web Vitals
     if (typeof window !== "undefined") {
       import("web-vitals").then(
-        ({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-          getCLS(reportWebVitals);
-          getFID(reportWebVitals);
-          getFCP(reportWebVitals);
-          getLCP(reportWebVitals);
-          getTTFB(reportWebVitals);
+        ({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+          onCLS(reportWebVitals);
+          onFCP(reportWebVitals);
+          onLCP(reportWebVitals);
+          onTTFB(reportWebVitals);
+          // Note: FID is deprecated in favor of INP (Interaction to Next Paint)
+          // but we keep it for older browsers
+          if (onFID) {
+            onFID(reportWebVitals);
+          }
         },
       );
 
