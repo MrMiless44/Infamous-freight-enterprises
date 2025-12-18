@@ -1,0 +1,6 @@
+Choose one:
+A) Vercel Postgres (easiest - click "Create Database" in Vercel)
+B) Railway.app (search "Railway")
+C) Fly Postgres (if using Fly for DB too)
+
+Add DATABASE_URL to Fly.io environment variables

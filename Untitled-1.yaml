@@ -1,3 +1,10 @@
-# .github/workflows/ci.yml
-- name: Run tests with coverage
-  run: cd api && npm test -- --coverage --coverageThreshold='{"global":{"branches":75,"functions":80,"lines":84,"statements":84}}'
+🔗 https://vercel.com
+
+Quick steps:
+1. Login with GitHub
+2. Click "Add New" → "Project"
+3. Select "Infamous-freight-enterprises"
+4. Click "Import"
+5. Click "Deploy"
+6. Wait 3-5 minutes ⏳
+7. Copy your URL (looks like: https://infamous-freight-XXXXX.vercel.app)
