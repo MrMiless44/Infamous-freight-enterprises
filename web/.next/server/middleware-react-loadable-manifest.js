@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}";
+self.__REACT_LOADABLE_MANIFEST='{"../node_modules/.pnpm/@datadog+browser-rum@6.25.0/node_modules/@datadog/browser-rum/esm/boot/lazyLoadProfiler.js -> ../domain/profiling/profiler":{"id":8030,"files":["static/chunks/profiler.57923676e6845fe4.js"]},"../node_modules/.pnpm/@datadog+browser-rum@6.25.0/node_modules/@datadog/browser-rum/esm/boot/lazyLoadRecorder.js -> ./startRecording":{"id":657,"files":["static/chunks/recorder.ec36e6c4e853ddf9.js"]}}';

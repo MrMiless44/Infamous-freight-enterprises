@@ -28,6 +28,7 @@ module.exports = {
     ],
   ],
   testMatch: ["**/__tests__/**/*.js", "**/?(*.)+(spec|test).js"],
+  testPathIgnorePatterns: ["/node_modules/", "/__tests__/helpers/"],
   coveragePathIgnorePatterns: ["/node_modules/"],
   // Handle ES modules in monorepo
   transformIgnorePatterns: ["node_modules/(?!(@infamous-freight)/)"],
