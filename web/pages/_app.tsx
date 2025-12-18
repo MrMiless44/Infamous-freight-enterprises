@@ -15,12 +15,12 @@ export default function App({ Component, pageProps }: AppProps) {
     // Track Core Web Vitals
     if (typeof window !== "undefined") {
       import("web-vitals").then(
-        ({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-          getCLS(reportWebVitals);
-          getFID(reportWebVitals);
-          getFCP(reportWebVitals);
-          getLCP(reportWebVitals);
-          getTTFB(reportWebVitals);
+        ({ onCLS, onFCP, onLCP, onTTFB, onINP }) => {
+          onCLS(reportWebVitals);
+          onFCP(reportWebVitals);
+          onLCP(reportWebVitals);
+          onTTFB(reportWebVitals);
+          onINP(reportWebVitals);
         },
       );
 
