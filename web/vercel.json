@@ -1,9 +1,12 @@
 {
-  "buildCommand": "next build",
-  "installCommand": "npm install",
-  "outputDirectory": ".next",
+  "version": 2,
+  "routes": [
+    { "src": "/api/proxy/(.*)", "dest": "/api/proxy/$1" },
+    { "src": "/api/(.*)", "dest": "https://infamous-freight-ai.fly.dev/api/$1" }
+  ],
   "env": {
-    "NEXT_PUBLIC_API_BASE": "@api_base_url_prod",
-    "NEXT_PUBLIC_ENV": "production"
+    "NODE_VERSION": "20.18.1",
+    "NEXT_PUBLIC_ENV": "production",
+    "NEXT_PUBLIC_API_BASE": "https://infamous-freight-ai.fly.dev"
   }
 }
