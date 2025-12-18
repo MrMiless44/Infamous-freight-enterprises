@@ -1,4 +1,0 @@
-{
-  "buildCommand": "cd .. && pnpm install && pnpm --filter @infamous-freight/shared build && cd web && pnpm build",
-  "installCommand": "cd .. && pnpm install --frozen-lockfile"
-}

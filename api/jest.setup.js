@@ -8,8 +8,45 @@ jest.mock("@prisma/client", () => {
   const mockPrismaClient = jest.fn();
   mockPrismaClient.prototype.$disconnect = jest.fn();
 
+  // Create a mock Prisma instance with user operations
+  const mockUserCreate = jest.fn((args) => {
+    const { data } = args;
+    return Promise.resolve({
+      id: "test-user-123",
+      email: data.email,
+      name: data.name || null,
+      role: data.role || "user",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+  });
+
+  const mockUserFindUnique = jest.fn(() =>
+    Promise.resolve({
+      id: "test-user-123",
+      email: "test@example.com",
+      name: "Test User",
+      role: "user",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
+  );
+
+  const mockUserFindMany = jest.fn(() => Promise.resolve([]));
+
+  const mockPrismaInstance = {
+    user: {
+      create: mockUserCreate,
+      findUnique: mockUserFindUnique,
+      findMany: mockUserFindMany,
+      update: jest.fn(() => Promise.resolve({})),
+      delete: jest.fn(() => Promise.resolve({})),
+    },
+    $disconnect: jest.fn(),
+  };
+
   return {
-    PrismaClient: mockPrismaClient,
+    PrismaClient: jest.fn(() => mockPrismaInstance),
     Prisma: {
       PrismaClientValidationError: Error,
       PrismaClientRustPanicError: Error,
@@ -18,6 +55,106 @@ jest.mock("@prisma/client", () => {
       PrismaClientUnknownRequestError: Error,
     },
   };
+});
+
+// Mock the prisma database module
+jest.mock("./src/db/prisma.js", () => {
+  const mockUserCreate = jest.fn((args) => {
+    const { data } = args;
+    return Promise.resolve({
+      id: "test-user-123",
+      email: data.email,
+      name: data.name || null,
+      role: data.role || "user",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+  });
+
+  const mockShipmentCreate = jest.fn((args) => {
+    const { data } = args;
+    return Promise.resolve({
+      id: "shipment-" + Date.now(),
+      reference: data.reference,
+      origin: data.origin,
+      destination: data.destination,
+      driverId: data.driverId || null,
+      status: data.status || 'created',
+      trackingNumber: 'TRK-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      driver: null,
+    });
+  });
+
+  const mockShipmentFindMany = jest.fn(() =>
+    Promise.resolve([
+      {
+        id: 'shipment-1',
+        reference: 'REF-001',
+        origin: 'New York, NY',
+        destination: 'Los Angeles, CA',
+        status: 'created',
+        trackingNumber: 'TRK-ABC123',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        driver: null,
+      },
+    ]),
+  );
+
+  const mockShipmentFindUnique = jest.fn(() =>
+    Promise.resolve({
+      id: 'shipment-1',
+      reference: 'REF-001',
+      origin: 'New York, NY',
+      destination: 'Los Angeles, CA',
+      status: 'created',
+      trackingNumber: 'TRK-ABC123',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      driver: null,
+    }),
+  );
+
+  const mockPrismaInstance = {
+    user: {
+      create: mockUserCreate,
+      findUnique: jest.fn(() => Promise.resolve({})),
+      findMany: jest.fn(() => Promise.resolve([])),
+      update: jest.fn(() => Promise.resolve({})),
+      delete: jest.fn(() => Promise.resolve({})),
+    },
+    shipment: {
+      findMany: mockShipmentFindMany,
+      findUnique: mockShipmentFindUnique,
+      create: mockShipmentCreate,
+      update: jest.fn(() => Promise.resolve({})),
+      delete: jest.fn(() => Promise.resolve({})),
+    },
+    aiEvent: {
+      create: jest.fn(() => Promise.resolve({})),
+    },
+    $transaction: jest.fn((cb) => {
+      // Mock $transaction to call the callback with a mock tx object
+      const mockTx = {
+        shipment: {
+          create: mockShipmentCreate,
+          findUnique: mockShipmentFindUnique,
+          findMany: mockShipmentFindMany,
+          update: jest.fn(() => Promise.resolve({})),
+          delete: jest.fn(() => Promise.resolve({})),
+        },
+        aiEvent: {
+          create: jest.fn(() => Promise.resolve({})),
+        },
+      };
+      return cb(mockTx);
+    }),
+    $disconnect: jest.fn(),
+  };
+
+  return { prisma: mockPrismaInstance };
 });
 
 // Mock rate-limiter-flexible before it's loaded by security middleware
