@@ -180,8 +180,8 @@ describe("Users API Routes", () => {
         .send(newUserData);
 
       expect(res.status).toBe(201);
-      expect(res.body.ok).toBe(true);
-      expect(res.body.user).toEqual(createdUser);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data).toEqual(createdUser);
       expect(prisma.user.create).toHaveBeenCalled();
     });
 
@@ -200,7 +200,7 @@ describe("Users API Routes", () => {
         .send(newUserData);
 
       expect(res.status).toBe(201);
-      expect(res.body.user.role).toBe("user");
+      expect(res.body.data.role).toBe("user");
     });
 
     test("returns 400 when email is missing", async () => {
@@ -241,8 +241,8 @@ describe("Users API Routes", () => {
         .send(updateData);
 
       expect(res.status).toBe(200);
-      expect(res.body.ok).toBe(true);
-      expect(res.body.user.name).toBe("Updated Name");
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.name).toBe("Updated Name");
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { id: "user-123" },
         data: updateData,
@@ -293,7 +293,7 @@ describe("Users API Routes", () => {
         .set("Authorization", authHeader(token));
 
       expect(res.status).toBe(200);
-      expect(res.body.ok).toBe(true);
+      expect(res.body.success).toBe(true);
       expect(res.body.message).toBe("User deleted successfully");
       expect(prisma.user.delete).toHaveBeenCalledWith({
         where: { id: "user-123" },
