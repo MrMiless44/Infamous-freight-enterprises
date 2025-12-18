@@ -29,6 +29,9 @@ function initSentry(app) {
     Sentry.init({
       dsn: sentryDsn,
       environment: process.env.NODE_ENV,
+      // Setting this option to true will send default PII data to Sentry.
+      // For example, automatic IP address collection on events
+      sendDefaultPii: true,
       tracesSampleRate: 0.1, // Sample 10% of transactions
       profilesSampleRate: 0.1, // Sample 10% of profiles
       integrations: [
