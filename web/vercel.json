@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "buildCommand": "cd .. && pnpm install && pnpm --filter @infamous-freight/shared build && cd web && pnpm build",
+  "installCommand": "cd .. && pnpm install --frozen-lockfile",
   "routes": [
     { "src": "/api/proxy/(.*)", "dest": "/api/proxy/$1" },
     { "src": "/api/(.*)", "dest": "https://infamous-freight-ai.fly.dev/api/$1" }
