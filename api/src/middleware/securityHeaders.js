@@ -113,10 +113,8 @@ function handleCSPViolation(req, res) {
 
   // Optionally send to monitoring service (Sentry, DataDog, etc)
   if (process.env.SENTRY_DSN) {
-    const Sentry = require("./sentry");
-    Sentry.captureMessage("CSP Violation", "warning", {
-      violation,
-    });
+    const { captureMessage } = require("../config/sentry");
+    captureMessage("CSP Violation", "warning");
   }
 
   res.status(204).end();
