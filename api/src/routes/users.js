@@ -1,11 +1,12 @@
 const express = require("express");
 const { prisma } = require("../db/prisma");
-const { body, validationResult } = require("express-validator");
+const { body } = require("express-validator");
 const {
   authenticate,
   requireScope,
   auditLog,
 } = require("../middleware/security");
+const { handleValidationErrors } = require("../middleware/validation");
 
 const router = express.Router();
 
@@ -154,21 +155,26 @@ router.post(
   requireScope("users:write"),
   auditLog,
   [
-    body("email").isEmail().withMessage("Invalid email format"),
-    body("name").optional().isString().trim().isLength({ min: 1, max: 100 }),
-    body("role").optional().isIn(["user", "admin", "driver"]).withMessage("Invalid role"),
+    body("email")
+      .isString()
+      .withMessage("Email must be a string")
+      .isEmail()
+      .withMessage("Invalid email format"),
+    body("name")
+      .optional()
+      .isString()
+      .withMessage("Name must be a string")
+      .trim()
+      .isLength({ min: 1, max: 100 })
+      .withMessage("Name must be between 1 and 100 characters"),
+    body("role")
+      .optional()
+      .isIn(["user", "admin", "driver"])
+      .withMessage("Invalid role"),
   ],
+  handleValidationErrors,
   async (req, res, next) => {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          ok: false,
-          error: "Validation Error",
-          details: errors.array(),
-        });
-      }
-
       const { email, name, role = "user" } = req.body;
 
       if (!email) {
@@ -191,12 +197,16 @@ router.post(
         },
       });
 
-      res.status(201).json({ ok: true, user });
+      res
+        .status(201)
+        .json({ success: true, data: user, message: "User created successfully" });
     } catch (err) {
       if (err.code === "P2002") {
-        return res
-          .status(409)
-          .json({ ok: false, error: "Email already exists" });
+        return res.status(409).json({
+          success: false,
+          error: "Email already exists",
+          message: "A user with this email already exists",
+        });
       }
       next(err);
     }
