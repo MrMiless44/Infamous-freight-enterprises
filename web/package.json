@@ -16,7 +16,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@datadog/browser-rum": "^4.53.0",
+    "@datadog/browser-rum": "^6.25.0",
     "@infamous-freight/shared": "file:../packages/shared",
     "@vercel/analytics": "^1.4.0",
     "@vercel/speed-insights": "^1.0.0",

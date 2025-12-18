@@ -33,6 +33,9 @@ importers:
       prettier:
         specifier: ^3.7.4
         version: 3.7.4
+      prisma:
+        specifier: ^5.22.0
+        version: 5.22.0
 
   api:
     dependencies:
@@ -195,6 +198,9 @@ importers:
 
   web:
     dependencies:
+      '@datadog/browser-rum':
+        specifier: ^6.25.0
+        version: 6.25.0
       '@infamous-freight/shared':
         specifier: file:../packages/shared
         version: file:packages/shared
@@ -1830,6 +1836,28 @@ packages:
     resolution: {integrity: sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw==}
     engines: {node: '>=18'}
     dev: true
+
+  /@datadog/browser-core@6.25.0:
+    resolution: {integrity: sha512-LyVY1VnBH2kIsWf4ClJq1Fry1ndDTlULqPaP9ofVPxTv0WmCKElklkGA6fJ0lJeRx5u5PSx2onxV1X8S/pY2oA==}
+    dev: false
+
+  /@datadog/browser-rum-core@6.25.0:
+    resolution: {integrity: sha512-2e7xJSpvVgVcHQOcH8m0Cd22GEDSPJxSMa+M5KtnNb7TturZ8YIZc0p9At2Y5ZtaH5G+pbHo5voDfk/WOdiVUA==}
+    dependencies:
+      '@datadog/browser-core': 6.25.0
+    dev: false
+
+  /@datadog/browser-rum@6.25.0:
+    resolution: {integrity: sha512-jAr8tUK0Wg6Cxu9bVtYZ50zZ5N1TxdNsxNieYYcnMp8VZ4jNIrLk+xDTKtTDxpWR8ooYWHIWfYcbKueemYZCgQ==}
+    peerDependencies:
+      '@datadog/browser-logs': 6.25.0
+    peerDependenciesMeta:
+      '@datadog/browser-logs':
+        optional: true
+    dependencies:
+      '@datadog/browser-core': 6.25.0
+      '@datadog/browser-rum-core': 6.25.0
+    dev: false
 
   /@discoveryjs/json-ext@0.5.7:
     resolution: {integrity: sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==}
