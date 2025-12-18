@@ -12,6 +12,42 @@ const nextConfig = {
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
   },
+  // Image optimization for Core Web Vitals
+  images: {
+    domains: ['localhost', 'infamous-freight.fly.dev', 'vercel.app'],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year for optimized images
+  },
+  // Response headers for caching and security
+  headers: async () => [
+    {
+      source: '/images/(.*)',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=31536000, immutable'
+        }
+      ]
+    },
+    {
+      source: '/_next/static/(.*)',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=31536000, immutable'
+        }
+      ]
+    },
+    {
+      source: '/api/(.*)',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=300, s-maxage=600'
+        }
+      ]
+    }
+  ],
   // Optimize for production
   poweredByHeader: false,
   compress: true,

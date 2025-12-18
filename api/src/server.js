@@ -15,7 +15,12 @@ const express = require("express");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
-const { httpLogger, logger, correlationMiddleware, performanceMiddleware } = require("./middleware/logger");
+const {
+  httpLogger,
+  logger,
+  correlationMiddleware,
+  performanceMiddleware,
+} = require("./middleware/logger");
 const { rateLimit } = require("./middleware/security");
 const errorHandler = require("./middleware/errorHandler");
 const {
@@ -24,6 +29,7 @@ const {
 } = require("./middleware/securityHeaders");
 const { initSentry, attachErrorHandler } = require("./config/sentry");
 const config = require("./config");
+const { compressionMiddleware } = require("./middleware/performance");
 const healthRoutes = require("./routes/health");
 const aiRoutes = require("./routes/ai.commands");
 const billingRoutes = require("./routes/billing");
@@ -74,6 +80,7 @@ app.use(
 app.use(correlationMiddleware);
 app.use(performanceMiddleware);
 app.use(httpLogger);
+app.use(compressionMiddleware); // Add compression for all responses
 app.use(rateLimit);
 app.use(express.json({ limit: "12mb" }));
 
