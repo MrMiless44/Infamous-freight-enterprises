@@ -5,6 +5,10 @@
   "outputDirectory": "web/.next",
   "routes": [
     {
+      "src": "/api/proxy/(.*)",
+      "dest": "/api/proxy/$1"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "https://infamous-freight-ai.fly.dev/api/$1"
     }
