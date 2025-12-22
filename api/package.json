@@ -23,7 +23,7 @@
     "@anthropic-ai/sdk": "^0.20.0",
     "@infamous-freight/shared": "file:../packages/shared",
     "@paypal/checkout-server-sdk": "^1.0.3",
-    "@prisma/client": "^5.11.0",
+    "@prisma/client": "^7.2.0",
     "@sentry/node": "^7.100.0",
     "axios": "^1.7.0",
     "compression": "^1.8.1",
