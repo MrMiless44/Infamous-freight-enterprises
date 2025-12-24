@@ -42,6 +42,7 @@
     "prisma": "^5.22.0"
   },
   "dependencies": {
-    "botid": "^1.5.10"
+    "botid": "^1.5.10",
+    "stripe": "^20.1.0"
   }
 }
