@@ -8,6 +8,9 @@
     "node": ">=20.18.1 <21"
   },
   "type": "module",
+  "prisma": {
+    "schema": "api/prisma/schema.prisma"
+  },
   "workspaces": [
     "api",
     "web",
