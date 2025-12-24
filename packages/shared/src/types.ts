@@ -47,3 +47,24 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
     itemsPerPage: number;
   };
 }
+
+export interface AiDecision {
+  id: string;
+  organizationId: string;
+  invoiceId: string;
+  agent: string;
+  decision: "approve" | "dispute";
+  confidence: number;
+  rationale: Record<string, any>;
+  createdAt: Date;
+  feedback?: AiFeedback;
+}
+
+export interface AiFeedback {
+  id: string;
+  aiDecisionId: string;
+  outcome: "correct" | "false_positive" | "missed";
+  notes?: string;
+  createdAt: Date;
+  aiDecision?: AiDecision;
+}

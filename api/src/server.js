@@ -34,6 +34,7 @@ const config = require("./config");
 const { compressionMiddleware } = require("./middleware/performance");
 const healthRoutes = require("./routes/health");
 const aiRoutes = require("./routes/ai.commands");
+const aiDecisionsRoutes = require("./routes/ai.decisions");
 const billingRoutes = require("./routes/billing");
 const voiceRoutes = require("./routes/voice");
 const aiSimRoutes = require("./routes/aiSim.internal");
@@ -99,6 +100,7 @@ app.use(
 // Routes
 app.use("/api", healthRoutes);
 app.use("/api", aiRoutes);
+app.use("/api", aiDecisionsRoutes);
 app.use("/api", billingRoutes);
 app.use("/api", voiceRoutes);
 app.use("/api", usersRoutes);
