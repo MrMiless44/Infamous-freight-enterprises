@@ -398,13 +398,13 @@ When reporting issues:
 
 ### pnpm Version Management
 
-This project uses **Corepack** to automatically manage pnpm versions. The required version is specified in `package.json` (`pnpm@7.5.1`).
+This project uses **Corepack** to automatically manage pnpm versions. The required version is specified in `package.json` (`pnpm@8.15.9`).
 
 **If pnpm is not found:**
 
 ```bash
 corepack enable
-corepack prepare pnpm@7.5.1 --activate
+corepack prepare pnpm@8.15.9 --activate
 ```
 
 **If you see "Failed to switch pnpm":**
@@ -415,7 +415,7 @@ sudo npm install -g corepack --force
 
 # Then enable and prepare pnpm
 corepack enable
-corepack prepare pnpm@7.5.1 --activate
+corepack prepare pnpm@8.15.9 --activate
 ```
 
 **Pre-commit hooks failing with pnpm error:**

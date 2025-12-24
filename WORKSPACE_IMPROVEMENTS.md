@@ -92,7 +92,7 @@ When npm registry is stable:
 ```bash
 # 1. Ensure Corepack is active
 corepack enable
-corepack prepare pnpm@7.5.1 --activate
+corepack prepare pnpm@8.15.9 --activate
 
 # 2. Clean install dependencies
 pnpm install
