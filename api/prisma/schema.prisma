@@ -46,3 +46,28 @@ model AiEvent {
   payload   Json
   createdAt DateTime @default(now())
 }
+
+model Plan {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  stripePrice String   @unique
+  features    Json
+  createdAt   DateTime @default(now())
+}
+
+model Subscription {
+  id               String   @id @default(cuid())
+  userId           String
+  stripeCustomer   String
+  stripeSub        String
+  status           String
+  currentPeriodEnd DateTime
+  createdAt        DateTime @default(now())
+}
+
+model Entitlement {
+  id      String  @id @default(cuid())
+  userId  String
+  feature String
+  enabled Boolean @default(true)
+}
