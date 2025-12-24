@@ -5,6 +5,7 @@ import { z } from "zod";
 import { calibrate } from "../ai/v2";
 import { prisma } from "../db/prisma";
 import { requireAuth } from "../middleware/auth";
+import { handleVoiceCommand } from "../services/avatar-engine/src/voice";
 
 const MAX_FILE_SIZE_MB = Number(process.env.VOICE_MAX_FILE_SIZE_MB ?? 10);
 const upload = multer({
@@ -115,6 +116,11 @@ voice.post("/command", async (req, res) => {
     take: 3,
   });
 
+  const avatarResponse = await handleVoiceCommand(
+    normalizedText,
+    parsed.data.metadata,
+  );
+
   const decision = await prisma.aiDecision.create({
     data: {
       organizationId: req.user.organizationId,
@@ -125,6 +131,7 @@ voice.post("/command", async (req, res) => {
         tags,
         channel: parsed.data.channel ?? "command",
         memoryKeys: memory.map((entry) => entry.key),
+        avatarResponse,
       }),
     },
   });
@@ -136,6 +143,7 @@ voice.post("/command", async (req, res) => {
     decisionId: decision.id,
     channel: parsed.data.channel ?? "command",
     recommended: suggestedNextSteps(intent),
+    avatarResponse,
     trace: {
       tags,
       summary: normalizedText.slice(0, 240),

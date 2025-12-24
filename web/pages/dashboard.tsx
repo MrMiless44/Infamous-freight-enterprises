@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { track } from "@vercel/analytics";
+import { AvatarVoice } from "../components/AvatarVoice";
 import { VoicePanel } from "../components/VoicePanel";
 import { BillingPanel } from "../components/BillingPanel";
 
@@ -50,6 +51,7 @@ export default function Dashboard() {
       )}
 
       <VoicePanel />
+      <AvatarVoice />
       <BillingPanel />
     </main>
   );
