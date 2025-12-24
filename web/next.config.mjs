@@ -4,6 +4,8 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://infamous-freight-api.fly.dev";
+
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone", // Enable standalone output for Docker optimization
@@ -24,7 +26,7 @@ const nextConfig = {
     afterFiles: [
       {
         source: '/api/:path*',
-        destination: 'https://infamous-freight-api.fly.dev/api/:path*',
+        destination: `${apiBaseUrl}/api/:path*`,
       },
     ],
   }),
