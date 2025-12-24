@@ -35,6 +35,7 @@
     "e2e": "pnpm --filter e2e test"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.15.3",
     "@playwright/test": "^1.57.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",

@@ -1,0 +1,9 @@
+[build]
+  command = "pnpm install --frozen-lockfile && pnpm --filter infamous-freight-web... build"
+  publish = "web/.next"
+
+[build.environment]
+  NODE_VERSION = "20.18.1"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
