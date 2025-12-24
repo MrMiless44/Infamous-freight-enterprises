@@ -4,7 +4,7 @@
   "description": "Next.js React web application for freight management and logistics operations",
   "private": true,
   "engines": {
-    "node": ">=20.18.1 <21"
+    "node": ">=20.18.1 <23"
   },
   "scripts": {
     "dev": "next dev",
