@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -euo pipefail
+set -eu
 
 # Pre-push hook - Run tests before pushing
 echo "🧪 Running tests before push..."
