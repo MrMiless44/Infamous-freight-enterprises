@@ -87,31 +87,30 @@ jobs:
 
           echo "🔍 Searching for HTML files (max depth 4)..."
 
-          # Track overall validation status
-          FAILED_FILES=()
-          VALIDATED_COUNT=0
-
           # Check if any HTML files exist
           if ! find . -maxdepth 4 -type f -name "*.html" -print -quit | grep -q .; then
             echo "✅ No HTML files found; nothing to validate."
             exit 0
           fi
 
+          # Track overall validation status
+          FAILED_FILES=()
+          VALIDATED_COUNT=0
+          DISPLAY_FILES=()
+
+          # First pass: collect files for display and count
+          while IFS= read -r -d '' file; do
+            DISPLAY_FILES+=("$file")
+          done < <(find . -maxdepth 4 -type f -name "*.html" -print0)
+
+          TOTAL_FILES=${#DISPLAY_FILES[@]}
+
           echo "📄 HTML files found:"
-          find . -maxdepth 4 -type f -name "*.html" -print0 | while IFS= read -r -d '' file; do
-            echo "  - $file"
-          done
+          printf '  - %s\n' "${DISPLAY_FILES[@]}"
           echo ""
 
-          # Count total files using null delimiters to handle newlines in filenames
-          TOTAL_FILES=$(find . -maxdepth 4 -type f -name "*.html" -print0 | tr -cd '\0' | wc -c)
-
           # Process files with proper quoting to handle special characters
-          while IFS= read -r -d '' file; do
-            if [ -z "$file" ]; then
-              continue
-            fi
-
+          for file in "${DISPLAY_FILES[@]}"; do
             VALIDATED_COUNT=$((VALIDATED_COUNT + 1))
             echo "[$VALIDATED_COUNT/$TOTAL_FILES] Validating: $file"
 
@@ -126,7 +125,7 @@ jobs:
               FAILED_FILES+=("$file")
             fi
             echo ""
-          done < <(find . -maxdepth 4 -type f -name "*.html" -print0)
+          done
 
           # Summary report
           echo "═══════════════════════════════════════"
