@@ -1,6 +1,6 @@
 [build]
   base = "web"
-  command = "corepack enable && pnpm install --frozen-lockfile && pnpm build"
+  command = "corepack enable && pnpm install --frozen-lockfile && pnpm --filter @infamous-freight/shared build && pnpm build"
   publish = ".next"
 
 [build.environment]
