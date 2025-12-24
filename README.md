@@ -1,24 +1,102 @@
-# 🚚 Infæmous Freight Enterprise
+# INFÆMOUS SYNTHETIC INTELLIGENCE PLATFORM
 
-AI Synthetic Intelligence ♊️–powered logistics operating system.
+A production-grade **Synthetic Intelligence Operating System** with
+persistent avatars, long-term memory, automation, and enterprise billing.
 
-Infæmous Freight Enterprise deploys autonomous AI agents to audit freight invoices,
-reduce cost leakage, enforce compliance, and integrate with ERP/TMS systems.
+Built to power **Infæmous Freight Enterprises** and other high-automation businesses.
 
-This is enterprise software.
+---
 
-## Monorepo
+## 🚀 What This Is
 
-- api — backend
-- web — Next.js dashboard
-- mobile — React Native app
-- packages/shared — domain contracts
-- docs — governance & trust
+This platform is **not a chatbot**.
 
-## Security
+It is a:
+- Persistent AI operator
+- Memory-backed decision engine
+- Avatar-driven interface
+- Automation-first system
+- Revenue-aware intelligence layer
 
-SOC2-ready architecture with human oversight.
+---
 
-## Status
+## 🧠 Core Capabilities
 
-Production-grade foundation.
+- Synthetic Intelligence Orchestration
+- Persistent Avatars (User + Driver)
+- Long + Short-Term Memory
+- AI Skill Routing (Actions > Text)
+- Automation & Learning Loops
+- Stripe Metered Billing
+- RBAC + Security Controls
+- Freight-native integrations
+
+---
+
+## 🏗 Tech Stack
+
+### Frontend
+- Next.js 14
+- TypeScript
+- TailwindCSS
+- Server Actions
+
+### Backend
+- Node.js 20
+- Fastify / Express
+- Prisma ORM
+- PostgreSQL
+- Redis
+
+### AI
+- OpenAI (Primary)
+- Anthropic (Secondary)
+- Synthetic Rule Engine (Fallback)
+
+### Infra
+- Docker
+- Vercel (Web)
+- Render / Fly.io (API)
+- Supabase / RDS (DB)
+
+---
+
+## 📦 Repo Structure
+
+- api/
+- web/
+- mobile/
+- packages/
+- deploy/ and docker/ for runtime orchestration assets
+
+---
+
+## ▶️ Run Locally
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+---
+
+## 🔌 Infæmous Freight Integration
+
+This system plugs directly into:
+- Drivers
+- Dispatch
+- Routes
+- Support
+- Revenue optimization
+
+---
+
+## 🧬 Philosophy
+
+AI should operate, not converse.
+
+---
+
+## 📄 License
+
+Private / Commercial
