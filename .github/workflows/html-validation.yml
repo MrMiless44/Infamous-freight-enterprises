@@ -53,13 +53,13 @@ jobs:
           
           if [ -z "$HTML_FILES" ]; then
             echo "⚠️  No HTML files found in the repository"
-            echo "html_count=0" >> $GITHUB_OUTPUT
+            echo "html_count=0" >> "$GITHUB_OUTPUT"
           else
             HTML_COUNT=$(echo "$HTML_FILES" | wc -l)
             echo "✅ Found $HTML_COUNT HTML file(s):"
             echo "$HTML_FILES"
             echo ""
-            echo "html_count=$HTML_COUNT" >> $GITHUB_OUTPUT
+            echo "html_count=$HTML_COUNT" >> "$GITHUB_OUTPUT"
             
             # Save file list for validation step
             echo "$HTML_FILES" > /tmp/html_files.txt
@@ -98,17 +98,17 @@ jobs:
           echo "📊 Validation Summary"
           echo "========================================"
           
-          if [ $VALIDATION_FAILED -eq 1 ]; then
+          if [ "$VALIDATION_FAILED" -eq 1 ]; then
             echo "❌ HTML validation FAILED!"
             echo ""
             echo "Failed files:"
             echo "$FAILED_FILES"
             echo ""
-            echo "validation_status=failed" >> $GITHUB_OUTPUT
+            echo "validation_status=failed" >> "$GITHUB_OUTPUT"
             exit 1
           else
             echo "✅ All HTML files are valid!"
-            echo "validation_status=passed" >> $GITHUB_OUTPUT
+            echo "validation_status=passed" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload Validation Logs on Failure
@@ -124,18 +124,20 @@ jobs:
       - name: Create Summary
         if: always()
         run: |
-          echo "## 🔍 HTML Validation Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [ "${{ steps.find-html.outputs.html_count }}" = "0" ]; then
-            echo "⚠️ No HTML files found in the repository (depth <= 4)" >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ steps.validate.outputs.validation_status }}" = "passed" ]; then
-            echo "✅ **All HTML files passed validation!**" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "- Files validated: ${{ steps.find-html.outputs.html_count }}" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "❌ **HTML validation failed!**" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "- Files validated: ${{ steps.find-html.outputs.html_count }}" >> $GITHUB_STEP_SUMMARY
-            echo "- Check the logs artifact for detailed error messages" >> $GITHUB_STEP_SUMMARY
-          fi
+          {
+            echo "## 🔍 HTML Validation Results"
+            echo ""
+            
+            if [ "${{ steps.find-html.outputs.html_count }}" = "0" ]; then
+              echo "⚠️ No HTML files found in the repository (depth <= 4)"
+            elif [ "${{ steps.validate.outputs.validation_status }}" = "passed" ]; then
+              echo "✅ **All HTML files passed validation!**"
+              echo ""
+              echo "- Files validated: ${{ steps.find-html.outputs.html_count }}"
+            else
+              echo "❌ **HTML validation failed!**"
+              echo ""
+              echo "- Files validated: ${{ steps.find-html.outputs.html_count }}"
+              echo "- Check the logs artifact for detailed error messages"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
