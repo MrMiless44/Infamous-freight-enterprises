@@ -46,3 +46,13 @@ model AiEvent {
   payload   Json
   createdAt DateTime @default(now())
 }
+
+model Invoice {
+  id          String   @id @default(cuid())
+  carrier     String
+  reference   String
+  totalAmount Float
+  status      String   @default("pending")
+  auditResult Json?
+  createdAt   DateTime @default(now())
+}
