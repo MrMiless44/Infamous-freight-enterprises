@@ -79,6 +79,8 @@ describe("Billing Routes", () => {
     delete require.cache[require.resolve("../src/routes/billing")];
     delete require.cache[require.resolve("../src/middleware/security")];
     delete require.cache[require.resolve("../src/middleware/errorHandler")];
+    delete require.cache[require.resolve("../src/routes/billing/invoices")];
+    delete require.cache[require.resolve("../src/routes/billing/reports")];
 
     const billingRouter = require("../src/routes/billing");
     const errorHandler = require("../src/middleware/errorHandler");

@@ -11,8 +11,13 @@ const {
   validateString,
   handleValidationErrors,
 } = require("../middleware/validation");
+const invoiceRoutes = require("./billing/invoices");
+const reportRoutes = require("./billing/reports");
 
 const router = express.Router();
+
+router.use("/billing/invoices", invoiceRoutes);
+router.use("/billing/reports", reportRoutes);
 
 // Lazy initialization functions for better testability
 const getStripeClient = () => {
