@@ -66,9 +66,17 @@ describe("aiSyntheticClient sendCommand", () => {
 
     const { sendCommand } = require("../aiSyntheticClient");
 
-    await expect(sendCommand("anything")).rejects.toMatchObject({
-      message: "Synthetic AI engine not configured",
-      status: 503,
+    const result = await sendCommand("audit_invoice", {
+      invoice: { currency: "USD", totalAmount: 2500 },
+    });
+
+    expect(result).toMatchObject({
+      provider: "synthetic",
+      source: "offline-fallback",
+      command: "audit_invoice",
+    });
+    expect(result.meta).toMatchObject({
+      fallbackReason: "missing_configuration",
     });
   });
 
@@ -91,10 +99,16 @@ describe("aiSyntheticClient sendCommand", () => {
 
     const { sendCommand } = require("../aiSyntheticClient");
 
-    await expect(sendCommand("track")).rejects.toMatchObject({
-      message: "Synthetic AI engine request failed",
+    const result = await sendCommand("track");
+
+    expect(result).toMatchObject({
+      provider: "synthetic",
+      source: "offline-fallback",
+      command: "track",
+    });
+    expect(result.meta).toMatchObject({
+      fallbackReason: "request_failed",
       status: 429,
-      details: { error: "rate limit" },
     });
     expect(postMock).toHaveBeenCalledTimes(1);
   });

@@ -2,6 +2,7 @@ const axios = require("axios");
 const OpenAI = require("openai");
 const Anthropic = require("@anthropic-ai/sdk");
 const { logger } = require("../middleware/logger");
+const { generateSyntheticResponse } = require("./syntheticFallback");
 
 const mode = process.env.AI_PROVIDER || "synthetic";
 const parsedTimeoutMs = parseInt(process.env.AI_HTTP_TIMEOUT_MS || "8000", 10);
@@ -86,27 +87,28 @@ const toHttpError = (err, defaultMessage, defaultStatus = 502) => {
 };
 
 async function sendSynthetic(command, payload, meta) {
-  if (!syntheticUrl || !syntheticKey) {
-    const error = new Error("Synthetic AI engine not configured");
-    error.status = 503;
-    throw error;
-  }
+  const useOfflineFallback = !syntheticUrl || !syntheticKey;
 
   try {
-    const res = await withRetry(
-      () =>
-        httpClient.post(
-          syntheticUrl,
-          { command, payload, meta },
-          {
-            headers: {
-              "x-api-key": syntheticKey,
-              "x-security-mode": process.env.AI_SECURITY_MODE || "strict",
-            },
-          },
-        ),
-      { retries: 1, delayMs: 300 },
-    );
+    if (useOfflineFallback) {
+      logger.info({
+        msg: "Synthetic AI engine not configured, using offline fallback",
+        command,
+      });
+      return generateSyntheticResponse(command, payload, meta, {
+        fallbackReason: "missing_configuration",
+      });
+    }
+
+    const res = await withRetry(() => {
+      const headers = {
+        "x-api-key": syntheticKey,
+        "x-security-mode": process.env.AI_SECURITY_MODE || "strict",
+      };
+
+      return httpClient.post(syntheticUrl, { command, payload, meta }, { headers });
+    }, { retries: 1, delayMs: 300 });
+
     return res.data;
   } catch (err) {
     logger.error({
@@ -117,7 +119,11 @@ async function sendSynthetic(command, payload, meta) {
       code: err.code,
       data: err.response?.data,
     });
-    throw toHttpError(err, "Synthetic AI engine request failed");
+    return generateSyntheticResponse(command, payload, meta, {
+      fallbackReason: "request_failed",
+      error: err.message,
+      status: err.response?.status,
+    });
   }
 }
 
