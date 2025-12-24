@@ -22,7 +22,8 @@ try {
     assertEnv(["ANTHROPIC_API_KEY"], "Anthropic configuration");
   }
 
-  if (process.env.STRIPE_SECRET_KEY) {
+  const stripeKey = process.env.STRIPE_SECRET_KEY || process.env.STRIPE_API_KEY;
+  if (stripeKey) {
     assertEnv(
       ["STRIPE_SUCCESS_URL", "STRIPE_CANCEL_URL"],
       "Stripe redirect URLs",

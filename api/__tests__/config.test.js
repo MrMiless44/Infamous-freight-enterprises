@@ -11,7 +11,8 @@ describe("Config", () => {
 
     // Clear all environment variables
     Object.keys(process.env).forEach((key) => {
-      if (key.startsWith("API_") ||
+      if (
+        key.startsWith("API_") ||
         key.startsWith("DATABASE_") ||
         key.startsWith("CORS_") ||
         key.startsWith("OPENAI_") ||
@@ -21,7 +22,8 @@ describe("Config", () => {
         key.startsWith("AI_") ||
         key.startsWith("JWT_") ||
         key.startsWith("LOG_") ||
-        key === "NODE_ENV") {
+        key === "NODE_ENV"
+      ) {
         delete process.env[key];
       }
     });
@@ -91,7 +93,7 @@ describe("Config", () => {
     test("should throw error when DATABASE_URL is missing", () => {
       const config = require("../src/config");
       expect(() => config.getDatabaseUrl()).toThrow(
-        "Missing required environment variable: DATABASE_URL"
+        "Missing required environment variable: DATABASE_URL",
       );
     });
   });
@@ -104,7 +106,8 @@ describe("Config", () => {
     });
 
     test("should parse multiple CORS origins", () => {
-      process.env.CORS_ORIGINS = "http://localhost:3000, http://localhost:4000, https://example.com";
+      process.env.CORS_ORIGINS =
+        "http://localhost:3000, http://localhost:4000, https://example.com";
       const config = require("../src/config");
       const origins = config.getCorsOrigins();
       expect(origins).toEqual([
@@ -118,13 +121,15 @@ describe("Config", () => {
   describe("getApiKeys", () => {
     test("should throw errors when required API keys are missing", () => {
       const config = require("../src/config");
-      expect(() => config.getApiKeys()).toThrow(/Missing required environment variable/);
+      expect(() => config.getApiKeys()).toThrow(
+        /Missing required environment variable/,
+      );
     });
 
     test("should return all API keys when present", () => {
       process.env.OPENAI_API_KEY = "openai-key";
       process.env.ANTHROPIC_API_KEY = "anthropic-key";
-      process.env.STRIPE_API_KEY = "stripe-key";
+      process.env.STRIPE_SECRET_KEY = "stripe-secret-key";
       process.env.STRIPE_WEBHOOK_SECRET = "stripe-webhook";
       process.env.PAYPAL_CLIENT_ID = "paypal-id";
       process.env.PAYPAL_CLIENT_SECRET = "paypal-secret";
@@ -137,13 +142,30 @@ describe("Config", () => {
 
       expect(keys.openai).toBe("openai-key");
       expect(keys.anthropic).toBe("anthropic-key");
-      expect(keys.stripe).toBe("stripe-key");
+      expect(keys.stripe).toBe("stripe-secret-key");
       expect(keys.stripeWebhookSecret).toBe("stripe-webhook");
       expect(keys.paypalClientId).toBe("paypal-id");
       expect(keys.paypalClientSecret).toBe("paypal-secret");
       expect(keys.paypalSecret).toBe("paypal-secret-2");
       expect(keys.aiSyntheticUrl).toBe("http://localhost:8000");
       expect(keys.aiSyntheticKey).toBe("ai-key");
+    });
+
+    test("should support legacy STRIPE_API_KEY fallback", () => {
+      process.env.OPENAI_API_KEY = "openai-key";
+      process.env.ANTHROPIC_API_KEY = "anthropic-key";
+      process.env.STRIPE_API_KEY = "legacy-stripe-key";
+      process.env.STRIPE_WEBHOOK_SECRET = "stripe-webhook";
+      process.env.PAYPAL_CLIENT_ID = "paypal-id";
+      process.env.PAYPAL_CLIENT_SECRET = "paypal-secret";
+      process.env.PAYPAL_SECRET = "paypal-secret-2";
+      process.env.AI_SYNTHETIC_ENGINE_URL = "http://localhost:8000";
+      process.env.AI_SYNTHETIC_API_KEY = "ai-key";
+
+      const config = require("../src/config");
+      const keys = config.getApiKeys();
+
+      expect(keys.stripe).toBe("legacy-stripe-key");
     });
   });
 
@@ -157,7 +179,7 @@ describe("Config", () => {
     test("should throw error when JWT_SECRET is missing", () => {
       const config = require("../src/config");
       expect(() => config.getJwtSecret()).toThrow(
-        "Missing required environment variable: JWT_SECRET"
+        "Missing required environment variable: JWT_SECRET",
       );
     });
   });
@@ -200,7 +222,7 @@ describe("Config", () => {
       test("should throw error when variable is missing and no default", () => {
         const config = require("../src/config");
         expect(() => config.requireEnv("MISSING_VAR")).toThrow(
-          "Missing required environment variable: MISSING_VAR"
+          "Missing required environment variable: MISSING_VAR",
         );
       });
     });

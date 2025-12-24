@@ -31,10 +31,19 @@ class Config {
 
   // Third-party API Keys
   getApiKeys() {
+    const stripeSecret =
+      this.getEnv("STRIPE_SECRET_KEY") || this.getEnv("STRIPE_API_KEY");
+
+    if (!stripeSecret) {
+      throw new Error(
+        "Missing required environment variable: STRIPE_SECRET_KEY (or STRIPE_API_KEY)",
+      );
+    }
+
     return {
       openai: this.requireEnv("OPENAI_API_KEY"),
       anthropic: this.requireEnv("ANTHROPIC_API_KEY"),
-      stripe: this.requireEnv("STRIPE_API_KEY"),
+      stripe: stripeSecret,
       stripeWebhookSecret: this.requireEnv("STRIPE_WEBHOOK_SECRET"),
       paypalClientId: this.requireEnv("PAYPAL_CLIENT_ID"),
       paypalClientSecret: this.requireEnv("PAYPAL_CLIENT_SECRET"),
