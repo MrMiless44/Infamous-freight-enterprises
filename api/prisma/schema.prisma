@@ -71,3 +71,28 @@ model Entitlement {
   feature String
   enabled Boolean @default(true)
 }
+
+model AiDecision {
+  id             String   @id @default(cuid())
+  organizationId String
+  invoiceId      String
+  agent          String   // billing_audit, compliance, etc
+  decision       String   // approve | dispute
+  confidence     Float
+  rationale      Json
+  createdAt      DateTime @default(now())
+
+  feedback       AiFeedback?
+
+  @@index([organizationId, agent])
+}
+
+model AiFeedback {
+  id           String   @id @default(cuid())
+  aiDecisionId String   @unique
+  outcome      String   // correct | false_positive | missed
+  notes        String?
+  createdAt    DateTime @default(now())
+
+  aiDecision   AiDecision @relation(fields: [aiDecisionId], references: [id])
+}
