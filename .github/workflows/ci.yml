@@ -52,8 +52,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install OpenSSL
-        run: sudo apt-get update && sudo apt-get install -y libssl-dev
+      - name: Install OpenSSL and HTML Tidy
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev tidy
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -77,9 +77,6 @@ jobs:
 
       - name: Lint all services
         run: pnpm lint
-
-      - name: Install HTML Tidy
-        run: sudo apt-get update && sudo apt-get install -y tidy
 
       - name: Validate HTML files with tidy
         run: |
@@ -114,14 +111,16 @@ jobs:
             VALIDATED_COUNT=$((VALIDATED_COUNT + 1))
             echo "[$VALIDATED_COUNT/$TOTAL_FILES] Validating: $file"
 
-            # Run tidy and capture output only on failure
-            if tidy -e -q -utf8 "$file" > /dev/null 2>&1; then
+            # Run tidy once and capture output
+            TIDY_OUTPUT=$(tidy -e -q -utf8 "$file" 2>&1)
+            TIDY_EXIT=$?
+
+            if [ $TIDY_EXIT -eq 0 ]; then
               echo "  ✅ PASSED"
             else
-              TIDY_EXIT=$?
               echo "  ❌ FAILED (exit code: $TIDY_EXIT)"
               echo "  📋 Tidy output:"
-              tidy -e -q -utf8 "$file" 2>&1 | sed 's/^/    /'
+              echo "$TIDY_OUTPUT" | sed 's/^/    /'
               FAILED_FILES+=("$file")
             fi
             echo ""
