@@ -13,7 +13,107 @@ const {
 
 const router = express.Router();
 
-// Get all AI decisions with optional filtering
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     AiDecision:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "decision-123"
+ *         organizationId:
+ *           type: string
+ *           example: "org-123"
+ *         invoiceId:
+ *           type: string
+ *           example: "invoice-123"
+ *         agent:
+ *           type: string
+ *           example: "billing_audit"
+ *         decision:
+ *           type: string
+ *           enum: [approve, dispute]
+ *           example: "approve"
+ *         confidence:
+ *           type: number
+ *           format: float
+ *           minimum: 0
+ *           maximum: 1
+ *           example: 0.95
+ *         rationale:
+ *           type: object
+ *           example: { "reason": "Invoice matches purchase order" }
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         feedback:
+ *           $ref: '#/components/schemas/AiFeedback'
+ *     AiFeedback:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "feedback-123"
+ *         aiDecisionId:
+ *           type: string
+ *           example: "decision-123"
+ *         outcome:
+ *           type: string
+ *           enum: [correct, false_positive, missed]
+ *           example: "correct"
+ *         notes:
+ *           type: string
+ *           example: "Decision was accurate"
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ */
+
+/**
+ * @swagger
+ * /api/ai-decisions:
+ *   get:
+ *     summary: Get all AI decisions with optional filtering
+ *     tags: [AI Decisions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: organizationId
+ *         schema:
+ *           type: string
+ *         description: Filter by organization ID
+ *       - in: query
+ *         name: agent
+ *         schema:
+ *           type: string
+ *         description: Filter by agent name
+ *       - in: query
+ *         name: invoiceId
+ *         schema:
+ *           type: string
+ *         description: Filter by invoice ID
+ *     responses:
+ *       200:
+ *         description: List of AI decisions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 decisions:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/AiDecision'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Insufficient permissions
+ */
 router.get(
   "/ai-decisions",
   limiters.general,
@@ -46,7 +146,40 @@ router.get(
   },
 );
 
-// Get AI decision by ID
+/**
+ * @swagger
+ * /api/ai-decisions/{id}:
+ *   get:
+ *     summary: Get AI decision by ID
+ *     tags: [AI Decisions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: AI decision ID
+ *     responses:
+ *       200:
+ *         description: AI decision details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 decision:
+ *                   $ref: '#/components/schemas/AiDecision'
+ *       404:
+ *         description: AI decision not found
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Insufficient permissions
+ */
 router.get(
   "/ai-decisions/:id",
   limiters.general,
@@ -75,7 +208,63 @@ router.get(
   },
 );
 
-// Create new AI decision
+/**
+ * @swagger
+ * /api/ai-decisions:
+ *   post:
+ *     summary: Create new AI decision
+ *     tags: [AI Decisions]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [organizationId, invoiceId, agent, decision, confidence]
+ *             properties:
+ *               organizationId:
+ *                 type: string
+ *                 example: "org-123"
+ *               invoiceId:
+ *                 type: string
+ *                 example: "invoice-123"
+ *               agent:
+ *                 type: string
+ *                 example: "billing_audit"
+ *               decision:
+ *                 type: string
+ *                 enum: [approve, dispute]
+ *                 example: "approve"
+ *               confidence:
+ *                 type: number
+ *                 format: float
+ *                 minimum: 0
+ *                 maximum: 1
+ *                 example: 0.95
+ *               rationale:
+ *                 type: object
+ *                 example: { "reason": "Invoice matches purchase order" }
+ *     responses:
+ *       201:
+ *         description: AI decision created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 decision:
+ *                   $ref: '#/components/schemas/AiDecision'
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Insufficient permissions
+ */
 router.post(
   "/ai-decisions",
   limiters.ai,
@@ -135,7 +324,89 @@ router.post(
   },
 );
 
-// Create feedback for an AI decision
+/**
+ * @swagger
+ * /api/ai-decisions/{id}/feedback:
+ *   post:
+ *     summary: Create feedback for an AI decision
+ *     tags: [AI Decisions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: AI decision ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [outcome]
+ *             properties:
+ *               outcome:
+ *                 type: string
+ *                 enum: [correct, false_positive, missed]
+ *                 example: "correct"
+ *               notes:
+ *                 type: string
+ *                 example: "Decision was accurate"
+ *     responses:
+ *       201:
+ *         description: Feedback created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 feedback:
+ *                   $ref: '#/components/schemas/AiFeedback'
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: AI decision not found
+ *       409:
+ *         description: Feedback already exists
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Insufficient permissions
+ *   get:
+ *     summary: Get feedback for an AI decision
+ *     tags: [AI Decisions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: AI decision ID
+ *     responses:
+ *       200:
+ *         description: Feedback details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 feedback:
+ *                   $ref: '#/components/schemas/AiFeedback'
+ *       404:
+ *         description: Feedback not found
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Insufficient permissions
+ */
 router.post(
   "/ai-decisions/:id/feedback",
   limiters.general,
@@ -194,7 +465,56 @@ router.post(
   },
 );
 
-// Update feedback for an AI decision
+/**
+ * @swagger
+ * /api/ai-feedback/{id}:
+ *   patch:
+ *     summary: Update feedback for an AI decision
+ *     tags: [AI Decisions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Feedback ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               outcome:
+ *                 type: string
+ *                 enum: [correct, false_positive, missed]
+ *                 example: "correct"
+ *               notes:
+ *                 type: string
+ *                 example: "Updated feedback notes"
+ *     responses:
+ *       200:
+ *         description: Feedback updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 feedback:
+ *                   $ref: '#/components/schemas/AiFeedback'
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: Feedback not found
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Insufficient permissions
+ */
 router.patch(
   "/ai-feedback/:id",
   limiters.general,
@@ -236,7 +556,6 @@ router.patch(
   },
 );
 
-// Get feedback by AI decision ID
 router.get(
   "/ai-decisions/:id/feedback",
   limiters.general,
