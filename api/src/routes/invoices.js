@@ -15,6 +15,13 @@ const {
 
 const router = express.Router();
 
+const normalizeInvoice = (invoice) => ({
+  ...invoice,
+  totalAmount:
+    invoice?.totalAmount != null ? Number(invoice.totalAmount) : invoice?.totalAmount,
+  savings: invoice?.savings != null ? Number(invoice.savings) : invoice?.savings,
+});
+
 const currencyValidator = body("currency")
   .optional()
   .isString()
@@ -54,7 +61,7 @@ router.post(
           status: "pending",
         },
       });
-      res.status(201).json({ ok: true, invoice });
+      res.status(201).json({ ok: true, invoice: normalizeInvoice(invoice) });
     } catch (err) {
       if (err.code === "P2002") {
         return res
@@ -78,7 +85,7 @@ router.get(
       const invoices = await prisma.invoice.findMany({
         orderBy: { createdAt: "desc" },
       });
-      res.json({ ok: true, invoices });
+      res.json({ ok: true, invoices: invoices.map(normalizeInvoice) });
     } catch (err) {
       next(err);
     }
@@ -135,7 +142,7 @@ router.post(
         },
       });
 
-      res.json({ ok: true, invoice: updated });
+      res.json({ ok: true, invoice: normalizeInvoice(updated) });
     } catch (err) {
       next(err);
     }
