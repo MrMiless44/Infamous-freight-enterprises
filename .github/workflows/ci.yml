@@ -78,6 +78,76 @@ jobs:
       - name: Lint all services
         run: pnpm lint
 
+      - name: Install HTML Tidy
+        run: sudo apt-get update && sudo apt-get install -y tidy
+
+      - name: Validate HTML files with tidy
+        run: |
+          set +e  # Don't exit immediately on error
+
+          echo "🔍 Searching for HTML files (max depth 4)..."
+
+          # Use find with null delimiter to handle special characters and spaces
+          HTML_FILES=$(find . -maxdepth 4 -type f -name "*.html" -print0 | tr '\0' '\n')
+
+          if [ -z "$HTML_FILES" ]; then
+            echo "✅ No HTML files found; nothing to validate."
+            exit 0
+          fi
+
+          echo "📄 HTML files found:"
+          echo "$HTML_FILES" | sed 's/^/  - /'
+          echo ""
+
+          # Track overall validation status
+          FAILED_FILES=()
+          VALIDATED_COUNT=0
+          TOTAL_FILES=$(echo "$HTML_FILES" | wc -l)
+
+          # Process files with proper quoting to handle special characters
+          while IFS= read -r file; do
+            if [ -z "$file" ]; then
+              continue
+            fi
+
+            VALIDATED_COUNT=$((VALIDATED_COUNT + 1))
+            echo "[$VALIDATED_COUNT/$TOTAL_FILES] Validating: $file"
+
+            # Run tidy and capture output
+            if TIDY_OUTPUT=$(tidy -e -q -utf8 "$file" 2>&1); then
+              echo "  ✅ PASSED"
+            else
+              TIDY_EXIT=$?
+              echo "  ❌ FAILED (exit code: $TIDY_EXIT)"
+              echo "  📋 Tidy output:"
+              echo "$TIDY_OUTPUT" | sed 's/^/    /'
+              FAILED_FILES+=("$file")
+            fi
+            echo ""
+          done < <(find . -maxdepth 4 -type f -name "*.html" -print0 | xargs -0 -n1 echo)
+
+          # Summary report
+          echo "═══════════════════════════════════════"
+          echo "📊 Validation Summary"
+          echo "═══════════════════════════════════════"
+          echo "Total files: $TOTAL_FILES"
+          echo "Validated: $VALIDATED_COUNT"
+          echo "Passed: $((VALIDATED_COUNT - ${#FAILED_FILES[@]}))"
+          echo "Failed: ${#FAILED_FILES[@]}"
+          echo ""
+
+          # Report failed files
+          if [ ${#FAILED_FILES[@]} -gt 0 ]; then
+            echo "❌ Failed files:"
+            printf '  - %s\n' "${FAILED_FILES[@]}"
+            echo ""
+            echo "::error::HTML validation failed for ${#FAILED_FILES[@]} file(s). See logs above for details."
+            exit 1
+          else
+            echo "✅ All HTML files passed validation!"
+            exit 0
+          fi
+
       - name: Build shared package
         run: pnpm --filter @infamous-freight/shared build
 
@@ -283,7 +353,7 @@ jobs:
               '${{ needs.test-coverage.result }}',
               '${{ needs.smoke-tests.result }}'
             ].every(status => status === 'success' || status === 'skipped');
-            
+
             github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -304,21 +374,21 @@ jobs:
               '${{ needs.test-coverage.result }}',
               '${{ needs.smoke-tests.result }}'
             ].every(status => status === 'success' || status === 'skipped');
-            
-            const status = allPassed ? '✅' : '❌';
-            const comment = `## ${status} CI Pipeline Status
-            
-| Check | Result |
-|-------|--------|
-| Security Audit | ${{ needs.security-audit.result }} |
-| Lint & Build | ${{ needs.lint-build.result }} |
-| Tests & Coverage | ${{ needs.test-coverage.result }} |
-| Smoke Tests | ${{ needs.smoke-tests.result }} |
-| Docker Build | ${{ needs.docker-build.result }} |
-| Performance | ${{ needs.performance-check.result }} |
 
-${allPassed ? '✅ **All checks passed! Ready for deployment.**' : '⚠️ **Some checks failed. Please review.**'}`;
-            
+            const status = allPassed ? '✅' : '❌';
+            const comment = \`## \${status} CI Pipeline Status
+
+            | Check | Result |
+            |-------|--------|
+            | Security Audit | ${{ needs.security-audit.result }} |
+            | Lint & Build | ${{ needs.lint-build.result }} |
+            | Tests & Coverage | ${{ needs.test-coverage.result }} |
+            | Smoke Tests | ${{ needs.smoke-tests.result }} |
+            | Docker Build | ${{ needs.docker-build.result }} |
+            | Performance | ${{ needs.performance-check.result }} |
+
+            \${allPassed ? '✅ **All checks passed! Ready for deployment.**' : '⚠️ **Some checks failed. Please review.**'}\`;
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
