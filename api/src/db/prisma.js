@@ -24,4 +24,5 @@ process.on("SIGTERM", async () => {
   process.exit(0);
 });
 
-module.exports = prisma;
+// Support named imports for compatibility with existing route handlers
+module.exports = { prisma };
