@@ -9,6 +9,7 @@
 async function cleanDatabase(prisma) {
     // Delete in order to respect foreign key constraints
     await prisma.aiEvent.deleteMany()
+    await prisma.invoice.deleteMany()
     await prisma.shipment.deleteMany()
     await prisma.driver.deleteMany()
     await prisma.user.deleteMany()
@@ -23,6 +24,7 @@ async function seedDatabase(prisma, data = {}) {
     const users = data.users || []
     const drivers = data.drivers || []
     const shipments = data.shipments || []
+    const invoices = data.invoices || []
 
     // Create users
     for (const user of users) {
@@ -37,6 +39,11 @@ async function seedDatabase(prisma, data = {}) {
     // Create shipments
     for (const shipment of shipments) {
         await prisma.shipment.create({ data: shipment })
+    }
+
+    // Create invoices
+    for (const invoice of invoices) {
+        await prisma.invoice.create({ data: invoice })
     }
 }
 

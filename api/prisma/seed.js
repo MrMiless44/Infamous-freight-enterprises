@@ -63,6 +63,32 @@ async function main() {
     },
   });
 
+  await prisma.invoice.createMany({
+    data: [
+      {
+        carrier: "Blue Steel Logistics",
+        reference: "INV-1001",
+        totalAmount: 1299.5,
+        currency: "USD",
+        status: "pending",
+      },
+      {
+        carrier: "Northern Freight",
+        reference: "INV-1002",
+        totalAmount: 845.75,
+        currency: "USD",
+        status: "pending",
+      },
+      {
+        carrier: "Quantum Haulage",
+        reference: "INV-1003",
+        totalAmount: 2230.0,
+        currency: "USD",
+        status: "pending",
+      },
+    ],
+  });
+
   await prisma.aiEvent.create({
     data: {
       type: "seed",

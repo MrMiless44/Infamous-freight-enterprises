@@ -130,6 +130,41 @@
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *     Invoice:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "inv_123"
+ *         carrier:
+ *           type: string
+ *           example: "Northern Freight"
+ *         reference:
+ *           type: string
+ *           example: "INV-1001"
+ *         totalAmount:
+ *           type: number
+ *           format: float
+ *           example: 1299.5
+ *         currency:
+ *           type: string
+ *           example: "USD"
+ *         auditResult:
+ *           type: object
+ *           description: Raw AI audit response
+ *         savings:
+ *           type: number
+ *           format: float
+ *           example: 125.25
+ *         status:
+ *           type: string
+ *           example: "audited"
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
  *     Driver:
  *       type: object
  *       properties:
@@ -505,6 +540,115 @@
  *         description: Unauthorized
  *       403:
  *         description: Insufficient permissions
+ */
+
+/**
+ * @swagger
+ * /api/invoices:
+ *   get:
+ *     summary: List invoices
+ *     tags: [Invoices]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of invoices
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 invoices:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Invoice'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Insufficient permissions
+ *   post:
+ *     summary: Create invoice metadata
+ *     tags: [Invoices]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [carrier, reference, totalAmount]
+ *             properties:
+ *               carrier:
+ *                 type: string
+ *                 example: "Blue Steel Logistics"
+ *               reference:
+ *                 type: string
+ *                 example: "INV-1001"
+ *               totalAmount:
+ *                 type: number
+ *                 format: float
+ *                 example: 1499.99
+ *               currency:
+ *                 type: string
+ *                 example: "USD"
+ *     responses:
+ *       201:
+ *         description: Invoice created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 invoice:
+ *                   $ref: '#/components/schemas/Invoice'
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Insufficient permissions
+ *       409:
+ *         description: Invoice reference already exists
+ */
+
+/**
+ * @swagger
+ * /api/invoices/{id}/audit:
+ *   post:
+ *     summary: Audit invoice with AI
+ *     tags: [Invoices]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Invoice ID
+ *     responses:
+ *       200:
+ *         description: Invoice audit result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 invoice:
+ *                   $ref: '#/components/schemas/Invoice'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Insufficient permissions
+ *       404:
+ *         description: Invoice not found
  */
 
 module.exports = {};

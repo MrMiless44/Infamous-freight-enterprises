@@ -34,6 +34,22 @@ jest.mock("@prisma/client", () => {
 
   const mockUserFindMany = jest.fn(() => Promise.resolve([]));
 
+  const mockInvoiceCreate = jest.fn((args) => {
+    const { data } = args;
+    return Promise.resolve({
+      id: "inv-test-123",
+      carrier: data.carrier,
+      reference: data.reference,
+      totalAmount: data.totalAmount,
+      currency: data.currency || "USD",
+      auditResult: data.auditResult || null,
+      savings: data.savings || 0,
+      status: data.status || "pending",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+  });
+
   const mockPrismaInstance = {
     user: {
       create: mockUserCreate,
@@ -41,6 +57,13 @@ jest.mock("@prisma/client", () => {
       findMany: mockUserFindMany,
       update: jest.fn(() => Promise.resolve({})),
       delete: jest.fn(() => Promise.resolve({})),
+    },
+    invoice: {
+      create: mockInvoiceCreate,
+      findMany: jest.fn(() => Promise.resolve([])),
+      findUnique: jest.fn(() => Promise.resolve(null)),
+      update: jest.fn(() => Promise.resolve({})),
+      deleteMany: jest.fn(() => Promise.resolve({})),
     },
     $disconnect: jest.fn(),
   };
@@ -117,6 +140,54 @@ jest.mock("./src/db/prisma.js", () => {
     }),
   );
 
+  const mockInvoiceCreate = jest.fn((args) => {
+    const { data } = args;
+    return Promise.resolve({
+      id: "inv-" + Math.random().toString(16).slice(2, 8),
+      carrier: data.carrier,
+      reference: data.reference,
+      totalAmount: data.totalAmount,
+      currency: data.currency || "USD",
+      auditResult: data.auditResult || null,
+      savings: data.savings || 0,
+      status: data.status || "pending",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+  });
+
+  const mockInvoiceFindMany = jest.fn(() =>
+    Promise.resolve([
+      {
+        id: "inv-123",
+        carrier: "Blue Steel Logistics",
+        reference: "INV-1001",
+        totalAmount: 1299.5,
+        currency: "USD",
+        auditResult: null,
+        savings: 0,
+        status: "pending",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]),
+  );
+
+  const mockInvoiceFindUnique = jest.fn(() =>
+    Promise.resolve({
+      id: "inv-123",
+      carrier: "Blue Steel Logistics",
+      reference: "INV-1001",
+      totalAmount: 1299.5,
+      currency: "USD",
+      auditResult: null,
+      savings: 0,
+      status: "pending",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
+  );
+
   const mockPrismaInstance = {
     user: {
       create: mockUserCreate,
@@ -131,6 +202,13 @@ jest.mock("./src/db/prisma.js", () => {
       create: mockShipmentCreate,
       update: jest.fn(() => Promise.resolve({})),
       delete: jest.fn(() => Promise.resolve({})),
+    },
+    invoice: {
+      findMany: mockInvoiceFindMany,
+      findUnique: mockInvoiceFindUnique,
+      create: mockInvoiceCreate,
+      update: jest.fn(() => Promise.resolve({})),
+      deleteMany: jest.fn(() => Promise.resolve({})),
     },
     aiEvent: {
       create: jest.fn(() => Promise.resolve({})),
@@ -177,8 +255,10 @@ process.env.PORT = "0";
 // These pass on Node 20.18.1 which is the target version
 const nodeVersion = parseInt(process.version.slice(1).split(".")[0], 10);
 if (nodeVersion > 20) {
-  // Mark problematic test suites to skip on Node 22+
-  global.skipSupertestOnNode22 = true;
+  // Mark problematic test suites to skip on Node 22+ unless explicitly forced
+  global.skipSupertestOnNode22 = process.env.FORCE_SUPERTEST === "true"
+    ? false
+    : true;
 }
 
 // Suppress console output during tests (optional)

@@ -466,6 +466,98 @@ Create a Stripe payment.
 
 ---
 
+## Invoice Endpoints
+
+### GET /api/invoices
+
+List all invoices (newest first).
+
+**Authentication**: Required (`billing:read`)  
+**Rate Limit**: 30/15min
+
+**Response** (200 OK):
+
+```json
+{
+  "ok": true,
+  "invoices": [
+    {
+      "id": "inv-123",
+      "carrier": "Blue Steel Logistics",
+      "reference": "INV-1001",
+      "totalAmount": 1299.5,
+      "currency": "USD",
+      "status": "pending",
+      "createdAt": "2025-01-20T10:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### POST /api/invoices
+
+Create a new invoice record.
+
+**Authentication**: Required (`billing:write`)  
+**Rate Limit**: 30/15min
+
+**Body**:
+
+```json
+{
+  "carrier": "Northern Freight",
+  "reference": "INV-1005",
+  "totalAmount": 845.75,
+  "currency": "USD"
+}
+```
+
+**Response** (201 Created):
+
+```json
+{
+  "ok": true,
+  "invoice": {
+    "id": "inv-456",
+    "carrier": "Northern Freight",
+    "reference": "INV-1005",
+    "totalAmount": 845.75,
+    "currency": "USD",
+    "status": "pending"
+  }
+}
+```
+
+---
+
+### POST /api/invoices/:id/audit
+
+Audit an invoice with the AI engine. Saves the AI response and updates status based on the decision.
+
+**Authentication**: Required (`billing:read` + `ai:command`)  
+**Rate Limit**: 20/1min (AI limiter)
+
+**Response** (200 OK):
+
+```json
+{
+  "ok": true,
+  "invoice": {
+    "id": "inv-456",
+    "status": "approved",
+    "savings": 120.5,
+    "auditResult": {
+      "decision": "approve",
+      "savings": 120.5
+    }
+  }
+}
+```
+
+---
+
 ## Voice Endpoints
 
 ### POST /api/voice/ingest

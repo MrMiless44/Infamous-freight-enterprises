@@ -39,6 +39,7 @@ const voiceRoutes = require("./routes/voice");
 const aiSimRoutes = require("./routes/aiSim.internal");
 const usersRoutes = require("./routes/users");
 const shipmentsRoutes = require("./routes/shipments");
+const invoicesRoutes = require("./routes/invoices");
 
 const app = express();
 
@@ -103,6 +104,7 @@ app.use("/api", billingRoutes);
 app.use("/api", voiceRoutes);
 app.use("/api", usersRoutes);
 app.use("/api", shipmentsRoutes);
+app.use("/api", invoicesRoutes);
 
 // CSP Violation Report Handler
 app.post("/api/csp-violation", handleCSPViolation);

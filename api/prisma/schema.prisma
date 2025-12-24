@@ -46,3 +46,16 @@ model AiEvent {
   payload   Json
   createdAt DateTime @default(now())
 }
+
+model Invoice {
+  id          String   @id @default(cuid())
+  carrier     String
+  reference   String   @unique
+  totalAmount Decimal  @db.Decimal(12, 2)
+  currency    String   @default("USD")
+  auditResult Json?
+  savings     Decimal  @db.Decimal(12, 2) @default(0)
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
