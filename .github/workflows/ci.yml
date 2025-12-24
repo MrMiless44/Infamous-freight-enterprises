@@ -87,25 +87,27 @@ jobs:
 
           echo "🔍 Searching for HTML files (max depth 4)..."
 
-          # Use find with null delimiter to handle special characters and spaces
-          HTML_FILES=$(find . -maxdepth 4 -type f -name "*.html" -print0 | tr '\0' '\n')
+          # Track overall validation status
+          FAILED_FILES=()
+          VALIDATED_COUNT=0
 
-          if [ -z "$HTML_FILES" ]; then
+          # Check if any HTML files exist
+          if ! find . -maxdepth 4 -type f -name "*.html" -print -quit | grep -q .; then
             echo "✅ No HTML files found; nothing to validate."
             exit 0
           fi
 
           echo "📄 HTML files found:"
-          echo "$HTML_FILES" | sed 's/^/  - /'
+          find . -maxdepth 4 -type f -name "*.html" -print0 | while IFS= read -r -d '' file; do
+            echo "  - $file"
+          done
           echo ""
 
-          # Track overall validation status
-          FAILED_FILES=()
-          VALIDATED_COUNT=0
-          TOTAL_FILES=$(echo "$HTML_FILES" | wc -l)
+          # Count total files using null delimiters to handle newlines in filenames
+          TOTAL_FILES=$(find . -maxdepth 4 -type f -name "*.html" -print0 | tr -cd '\0' | wc -c)
 
           # Process files with proper quoting to handle special characters
-          while IFS= read -r file; do
+          while IFS= read -r -d '' file; do
             if [ -z "$file" ]; then
               continue
             fi
@@ -124,7 +126,7 @@ jobs:
               FAILED_FILES+=("$file")
             fi
             echo ""
-          done < <(find . -maxdepth 4 -type f -name "*.html" -print0 | xargs -0 -n1 echo)
+          done < <(find . -maxdepth 4 -type f -name "*.html" -print0)
 
           # Summary report
           echo "═══════════════════════════════════════"
