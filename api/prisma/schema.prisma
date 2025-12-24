@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  binaryTargets = ["native"]
 }
 
 datasource db {
@@ -13,6 +13,7 @@ model User {
   email     String   @unique
   name      String?
   role      String   @default("user")
+  invoices  Invoice[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -45,4 +46,19 @@ model AiEvent {
   type      String
   payload   Json
   createdAt DateTime @default(now())
+}
+
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  amount        Decimal  @db.Decimal(10, 2)
+  currency      String   @default("USD")
+  status        String   @default("pending")
+  dueDate       DateTime?
+  issuedAt      DateTime @default(now())
+  paidAt        DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
