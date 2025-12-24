@@ -33,7 +33,7 @@ describe("Billing Reports Routes", () => {
       .set(authHeader(makeToken()));
 
     expect(response.status).toBe(200);
-    expect(response.body.ok).toBe(true);
+    expect(response.body.success).toBe(true);
     expect(response.body.data.summary).toBeDefined();
     expect(response.body.data.revenue.monthly.length).toBeGreaterThan(0);
     expect(response.body.data.usage.apiCalls).toBeGreaterThan(0);
