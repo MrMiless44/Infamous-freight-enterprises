@@ -119,7 +119,7 @@ router.get("/", authenticate, requireScope("billing:read"), auditLog, (req, res)
   });
 
   const total = filtered.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const totalPages = total === 0 ? 0 : Math.ceil(total / pageSize);
   const start = (pageNum - 1) * pageSize;
   const end = start + pageSize;
   const invoices = filtered.slice(start, end);
