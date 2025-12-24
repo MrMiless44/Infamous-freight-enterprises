@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "web/next.config.mjs",
+      "use": "@vercel/next"
+    }
+  ],
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm --filter @infamous-freight/shared build"
+}
