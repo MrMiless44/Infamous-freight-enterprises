@@ -87,21 +87,17 @@ jobs:
 
           echo "🔍 Searching for HTML files (max depth 4)..."
 
-          # Check if any HTML files exist
-          if ! find . -maxdepth 4 -type f -name "*.html" -print -quit | grep -q .; then
-            echo "✅ No HTML files found; nothing to validate."
-            exit 0
-          fi
-
-          # Track overall validation status
-          FAILED_FILES=()
-          VALIDATED_COUNT=0
+          # Collect all HTML files into array
           DISPLAY_FILES=()
-
-          # First pass: collect files for display and count
           while IFS= read -r -d '' file; do
             DISPLAY_FILES+=("$file")
           done < <(find . -maxdepth 4 -type f -name "*.html" -print0)
+
+          # Check if any files were found
+          if [ ${#DISPLAY_FILES[@]} -eq 0 ]; then
+            echo "✅ No HTML files found; nothing to validate."
+            exit 0
+          fi
 
           TOTAL_FILES=${#DISPLAY_FILES[@]}
 
@@ -109,19 +105,23 @@ jobs:
           printf '  - %s\n' "${DISPLAY_FILES[@]}"
           echo ""
 
+          # Track validation status
+          FAILED_FILES=()
+          VALIDATED_COUNT=0
+
           # Process files with proper quoting to handle special characters
           for file in "${DISPLAY_FILES[@]}"; do
             VALIDATED_COUNT=$((VALIDATED_COUNT + 1))
             echo "[$VALIDATED_COUNT/$TOTAL_FILES] Validating: $file"
 
-            # Run tidy and capture output
-            if TIDY_OUTPUT=$(tidy -e -q -utf8 "$file" 2>&1); then
+            # Run tidy and capture output only on failure
+            if tidy -e -q -utf8 "$file" > /dev/null 2>&1; then
               echo "  ✅ PASSED"
             else
               TIDY_EXIT=$?
               echo "  ❌ FAILED (exit code: $TIDY_EXIT)"
               echo "  📋 Tidy output:"
-              echo "$TIDY_OUTPUT" | sed 's/^/    /'
+              tidy -e -q -utf8 "$file" 2>&1 | sed 's/^/    /'
               FAILED_FILES+=("$file")
             fi
             echo ""
