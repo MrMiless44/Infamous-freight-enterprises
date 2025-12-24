@@ -1,6 +1,5 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,91 +7,73 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  users     User[]
+  createdAt DateTime @default(now())
+}
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  role      String   @default("user")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(cuid())
+  email          String   @unique
+  passwordHash   String
+  role           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime @default(now())
 }
 
-model Driver {
-  id         String     @id @default(cuid())
-  name       String
-  phone      String?
-  status     String     @default("inactive")
-  avatarCode String?
-  shipments  Shipment[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-}
-
-model Shipment {
-  id          String   @id @default(cuid())
-  reference   String   @unique
-  origin      String
-  destination String
-  status      String   @default("created")
-  driverId    String?
-  driver      Driver?  @relation(fields: [driverId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model AiEvent {
-  id        String   @id @default(cuid())
-  type      String
-  payload   Json
-  createdAt DateTime @default(now())
-}
-
-model Plan {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  stripePrice String   @unique
-  features    Json
-  createdAt   DateTime @default(now())
-}
-
-model Subscription {
-  id               String   @id @default(cuid())
-  userId           String
-  stripeCustomer   String
-  stripeSub        String
-  status           String
-  currentPeriodEnd DateTime
-  createdAt        DateTime @default(now())
-}
-
-model Entitlement {
-  id      String  @id @default(cuid())
-  userId  String
-  feature String
-  enabled Boolean @default(true)
+model Invoice {
+  id             String   @id @default(cuid())
+  organizationId String
+  amount         Float
+  vendor         String
+  status         String   @default("pending")
+  createdAt      DateTime @default(now())
 }
 
 model AiDecision {
   id             String   @id @default(cuid())
   organizationId String
-  invoiceId      String
-  agent          String   // billing_audit, compliance, etc
-  decision       String   // approve | dispute
+  type           String
   confidence     Float
-  rationale      Json
+  rationale      String
   createdAt      DateTime @default(now())
-
-  feedback       AiFeedback?
-
-  @@index([organizationId, agent])
 }
 
-model AiFeedback {
-  id           String   @id @default(cuid())
-  aiDecisionId String   @unique
-  outcome      String   // correct | false_positive | missed
-  notes        String?
-  createdAt    DateTime @default(now())
+model DriverProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  organizationId String
+  displayName    String
+  avatarTheme    String
+}
 
-  aiDecision   AiDecision @relation(fields: [aiDecisionId], references: [id])
+model AvatarMemory {
+  id             String   @id @default(cuid())
+  userId         String
+  organizationId String
+  category       String
+  key            String
+  value          String
+  confidence     Float
+  pinned         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+}
+
+model RouteSession {
+  id             String   @id @default(cuid())
+  userId         String
+  organizationId String
+  startedAt      DateTime @default(now())
+  endedAt        DateTime?
+}
+
+model RouteEvent {
+  id        String   @id @default(cuid())
+  sessionId String
+  type      String
+  meta      String
+  createdAt DateTime @default(now())
 }
