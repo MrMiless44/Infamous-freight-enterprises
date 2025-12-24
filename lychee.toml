@@ -1,0 +1,4 @@
+verbose = true
+timeout = "20s"
+retry = 2
+exclude = ["mailto:*"]

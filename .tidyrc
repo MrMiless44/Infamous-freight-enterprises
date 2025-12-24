@@ -1,0 +1,9 @@
+char-encoding: utf8
+doctype: html5
+indent: auto
+indent-spaces: 2
+wrap: 0
+vertical-space: yes
+tidy-mark: no
+force-output: yes
+show-warnings: yes

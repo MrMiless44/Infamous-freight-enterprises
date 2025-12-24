@@ -1,0 +1,280 @@
+name: HTML Quality
+
+on:
+  push:
+    paths:
+      - '**/*.html'
+      - '.tidyrc'
+      - '.htmlhintrc'
+      - 'lychee.toml'
+  pull_request:
+    paths:
+      - '**/*.html'
+      - '.tidyrc'
+      - '.htmlhintrc'
+      - 'lychee.toml'
+  workflow_dispatch:
+
+concurrency:
+  group: html-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tidy-validate:
+    name: HTML Tidy Validation
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show repository tree (for debugging)
+        run: |
+          echo "Repository root:"
+          ls -la
+          echo ""
+          echo "Checking for HTML files..."
+          find . -name "*.html" -type f | head -10 || echo "No HTML files found in quick scan"
+
+      - name: Install html tidy
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y tidy
+          echo "Tidy version:"
+          tidy -v || true
+
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Create logs directory
+        run: mkdir -p tidy-logs
+
+      - name: Discover HTML files (git-tracked preferred)
+        id: discover
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          # Try git ls-files first (only tracked files)
+          files=$(git ls-files '*.html' 2>/dev/null || true)
+          
+          if [ -z "$files" ]; then
+            echo "No HTML files found via git ls-files, trying find..."
+            # Fallback to find, excluding common vendor directories
+            files=$(find . -type d \( -name node_modules -o -name vendor -o -name dist -o -name build -o -name .git \) -prune -o -type f -name '*.html' -print 2>/dev/null || true)
+          fi
+          
+          if [ -z "$files" ]; then
+            echo "No HTML files found in repository"
+            echo "file_count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
+          echo "Discovered HTML files:"
+          echo "$files"
+          echo ""
+          
+          count=$(echo "$files" | grep -v '^$' | wc -l | tr -d ' ')
+          echo "Total files found: $count"
+          echo "file_count=$count" >> "$GITHUB_OUTPUT"
+          
+          # Save files list for next step
+          echo "$files" > html_files.txt
+
+      - name: Validate HTML files with tidy (per-file logs)
+        if: steps.discover.outputs.file_count != '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ERR=0
+          FAIL_COUNT=0
+          
+          echo "Starting HTML validation with tidy..."
+          echo ""
+          
+          while IFS= read -r f; do
+            # Skip empty lines
+            [ -z "$f" ] && continue
+            
+            echo "Validating: $f"
+            
+            # Create sanitized log filename
+            log="tidy-logs/$(echo "$f" | sed 's#[./]#_#g').log"
+            
+            # Run tidy and capture exit code
+            if ! tidy -config .tidyrc -e -q -utf8 -f "$log" "$f" 2>&1; then
+              ERR=1
+              FAIL_COUNT=$((FAIL_COUNT + 1))
+              
+              # Emit GitHub workflow error annotation
+              echo "::error file=$f::HTML tidy validation failed. See artifact $log for details"
+              
+              # Show first few lines of error
+              echo "  ❌ FAILED - First errors:"
+              head -5 "$log" | sed 's/^/     /'
+              echo ""
+            else
+              echo "  ✅ PASSED"
+            fi
+          done < html_files.txt
+          
+          total=$(grep -v '^$' html_files.txt | wc -l | tr -d ' ')
+          echo ""
+          echo "=========================================="
+          echo "Validation Summary:"
+          echo "  Total files: $total"
+          echo "  Passed: $((total - FAIL_COUNT))"
+          echo "  Failed: $FAIL_COUNT"
+          echo "=========================================="
+          
+          # Create job summary
+          echo "## HTML Tidy Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Total Files | $total |" >> $GITHUB_STEP_SUMMARY
+          echo "| Passed | $((total - FAIL_COUNT)) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Failed | $FAIL_COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "$ERR" -ne 0 ]; then
+            echo "❌ One or more HTML files failed tidy validation." >&2
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **Validation failed** - Please review the errors above and the uploaded logs artifact." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          else
+            echo "✅ All HTML files passed validation!"
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **All files passed validation!**" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Reviewdog annotations from tidy logs
+        if: failure() && steps.discover.outputs.file_count != '0'
+        shell: bash
+        run: |
+          set +e  # Don't fail on reviewdog errors
+          
+          echo "Processing tidy logs for reviewdog annotations..."
+          
+          # Check if any logs exist
+          if [ ! "$(ls -A tidy-logs 2>/dev/null)" ]; then
+            echo "No tidy logs found to process"
+            exit 0
+          fi
+          
+          # Combine all logs and send to reviewdog
+          # Tidy output format: "line 10 column 5 - Error: message"
+          cat tidy-logs/*.log 2>/dev/null | \
+            reviewdog \
+              -efm="line %l column %c - %t%*[^:]: %m" \
+              -name="tidy" \
+              -reporter=github-pr-review \
+              -level=error \
+              -filter-mode=nofilter \
+              -fail-on-error=false || echo "Reviewdog completed with warnings"
+
+      - name: Upload tidy logs on failure
+        if: failure() && steps.discover.outputs.file_count != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tidy-logs
+          path: tidy-logs/
+          retention-days: 14
+
+      - name: No HTML files found
+        if: steps.discover.outputs.file_count == '0'
+        run: |
+          echo "ℹ️  No HTML files found to validate - skipping"
+          echo "## HTML Tidy Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "ℹ️  No HTML files found in repository - validation skipped" >> $GITHUB_STEP_SUMMARY
+
+  link-check:
+    name: Link Checker
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for HTML files
+        id: check-files
+        run: |
+          if git ls-files '*.html' | grep -q .; then
+            echo "has_html=true" >> "$GITHUB_OUTPUT"
+            echo "Found HTML files for link checking"
+          else
+            echo "has_html=false" >> "$GITHUB_OUTPUT"
+            echo "No HTML files found for link checking"
+          fi
+
+      - name: Lychee link checker
+        if: steps.check-files.outputs.has_html == 'true'
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --verbose --no-progress --timeout 20s --max-retries 2 "**/*.html" "README.md"
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: No HTML files for link check
+        if: steps.check-files.outputs.has_html == 'false'
+        run: |
+          echo "ℹ️  No HTML files found for link checking - skipping"
+          echo "## Link Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "ℹ️  No HTML files found - link checking skipped" >> $GITHUB_STEP_SUMMARY
+
+  htmlhint:
+    name: HTMLHint Linting
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install HTMLHint
+        run: npm install -g htmlhint
+
+      - name: Discover HTML files
+        id: discover
+        run: |
+          if git ls-files '*.html' | grep -q .; then
+            echo "has_html=true" >> "$GITHUB_OUTPUT"
+            echo "Found HTML files for HTMLHint"
+            git ls-files '*.html'
+          else
+            echo "has_html=false" >> "$GITHUB_OUTPUT"
+            echo "No HTML files found for HTMLHint"
+          fi
+
+      - name: Run HTMLHint
+        if: steps.discover.outputs.has_html == 'true'
+        run: |
+          echo "Running HTMLHint on discovered files..."
+          git ls-files '*.html' | xargs htmlhint -c .htmlhintrc
+          
+          echo "## HTMLHint Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ HTMLHint validation passed" >> $GITHUB_STEP_SUMMARY
+
+      - name: No HTML files for HTMLHint
+        if: steps.discover.outputs.has_html == 'false'
+        run: |
+          echo "ℹ️  No HTML files found for HTMLHint - skipping"
+          echo "## HTMLHint Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "ℹ️  No HTML files found - HTMLHint skipped" >> $GITHUB_STEP_SUMMARY
