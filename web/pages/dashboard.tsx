@@ -13,7 +13,7 @@ export default function Dashboard() {
       timestamp: new Date().toISOString(),
     });
 
-    const base = process.env.NEXT_PUBLIC_API_BASE || "/api";
+    const base = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
     fetch(`${base}/health`)
       .then((res) => res.json())
       .then((data) => {

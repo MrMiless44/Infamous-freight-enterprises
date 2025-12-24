@@ -8,7 +8,7 @@ const nextConfig = {
   reactStrictMode: true,
   output: "standalone", // Enable standalone output for Docker optimization
   env: {
-    NEXT_PUBLIC_API_BASE: process.env.NEXT_PUBLIC_API_BASE,
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
   },
@@ -24,7 +24,7 @@ const nextConfig = {
     afterFiles: [
       {
         source: '/api/:path*',
-        destination: 'https://infamous-freight-ai.fly.dev/api/:path*',
+        destination: 'https://infamous-freight-api.fly.dev/api/:path*',
       },
     ],
   }),

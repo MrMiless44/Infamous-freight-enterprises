@@ -1,5 +1,5 @@
 export function useApi() {
-  const base = process.env.NEXT_PUBLIC_API_BASE || "/api";
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
   function buildHeaders(custom?: HeadersInit) {
     const headers: HeadersInit = { ...(custom || {}) };
