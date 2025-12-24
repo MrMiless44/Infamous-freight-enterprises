@@ -42,6 +42,7 @@ jest.mock("@prisma/client", () => {
       update: jest.fn(() => Promise.resolve({})),
       delete: jest.fn(() => Promise.resolve({})),
     },
+    $queryRaw: jest.fn(() => Promise.resolve([{ ok: 1 }])),
     $disconnect: jest.fn(),
   };
 
@@ -79,8 +80,9 @@ jest.mock("./src/db/prisma.js", () => {
       origin: data.origin,
       destination: data.destination,
       driverId: data.driverId || null,
-      status: data.status || 'created',
-      trackingNumber: 'TRK-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+      status: data.status || "created",
+      trackingNumber:
+        "TRK-" + Math.random().toString(36).substr(2, 9).toUpperCase(),
       createdAt: new Date(),
       updatedAt: new Date(),
       driver: null,
@@ -90,12 +92,12 @@ jest.mock("./src/db/prisma.js", () => {
   const mockShipmentFindMany = jest.fn(() =>
     Promise.resolve([
       {
-        id: 'shipment-1',
-        reference: 'REF-001',
-        origin: 'New York, NY',
-        destination: 'Los Angeles, CA',
-        status: 'created',
-        trackingNumber: 'TRK-ABC123',
+        id: "shipment-1",
+        reference: "REF-001",
+        origin: "New York, NY",
+        destination: "Los Angeles, CA",
+        status: "created",
+        trackingNumber: "TRK-ABC123",
         createdAt: new Date(),
         updatedAt: new Date(),
         driver: null,
@@ -105,12 +107,12 @@ jest.mock("./src/db/prisma.js", () => {
 
   const mockShipmentFindUnique = jest.fn(() =>
     Promise.resolve({
-      id: 'shipment-1',
-      reference: 'REF-001',
-      origin: 'New York, NY',
-      destination: 'Los Angeles, CA',
-      status: 'created',
-      trackingNumber: 'TRK-ABC123',
+      id: "shipment-1",
+      reference: "REF-001",
+      origin: "New York, NY",
+      destination: "Los Angeles, CA",
+      status: "created",
+      trackingNumber: "TRK-ABC123",
       createdAt: new Date(),
       updatedAt: new Date(),
       driver: null,
@@ -135,6 +137,7 @@ jest.mock("./src/db/prisma.js", () => {
     aiEvent: {
       create: jest.fn(() => Promise.resolve({})),
     },
+    $queryRaw: jest.fn(() => Promise.resolve([{ ok: 1 }])),
     $transaction: jest.fn((cb) => {
       // Mock $transaction to call the callback with a mock tx object
       const mockTx = {
