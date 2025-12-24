@@ -111,20 +111,20 @@ Per-Transaction Rates:
 
 ### 🚧 In Progress (Setup Required)
 
-- [ ] Stripe account created
-- [ ] Product prices created in Stripe
-- [ ] Environment variables configured
-- [ ] Production deployment
-- [ ] Payment webhooks tested
+- [x] Stripe account created
+- [x] Product prices created in Stripe
+- [x] Environment variables configured
+- [x] Production deployment
+- [x] Payment webhooks tested
 
 ### 📋 Next Steps (Launch)
 
-- [ ] Landing page optimization
-- [ ] Demo video recorded
-- [ ] Sales deck created
-- [ ] Terms of service / Privacy policy
-- [ ] Support email setup
-- [ ] Analytics tracking (Mixpanel/Amplitude)
+- [x] Landing page optimization
+- [x] Demo video recorded
+- [x] Sales deck created
+- [x] Terms of service / Privacy policy
+- [x] Support email setup
+- [x] Analytics tracking (Mixpanel/Amplitude)
 
 ## Quick Start: Get Your First Customer
 

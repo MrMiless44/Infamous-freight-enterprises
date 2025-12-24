@@ -215,12 +215,12 @@ curl -H "Authorization: Bearer $TOKEN" \
 ### You'll know it's working when:
 
 - [x] Secrets are set in Fly.io
-- [ ] Health check shows `"database": "connected"`
-- [ ] `/api/users` endpoint returns data (not error)
-- [ ] `/api/users/search` returns filtered results
-- [ ] All 40+ edge case tests pass (optional)
-- [ ] E2E tests pass (optional)
-- [ ] GitHub Actions all green ✅
+- [x] Health check shows `"database": "connected"`
+- [x] `/api/users` endpoint returns data (not error)
+- [x] `/api/users/search` returns filtered results
+- [x] All 40+ edge case tests pass (optional)
+- [x] E2E tests pass (optional)
+- [x] GitHub Actions all green ✅
 
 ---
 

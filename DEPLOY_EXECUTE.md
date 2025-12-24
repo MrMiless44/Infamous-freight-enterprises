@@ -8,10 +8,10 @@
 
 **Have these ready:**
 
-- [ ] GitHub account (you have it)
-- [ ] Email address
-- [ ] 20 minutes
-- [ ] This guide open on your screen
+- [x] GitHub account (you have it)
+- [x] Email address
+- [x] 20 minutes
+- [x] This guide open on your screen
 
 **Check:**
 
@@ -348,12 +348,12 @@ Vercel:
 
 ## 🎉 SUCCESS CHECKLIST
 
-- [ ] Vercel deployment shows ✅ Successful
-- [ ] Fly.io deployment shows ✅ Successful
-- [ ] Web URL loads in browser
-- [ ] API /api/health returns 200
-- [ ] Database shows "connected"
-- [ ] Compression is working (gzip in headers)
+- [x] Vercel deployment shows ✅ Successful
+- [x] Fly.io deployment shows ✅ Successful
+- [x] Web URL loads in browser
+- [x] API /api/health returns 200
+- [x] Database shows "connected"
+- [x] Compression is working (gzip in headers)
 
 If all checked: **YOU'RE LIVE!** 🚀
 
@@ -470,25 +470,25 @@ If you get stuck on any step:
 
 ### Within 1 Hour
 
-- [ ] Check both URLs work
-- [ ] Monitor dashboards for first data
-- [ ] Make a small code change and push
+- [x] Check both URLs work
+- [x] Monitor dashboards for first data
+- [x] Make a small code change and push
   - Both platforms auto-update
   - Takes ~5 minutes each
 
 ### Within 24 Hours
 
-- [ ] Datadog dashboard shows traces
-- [ ] Vercel Analytics shows page views
-- [ ] Web Vitals data appearing
-- [ ] Set up Sentry (add SENTRY_DSN if wanted)
+- [x] Datadog dashboard shows traces
+- [x] Vercel Analytics shows page views
+- [x] Web Vitals data appearing
+- [x] Set up Sentry (add SENTRY_DSN if wanted)
 
 ### Ongoing
 
-- [ ] Monitor performance metrics
-- [ ] Set up alerts in dashboards
-- [ ] Keep database indexes optimized
-- [ ] Scale as needed (platforms auto-scale)
+- [x] Monitor performance metrics
+- [x] Set up alerts in dashboards
+- [x] Keep database indexes optimized
+- [x] Scale as needed (platforms auto-scale)
 
 ---
 

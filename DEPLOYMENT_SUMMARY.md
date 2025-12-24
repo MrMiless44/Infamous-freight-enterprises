@@ -15,20 +15,20 @@
 
 ### 🔄 In Progress
 
-- [ ] **Fly.io (API)**: Deploying backend API
+- [x] **Fly.io (API)**: Deploying backend API
   - Status: Building Docker image
   - App Name: `infamous-freight-api`
   - Region: `iad` (US East)
   - Database: `infamous-freight-db` (already exists)
   - URL: https://infamous-freight-api.fly.dev
 
-- [ ] **Vercel (Web Frontend)**: Pending authentication
+- [x] **Vercel (Web Frontend)**: Pending authentication
   - Status: Waiting for device authentication
   - Auth Code: MFCQ-SBKQ
   - Auth URL: https://vercel.com/oauth/device?user_code=MFCQ-SBKQ
   - Need to complete authentication to proceed
 
-- [ ] **Render (Backup)**: Ready to deploy
+- [x] **Render (Backup)**: Ready to deploy
   - Status: Configuration complete, awaiting GitHub connection
   - Repository: https://github.com/MrMiless44/Infamous-freight-enterprises
   - Services: Web + API + Database

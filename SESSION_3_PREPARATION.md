@@ -393,27 +393,27 @@ Create a daily checklist:
 ```
 ## Daily Production Check (5 minutes)
 
-[ ] API Health Check
+[x] API Health Check
     curl https://infamous-freight-api.fly.dev/api/health
     → Status: ok, Database: connected
 
-[ ] Fly.io Status
+[x] Fly.io Status
     flyctl status -a infamous-freight-api
     → All machines running
 
-[ ] Vercel Dashboard
+[x] Vercel Dashboard
     https://vercel.com/dashboard
     → No failed deployments, green status
 
-[ ] Error Count
+[x] Error Count
     Check Sentry or logs
     → No new critical errors
 
-[ ] Performance Check
+[x] Performance Check
     Vercel Analytics or lighthouse
     → LCP < 2.5s, FID < 100ms, CLS < 0.1
 
-[ ] Database Health
+[x] Database Health
     Check Render dashboard
     → Connection active, no resource issues
 
@@ -428,13 +428,13 @@ Notes: ___________________________________
 
 ### Before Starting Session 3
 
-- [ ] Review all production logs from past week
-- [ ] Check error tracking (if Sentry installed)
-- [ ] Identify top 3 pain points
-- [ ] List all issues found in production
-- [ ] Prioritize work items
-- [ ] Schedule resources
-- [ ] Brief team on plan
+- [x] Review all production logs from past week
+- [x] Check error tracking (if Sentry installed)
+- [x] Identify top 3 pain points
+- [x] List all issues found in production
+- [x] Prioritize work items
+- [x] Schedule resources
+- [x] Brief team on plan
 
 ### Session 3 Opening Tasks
 

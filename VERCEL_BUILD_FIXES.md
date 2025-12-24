@@ -163,7 +163,7 @@ pnpm build
 - [x] Shared package builds before web
 - [x] .vercelignore cleaned up
 - [x] Commits pushed
-- [ ] **Next**: Trigger new Vercel deployment (from dashboard or by pushing)
+- [x] **Next**: Trigger new Vercel deployment (from dashboard or by pushing)
 
 To trigger deployment:
 

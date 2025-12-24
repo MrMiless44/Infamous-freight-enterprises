@@ -252,12 +252,12 @@ cd web && npm run dev             # Run Web
 - [x] Initial commit made
 - [x] Docker configs ready
 - [x] Environment variables set
-- [ ] GitHub remote added
-- [ ] Docker containers running
-- [ ] Database migrated
-- [ ] API tested
-- [ ] Web tested
-- [ ] Deployed to production
+- [x] GitHub remote added
+- [x] Docker containers running
+- [x] Database migrated
+- [x] API tested
+- [x] Web tested
+- [x] Deployed to production
 
 ---
 

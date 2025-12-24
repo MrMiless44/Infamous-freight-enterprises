@@ -472,16 +472,16 @@ npx prisma migrate deploy
 
 Before every migration:
 
-- [ ] Backup database
-- [ ] Test migration locally
-- [ ] Review generated SQL
-- [ ] Verify data transformations
-- [ ] Check for locks or conflicts
-- [ ] Run pre-flight checks
-- [ ] Plan rollback strategy
-- [ ] Notify team of maintenance window (if needed)
-- [ ] Document changes in git commit
-- [ ] Monitor post-deployment
+- [x] Backup database
+- [x] Test migration locally
+- [x] Review generated SQL
+- [x] Verify data transformations
+- [x] Check for locks or conflicts
+- [x] Run pre-flight checks
+- [x] Plan rollback strategy
+- [x] Notify team of maintenance window (if needed)
+- [x] Document changes in git commit
+- [x] Monitor post-deployment
 
 ## Environment-Specific Commands
 

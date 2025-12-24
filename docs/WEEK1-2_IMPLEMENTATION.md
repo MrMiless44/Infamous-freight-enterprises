@@ -356,11 +356,11 @@ Before every production migration:
 
 ### Next Steps (User Action Required)
 
-- [ ] Set up Sentry.io account (free tier available)
-- [ ] Add SENTRY_DSN environment variable
-- [ ] Configure Sentry alerts to Slack
-- [ ] Test rate limiting locally
-- [ ] Review DATABASE_MIGRATIONS.md before next migration
+- [x] Set up Sentry.io account (free tier available)
+- [x] Add SENTRY_DSN environment variable
+- [x] Configure Sentry alerts to Slack
+- [x] Test rate limiting locally
+- [x] Review DATABASE_MIGRATIONS.md before next migration
 
 ### Files Modified
 

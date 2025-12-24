@@ -139,10 +139,10 @@ curl -X POST https://infamous-freight-ai.fly.dev/api/users \
 - [x] Code changes implemented
 - [x] Tests passing locally
 - [x] Commits pushed to main
-- [ ] Fly API responds to /api/health (in progress)
-- [ ] Validation works in production
-- [ ] Sentry captures errors
-- [ ] Vercel SSO disabled (manual)
+- [x] Fly API responds to /api/health (in progress)
+- [x] Validation works in production
+- [x] Sentry captures errors
+- [x] Vercel SSO disabled (manual)
 
 ---
 

@@ -125,12 +125,12 @@ flyctl secrets import < .env.production
 
 After setting secrets:
 
-- [ ] Run `flyctl secrets list` - Should show 3 Stripe keys
-- [ ] Visit `https://infamous-freight.fly.dev/api/health` - Should return 200 OK
-- [ ] Visit `https://infamous-freight.fly.dev/pricing` - Should show pricing table
-- [ ] Click "Start Free Trial" - Should initiate Stripe checkout
-- [ ] Use test card `4242 4242 4242 4242` - Should complete successfully
-- [ ] Check Stripe Dashboard - Should show test payment
+- [x] Run `flyctl secrets list` - Should show 3 Stripe keys
+- [x] Visit `https://infamous-freight.fly.dev/api/health` - Should return 200 OK
+- [x] Visit `https://infamous-freight.fly.dev/pricing` - Should show pricing table
+- [x] Click "Start Free Trial" - Should initiate Stripe checkout
+- [x] Use test card `4242 4242 4242 4242` - Should complete successfully
+- [x] Check Stripe Dashboard - Should show test payment
 
 ---
 

@@ -364,18 +364,18 @@ git push origin main
 
 ### Validation Checklist
 
-- [ ] `/api/health` returns 200 and status "ok"
-- [ ] `/api/users` returns user list with pagination
-- [ ] `/api/users/search?q=test` returns filtered results
-- [ ] Search endpoint respects pagination (page, limit)
-- [ ] Search endpoint respects sorting (sortBy, order)
-- [ ] Search endpoint filters by role
-- [ ] Rate limiting headers present (X-RateLimit-\*)
-- [ ] Error responses follow standard format
-- [ ] All 40+ edge case tests pass
-- [ ] E2E tests pass against live API
-- [ ] GitHub Actions all workflows pass
-- [ ] Web frontend loads and communicates with API
+- [x] `/api/health` returns 200 and status "ok"
+- [x] `/api/users` returns user list with pagination
+- [x] `/api/users/search?q=test` returns filtered results
+- [x] Search endpoint respects pagination (page, limit)
+- [x] Search endpoint respects sorting (sortBy, order)
+- [x] Search endpoint filters by role
+- [x] Rate limiting headers present (X-RateLimit-\*)
+- [x] Error responses follow standard format
+- [x] All 40+ edge case tests pass
+- [x] E2E tests pass against live API
+- [x] GitHub Actions all workflows pass
+- [x] Web frontend loads and communicates with API
 
 ---
 
@@ -416,39 +416,39 @@ flyctl status -a infamous-freight-api
 
 ### ✅ Iteration 1: Secrets (BLOCKER)
 
-- [ ] DATABASE_URL set in Fly.io
-- [ ] JWT_SECRET set in Fly.io
-- [ ] Health check shows "database": "connected"
+- [x] DATABASE_URL set in Fly.io
+- [x] JWT_SECRET set in Fly.io
+- [x] Health check shows "database": "connected"
 
 ### ✅ Iteration 2: Tests
 
-- [ ] 40+ edge case tests pass
-- [ ] Coverage ≥50% (API requirement)
-- [ ] No test failures in GitHub Actions
+- [x] 40+ edge case tests pass
+- [x] Coverage ≥50% (API requirement)
+- [x] No test failures in GitHub Actions
 
 ### ✅ Iteration 3: Database
 
-- [ ] `/api/users` returns data (not error)
-- [ ] `/api/users/search` returns results
-- [ ] Pagination works correctly
+- [x] `/api/users` returns data (not error)
+- [x] `/api/users/search` returns results
+- [x] Pagination works correctly
 
 ### ✅ Iteration 4: CI/CD
 
-- [ ] All GitHub Actions workflows pass
-- [ ] No red X marks on main branch
-- [ ] Latest deploy succeeds
+- [x] All GitHub Actions workflows pass
+- [x] No red X marks on main branch
+- [x] Latest deploy succeeds
 
 ### ✅ Iteration 5: E2E
 
-- [ ] Playwright tests pass
-- [ ] All user flows work end-to-end
-- [ ] Error scenarios handled gracefully
+- [x] Playwright tests pass
+- [x] All user flows work end-to-end
+- [x] Error scenarios handled gracefully
 
 ### ✅ Iteration 6: Frontend
 
-- [ ] Web app loads at Vercel URL
-- [ ] API calls succeed
-- [ ] User search works in UI
+- [x] Web app loads at Vercel URL
+- [x] API calls succeed
+- [x] User search works in UI
 
 ---
 
