@@ -40,6 +40,19 @@ model Shipment {
   updatedAt   DateTime @updatedAt
 }
 
+model Invoice {
+  id          String   @id @default(cuid())
+  carrier     String
+  reference   String
+  totalAmount Float
+  currency    String   @default("USD")
+  status      String   @default("pending") // pending | audited | approved | disputed
+  auditResult Json?
+  savings     Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model AiEvent {
   id        String   @id @default(cuid())
   type      String

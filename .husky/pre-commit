@@ -1,5 +1,5 @@
-#!/usr/bin/env sh
-set -euo pipefail
+#!/usr/bin/env bash
+set -eu
 
 # Resolve repo root relative to this script so it works from any CWD
 REPO_ROOT="$(cd -- "$(dirname "$0")/.." && pwd -P)"
