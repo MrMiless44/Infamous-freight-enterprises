@@ -1,5 +1,5 @@
 const express = require("express");
-const { authenticate, requireScope, auditLog } = require("../../middleware/security");
+const { authenticate, requireScope, auditLog, limiters } = require("../../middleware/security");
 
 const router = express.Router();
 
