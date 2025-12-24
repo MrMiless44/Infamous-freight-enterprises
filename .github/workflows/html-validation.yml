@@ -1,0 +1,141 @@
+name: HTML Validation
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-html:
+    name: Validate HTML Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Debug - Display Repository Root
+        run: |
+          echo "📁 Repository root:"
+          pwd
+          echo ""
+          echo "📄 Top-level HTML files:"
+          find . -maxdepth 1 -name "*.html" -type f 2>/dev/null || echo "No HTML files found at root level"
+
+      - name: Install HTML Tidy
+        run: |
+          echo "📦 Installing tidy (libtidy)..."
+          sudo apt-get update -qq
+          sudo apt-get install -y tidy
+
+      - name: Verify Tidy Installation
+        run: |
+          echo "✅ Verifying tidy installation:"
+          tidy -version
+          echo ""
+          echo "📍 Tidy location:"
+          which tidy
+
+      - name: Find HTML Files
+        id: find-html
+        run: |
+          echo "🔍 Finding all HTML files (depth <= 4)..."
+          HTML_FILES=$(find . -maxdepth 4 -name "*.html" -type f 2>/dev/null | sort)
+          
+          if [ -z "$HTML_FILES" ]; then
+            echo "⚠️  No HTML files found in the repository"
+            echo "html_count=0" >> $GITHUB_OUTPUT
+          else
+            HTML_COUNT=$(echo "$HTML_FILES" | wc -l)
+            echo "✅ Found $HTML_COUNT HTML file(s):"
+            echo "$HTML_FILES"
+            echo ""
+            echo "html_count=$HTML_COUNT" >> $GITHUB_OUTPUT
+            
+            # Save file list for validation step
+            echo "$HTML_FILES" > /tmp/html_files.txt
+          fi
+
+      - name: Validate HTML Files
+        if: steps.find-html.outputs.html_count > 0
+        id: validate
+        run: |
+          echo "🔍 Validating HTML files with tidy..."
+          echo ""
+          
+          VALIDATION_FAILED=0
+          FAILED_FILES=""
+          
+          while IFS= read -r html_file; do
+            echo "----------------------------------------"
+            echo "📄 Validating: $html_file"
+            echo "----------------------------------------"
+            
+            # Run tidy with options:
+            # -q: quiet (suppress non-essential output)
+            # -e: show only errors
+            # --gnu-emacs: show filename and line number
+            if tidy -q -e --gnu-emacs "$html_file" 2>&1 | tee "/tmp/$(basename "$html_file").log"; then
+              echo "✅ Valid HTML: $html_file"
+            else
+              echo "❌ Validation failed: $html_file"
+              VALIDATION_FAILED=1
+              FAILED_FILES="$FAILED_FILES$html_file"$'\n'
+            fi
+            echo ""
+          done < /tmp/html_files.txt
+          
+          echo "========================================"
+          echo "📊 Validation Summary"
+          echo "========================================"
+          
+          if [ $VALIDATION_FAILED -eq 1 ]; then
+            echo "❌ HTML validation FAILED!"
+            echo ""
+            echo "Failed files:"
+            echo "$FAILED_FILES"
+            echo ""
+            echo "validation_status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "✅ All HTML files are valid!"
+            echo "validation_status=passed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload Validation Logs on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-validation-logs
+          path: |
+            /tmp/*.log
+            /tmp/html_files.txt
+          retention-days: 30
+
+      - name: Create Summary
+        if: always()
+        run: |
+          echo "## 🔍 HTML Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.find-html.outputs.html_count }}" = "0" ]; then
+            echo "⚠️ No HTML files found in the repository (depth <= 4)" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.validate.outputs.validation_status }}" = "passed" ]; then
+            echo "✅ **All HTML files passed validation!**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- Files validated: ${{ steps.find-html.outputs.html_count }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **HTML validation failed!**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- Files validated: ${{ steps.find-html.outputs.html_count }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Check the logs artifact for detailed error messages" >> $GITHUB_STEP_SUMMARY
+          fi
