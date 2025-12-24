@@ -457,16 +457,123 @@ Execute an AI command (OpenAI, Anthropic, or synthetic fallback).
 
 ## Billing Endpoints
 
-### POST /api/billing/stripe
+### POST /api/billing/stripe/session
 
-Create a Stripe payment.
+Create a Stripe checkout session for a plan.
 
 **Authentication**: Required (`billing:*`)  
 **Rate Limit**: 30/15min
 
+**Body**
+
+```json
+{
+  "plan": "starter | growth | enterprise",
+  "quantity": 1,
+  "successUrl": "https://app.yourdomain.com/billing/success",
+  "cancelUrl": "https://app.yourdomain.com/billing/cancel"
+}
+```
+
+**Response** (201 Created):
+
+```json
+{
+  "ok": true,
+  "sessionId": "sess_123",
+  "plan": "starter",
+  "quantity": 1,
+  "amountCents": 4900,
+  "currency": "usd",
+  "url": "https://billing.stripe.com/...",
+  "features": ["50 AI audits", "Voice commands", "Basic avatars"]
+}
+```
+
+### POST /api/billing/paypal/order
+
+Create a PayPal order for a plan.
+
+**Authentication**: Required (`billing:*`)  
+**Rate Limit**: 30/15min
+
+**Response** (201 Created):
+
+```json
+{
+  "ok": true,
+  "orderId": "order_abc",
+  "approvalUrl": "https://www.sandbox.paypal.com/checkoutnow?token=order_abc",
+  "plan": "growth",
+  "quantity": 1,
+  "amountCents": 12900,
+  "currency": "usd"
+}
+```
+
+### POST /api/billing/paypal/capture
+
+Capture an approved PayPal order.
+
+**Authentication**: Required (`billing:*`)
+
+**Body**:
+
+```json
+{
+  "orderId": "order_abc",
+  "note": "Optional note for audit trail"
+}
+```
+
+**Response** (200 OK):
+
+```json
+{
+  "ok": true,
+  "orderId": "order_abc",
+  "captureId": "cap_123",
+  "status": "captured"
+}
+```
+
 ---
 
 ## Voice Endpoints
+
+### POST /api/voice/command
+
+Process a text command from the voice interface.
+
+**Authentication**: Required (`voice:command`)  
+**Rate Limit**: 60/15min
+
+**Body**:
+
+```json
+{
+  "text": "Audit invoice 1234",
+  "channel": "mobile",
+  "metadata": {"priority": "high"}
+}
+```
+
+**Response** (200 OK):
+
+```json
+{
+  "ok": true,
+  "intent": "invoice_audit",
+  "confidence": 0.82,
+  "decisionId": "dec_456",
+  "recommended": ["Queue invoice for audit workflow", "..."],
+  "trace": {
+    "tags": ["invoice", "audit"],
+    "summary": "Audit invoice 1234",
+    "memory": [{"key": "vendor:abc", "confidence": 0.9}]
+  }
+}
+```
 
 ### POST /api/voice/ingest
 
@@ -478,6 +585,7 @@ Upload and transcribe audio.
 **File Upload** (Multipart Form Data):
 
 - `audio` (file, required): MP3/WAV/M4A, max 10MB
+- Response returns `referenceId`, `filename`, `mimetype`, `sizeMb`
 
 ---
 

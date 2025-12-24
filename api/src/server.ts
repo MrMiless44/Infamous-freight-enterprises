@@ -10,6 +10,8 @@ import { avatar } from "./routes/avatar";
 import { route } from "./routes/route";
 import { invoices } from "./routes/invoices";
 import { admin } from "./routes/admin";
+import { voice } from "./routes/voice";
+import { billing } from "./routes/billing";
 import { rateLimit } from "./middleware/rateLimit";
 import { auditTrail } from "./middleware/audit";
 
@@ -26,5 +28,7 @@ app.use("/api/avatar", avatar);
 app.use("/api/route", route);
 app.use("/api/invoices", invoices);
 app.use("/api/admin", admin);
+app.use("/api/voice", voice);
+app.use("/api/billing", billing);
 
 app.listen(env.PORT, () => console.log(`API running on port ${env.PORT}`));
