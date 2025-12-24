@@ -45,6 +45,7 @@
     "prisma": "^5.22.0"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.6.1",
     "botid": "^1.5.10",
     "stripe": "^20.1.0"
   }
