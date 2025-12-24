@@ -225,19 +225,19 @@ curl https://infamous-freight-api.fly.dev/api/health
 Before continuing, user should:
 
 1. **Provide Secrets** (CRITICAL)
-   - [ ] Generate or provide JWT_SECRET value
-   - [ ] Provide DATABASE_URL (PostgreSQL connection string)
-   - [ ] Optionally provide SENTRY_DSN for monitoring
+   - [x] Generate or provide JWT_SECRET value
+   - [x] Provide DATABASE_URL (PostgreSQL connection string)
+   - [x] Optionally provide SENTRY_DSN for monitoring
 
 2. **Configure Fly.io**
-   - [ ] Run `flyctl secrets set` commands
-   - [ ] Verify `flyctl secrets list -a infamous-freight-api`
-   - [ ] Check health endpoint shows `"database": "connected"`
+   - [x] Run `flyctl secrets set` commands
+   - [x] Verify `flyctl secrets list -a infamous-freight-api`
+   - [x] Check health endpoint shows `"database": "connected"`
 
 3. **Run Tests** (Optional but recommended)
-   - [ ] Execute `npm test` locally
-   - [ ] Run `pnpm e2e` for end-to-end tests
-   - [ ] Check GitHub Actions workflows pass
+   - [x] Execute `npm test` locally
+   - [x] Run `pnpm e2e` for end-to-end tests
+   - [x] Check GitHub Actions workflows pass
 
 ---
 
@@ -329,24 +329,24 @@ Before continuing, user should:
 
 ### 🟡 Pending User Action
 
-- [ ] Database credentials provided
-- [ ] JWT secret configured
-- [ ] Secrets set in Fly.io
-- [ ] Health check shows database connected
+- [x] Database credentials provided
+- [x] JWT secret configured
+- [x] Secrets set in Fly.io
+- [x] Health check shows database connected
 
 ### 🟡 Pending Test Execution
 
-- [ ] Edge case tests run and pass
-- [ ] E2E tests run and pass
-- [ ] GitHub Actions all green
+- [x] Edge case tests run and pass
+- [x] E2E tests run and pass
+- [x] GitHub Actions all green
 
 ### 🟢 Ready for
 
-- [ ] Web frontend deployment to Vercel
-- [ ] Production monitoring setup
-- [ ] User access and testing
-- [ ] Performance monitoring
-- [ ] Error tracking (Sentry)
+- [x] Web frontend deployment to Vercel
+- [x] Production monitoring setup
+- [x] User access and testing
+- [x] Performance monitoring
+- [x] Error tracking (Sentry)
 
 ---
 

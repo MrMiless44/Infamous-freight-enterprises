@@ -138,26 +138,26 @@
 
 ### ✅ Essential (Do First)
 
-- [ ] **Test Web**: Visit your public URL
-- [ ] **Test API**: `curl https://your-api-url.com/api/health`
-- [ ] **Test Pricing**: Visit `/pricing` page
-- [ ] **Add Stripe Keys**: Configure payment processing
-- [ ] **Custom Domain**: Point your domain (optional)
+- [x] **Test Web**: Visit your public URL
+- [x] **Test API**: `curl https://your-api-url.com/api/health`
+- [x] **Test Pricing**: Visit `/pricing` page
+- [x] **Add Stripe Keys**: Configure payment processing
+- [x] **Custom Domain**: Point your domain (optional)
 
 ### 🔒 Security (Do Today)
 
-- [ ] **Environment Secrets**: Never commit real API keys
-- [ ] **CORS**: Update allowed origins in production
-- [ ] **Rate Limiting**: Verify it's working
-- [ ] **Database Backups**: Enable on Render/Fly
-- [ ] **SSL Certificate**: Auto-enabled on Render/Vercel
+- [x] **Environment Secrets**: Never commit real API keys
+- [x] **CORS**: Update allowed origins in production
+- [x] **Rate Limiting**: Verify it's working
+- [x] **Database Backups**: Enable on Render/Fly
+- [x] **SSL Certificate**: Auto-enabled on Render/Vercel
 
 ### 📊 Monitoring (Do This Week)
 
-- [ ] **Error Tracking**: Add Sentry (free tier)
-- [ ] **Analytics**: Add Plausible or Google Analytics
-- [ ] **Uptime Monitor**: UptimeRobot.com (free)
-- [ ] **Performance**: Lighthouse score check
+- [x] **Error Tracking**: Add Sentry (free tier)
+- [x] **Analytics**: Add Plausible or Google Analytics
+- [x] **Uptime Monitor**: UptimeRobot.com (free)
+- [x] **Performance**: Lighthouse score check
 
 ---
 

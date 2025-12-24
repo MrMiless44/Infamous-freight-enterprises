@@ -90,11 +90,11 @@ DD_TRACE_ENABLED=true pnpm api:dev
 
 ### Post-Deployment
 
-- [ ] Verify Datadog APM traces in dashboard
-- [ ] Check Sentry for error tracking
-- [ ] Monitor Core Web Vitals in Vercel Analytics
-- [ ] Verify database indexes are created
-- [ ] Set up monitoring alerts
+- [x] Verify Datadog APM traces in dashboard
+- [x] Check Sentry for error tracking
+- [x] Monitor Core Web Vitals in Vercel Analytics
+- [x] Verify database indexes are created
+- [x] Set up monitoring alerts
 
 ---
 

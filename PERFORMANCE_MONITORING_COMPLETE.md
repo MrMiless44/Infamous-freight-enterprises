@@ -349,16 +349,16 @@ pnpm test
 
 ## 📋 Checklist for Production
 
-- [ ] Run `pnpm install` to get new dependencies
-- [ ] Run `scripts/db-indexes.sql` in production database
-- [ ] Set `DD_TRACE_ENABLED=true` in production
-- [ ] Configure `SENTRY_DSN` for error tracking
-- [ ] Deploy to Vercel (web) and Fly.io (api)
-- [ ] Verify Datadog APM traces in dashboard
-- [ ] Monitor Core Web Vitals in Vercel Analytics
-- [ ] Set up Sentry alerts for errors
-- [ ] Configure Datadog alerts for slow queries/APIs
-- [ ] Monitor database slow query log
+- [x] Run `pnpm install` to get new dependencies
+- [x] Run `scripts/db-indexes.sql` in production database
+- [x] Set `DD_TRACE_ENABLED=true` in production
+- [x] Configure `SENTRY_DSN` for error tracking
+- [x] Deploy to Vercel (web) and Fly.io (api)
+- [x] Verify Datadog APM traces in dashboard
+- [x] Monitor Core Web Vitals in Vercel Analytics
+- [x] Set up Sentry alerts for errors
+- [x] Configure Datadog alerts for slow queries/APIs
+- [x] Monitor database slow query log
 
 ---
 

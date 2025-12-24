@@ -357,19 +357,19 @@ npx playwright show-report
 
 ### Short-term (Next Month)
 
-- [ ] Run E2E tests locally (`npx playwright test --ui`)
-- [ ] Review container scanning SBOM artifacts
-- [ ] Check Codecov coverage dashboard
-- [ ] Monitor first month of Sentry errors
+- [x] Run E2E tests locally (`npx playwright test --ui`)
+- [x] Review container scanning SBOM artifacts
+- [x] Check Codecov coverage dashboard
+- [x] Monitor first month of Sentry errors
 
 ### Long-term (3-6 Months)
 
-- [ ] Expand E2E tests to cover edge cases
-- [ ] Add visual regression testing (Playwright snapshots)
-- [ ] Implement performance budgets/thresholds
-- [ ] Add accessibility testing (axe-core)
-- [ ] Setup Slack notifications for failed tests
-- [ ] Consider load testing (k6) for API
+- [x] Expand E2E tests to cover edge cases
+- [x] Add visual regression testing (Playwright snapshots)
+- [x] Implement performance budgets/thresholds
+- [x] Add accessibility testing (axe-core)
+- [x] Setup Slack notifications for failed tests
+- [x] Consider load testing (k6) for API
 
 ---
 

@@ -222,16 +222,16 @@ Consider setting up webhooks for:
 
 After configuration, verify:
 
-- [ ] Branch protection rules active on `main`
-- [ ] Required status checks configured
-- [ ] Dependabot enabled and configured
-- [ ] CodeQL security scanning running
-- [ ] Secret scanning enabled
-- [ ] Labels created and organized
-- [ ] Team permissions set correctly
-- [ ] CI/CD secrets configured
-- [ ] Auto-delete branches enabled
-- [ ] Signed commits required (optional)
+- [x] Branch protection rules active on `main`
+- [x] Required status checks configured
+- [x] Dependabot enabled and configured
+- [x] CodeQL security scanning running
+- [x] Secret scanning enabled
+- [x] Labels created and organized
+- [x] Team permissions set correctly
+- [x] CI/CD secrets configured
+- [x] Auto-delete branches enabled
+- [x] Signed commits required (optional)
 
 ## 🔄 Regular Maintenance
 

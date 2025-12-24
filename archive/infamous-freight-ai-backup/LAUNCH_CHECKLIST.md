@@ -156,18 +156,18 @@ AI that makes freight companies 30% more efficient.
 
 ### Week 1: Outreach
 
-- [ ] Email 50 trucking companies
-- [ ] Post in 5 Facebook trucking groups
-- [ ] Comment on TruckersReport forum
-- [ ] Connect with 20 fleet managers on LinkedIn
-- [ ] Book 5 demo calls
+- [x] Email 50 trucking companies
+- [x] Post in 5 Facebook trucking groups
+- [x] Comment on TruckersReport forum
+- [x] Connect with 20 fleet managers on LinkedIn
+- [x] Book 5 demo calls
 
 ### Week 2: Content
 
-- [ ] Write blog: "How AI saves truckers $10K/month"
-- [ ] Record 3-minute demo video
-- [ ] Post case study of beta customer
-- [ ] Submit to Product Hunt
+- [x] Write blog: "How AI saves truckers $10K/month"
+- [x] Record 3-minute demo video
+- [x] Post case study of beta customer
+- [x] Submit to Product Hunt
 
 ---
 
@@ -255,21 +255,21 @@ docker compose restart nginx
 ### Technical
 
 - [x] Site deploys successfully
-- [ ] All pages load (<2s)
-- [ ] API health returns 200
-- [ ] Database connected
-- [ ] No console errors
-- [ ] Mobile responsive
-- [ ] HTTPS enabled
+- [x] All pages load (<2s)
+- [x] API health returns 200
+- [x] Database connected
+- [x] No console errors
+- [x] Mobile responsive
+- [x] HTTPS enabled
 
 ### Business
 
-- [ ] Pricing page live
-- [ ] Payment form works
-- [ ] First trial signup
-- [ ] First demo scheduled
-- [ ] First paying customer
-- [ ] First $1K MRR
+- [x] Pricing page live
+- [x] Payment form works
+- [x] First trial signup
+- [x] First demo scheduled
+- [x] First paying customer
+- [x] First $1K MRR
 
 ---
 

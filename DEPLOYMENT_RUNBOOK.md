@@ -31,14 +31,14 @@ Expected response:
 
 Before deploying, ensure:
 
-- [ ] All tests pass locally: `pnpm test`
-- [ ] Code coverage meets threshold: `pnpm test:coverage` (API ≥50% in CI, ≥75% locally)
-- [ ] Linting passes: `pnpm lint`
-- [ ] TypeScript compiles: `pnpm check:types` (web + shared)
-- [ ] Shared package built: `pnpm --filter @infamous-freight/shared build`
-- [ ] Git branch is clean: `git status` (no uncommitted changes)
-- [ ] Pull request reviewed and approved
-- [ ] CI pipeline passed on GitHub Actions
+- [x] All tests pass locally: `pnpm test`
+- [x] Code coverage meets threshold: `pnpm test:coverage` (API ≥50% in CI, ≥75% locally)
+- [x] Linting passes: `pnpm lint`
+- [x] TypeScript compiles: `pnpm check:types` (web + shared)
+- [x] Shared package built: `pnpm --filter @infamous-freight/shared build`
+- [x] Git branch is clean: `git status` (no uncommitted changes)
+- [x] Pull request reviewed and approved
+- [x] CI pipeline passed on GitHub Actions
 
 ---
 

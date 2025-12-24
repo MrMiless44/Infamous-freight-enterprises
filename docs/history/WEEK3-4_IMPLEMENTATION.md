@@ -285,13 +285,13 @@ Caching: Speeds up subsequent scans
 
 ### Future Enhancements
 
-- [ ] Add visual regression testing (playwright snapshots)
-- [ ] Add performance budget enforcement
-- [ ] Add accessibility testing (axe-core)
-- [ ] Expand E2E tests to cover edge cases
-- [ ] Add load/stress testing with k6
-- [ ] Configure Slack notifications for failed tests
-- [ ] Add API-only tests for backend validation
+- [x] Add visual regression testing (playwright snapshots)
+- [x] Add performance budget enforcement
+- [x] Add accessibility testing (axe-core)
+- [x] Expand E2E tests to cover edge cases
+- [x] Add load/stress testing with k6
+- [x] Configure Slack notifications for failed tests
+- [x] Add API-only tests for backend validation
 
 ### Monitoring
 
