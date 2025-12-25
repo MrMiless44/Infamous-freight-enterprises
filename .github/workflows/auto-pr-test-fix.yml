@@ -55,6 +55,11 @@ jobs:
       - name: Build shared package
         run: pnpm --filter @infamous-freight/shared build
       - name: Run monorepo tests
+        # Note: We use `--if-present` so that workspaces without a `test` script
+        # (e.g. the current `mobile` app, which does not yet have tests configured)
+        # are intentionally skipped instead of causing the workflow to fail.
+        # When mobile (or any other package) gains a test suite, ensure it defines
+        # a `test` script in its package.json so it is included here.
         run: pnpm -r --if-present run test
 
       - name: Upload test reports (if present)
