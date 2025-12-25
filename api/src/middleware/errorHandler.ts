@@ -10,8 +10,8 @@ export function errorHandler(
     return next(err);
   }
 
-  const status = err?.status ?? 500;
-  const message = err?.message ?? "Server Error";
+  const status = err.status ?? 500;
+  const message = err.message ?? "Server Error";
 
   return res.status(status).json({ error: message });
 }
