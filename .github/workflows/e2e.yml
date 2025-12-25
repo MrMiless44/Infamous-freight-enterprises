@@ -44,7 +44,7 @@ jobs:
         run: pnpm -w install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: pnpm -w exec prisma generate
+        run: pnpm --filter infamous-freight-api exec prisma generate
         continue-on-error: true
 
       - name: Install Playwright browsers
