@@ -2,35 +2,41 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ "main" ]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: pnpm
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Enable corepack
+        run: corepack enable
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install (monorepo)
+        run: pnpm install --no-frozen-lockfile
 
-      - name: Generate Prisma client
-        run: pnpm -C api prisma generate
+      # Run only if scripts exist in each workspace.
+      - name: Lint (if present)
+        run: pnpm -r --if-present run lint
 
-      - name: Build shared
-        run: pnpm --filter @infamous-freight/shared build || true
+      - name: Typecheck (if present)
+        run: pnpm -r --if-present run typecheck
 
-      - name: Build API
-        run: pnpm --filter infamous-freight-api build || true
+      - name: Test (if present)
+        run: pnpm -r --if-present run test
 
-      - name: Build Web
-        run: pnpm --filter infamous-freight-web build || true
+      - name: Build (if present)
+        run: pnpm -r --if-present run build
