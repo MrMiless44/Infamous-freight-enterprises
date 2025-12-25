@@ -144,6 +144,9 @@ billing.post("/paypal/capture", async (req, res, next) => {
     return res.status(400).json({ error: "orderId too long" });
   }
 
+  if (!/^[A-Za-z0-9-]+$/.test(orderId)) {
+    return res.status(400).json({ error: "invalid orderId format" });
+  }
   const paypalConfig = config.getPayPalConfig();
   if (!paypalConfig.enabled) {
     return res.status(503).json({ error: "PayPal not configured" });
