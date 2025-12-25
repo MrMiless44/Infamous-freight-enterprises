@@ -14,26 +14,12 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     // Track Core Web Vitals
     if (typeof window !== "undefined") {
-      import("web-vitals").then((webVitals) => {
-        const {
-          onCLS,
-          onFID,
-          onFCP,
-          onLCP,
-          onTTFB,
-        } = webVitals as {
-          onCLS?: (onReport: typeof reportWebVitals) => void;
-          onFID?: (onReport: typeof reportWebVitals) => void;
-          onFCP?: (onReport: typeof reportWebVitals) => void;
-          onLCP?: (onReport: typeof reportWebVitals) => void;
-          onTTFB?: (onReport: typeof reportWebVitals) => void;
-        };
-
-        onCLS?.(reportWebVitals);
-        onFID?.(reportWebVitals);
-        onFCP?.(reportWebVitals);
-        onLCP?.(reportWebVitals);
-        onTTFB?.(reportWebVitals);
+      import("web-vitals").then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+        onCLS(reportWebVitals);
+        onFID(reportWebVitals);
+        onFCP(reportWebVitals);
+        onLCP(reportWebVitals);
+        onTTFB(reportWebVitals);
       });
 
       // Track layout shifts and long tasks
