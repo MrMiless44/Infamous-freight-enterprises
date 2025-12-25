@@ -5,6 +5,56 @@
 
 ---
 
+## 🚧 December 25, 2025 - API Image Build Attempt (Blocked)
+
+### Steps Executed
+
+1. **Installed container tooling (daemonless host)**
+   ```bash
+   apt-get update
+   apt-get install -y docker.io docker-buildx
+   ```
+   - Docker CLI/daemon installed.
+   - Buildx plugin installed for BuildKit support.
+
+2. **Started Docker daemon with restricted options**  
+   Host lacks `CAP_NET_ADMIN` and iptables support, so the daemon was started without NAT/bridge networking and with the VFS storage driver:
+   ```bash
+   dockerd --host=unix:///var/run/docker.sock \
+     --storage-driver=vfs \
+     --iptables=false --bridge=none \
+     --ip-forward=false --ip-masq=false
+   ```
+   - Daemon is running with BuildKit enabled; only `host` and `none` networks are available.
+
+3. **Attempted to build the API image (legacy builder)**  
+   ```bash
+   docker build --network host -t infamous-api ./api
+   ```
+   - Result: `unshare: operation not permitted` (host disallows required namespaces).
+
+4. **Attempted to build with BuildKit**  
+   ```bash
+   docker buildx build --network host -t infamous-api ./api --load
+   ```
+   - Result: BuildKit failed to mount the build context (`operation not permitted`) because the host kernel does not grant `CAP_SYS_ADMIN` for mount operations.
+
+### Current Status
+
+- ❌ API image not built in this environment.
+- Host container lacks necessary kernel capabilities (`CAP_SYS_ADMIN` / namespace + mount permissions) to perform Docker/BuildKit builds, even with VFS storage and networking disabled.
+
+### Recommended Next Steps
+
+- Run the build on a host/runner with full Docker privileges (including `CAP_SYS_ADMIN` and iptables/NAT support).
+- Alternatively, use a remote builder (e.g., GitHub Actions, Fly.io, or another CI runner) to produce and push the `infamous-api` image.
+- Once on a privileged host, the standard command should work:
+  ```bash
+  docker build -t infamous-api ./api
+  ```
+
+---
+
 ## 📋 Execution Summary
 
 ### Commands Executed
