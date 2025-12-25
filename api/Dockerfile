@@ -7,9 +7,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY api/package.json ./api/package.json
 RUN corepack enable && pnpm install --filter api... --frozen-lockfile
 
-# Generate the Prisma client for the API
+# Copy Prisma schema for the API (client is generated during build via prebuild hook)
 COPY api/prisma ./api/prisma
-RUN pnpm --filter api... prisma generate
 
 # Copy the remaining API source and build
 COPY api/tsconfig.json ./api/tsconfig.json
