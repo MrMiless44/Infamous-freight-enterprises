@@ -1,12 +1,23 @@
-FROM node:20-alpine
+FROM node:20-alpine AS builder
+
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install -g pnpm && pnpm install --prod=false
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && pnpm install
+
+COPY prisma ./prisma
+RUN pnpm prisma generate
 
 COPY . .
-RUN pnpm prisma:generate && pnpm build
-RUN pnpm prune --prod
+RUN pnpm build
 
-EXPOSE 4000
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+COPY package.json ./
+
+ENV NODE_ENV=production
 CMD ["node", "dist/server.js"]
