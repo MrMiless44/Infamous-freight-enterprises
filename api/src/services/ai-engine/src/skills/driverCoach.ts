@@ -16,10 +16,12 @@ type DriverCoachResult = {
   decisionId: string;
 };
 
-function selectCoaching(event: DriverEvent): Omit<
+type CoachingSelection = Omit<
   DriverCoachResult,
-  "type" | "memoryKey"
-> {
+  "type" | "memoryKey" | "decisionId"
+>;
+
+function selectCoaching(event: DriverEvent): CoachingSelection {
   const lateMinutes = event.lateMinutes ?? 0;
   const hardBrakes = event.hardBrakes ?? 0;
   const dwellMinutes = event.dwellMinutes ?? 0;
@@ -69,8 +71,6 @@ export async function driverCoach(
 
   const coaching = selectCoaching(event);
 
-  let decisionId: string | undefined;
-
   if (prior) {
     await prisma.avatarMemory.update({
       where: { id: prior.id },
@@ -103,12 +103,11 @@ export async function driverCoach(
       }),
     },
   });
-  decisionId = decision.id;
 
   return {
     type: "COACHING",
     memoryKey,
-    decisionId,
+    decisionId: decision.id,
     ...coaching,
   };
 }
