@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "pnpm run prisma:generate",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "prisma:generate": "prisma generate",
+    "prisma:generate": "node ./scripts/prisma-generate.mjs",
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
