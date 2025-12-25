@@ -36,7 +36,7 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y tidy
-          tidy -v || true
+          tidy -v || true # intentionally ignore tidy version exit code; this is informational only
 
       - name: Validate HTML files with tidy
         run: |
