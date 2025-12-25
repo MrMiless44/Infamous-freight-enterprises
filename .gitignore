@@ -52,6 +52,7 @@ web/.vercel/
 **/dist/
 **/build/
 .cache/
+node-compile-cache/
 
 # Test artifacts
 junit.xml

@@ -20,7 +20,7 @@
     "postinstall": "pnpm -r prisma:generate"
   },
   "devDependencies": {
-    "lint-staged": "^15.2.9"
+    "lint-staged": "^15.5.2"
   },
   "lint-staged": {
     "*": "echo \"lint-staged: no checks configured\""
