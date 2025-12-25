@@ -1,3 +1,7 @@
+// Prevent Next.js from attempting to patch package-lock.json during tests when
+// optional SWC binaries are already installed locally.
+process.env.NEXT_IGNORE_INCORRECT_LOCKFILE = "true";
+
 const nextJest = require("next/jest");
 
 const createJestConfig = nextJest({
