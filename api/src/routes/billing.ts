@@ -100,7 +100,7 @@ billing.post("/paypal/order", async (req, res, next) => {
         {
           amount: {
             currency_code: "USD",
-            value: "49.00",
+            value: (DEFAULT_PLAN.price / 100).toFixed(2),
           },
         },
       ],
