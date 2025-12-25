@@ -22,8 +22,11 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - name: Enable corepack
-        run: corepack enable
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+          run_install: false
 
       - name: Show repo tree (for debugging)
         run: |
