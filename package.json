@@ -10,7 +10,8 @@
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
-    "lint": "pnpm -r lint"
+    "lint": "pnpm -r lint",
+    "postinstall": "pnpm -r prisma:generate"
   },
   "devDependencies": {
     "lint-staged": "^15.2.9"
