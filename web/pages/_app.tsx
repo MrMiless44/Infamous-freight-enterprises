@@ -15,19 +15,25 @@ export default function App({ Component, pageProps }: AppProps) {
     // Track Core Web Vitals
     if (typeof window !== "undefined") {
       import("web-vitals").then((webVitals) => {
-        const vitals = webVitals as unknown as {
-          getCLS?: (onReport: typeof reportWebVitals) => void;
-          getFID?: (onReport: typeof reportWebVitals) => void;
-          getFCP?: (onReport: typeof reportWebVitals) => void;
-          getLCP?: (onReport: typeof reportWebVitals) => void;
-          getTTFB?: (onReport: typeof reportWebVitals) => void;
+        const {
+          onCLS,
+          onFID,
+          onFCP,
+          onLCP,
+          onTTFB,
+        } = webVitals as {
+          onCLS?: (onReport: typeof reportWebVitals) => void;
+          onFID?: (onReport: typeof reportWebVitals) => void;
+          onFCP?: (onReport: typeof reportWebVitals) => void;
+          onLCP?: (onReport: typeof reportWebVitals) => void;
+          onTTFB?: (onReport: typeof reportWebVitals) => void;
         };
 
-        vitals.getCLS?.(reportWebVitals);
-        vitals.getFID?.(reportWebVitals);
-        vitals.getFCP?.(reportWebVitals);
-        vitals.getLCP?.(reportWebVitals);
-        vitals.getTTFB?.(reportWebVitals);
+        onCLS?.(reportWebVitals);
+        onFID?.(reportWebVitals);
+        onFCP?.(reportWebVitals);
+        onLCP?.(reportWebVitals);
+        onTTFB?.(reportWebVitals);
       });
 
       // Track layout shifts and long tasks
