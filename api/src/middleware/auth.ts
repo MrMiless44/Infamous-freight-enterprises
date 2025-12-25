@@ -64,7 +64,18 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 export function requireScope(scope: string) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return res.sendStatus(401);
+      const authHeader = req.headers.authorization;
+      if (!authHeader?.startsWith("Bearer ")) {
+        return res.sendStatus(401);
+      }
+
+      const token = authHeader.split(" ")[1];
+      const user = decodeToken(token);
+      if (!user) {
+        return res.sendStatus(401);
+      }
+
+      req.user = user;
     }
 
     const scopes = req.user.scopes ?? [];
