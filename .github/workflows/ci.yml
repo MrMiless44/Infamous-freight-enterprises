@@ -19,7 +19,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 20.18.1
           cache: pnpm
 
       - name: Setup pnpm
@@ -100,7 +100,7 @@ jobs:
             !**/build/**
 
       - name: Install (monorepo)
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       # Run only if scripts exist in each workspace.
       - name: Lint (if present)
