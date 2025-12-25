@@ -2,7 +2,7 @@ import { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../db/prisma";
-import { env } from "../config/env";
+import config from "../config";
 import { AuthUser } from "../middleware/auth";
 
 export const auth = Router();
@@ -24,6 +24,6 @@ auth.post("/login", async (req, res) => {
     role: user.role,
     email: user.email,
   };
-  const token = jwt.sign(payload, env.JWT_SECRET);
+  const token = jwt.sign(payload, config.getJwtSecret());
   res.json({ token });
 });
