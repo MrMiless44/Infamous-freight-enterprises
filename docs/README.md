@@ -5,6 +5,7 @@ Welcome to the Infamous Freight Enterprise documentation! This index will help y
 ## Getting Started
 
 - **[Developer Guide](developer-guide.md)** - Complete setup and development workflow guide
+- **[Repository Structure](repository-structure.md)** - Repository organization and file structure
 - **[Quick Reference](QUICK_REFERENCE.md)** - Common commands and quick tips
 - **[Contributing Guidelines](../CONTRIBUTING.md)** - How to contribute to the project
 
@@ -28,6 +29,7 @@ Welcome to the Infamous Freight Enterprise documentation! This index will help y
 - **[Database Migrations](DATABASE_MIGRATIONS.md)** - Database schema management
 - **[Container Security](CONTAINER_SECURITY.md)** - Docker security guidelines
 - **[Alpine Prisma Setup](ALPINE_PRISMA_SETUP.md)** - Prisma on Alpine Linux
+- **[Validation Guide](validation-guide.md)** - Code validation tools and processes
 - **[Development Status](development/DEVELOPMENT_STATUS.md)** - Current development state
 - **[Tools Setup](development/TOOLS_SETUP.md)** - Development tools configuration
 - **[Workspace Improvements](development/WORKSPACE_IMPROVEMENTS.md)** - IDE and workspace setup
