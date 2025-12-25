@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
-import { env } from "./config/env";
 import "./cron";
+import config from "./config";
 
 import { health } from "./routes/health";
 import { auth } from "./routes/auth";
@@ -14,6 +14,7 @@ import { voice } from "./routes/voice";
 import { billing } from "./routes/billing";
 import { rateLimit } from "./middleware/rateLimit";
 import { auditTrail } from "./middleware/audit";
+import errorHandler from "./middleware/errorHandler";
 
 const app = express();
 app.use(cors());
@@ -30,5 +31,9 @@ app.use("/api/invoices", invoices);
 app.use("/api/admin", admin);
 app.use("/api/voice", voice);
 app.use("/api/billing", billing);
+app.use(errorHandler);
 
-app.listen(env.PORT, () => console.log(`API running on port ${env.PORT}`));
+const apiConfig = config.getApiConfig();
+const port = Number(apiConfig.port);
+
+app.listen(port, () => console.log(`API running on port ${port}`));

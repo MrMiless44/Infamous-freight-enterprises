@@ -1,185 +1,178 @@
-import { randomUUID } from "node:crypto";
 import { Router } from "express";
-import { z } from "zod";
-import { prisma } from "../db/prisma";
-import { requireAuth } from "../middleware/auth";
+import Stripe from "stripe";
+import paypal from "@paypal/checkout-server-sdk";
+import config from "../config";
+import { requireAuth, requireScope } from "../middleware/auth";
 
-const PLANS = {
-  starter: {
-    amountCents: 4900,
-    currency: "usd",
-    features: ["50 AI audits", "Voice commands", "Basic avatars"],
-  },
-  growth: {
-    amountCents: 12900,
-    currency: "usd",
-    features: ["500 AI audits", "Route automation", "Avatar evolution"],
-  },
-  enterprise: {
-    amountCents: 0,
-    currency: "usd",
-    features: ["Unlimited usage", "Dedicated SRE", "Custom compliance"],
-  },
-} as const;
+const stripeApiVersion = "2024-06-20" as Stripe.LatestApiVersion;
 
-type PlanId = keyof typeof PLANS;
-
-const stripeSessionSchema = z.object({
-  plan: z.enum(["starter", "growth", "enterprise"]).default("starter"),
-  quantity: z.number().int().positive().max(100).default(1),
-  successUrl: z.string().url().optional(),
-  cancelUrl: z.string().url().optional(),
-});
-
-const paypalOrderSchema = z.object({
-  plan: z.enum(["starter", "growth", "enterprise"]).default("starter"),
-  quantity: z.number().int().positive().max(100).default(1),
-  returnUrl: z.string().url().optional(),
-  cancelUrl: z.string().url().optional(),
-});
-
-const paypalCaptureSchema = z.object({
-  orderId: z.string().min(4, "orderId is required"),
-  note: z.string().optional(),
-});
-
-function generateId(prefix: string) {
-  return `${prefix}_${randomUUID().replace(/-/g, "").slice(0, 24)}`;
+function createStripeClient() {
+  const stripeConfig = config.getStripeConfig();
+  return new Stripe(stripeConfig.secretKey, { apiVersion: stripeApiVersion });
 }
 
-function sessionUrl(sessionId: string) {
-  const base =
-    process.env.STRIPE_CHECKOUT_URL ??
-    "https://billing.stripe.com/p/test_checkout";
-  return `${base}?session_id=${sessionId}`;
+function createPayPalClient() {
+  const paypalConfig = config.getPayPalConfig();
+  const environment = new paypal.core.SandboxEnvironment(
+    paypalConfig.clientId,
+    paypalConfig.clientSecret,
+  );
+  return new paypal.core.PayPalHttpClient(environment);
 }
 
-function paypalUrl(orderId: string) {
-  const base =
-    process.env.PAYPAL_APPROVAL_URL ??
-    "https://www.sandbox.paypal.com/checkoutnow";
-  return `${base}?token=${orderId}`;
-}
+const DEFAULT_PLAN = {
+  mode: "payment" as const,
+  price: 4900,
+  name: "Infamous Freight AI",
+};
 
 export const billing = Router();
 
 billing.use(requireAuth);
+billing.use(requireScope("billing:write"));
 
-billing.post("/stripe/session", async (req, res) => {
-  const parsed = stripeSessionSchema.safeParse(req.body ?? {});
-  if (!parsed.success) {
-    return res.status(400).json({ error: parsed.error.message });
+billing.post("/stripe/session", async (req, res, next) => {
+  const stripeConfig = config.getStripeConfig();
+
+  if (!stripeConfig.enabled) {
+    return res.status(503).json({ error: "Stripe not configured" });
   }
 
-  const plan = PLANS[parsed.data.plan as PlanId];
-  const amountCents =
-    plan.amountCents > 0
-      ? plan.amountCents * parsed.data.quantity
-      : plan.amountCents;
-  const sessionId = generateId("sess");
-
-  await prisma.aiDecision.create({
-    data: {
-      organizationId: req.user.organizationId,
-      type: "billing:stripe.session",
-      confidence: 1,
-      rationale: JSON.stringify({
-        plan: parsed.data.plan,
-        quantity: parsed.data.quantity,
-        amountCents,
-        userId: req.user.id,
-      }),
-    },
-  });
-
-  return res.status(201).json({
-    ok: true,
-    plan: parsed.data.plan,
-    quantity: parsed.data.quantity,
-    sessionId,
-    url: sessionUrl(sessionId),
-    amountCents,
-    currency: plan.currency,
-    features: plan.features,
-    callbacks: {
-      successUrl: parsed.data.successUrl,
-      cancelUrl: parsed.data.cancelUrl,
-    },
-  });
-});
-
-billing.post("/paypal/order", async (req, res) => {
-  const parsed = paypalOrderSchema.safeParse(req.body ?? {});
-  if (!parsed.success) {
-    return res.status(400).json({ error: parsed.error.message });
+  if (!stripeConfig.successUrl || !stripeConfig.cancelUrl) {
+    return res
+      .status(503)
+      .json({ error: "Stripe success/cancel URLs not configured" });
   }
 
-  const plan = PLANS[parsed.data.plan];
-  const orderId = generateId("order");
-  const approvalUrl = paypalUrl(orderId);
-  const amountCents =
-    plan.amountCents > 0
-      ? plan.amountCents * parsed.data.quantity
-      : plan.amountCents;
+  // This endpoint uses a fixed default plan and does not accept any request body.
+  if (req.body && Object.keys(req.body).length > 0) {
+    return res.status(400).json({
+      error:
+        "This endpoint does not accept a request body; the default plan is used.",
+    });
+  }
+  try {
+    const stripeClient = createStripeClient();
+    const session = await stripeClient.checkout.sessions.create({
+      mode: DEFAULT_PLAN.mode,
+      success_url: stripeConfig.successUrl,
+      cancel_url: stripeConfig.cancelUrl,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: { name: DEFAULT_PLAN.name },
+            unit_amount: DEFAULT_PLAN.price,
+          },
+          quantity: 1,
+        },
+      ],
+    });
 
-  await prisma.aiDecision.create({
-    data: {
-      organizationId: req.user.organizationId,
-      type: "billing:paypal.order",
-      confidence: 1,
-      rationale: JSON.stringify({
-        orderId,
-        plan: parsed.data.plan,
-        quantity: parsed.data.quantity,
-        amountCents,
-        userId: req.user.id,
-      }),
-    },
-  });
-
-  return res.status(201).json({
-    ok: true,
-    orderId,
-    approvalUrl,
-    plan: parsed.data.plan,
-    quantity: parsed.data.quantity,
-    amountCents,
-    currency: plan.currency,
-    features: plan.features,
-    callbacks: {
-      returnUrl: parsed.data.returnUrl,
-      cancelUrl: parsed.data.cancelUrl,
-    },
-  });
+    return res.status(200).json({
+      ok: true,
+      sessionId: session.id,
+      url: session.url,
+    });
+  } catch (err) {
+    return next(err);
+  }
 });
 
-billing.post("/paypal/capture", async (req, res) => {
-  const parsed = paypalCaptureSchema.safeParse(req.body ?? {});
-  if (!parsed.success) {
-    return res.status(400).json({ error: parsed.error.message });
+billing.post("/paypal/order", async (req, res, next) => {
+  const paypalConfig = config.getPayPalConfig();
+  if (!paypalConfig.enabled) {
+    return res.status(503).json({ error: "PayPal not configured" });
   }
 
-  const captureId = generateId("cap");
+  if (!paypalConfig.returnUrl || !paypalConfig.cancelUrl) {
+    return res
+      .status(503)
+      .json({ error: "PayPal return/cancel URLs not configured" });
+  }
 
-  await prisma.aiDecision.create({
-    data: {
-      organizationId: req.user.organizationId,
-      type: "billing:paypal.capture",
-      confidence: 1,
-      rationale: JSON.stringify({
-        captureId,
-        orderId: parsed.data.orderId,
-        note: parsed.data.note,
-        userId: req.user.id,
-      }),
-    },
-  });
+  const returnUrl = paypalConfig.returnUrl;
+  const cancelUrl = paypalConfig.cancelUrl;
+  try {
+    const client = createPayPalClient();
+    const request = new paypal.orders.OrdersCreateRequest();
+    request.prefer("return=representation");
+    request.requestBody({
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          amount: {
+            currency_code: "USD",
+            value: (DEFAULT_PLAN.price / 100).toFixed(2),
+          },
+        },
+      ],
+      application_context: {
+        return_url: returnUrl,
+        cancel_url: cancelUrl,
+      },
+    });
 
-  return res.json({
-    ok: true,
-    captureId,
-    orderId: parsed.data.orderId,
-    status: "captured",
-    note: parsed.data.note,
-  });
+    const order = await client.execute(request);
+    const links = order?.result?.links;
+    const approvalUrl = Array.isArray(links)
+      ? (() => {
+          const approveLink = links.find(
+            (link: { rel: string; href?: unknown }) => link.rel === "approve",
+          );
+          return typeof approveLink?.href === "string" ? approveLink.href : null;
+        })()
+      : null;
+
+    return res.status(200).json({
+      ok: true,
+      orderId: order?.result?.id,
+      approvalUrl,
+    });
+  } catch (err) {
+    return next(err);
+  }
 });
+
+billing.post("/paypal/capture", async (req, res, next) => {
+  const { orderId } = req.body ?? {};
+  if (!orderId || typeof orderId !== "string" || orderId.length < 1) {
+    return res.status(400).json({ error: "orderId is required" });
+  }
+
+  if (orderId.length > 128) {
+    return res.status(400).json({ error: "orderId too long" });
+  }
+
+  if (!/^[A-Za-z0-9-]+$/.test(orderId)) {
+    return res.status(400).json({ error: "invalid orderId format" });
+  }
+  const paypalConfig = config.getPayPalConfig();
+  if (!paypalConfig.enabled) {
+    return res.status(503).json({ error: "PayPal not configured" });
+  }
+
+  try {
+    const client = createPayPalClient();
+    const captureRequest = new paypal.orders.OrdersCaptureRequest(orderId);
+    captureRequest.requestBody({});
+    const capture = await client.execute(captureRequest);
+
+    return res.status(200).json({
+      ok: true,
+      capture: capture.result,
+    });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+export default billing;
+
+// Support CommonJS require in legacy tests
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const module: any;
+if (typeof module !== "undefined" && module?.exports) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  module.exports = billing;
+}
