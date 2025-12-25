@@ -44,7 +44,7 @@ jobs:
           echo "::group::Installing tidy"
           sudo apt-get update -y
           sudo apt-get install -y tidy
-          tidy -v
+          tidy -v || true  # tidy -v may exit with non-zero when only printing version
           echo "::endgroup::"
 
       - name: Validate HTML files with tidy
