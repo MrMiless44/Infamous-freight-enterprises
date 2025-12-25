@@ -41,21 +41,15 @@ jobs:
       - name: Validate HTML files with tidy
         run: |
           set -e
-          HTML_FILES=$(find . -name node_modules -prune -o -type f -name "*.html" -print | tr '\n' ' ')
-          if [ -z "$HTML_FILES" ]; then
+          # Check if there are any HTML files to validate (excluding node_modules)
+          if ! find . -name node_modules -prune -o -type f -name "*.html" -print -quit | grep -q .; then
             echo "No HTML files found; nothing to validate."
             exit 0
           fi
-          echo "HTML files found: $HTML_FILES"
-          ERR=0
-          for f in $HTML_FILES; do
-            echo "Validating $f"
-            if ! tidy -e -q -utf8 "$f"; then
-              echo "::warning file=$f::HTML validation failed for $f"
-              ERR=1
-            fi
-          done
-          if [ $ERR -ne 0 ]; then
+
+          echo "Validating HTML files with tidy..."
+          # Run tidy on each HTML file; this safely handles filenames with spaces
+          if ! find . -name node_modules -prune -o -type f -name "*.html" -exec tidy -e -q -utf8 {} \; ; then
             echo "::error::One or more HTML files failed tidy validation."
             exit 1
           fi
