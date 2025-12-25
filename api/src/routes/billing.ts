@@ -44,6 +44,13 @@ billing.post("/stripe/session", async (req, res, next) => {
       .json({ error: "Stripe success/cancel URLs not configured" });
   }
 
+  // This endpoint uses a fixed default plan and does not accept any request body.
+  if (req.body && Object.keys(req.body).length > 0) {
+    return res.status(400).json({
+      error:
+        "This endpoint does not accept a request body; the default plan is used.",
+    });
+  }
   try {
     const stripeClient = createStripeClient();
     const session = await stripeClient.checkout.sessions.create({
