@@ -36,11 +36,18 @@ pnpm-error.log*
 *.yaml~
 *.json~
 *.md~
-Untitled-*.json
+Untitled-*
 *.pnpm
+*.pid
 install.log
 npm\ install\ -g\ *.yaml
 ✅\ *.md
+# In *
+- name:*
+Test Suites:*
+Back in*
+Choose one:*
+Secrets were*
 
 # Package manager backups
 package.json.backup

@@ -1,5 +1,1 @@
-{
-  "*.{js,jsx}": ["prettier --write"],
-  "*.{ts,tsx}": ["prettier --write"],
-  "*.{json,md}": ["prettier --write"]
-}
+configs/linting/.lintstagedrc

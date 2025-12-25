@@ -1,6 +1,0 @@
-Back in Vercel:
-1. Go to Settings
-2. Add environment variable:
-   Name: NEXT_PUBLIC_API_URL
-   Value: (paste Fly.io URL from step 2)
-3. Redeploy
