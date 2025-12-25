@@ -1,6 +1,11 @@
 [build]
-  command = "corepack enable && pnpm install --frozen-lockfile && pnpm build"
+  command = "corepack enable && pnpm install --no-frozen-lockfile && pnpm -C web build"
   publish = "web/.next"
 
 [build.environment]
   NODE_VERSION = "20"
+  NPM_FLAGS = "--version"
+  PNPM_HOME = "/opt/buildhome/.pnpm"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
