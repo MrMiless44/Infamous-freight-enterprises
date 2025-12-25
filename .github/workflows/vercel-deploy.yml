@@ -25,7 +25,7 @@ jobs:
         run: pnpm --filter web lint
         continue-on-error: true
       - name: Generate Prisma client
-        run: pnpm -w exec prisma generate
+        run: pnpm --filter infamous-freight-api exec prisma generate
         continue-on-error: true
       - name: Pull Vercel Environment Information
         run: npx vercel pull --yes --environment=production --token=${{

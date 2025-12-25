@@ -28,7 +28,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: pnpm -w exec prisma generate --schema api/prisma/schema.prisma
+        run: pnpm --filter infamous-freight-api exec prisma generate --schema prisma/schema.prisma
         continue-on-error: true
 
       - name: Set up Docker Buildx
