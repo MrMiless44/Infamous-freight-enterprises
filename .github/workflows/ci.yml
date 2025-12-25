@@ -30,32 +30,50 @@ jobs:
 
       - name: Show repo tree (for debugging)
         run: |
-          echo "Repository root:"
-          ls -la
-          echo "Top-level HTML files:"
-          ls -la *.html || true
+          echo "::group::Repository Tree"
+          echo "Repository structure for debugging:"
+          if command -v tree >/dev/null 2>&1; then
+            tree -L 4 || true
+          else
+            ls -R || true
+          fi
+          echo "::endgroup::"
 
       - name: Install HTML Tidy (libtidy)
         run: |
+          echo "::group::Installing tidy"
           sudo apt-get update -y
           sudo apt-get install -y tidy
-          tidy -v || true # intentionally ignore tidy version exit code; this is informational only
+          tidy -v
+          echo "::endgroup::"
 
       - name: Validate HTML files with tidy
         run: |
           set -e
-          # Check if there are any HTML files to validate (excluding node_modules)
-          if ! find . -name node_modules -prune -o -type f -name "*.html" -print -quit | grep -q .; then
-            echo "No HTML files found; nothing to validate."
+          echo "::group::Validating HTML files"
+          mapfile -t html_files < <(find . -type f -name "*.html" -not -path "*/node_modules/*")
+
+          if [ ${#html_files[@]} -eq 0 ]; then
+            echo "No HTML files found; skipping validation."
+            echo "::endgroup::"
             exit 0
           fi
 
-          echo "Validating HTML files with tidy..."
-          # Run tidy on each HTML file; this safely handles filenames with spaces
-          if ! find . -name node_modules -prune -o -type f -name "*.html" -exec tidy -e -q -utf8 {} \; ; then
-            echo "::error::One or more HTML files failed tidy validation."
+          ERR=0
+          for file in "${html_files[@]}"; do
+            echo "Running tidy validation on: $file"
+            if ! tidy -q -e -utf8 "$file"; then
+              ERR=1
+              echo "::warning file=$file::Validation failed."
+            fi
+          done
+
+          if [ $ERR -eq 1 ]; then
+            echo "::error::Validation failed for one or more HTML files."
+            echo "::endgroup::"
             exit 1
           fi
+          echo "::endgroup::"
 
       - name: Upload logs on failure
         if: failure()
