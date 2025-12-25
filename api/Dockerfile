@@ -2,22 +2,28 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable && pnpm install
+# Install only the API workspace dependencies
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY api/package.json ./api/package.json
+RUN corepack enable && pnpm install --filter api... --frozen-lockfile
 
-COPY prisma ./prisma
-RUN pnpm prisma generate
+# Copy Prisma schema for the API (client is generated during build via prebuild hook)
+COPY api/prisma ./api/prisma
 
-COPY . .
-RUN pnpm build
+# Copy the remaining API source and build
+COPY api/tsconfig.json ./api/tsconfig.json
+COPY api/scripts ./api/scripts
+COPY api/src ./api/src
+RUN pnpm --filter api... build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
-COPY package.json ./
+COPY --from=builder /app/api/dist ./api/dist
+COPY --from=builder /app/api/prisma ./api/prisma
+COPY api/package.json ./api/package.json
 
+WORKDIR /app/api
 ENV NODE_ENV=production
 CMD ["node", "dist/server.js"]
