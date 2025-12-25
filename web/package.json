@@ -7,9 +7,9 @@
     "node": ">=20.18.1 <21"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "NEXT_IGNORE_INCORRECT_LOCKFILE=1 next dev",
+    "build": "NEXT_IGNORE_INCORRECT_LOCKFILE=1 next build",
+    "start": "NEXT_IGNORE_INCORRECT_LOCKFILE=1 next start",
     "lint": "echo 'Linting handled by root eslint config'",
     "test": "jest",
     "test:watch": "jest --watch",
