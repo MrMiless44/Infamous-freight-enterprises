@@ -85,11 +85,14 @@ billing.post("/paypal/order", async (req, res, next) => {
     return res.status(503).json({ error: "PayPal not configured" });
   }
 
-  const returnUrl =
-    paypalConfig.returnUrl || "https://example.com/paypal/success";
-  const cancelUrl =
-    paypalConfig.cancelUrl || "https://example.com/paypal/cancel";
+  if (!paypalConfig.returnUrl || !paypalConfig.cancelUrl) {
+    return res
+      .status(503)
+      .json({ error: "PayPal return/cancel URLs not configured" });
+  }
 
+  const returnUrl = paypalConfig.returnUrl;
+  const cancelUrl = paypalConfig.cancelUrl;
   try {
     const client = createPayPalClient();
     const request = new paypal.orders.OrdersCreateRequest();
