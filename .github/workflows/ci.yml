@@ -70,7 +70,7 @@ jobs:
           done
 
           if [ $ERR -eq 1 ]; then
-            echo "::error::Validation failed for one or more HTML files."
+            echo "::error::Validation failed for one or more HTML files. See tidy validation output above for details on each file."
             echo "::endgroup::"
             exit 1
           fi
