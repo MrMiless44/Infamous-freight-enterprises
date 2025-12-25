@@ -52,6 +52,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build shared package
+        run: pnpm --filter @infamous-freight/shared build
       - name: Run monorepo tests
         run: pnpm -r --if-present run test
 
