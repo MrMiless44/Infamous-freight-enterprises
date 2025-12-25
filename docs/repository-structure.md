@@ -15,24 +15,29 @@ infamous-freight-enterprise/
 │   ├── CODEOWNERS        # Code ownership rules
 │   ├── copilot-instructions.md
 │   └── dependabot.yml    # Dependency update configuration
+├── .github/              # GitHub configuration
 ├── .husky/               # Git hooks (pre-commit, etc.)
-├── api/                  # Backend API (Express.js, CommonJS)
 ├── configs/              # All configuration files
-│   ├── ci-cd/           # CI/CD platform configurations
-│   ├── docker/          # Docker Compose files
-│   └── linting/         # Linting and code quality configs
+│   ├── ci-cd/            # CI/CD platform configurations
+│   ├── docker/           # Docker Compose files
+│   ├── linting/          # Linting and formatting baselines
+│   ├── testing/          # Playwright test configuration
+│   └── validation/       # HTML/CSS validation rules
 ├── docs/                 # Documentation
-│   ├── api/             # API documentation
-│   ├── deployment/      # Deployment guides
-│   ├── development/     # Development guides
-│   ├── sessions/        # Historical session notes
-│   └── testing/         # Testing documentation
-├── e2e/                  # End-to-end tests (Playwright)
-├── mobile/               # Mobile app (React Native/Expo)
-├── packages/             # Shared packages
-│   └── shared/          # Shared types, constants, utilities
+│   ├── api/              # API documentation
+│   ├── deployment/       # Deployment guides
+│   ├── development/      # Development guides
+│   ├── sessions/         # Historical session notes
+│   └── testing/          # Testing documentation
+├── src/
+│   ├── apps/             # Application code
+│   │   ├── api/          # Backend API (Express.js, CommonJS)
+│   │   ├── mobile/       # Mobile app (React Native/Expo)
+│   │   └── web/          # Web frontend (Next.js)
+│   └── packages/         # Shared packages
+│       └── shared/       # Shared types, constants, utilities
+├── tests/e2e/            # End-to-end tests (Playwright)
 ├── scripts/              # Build and deployment scripts
-├── web/                  # Web frontend (Next.js)
 ├── CHANGELOG.md          # Version history
 ├── CONTRIBUTING.md       # Contribution guidelines
 ├── LICENSE               # License information
@@ -58,7 +63,7 @@ Deployment and CI/CD platform configurations:
 ### configs/docker/
 
 Docker and container configurations:
-- `docker-compose.yml` - Main Docker Compose configuration
+- `configs/docker/docker-compose.yml` - Main Docker Compose configuration
 - `docker-compose.dev.yml` - Development overrides
 - `docker-compose.prod.yml` - Production configuration
 - `docker-compose.override.yml` - Local overrides
@@ -70,18 +75,27 @@ Code quality and formatting configurations:
 - `.lintstagedrc` - Pre-commit lint configuration
 - `.nvmrc` - Node.js version
 - `.pnpmrc` - pnpm configuration
-- `.stylelintrc.json` - CSS linting rules
 - `eslint.config.js` - JavaScript/TypeScript linting rules
-- `playwright.config.js` - E2E test configuration
+
+### configs/testing/
+
+Testing configurations:
+- `playwright.config.js` - Playwright test configuration shared by CI and local runs
+
+### configs/validation/
+
+Validation and static analysis configurations:
+- `html-validate.config.js` - HTML validation rules
+- `stylelint.config.cjs` - CSS validation rules
+- `.stylelintignore` - CSS validation exclusions
 
 ### Symlinks for Compatibility
 
-Some configuration files require being at the repository root for tools to work correctly. These are symlinked from `configs/` to the root:
+Some configuration files require being at the repository root for tools to work correctly. Root entrypoints re-export the versions in `configs/`:
 
 - `codecov.yml` → `configs/ci-cd/codecov.yml`
-- `docker-compose*.yml` → `configs/docker/docker-compose*.yml`
 - `eslint.config.js` → `configs/linting/eslint.config.js`
-- `playwright.config.js` → `configs/linting/playwright.config.js`
+- `playwright.config.js` → `configs/testing/playwright.config.js`
 - `.editorconfig` → `configs/linting/.editorconfig`
 - `.lintstagedrc` → `configs/linting/.lintstagedrc`
 - `.nvmrc` → `configs/linting/.nvmrc`
@@ -219,7 +233,7 @@ The repository follows these naming conventions:
 ### Files
 - **Documentation**: UPPERCASE with underscores (e.g., `README.md`, `CONTRIBUTING.md`)
 - **Scripts**: kebab-case with `.sh` extension (e.g., `backup-database.sh`)
-- **Config files**: kebab-case or dot-prefix (e.g., `.eslintrc.json`, `docker-compose.yml`)
+- **Config files**: kebab-case or dot-prefix (e.g., `.eslintrc.json`, `configs/docker/docker-compose.yml`)
 - **Source files**: PascalCase for components, camelCase for utilities
 
 ### Directories

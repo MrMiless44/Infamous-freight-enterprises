@@ -12,7 +12,9 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   api:
-    build: ./api
+    build:
+      context: .
+      dockerfile: src/apps/api/Dockerfile
     restart: always
     env_file: .env
     depends_on:
@@ -21,7 +23,9 @@ services:
       - "4000:4000"
 
   web:
-    build: ./web
+    build:
+      context: .
+      dockerfile: src/apps/web/Dockerfile
     restart: always
     env_file: .env
     depends_on:

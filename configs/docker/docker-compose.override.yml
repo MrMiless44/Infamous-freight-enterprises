@@ -1,10 +1,12 @@
 services:
   api:
     volumes:
-      - ./api:/app
-    command: sh -c "npm install && npm run dev"
+      - ./:/app
+      - ./src/apps/api:/app/src/apps/api
+    command: sh -c "cd /app && pnpm install && pnpm --filter infamous-freight-api dev"
 
   web:
     volumes:
-      - ./web:/app
-    command: sh -c "npm install && npm run dev"
+      - ./:/app
+      - ./src/apps/web:/app/src/apps/web
+    command: sh -c "cd /app && pnpm install && pnpm --filter infamous-freight-web dev"

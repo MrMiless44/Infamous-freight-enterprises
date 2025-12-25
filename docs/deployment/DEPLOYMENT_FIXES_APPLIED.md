@@ -25,7 +25,7 @@ COPY api/prisma ./api/prisma
 
 **Problem**: Error "Cannot install with frozen-lockfile because pnpm-lock.yaml is not up to date"
 
-- API package.json was changed from `"@infamous-freight/shared": "workspace:*"` to `"file:../packages/shared"`
+- API package.json was changed from `"@infamous-freight/shared": "workspace:*"` to `"file:../../packages/shared"`
 - But pnpm-lock.yaml still referenced the old workspace protocol
 - Docker build failed during `pnpm install --frozen-lockfile`
 

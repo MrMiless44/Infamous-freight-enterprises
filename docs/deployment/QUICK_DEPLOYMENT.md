@@ -6,21 +6,25 @@
 
 ## ⚡ Fastest Path to Running (Docker Compose)
 
+> Docker Compose files now live under `configs/docker/`. Use the base file plus the `docker-compose.dev.yml` override for local development.
+
 ```bash
+COMPOSE="docker compose -f configs/docker/docker-compose.yml -f configs/docker/docker-compose.dev.yml"
+
 # 1. Start the entire stack with monitoring
-docker-compose up -d
+$COMPOSE up -d
 
 # 2. Check API is running with monitoring
-docker-compose logs api | grep -E "(listening|Datadog|monitoring|compression)"
+$COMPOSE logs api | grep -E "(listening|Datadog|monitoring|compression)"
 
 # 3. Apply database indexes (in new terminal)
-docker-compose exec api bash scripts/db-indexes.sql
+$COMPOSE exec api bash scripts/db-indexes.sql
 
 # 4. Health check
 curl http://localhost:3001/api/health
 
 # 5. View logs
-docker-compose logs -f api
+$COMPOSE logs -f api
 ```
 
 **Expected Output**:

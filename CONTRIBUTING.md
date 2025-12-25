@@ -98,7 +98,7 @@ pnpm dev              # Start Next.js
 pnpm build            # Production build
 ```
 
-**Shared Package** (`/packages/shared`)
+**Shared Package** (`/src/packages/shared`)
 
 ```bash
 cd packages/shared
