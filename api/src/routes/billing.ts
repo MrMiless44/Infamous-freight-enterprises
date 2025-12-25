@@ -114,9 +114,15 @@ billing.post("/paypal/order", async (req, res, next) => {
     });
 
     const order = await client.execute(request);
-    const approvalUrl =
-      order?.result?.links?.find((link: { rel: string }) => link.rel === "approve")
-        ?.href ?? null;
+    const links = order?.result?.links;
+    const approvalUrl = Array.isArray(links)
+      ? (() => {
+          const approveLink = links.find(
+            (link: { rel: string; href?: unknown }) => link.rel === "approve",
+          );
+          return typeof approveLink?.href === "string" ? approveLink.href : null;
+        })()
+      : null;
 
     return res.status(200).json({
       ok: true,
