@@ -28,9 +28,6 @@ jobs:
           version: 8.15.9
           run_install: false
 
-      - name: Enable corepack
-        run: corepack enable
-
       - name: Show repo tree (for debugging)
         run: |
           echo "Repository root:"
