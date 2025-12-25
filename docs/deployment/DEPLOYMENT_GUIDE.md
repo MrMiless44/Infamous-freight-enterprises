@@ -10,7 +10,7 @@
 
 ### 2. Docker Infrastructure ✓
 
-- docker-compose.yml configured
+- docker-compose.yml configured (located in `configs/docker/`)
 - Dockerfiles for API and Web
 - Nginx reverse proxy
 - PostgreSQL database

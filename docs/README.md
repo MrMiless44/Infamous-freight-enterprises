@@ -30,6 +30,7 @@ Welcome to the Infamous Freight Enterprise documentation! This index will help y
 - **[Container Security](CONTAINER_SECURITY.md)** - Docker security guidelines
 - **[Alpine Prisma Setup](ALPINE_PRISMA_SETUP.md)** - Prisma on Alpine Linux
 - **[Validation Guide](validation-guide.md)** - Code validation tools and processes
+- **[Developer Onboarding](development/developer-onboarding.md)** - Quick-start for contributors
 - **[Development Status](development/DEVELOPMENT_STATUS.md)** - Current development state
 - **[Tools Setup](development/TOOLS_SETUP.md)** - Development tools configuration
 - **[Workspace Improvements](development/WORKSPACE_IMPROVEMENTS.md)** - IDE and workspace setup

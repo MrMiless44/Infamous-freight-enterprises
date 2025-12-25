@@ -51,7 +51,7 @@ jobs:
         run: npx playwright install --with-deps ${{ matrix.browser }}
 
       - name: Start API server
-        working-directory: api
+        working-directory: src/apps/api
         run: |
           pnpm install --frozen-lockfile
           pnpm build 2>/dev/null || true

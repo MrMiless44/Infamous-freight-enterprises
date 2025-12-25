@@ -1,1 +1,3 @@
-configs/linting/playwright.config.js
+import config from "./configs/testing/playwright.config.js";
+
+export default config;

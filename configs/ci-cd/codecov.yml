@@ -28,11 +28,11 @@ flags:
   api:
     carryforward: true
     paths:
-      - api/src
-      - api/tests
+      - src/apps/api/src
+      - src/apps/api/tests
   web:
     carryforward: true
     paths:
-      - web/components
-      - web/pages
-      - web/hooks
+      - src/apps/web/components
+      - src/apps/web/pages
+      - src/apps/web/hooks

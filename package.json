@@ -7,20 +7,32 @@
     "node": ">=20"
   },
   "workspaces": [
-    "api",
-    "web",
-    "mobile",
-    "packages/*"
+    "src/apps/*",
+    "src/packages/*",
+    "tests/*"
   ],
   "scripts": {
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",
-    "test": "pnpm -r test",
-    "lint": "pnpm -r lint",
+    "test": "pnpm -r --filter '!infamous-freight-e2e' test",
+    "test:e2e": "pnpm --filter infamous-freight-e2e test",
+    "test:coverage": "pnpm -r --filter '!infamous-freight-e2e' --if-present test:coverage",
+    "lint": "pnpm exec eslint -c configs/linting/eslint.config.js \"src/**/*.{js,jsx,ts,tsx}\" \"tests/**/*.{js,jsx,ts,tsx}\"",
+    "lint:css": "pnpm exec stylelint \"{src,tests}/**/*.css\" --config configs/validation/stylelint.config.cjs --ignore-path configs/validation/.stylelintignore",
+    "lint:html": "pnpm exec html-validate \"{src,tests}/**/*.html\" --config configs/validation/html-validate.config.js",
+    "validate": "bash scripts/validation/run-validation.sh",
     "postinstall": "pnpm -r prisma:generate"
   },
   "devDependencies": {
-    "lint-staged": "^15.5.2"
+    "@eslint/js": "^9.13.0",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "html-validate": "^8.0.3",
+    "lint-staged": "^15.5.2",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "stylelint": "^16.9.0",
+    "stylelint-config-standard": "^36.0.0"
   },
   "lint-staged": {
     "*": "echo \"lint-staged: no checks configured\""

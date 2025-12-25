@@ -4,7 +4,7 @@
 
 - [Project Summary](PROJECT_SUMMARY.md) - Overview of the project
 - [README](README.md) - Main project documentation
-- [Production README](README.production.md) - Production deployment guide
+- [Production README](../deployment/production-overview.md) - Production deployment guide
 - [Environment Configuration](.env.guide.md) - Environment setup guide
 - [Consolidation Strategy](CONSOLIDATION_STRATEGY.md) - Architecture decisions
 
@@ -18,11 +18,11 @@
 ### Architecture
 
 - **Monorepo Structure**: Using pnpm workspaces
-  - `/api` - REST API backend service
-  - `/web` - Next.js frontend application
-  - `/mobile` - React Native mobile app (Expo)
-  - `/packages/shared` - Shared types, utilities, and constants
-  - `/e2e` - End-to-end tests with Playwright
+  - `/src/apps/api` - REST API backend service
+  - `/src/apps/web` - Next.js frontend application
+  - `/src/apps/mobile` - React Native mobile app (Expo)
+  - `/src/packages/shared` - Shared types, utilities, and constants
+  - `/tests/e2e` - End-to-end tests with Playwright
 
 ### Code Quality
 

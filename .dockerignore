@@ -10,11 +10,11 @@ coverage
 **/*.test.ts
 **/*.spec.js
 **/*.spec.ts
-e2e
+tests/e2e
 
 # Next.js
-web/.next
-web/out
+src/apps/web/.next
+src/apps/web/out
 
 # Build artifacts
 dist

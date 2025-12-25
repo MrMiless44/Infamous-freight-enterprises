@@ -6,16 +6,16 @@ on:
       - main
       - develop
     paths:
-      - "api/Dockerfile"
-      - "web/Dockerfile"
+      - "src/apps/api/Dockerfile"
+      - "src/apps/web/Dockerfile"
       - "**/package.json"
   pull_request:
     branches:
       - main
       - develop
     paths:
-      - "api/Dockerfile"
-      - "web/Dockerfile"
+      - "src/apps/api/Dockerfile"
+      - "src/apps/web/Dockerfile"
       - "**/package.json"
   schedule:
     # Daily security scan at 1 AM UTC
@@ -47,7 +47,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: pnpm --filter infamous-freight-api exec prisma generate
+        working-directory: src/apps/api
+        run: pnpm exec prisma generate
         continue-on-error: true
 
       - name: Set up Docker Buildx
@@ -57,7 +58,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./api/Dockerfile
+          file: ./src/apps/api/Dockerfile
           push: false
           load: true
           tags: infamous-freight-api:latest
@@ -98,7 +99,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: pnpm --filter infamous-freight-api exec prisma generate
+        working-directory: src/apps/api
+        run: pnpm exec prisma generate
         continue-on-error: true
 
       - name: Set up Docker Buildx
@@ -108,7 +110,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./web/Dockerfile
+          file: ./src/apps/web/Dockerfile
           push: false
           load: true
           tags: infamous-freight-web:latest

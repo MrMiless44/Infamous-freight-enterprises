@@ -1,5 +1,7 @@
 import js from "@eslint/js";
 import prettier from "eslint-config-prettier";
+import tsParser from "@typescript-eslint/parser";
+import tsPlugin from "@typescript-eslint/eslint-plugin";
 
 export default [
   {
@@ -7,12 +9,16 @@ export default [
       "node_modules/**",
       "dist/**",
       ".next/**",
+      "**/.next/**",
       "build/**",
       "coverage/**",
+      "**/coverage/**",
+      "**/dist/**",
+      "**/build/**",
       "archive/**",
       "**/*.config.js",
       "**/*.config.ts",
-      "mobile/**",
+      "src/apps/mobile/**",
       "**/*.test.js",
       "**/*.spec.js",
       "**/*.test.ts",
@@ -44,9 +50,10 @@ export default [
   {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
+      parser: tsParser,
       parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
         ecmaFeatures: { jsx: true },
       },
       globals: {
@@ -55,13 +62,16 @@ export default [
         Buffer: "readonly",
       },
     },
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+    },
     rules: {
       "no-console": ["warn", { allow: ["warn", "error"] }],
       "no-unused-vars": "off",
     },
   },
   {
-    files: ["api/**/*.js", "packages/**/*.js"],
+    files: ["src/apps/api/**/*.js", "src/packages/**/*.js"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "commonjs",
@@ -73,6 +83,34 @@ export default [
         module: "readonly",
         __dirname: "readonly",
         __filename: "readonly",
+      },
+    },
+  },
+  {
+    files: [
+      "src/apps/web/**/*.{js,jsx,ts,tsx}",
+      "tests/e2e/**/*.{js,jsx,ts,tsx}",
+    ],
+    languageOptions: {
+      globals: {
+        window: "readonly",
+        document: "readonly",
+        navigator: "readonly",
+        self: "readonly",
+        PerformanceObserver: "readonly",
+      },
+    },
+  },
+  {
+    files: ["**/__tests__/**/*.{js,jsx,ts,tsx}", "**/*.{spec,test}.{js,jsx,ts,tsx}"],
+    languageOptions: {
+      globals: {
+        describe: "readonly",
+        test: "readonly",
+        expect: "readonly",
+        jest: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
       },
     },
   },

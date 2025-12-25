@@ -1,5 +1,4 @@
 packages:
-  - api
-  - web
-  - mobile
-  - packages/*
+  - src/apps/*
+  - src/packages/*
+  - tests/*

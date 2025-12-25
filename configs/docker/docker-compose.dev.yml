@@ -1,8 +1,10 @@
 services:
   api:
     volumes:
-      - ./api:/app
+      - ./:/app
+      - ./src/apps/api:/app/src/apps/api
 
   web:
     volumes:
-      - ./web:/app
+      - ./:/app
+      - ./src/apps/web:/app/src/apps/web

@@ -21,8 +21,8 @@ services:
 
   api:
     build:
-      context: ./api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: src/apps/api/Dockerfile
       args:
         NODE_ENV: production
     container_name: infamous_api
@@ -38,10 +38,11 @@ services:
     ports:
       - "${API_PORT:-3001}:3001"
     volumes:
-      - ./api:/app/api
+      - ./:/app
+      - ./src/apps/api:/app/src/apps/api
       - pnpm-store:/root/.local/share/pnpm/store
-      - node-modules-api:/app/api/node_modules
-    command: sh -c "cd /app && pnpm install && cd api && pnpm dev"
+      - node-modules-api:/app/src/apps/api/node_modules
+    command: sh -c "cd /app && pnpm install && cd src/apps/api && pnpm dev"
     healthcheck:
       test:
         [
@@ -58,8 +59,8 @@ services:
 
   web:
     build:
-      context: ./web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: src/apps/web/Dockerfile
       args:
         NODE_ENV: production
     container_name: infamous_web
@@ -75,11 +76,12 @@ services:
     ports:
       - "${WEB_PORT:-3000}:3000"
     volumes:
-      - ./web:/app/web
+      - ./:/app
+      - ./src/apps/web:/app/src/apps/web
       - pnpm-store:/root/.local/share/pnpm/store
-      - node-modules-web:/app/web/node_modules
-      - nextjs-cache:/app/web/.next
-    command: sh -c "cd /app && pnpm install && cd web && pnpm dev"
+      - node-modules-web:/app/src/apps/web/node_modules
+      - nextjs-cache:/app/src/apps/web/.next
+    command: sh -c "cd /app && pnpm install && cd src/apps/web && pnpm dev"
 
   nginx:
     image: nginx:stable-alpine

@@ -28,7 +28,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: pnpm --filter infamous-freight-api exec prisma generate --schema prisma/schema.prisma
+        working-directory: src/apps/api
+        run: pnpm exec prisma generate
         continue-on-error: true
 
       - name: Set up Docker Buildx
@@ -41,7 +42,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./api/Dockerfile
+          file: ./src/apps/api/Dockerfile
           push: false
           tags: ghcr.io/${{ env.REGISTRY_OWNER }}/infamous-freight-api:test
 
@@ -49,7 +50,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./web/Dockerfile
+          file: ./src/apps/web/Dockerfile
           push: false
           tags: ghcr.io/${{ env.REGISTRY_OWNER }}/infamous-freight-web:test
           build-args: |

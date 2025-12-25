@@ -54,6 +54,9 @@ package.json.backup
 package.json.pnpm
 
 # Build artifacts and caches
+src/apps/web/.next/
+src/apps/web/.vercel/
+src/apps/web/out/
 web/.next/analyze/
 web/.vercel/
 **/dist/

@@ -12,7 +12,7 @@ concurrency:
 jobs:
   ci:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
@@ -39,43 +39,6 @@ jobs:
           fi
           echo "::endgroup::"
 
-      - name: Install HTML Tidy (libtidy)
-        run: |
-          echo "::group::Installing tidy"
-          sudo apt-get update -y
-          sudo apt-get install -y tidy
-          tidy -v || true  # tidy -v may exit with non-zero when only printing version
-          echo "::endgroup::"
-
-      - name: Validate HTML files with tidy
-        run: |
-          set -e
-          echo "::group::Validating HTML files"
-          mapfile -t html_files < <(find . -type f -name "*.html" -not -path "*/node_modules/*")
-
-          if [ ${#html_files[@]} -eq 0 ]; then
-            echo "No HTML files found; skipping validation."
-            echo "::endgroup::"
-            exit 0
-          fi
-
-          ERR=0
-          for file in "${html_files[@]}"; do
-            echo "Running tidy validation on: $file"
-            if ! tidy -q -e -utf8 "$file"; then
-              ERR=1
-              rel_file="${file#./}"
-              echo "::warning file=$rel_file::Validation failed."
-            fi
-          done
-
-          if [ $ERR -eq 1 ]; then
-            echo "::error::Validation failed for one or more HTML files. See tidy validation output above for details on each file."
-            echo "::endgroup::"
-            exit 1
-          fi
-          echo "::endgroup::"
-
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -83,16 +46,16 @@ jobs:
           name: ci-logs
           path: |
             ./*.log
-            ./api/**/*.log
-            ./web/**/*.log
-            ./mobile/**/*.log
-            ./e2e/**/*.log
+            ./src/apps/api/**/*.log
+            ./src/apps/web/**/*.log
+            ./src/apps/mobile/**/*.log
+            ./tests/e2e/**/*.log
             ./logs/**/*.log
             ./*.txt
-            ./api/**/*.txt
-            ./web/**/*.txt
-            ./mobile/**/*.txt
-            ./e2e/**/*.txt
+            ./src/apps/api/**/*.txt
+            ./src/apps/web/**/*.txt
+            ./src/apps/mobile/**/*.txt
+            ./tests/e2e/**/*.txt
             ./logs/**/*.txt
             !**/node_modules/**
             !**/dist/**
@@ -102,45 +65,27 @@ jobs:
       - name: Install (monorepo)
         run: pnpm install --frozen-lockfile
 
-      - name: Install Stylelint for CSS validation
-        run: |
-          echo "::group::Installing Stylelint"
-          pnpm add -D stylelint stylelint-config-standard
-          echo "::endgroup::"
+      - name: Validate source files (HTML, CSS, JS/TS)
+        run: pnpm validate
 
-      - name: Validate CSS files with Stylelint
-        run: |
-          set -e
-          echo "::group::Validating CSS files"
-          mapfile -t css_files < <(find . -type f -name "*.css" -not -path "*/node_modules/*" -not -path "*/.next/*" -not -path "*/dist/*" -not -path "*/build/*")
-          
-          if [ ${#css_files[@]} -eq 0 ]; then
-            echo "No CSS files found; skipping validation."
-            echo "::endgroup::"
-            exit 0
-          fi
-          
-          echo "Found ${#css_files[@]} CSS file(s) to validate"
-          
-          # Run stylelint on all CSS files
-          if ! npx stylelint "**/*.css" --ignore-path .gitignore; then
-            echo "::error::CSS validation failed. See stylelint output above for details."
-            echo "::endgroup::"
-            exit 1
-          fi
-          
-          echo "All CSS files validated successfully"
-          echo "::endgroup::"
-
-      # Run only if scripts exist in each workspace.
-      - name: Lint (if present)
-        run: pnpm -r --if-present run lint
+      - name: Lint (workspace)
+        run: pnpm lint
 
       - name: Typecheck (if present)
         run: pnpm -r --if-present run typecheck
 
-      - name: Test (if present)
-        run: pnpm -r --if-present run test
+      - name: Test
+        run: pnpm test
 
-      - name: Build (if present)
-        run: pnpm -r --if-present run build
+      - name: Coverage (if present)
+        run: pnpm test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: |
+            coverage/**/lcov.info
+            src/apps/**/coverage/lcov.info
+          fail_ci_if_error: true
+          verbose: true

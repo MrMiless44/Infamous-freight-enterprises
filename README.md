@@ -24,14 +24,22 @@ This is enterprise software built for autonomous operations with auditable accou
 
 ```
 infamous-freight-enterprise/
-├── api/              # Express.js backend (CommonJS)
-├── web/              # Next.js dashboard (TypeScript/ESM)
-├── mobile/           # React Native/Expo app
-├── packages/shared/  # Shared types, constants, and utilities
-├── e2e/              # Playwright end-to-end tests
-├── docs/             # Comprehensive documentation
-├── scripts/          # Build and deployment scripts
-└── configs/          # Configuration files
+├── src/
+│   ├── apps/
+│   │   ├── api/              # Express.js backend (CommonJS)
+│   │   ├── web/              # Next.js dashboard (TypeScript/ESM)
+│   │   └── mobile/           # React Native/Expo app
+│   └── packages/
+│       └── shared/           # Shared types, constants, and utilities
+├── tests/e2e/                # Playwright end-to-end tests
+├── configs/
+│   ├── ci-cd/                # Provider configuration (Codecov, Fly.io, Vercel)
+│   ├── docker/               # Docker Compose definitions (dev/prod/override)
+│   ├── linting/              # ESLint and formatting baselines
+│   ├── testing/              # Playwright test configuration
+│   └── validation/           # HTML/CSS validation rules
+├── docs/                     # Comprehensive documentation
+└── scripts/                  # Build and deployment scripts
 ```
 
 ## 🚀 Quick Start
@@ -57,7 +65,7 @@ pnpm install
 cp .env.example .env
 
 # Start services with Docker
-docker-compose up -d
+docker compose -f configs/docker/docker-compose.yml -f configs/docker/docker-compose.dev.yml up -d
 
 # Start development servers
 pnpm dev
@@ -75,6 +83,7 @@ For detailed setup instructions, see the [Developer Guide](docs/developer-guide.
 Comprehensive documentation is available in the [`docs/`](docs/) directory:
 
 - **[Developer Guide](docs/developer-guide.md)** - Complete development setup and workflow
+- **[Developer Onboarding](docs/development/developer-onboarding.md)** - Quick-start steps and required commands
 - **[API Reference](docs/api/API_REFERENCE.md)** - API endpoints and usage
 - **[Testing Guide](docs/TESTING.md)** - Testing strategy and practices
 - **[Deployment Guide](docs/deployment/)** - Deployment procedures
@@ -101,6 +110,13 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 4. **Push** to the branch (`git push origin feature/amazing-feature`)
 5. **Open** a Pull Request
 
+## 🧹 Validation & Quality Gates
+
+- **Run everything**: `pnpm validate` (HTML via `html-validate`, CSS via `stylelint`, JS/TS via ESLint)
+- **Configs** live in `configs/validation/` (HTML & CSS) and `configs/linting/` (ESLint)
+- **Playwright config**: `configs/testing/playwright.config.js`
+- **CI**: `.github/workflows/ci.yml` runs validation, linting, tests, coverage, and uploads to Codecov
+
 ## 🧪 Testing
 
 ```bash
@@ -112,10 +128,10 @@ pnpm --filter api test
 pnpm --filter web test
 
 # Run end-to-end tests
-pnpm --filter e2e test
+pnpm test:e2e
 
-# Run with coverage
-pnpm test -- --coverage
+# Run with coverage (uploads to Codecov in CI)
+pnpm test:coverage
 ```
 
 See the [Testing Guide](docs/TESTING.md) for more details.
