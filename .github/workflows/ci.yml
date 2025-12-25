@@ -64,7 +64,8 @@ jobs:
             echo "Running tidy validation on: $file"
             if ! tidy -q -e -utf8 "$file"; then
               ERR=1
-              echo "::warning file=$file::Validation failed."
+              rel_file="${file#./}"
+              echo "::warning file=$rel_file::Validation failed."
             fi
           done
 
