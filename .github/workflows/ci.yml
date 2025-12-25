@@ -60,8 +60,22 @@ jobs:
         with:
           name: ci-logs
           path: |
-            **/*.log
-            **/*.txt
+            ./*.log
+            ./api/**/*.log
+            ./web/**/*.log
+            ./mobile/**/*.log
+            ./e2e/**/*.log
+            ./logs/**/*.log
+            ./*.txt
+            ./api/**/*.txt
+            ./web/**/*.txt
+            ./mobile/**/*.txt
+            ./e2e/**/*.txt
+            ./logs/**/*.txt
+            !**/node_modules/**
+            !**/dist/**
+            !**/.next/**
+            !**/build/**
 
       - name: Install (monorepo)
         run: pnpm install --no-frozen-lockfile
