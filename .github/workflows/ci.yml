@@ -32,7 +32,7 @@ jobs:
           echo "Top-level HTML files:"
           ls -la *.html || true
 
-      - name: Install html tidy (libtidy)
+      - name: Install HTML Tidy (libtidy)
         run: |
           sudo apt-get update -y
           sudo apt-get install -y tidy
