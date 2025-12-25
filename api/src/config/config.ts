@@ -65,14 +65,15 @@ export class Config {
   }
 
   getApiKeys() {
+    const paypalSecret = this.requireEnv("PAYPAL_SECRET");
     const keys = {
       openai: this.requireEnv("OPENAI_API_KEY"),
       anthropic: this.requireEnv("ANTHROPIC_API_KEY"),
       stripe: this.requireEnv("STRIPE_API_KEY"),
       stripeWebhookSecret: this.requireEnv("STRIPE_WEBHOOK_SECRET"),
       paypalClientId: this.requireEnv("PAYPAL_CLIENT_ID"),
-      paypalClientSecret: this.requireEnv("PAYPAL_CLIENT_SECRET", this.getEnv("PAYPAL_SECRET")),
-      paypalSecret: this.requireEnv("PAYPAL_SECRET"),
+      paypalClientSecret: paypalSecret,
+      paypalSecret: paypalSecret,
       aiSyntheticUrl: this.requireEnv("AI_SYNTHETIC_ENGINE_URL"),
       aiSyntheticKey: this.requireEnv("AI_SYNTHETIC_API_KEY"),
     };
