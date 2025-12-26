@@ -9,6 +9,7 @@ echo "Step 2: Verify pnpm version"
 pnpm --version
 
 echo "Step 3: Run pnpm install to regenerate lockfile"
+export HUSKY=0
 pnpm install
 
 echo "Step 4: Verify shared package builds"

@@ -2,6 +2,7 @@
 FROM node:22-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+ENV HUSKY=0
 RUN corepack enable && apk add --no-cache libc6-compat
 
 # Install dependencies for all workspaces

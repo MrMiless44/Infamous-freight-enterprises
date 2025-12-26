@@ -1,11 +1,15 @@
 services:
   api:
+    environment:
+      HUSKY: 0
     volumes:
       - ./:/app
       - ./src/apps/api:/app/src/apps/api
     command: sh -c "cd /app && pnpm install && pnpm --filter infamous-freight-api dev"
 
   web:
+    environment:
+      HUSKY: 0
     volumes:
       - ./:/app
       - ./src/apps/web:/app/src/apps/web

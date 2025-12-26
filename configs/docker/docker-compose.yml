@@ -31,6 +31,7 @@ services:
       - .env.local
     environment:
       NODE_ENV: production
+      HUSKY: 0
       DATABASE_URL: postgresql://${POSTGRES_USER:-infamous}:${POSTGRES_PASSWORD:-infamouspass}@postgres:5432/${POSTGRES_DB:-infamous_freight}
     depends_on:
       postgres:
@@ -69,6 +70,7 @@ services:
       - .env.local
     environment:
       NODE_ENV: production
+      HUSKY: 0
       NEXT_PUBLIC_API_URL: http://api:3001
     depends_on:
       api:
