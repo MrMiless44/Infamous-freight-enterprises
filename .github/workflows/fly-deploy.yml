@@ -30,9 +30,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build API
-        run: pnpm -C src/apps/api build
-
       - name: Setup Flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
 
