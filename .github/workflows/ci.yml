@@ -53,10 +53,10 @@ jobs:
       #   run: pnpm test
 
       # ---- Option B: explicit per-app (works even if some packages lack scripts) ----
-      - name: Build API
-        run: pnpm -C src/apps/api build
-
       - name: Build Shared
         run: pnpm -C src/packages/shared build
+
+      - name: Build API
+        run: pnpm -C src/apps/api build
       - name: Build Web
         run: pnpm -C src/apps/web build
