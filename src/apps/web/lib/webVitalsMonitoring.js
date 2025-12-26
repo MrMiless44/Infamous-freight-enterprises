@@ -6,7 +6,7 @@
 export const reportWebVitals = (metric) => {
   // Log to console in development
   if (process.env.NODE_ENV === "development") {
-    console.log("📊 Web Vital:", metric);
+    console.info("📊 Web Vital:", metric);
   }
 
   // Send to Vercel Analytics
@@ -52,7 +52,7 @@ export const trackCLS = () => {
   const observer = new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
       if (!entry.hadRecentInput) {
-        console.log("🔄 Layout Shift:", {
+        console.info("🔄 Layout Shift:", {
           value: entry.value,
           source: entry.sources?.[0]?.node,
         });

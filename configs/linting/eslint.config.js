@@ -43,7 +43,7 @@ export default [
     },
     rules: {
       ...js.configs.recommended.rules,
-      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "no-console": ["warn", { allow: ["warn", "error", "info"] }],
       "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     },
   },
@@ -66,7 +66,7 @@ export default [
       "@typescript-eslint": tsPlugin,
     },
     rules: {
-      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "no-console": ["warn", { allow: ["warn", "error", "info"] }],
       "no-unused-vars": "off",
     },
   },

@@ -3,7 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding Infamous Freight database...");
+  console.info("Seeding Infamous Freight database...");
 
   await prisma.user.upsert({
     where: { email: "admin@infamous.ai" },
@@ -70,7 +70,7 @@ async function main() {
     },
   });
 
-  console.log("Seed completed.");
+  console.info("Seed completed.");
 }
 
 main()
