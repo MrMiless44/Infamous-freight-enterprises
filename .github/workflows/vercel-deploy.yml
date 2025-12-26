@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: production
+  group: vercel-production-deploy
   cancel-in-progress: false
 
 jobs:
