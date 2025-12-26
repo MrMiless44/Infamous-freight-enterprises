@@ -16,7 +16,7 @@ export function resolveApiBase(): string {
     const pathname = url.pathname || "/";
 
     // If no meaningful path was provided, default to /api
-    if (pathname === "/" || pathname === "") {
+    if (pathname === "/") {
       url.pathname = "/api";
       // Normalize: remove trailing slash except the one after /api
       return url.toString().replace(/\/+$/, "");
