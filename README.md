@@ -78,6 +78,12 @@ The application will be available at:
 
 For detailed setup instructions, see the [Developer Guide](docs/developer-guide.md).
 
+## 🧩 Package Manager & Lockfiles
+
+- **pnpm only**: The repo declares `packageManager: pnpm@8.15.9` and CI installs with `pnpm install --frozen-lockfile`.
+- **Single source of truth**: `pnpm-lock.yaml` is the only lockfile used across CI and Vercel. The deprecated root `package-lock.json` referenced an old workspace layout and could make Vercel fall back to `npm install`, producing mismatched dependency graphs compared to pnpm.
+- **Prevention**: `.npmrc` disables `package-lock.json` creation and `.gitignore` blocks reintroducing it. Use pnpm for installs locally and in any deployment hooks to stay consistent.
+
 ## 📚 Documentation
 
 Comprehensive documentation is available in the [`docs/`](docs/) directory:
