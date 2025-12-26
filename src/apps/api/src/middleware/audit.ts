@@ -5,6 +5,6 @@ export function auditTrail(req: Request, _res: Response, next: NextFunction) {
     ? `${req.user.id}@${req.user.organizationId}`
     : "anonymous";
   const message = `[AUDIT] ${req.method} ${req.originalUrl} by ${userInfo}`;
-  console.info(message);
+  console.warn(message);
   next();
 }

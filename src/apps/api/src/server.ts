@@ -36,4 +36,4 @@ app.use(errorHandler);
 const apiConfig = config.getApiConfig();
 const port = Number(apiConfig.port);
 
-app.listen(port, () => console.log(`API running on port ${port}`));
+app.listen(port, () => console.warn(`API running on port ${port}`));
