@@ -74,8 +74,9 @@ jobs:
             echo "❌ Critical vulnerabilities found in API image!"
             cat api-trivy-results.txt
             exit 1
+          else
+            echo "✅ No critical vulnerabilities in API image"
           fi
-          echo "✅ No critical vulnerabilities in API image"
 
   web-image-scan:
     name: Build + Scan Web Image
