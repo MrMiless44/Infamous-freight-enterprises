@@ -1,8 +1,5 @@
 export function resolveApiBase(): string {
-  const raw =
-    process.env.NEXT_PUBLIC_API_URL ||
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    "/api";
+  const raw = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
   const trimmed = raw.replace(/\/+$/, "");
 

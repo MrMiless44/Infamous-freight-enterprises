@@ -171,7 +171,7 @@ curl -H "Authorization: Bearer $TOKEN" \
 ### 🎯 Medium-term (Next 1-2 hours):
 
 8. ⏳ **Deploy web frontend**
-   - Set in Vercel: `API_BASE_URL=https://infamous-freight-api.fly.dev`
+   - Set in Vercel: `NEXT_PUBLIC_API_BASE_URL=https://infamous-freight-api.fly.dev`
    - Push to main: `git push origin main`
    - Vercel auto-deploys
 

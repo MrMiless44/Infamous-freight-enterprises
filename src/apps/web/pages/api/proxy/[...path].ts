@@ -1,12 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 // Proxies requests from /api/proxy/* to the backend API
-// Base URL is taken from NEXT_PUBLIC_API_URL (preferred) or API_BASE_URL
-const API_BASE = (
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.API_BASE_URL ||
-  ""
-).replace(/\/$/, "");
+// Base URL is taken from NEXT_PUBLIC_API_BASE_URL
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || "").replace(
+  /\/$/,
+  "",
+);
 
 function buildTargetUrl(req: NextApiRequest, base: string) {
   const rawQuery =
@@ -53,8 +52,7 @@ export default async function handler(
   if (!API_BASE) {
     res.status(500).json({
       ok: false,
-      error:
-        "API base URL not configured (set NEXT_PUBLIC_API_URL or API_BASE_URL)",
+      error: "API base URL not configured (set NEXT_PUBLIC_API_BASE_URL)",
     });
     return;
   }

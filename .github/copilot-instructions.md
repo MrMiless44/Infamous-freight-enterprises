@@ -100,7 +100,9 @@
 - Web SSR fetch:
 
   ```ts
-  const r = await fetch(`${process.env.API_BASE_URL}/api/shipments/1`);
+  const r = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/shipments/1`,
+  );
   const result: ApiResponse<Shipment> = await r.json();
   if (!result.success || !result.data) return { notFound: true };
   return { props: { shipment: result.data } };

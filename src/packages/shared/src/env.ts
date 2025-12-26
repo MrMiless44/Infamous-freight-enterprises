@@ -1,7 +1,7 @@
 // Environment variable validation utilities
 export const requiredEnvVars = {
   api: ["DATABASE_URL", "JWT_SECRET", "NODE_ENV", "PORT"],
-  web: ["NEXT_PUBLIC_API_URL", "NODE_ENV"],
+  web: ["NEXT_PUBLIC_API_BASE_URL", "NODE_ENV"],
 } as const;
 
 const isValueMissing = (value: string | undefined | null): boolean =>
