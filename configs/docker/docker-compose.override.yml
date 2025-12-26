@@ -3,10 +3,10 @@ services:
     volumes:
       - ./:/app
       - ./src/apps/api:/app/src/apps/api
-    command: sh -c "cd /app && pnpm install && pnpm --filter infamous-freight-api dev"
+    command: sh -c "cd /app && HUSKY=0 pnpm install && pnpm --filter infamous-freight-api dev"
 
   web:
     volumes:
       - ./:/app
       - ./src/apps/web:/app/src/apps/web
-    command: sh -c "cd /app && pnpm install && pnpm --filter infamous-freight-web dev"
+    command: sh -c "cd /app && HUSKY=0 pnpm install && pnpm --filter infamous-freight-web dev"

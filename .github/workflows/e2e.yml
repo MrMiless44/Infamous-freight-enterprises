@@ -44,6 +44,8 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
+        env:
+          HUSKY: 0
         run: pnpm -w install --frozen-lockfile
 
       - name: Generate Prisma client
@@ -55,6 +57,8 @@ jobs:
 
       - name: Start API server
         working-directory: src/apps/api
+        env:
+          HUSKY: 0
         run: |
           pnpm install --frozen-lockfile
           pnpm build 2>/dev/null || true

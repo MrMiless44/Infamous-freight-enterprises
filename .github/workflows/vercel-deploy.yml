@@ -27,6 +27,8 @@ jobs:
           node-version: 20.18.1
           cache: "pnpm"
       - name: Install dependencies
+        env:
+          HUSKY: 0
         run: pnpm -w install --frozen-lockfile
       - name: Lint web
         run: pnpm --filter web lint

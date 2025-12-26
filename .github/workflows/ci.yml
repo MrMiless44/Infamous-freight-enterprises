@@ -40,6 +40,8 @@ jobs:
             exit 1
           fi
       - name: Install (workspace)
+        env:
+          HUSKY: 0
         run: pnpm install --frozen-lockfile
 
       # ---- Option A: repo-wide scripts (if you added them) ----
