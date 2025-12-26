@@ -29,16 +29,30 @@ jobs:
       - name: Enable corepack (pnpm)
         run: corepack enable
 
-      - name: Guard: no package-lock.json anywhere
+      - name: Guard: no npm/yarn lockfiles
         run: |
-          # Ensure no root-level npm lockfile
-          test ! -f package-lock.json
+          # This project uses pnpm only
+          # Ensure no root-level npm/yarn lockfiles
+          test ! -f package-lock.json || { echo "Error: package-lock.json found"; exit 1; }
+          test ! -f yarn.lock || { echo "Error: yarn.lock found"; exit 1; }
+          test ! -f npm-shrinkwrap.json || { echo "Error: npm-shrinkwrap.json found"; exit 1; }
 
-          # Ensure no tracked package-lock.json files anywhere in the repo
+          # Ensure no tracked npm/yarn lockfiles anywhere in the repo
           if git ls-files '**/package-lock.json' | grep -q .; then
             echo "Error: package-lock.json files found. This repo uses pnpm; please remove npm lockfiles."
             exit 1
           fi
+          if git ls-files '**/yarn.lock' | grep -q .; then
+            echo "Error: yarn.lock files found. This repo uses pnpm; please remove yarn lockfiles."
+            exit 1
+          fi
+          if git ls-files '**/npm-shrinkwrap.json' | grep -q .; then
+            echo "Error: npm-shrinkwrap.json files found. This repo uses pnpm; please remove npm lockfiles."
+            exit 1
+          fi
+
+          # Verify pnpm-lock.yaml exists
+          test -f pnpm-lock.yaml || { echo "Error: pnpm-lock.yaml not found. Run: pnpm install"; exit 1; }
       - name: Install (workspace)
         run: pnpm install --frozen-lockfile
 
