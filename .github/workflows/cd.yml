@@ -53,6 +53,14 @@ jobs:
       - name: Build Web
         run: pnpm --filter infamous-freight-web build
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            packages/shared/dist/
+            api/dist/
+            web/.next/
   # OPTIONAL: Deploy Web (Vercel) via Vercel CLI
   # deploy_web:
   #   needs: build
