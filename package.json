@@ -21,7 +21,7 @@
     "lint:css": "pnpm exec stylelint \"{src,tests}/**/*.css\" --config configs/validation/stylelint.config.cjs --ignore-path configs/validation/.stylelintignore",
     "lint:html": "pnpm exec html-validate \"{src,tests}/**/*.html\" --config configs/validation/html-validate.config.js",
     "validate": "bash scripts/validation/run-validation.sh",
-    "postinstall": "pnpm -r prisma:generate"
+    "postinstall": "pnpm -r --if-present prisma:generate"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
