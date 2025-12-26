@@ -8,8 +8,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: flyio-api-production-deploy
-  cancel-in-progress: false
+  group: production
+  cancel-in-progress: true
 
 jobs:
   deploy:
