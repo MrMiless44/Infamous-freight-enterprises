@@ -2,7 +2,11 @@
 node_modules/
 **/node_modules/
 # pnpm-lock.yaml should be committed for reproducible builds
+# npm lockfiles (pnpm is required)
 package-lock.json
+**/package-lock.json
+npm-shrinkwrap.json
+**/npm-shrinkwrap.json
 
 # Build outputs
 dist/
