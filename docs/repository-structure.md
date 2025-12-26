@@ -264,6 +264,7 @@ GitHub Actions workflows in `.github/workflows/`:
 - `container-security.yml` - Container security checks
 - `docker-build.yml` - Docker image builds
 - `e2e.yml` - End-to-end tests
+- `cd.yml` - Orchestrates production deployments
 - `fly-deploy.yml` - Fly.io deployment
 - `vercel-deploy.yml` - Vercel deployment
 
