@@ -42,11 +42,14 @@ jobs:
       - name: Install (pnpm workspace)
         run: pnpm install --frozen-lockfile
 
+      - name: Build shared package
+        run: pnpm --filter @infamous-freight/shared build
+
       - name: Build API
-        run: pnpm -C src/apps/api build
+        run: pnpm --filter infamous-freight-api build
 
       - name: Build Web
-        run: pnpm -C src/apps/web build
+        run: pnpm --filter infamous-freight-web build
 
   # OPTIONAL: Deploy Web (Vercel) via Vercel CLI
   # deploy_web:
