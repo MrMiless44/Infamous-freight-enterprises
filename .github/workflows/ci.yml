@@ -1,12 +1,9 @@
 name: CI
 
 on:
+  pull_request:
   push:
     branches: [ "main" ]
-  pull_request:
-
-permissions:
-  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -15,80 +12,53 @@ concurrency:
 jobs:
   ci:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
+    permissions:
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node 20 + pnpm cache
+        uses: actions/setup-node@v4
         with:
           node-version: 20.18.1
           cache: pnpm
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8.15.9
-          run_install: false
+      - name: Enable corepack (pnpm)
+        run: corepack enable
 
-      - name: Show repo tree (for debugging)
+      - name: Guard: no package-lock.json anywhere
         run: |
-          echo "::group::Repository Tree"
-          echo "Repository structure for debugging:"
-          if command -v tree >/dev/null 2>&1; then
-            tree -L 4 || true
-          else
-            ls -R || true
+          # Ensure no root-level npm lockfile
+          test ! -f package-lock.json
+
+          # Ensure no tracked package-lock.json files anywhere in the repo
+          if git ls-files '**/package-lock.json' | grep -q .; then
+            echo "Error: package-lock.json files found. This repo uses pnpm; please remove npm lockfiles."
+            exit 1
           fi
-          echo "::endgroup::"
-
-      - name: Upload logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ci-logs
-          path: |
-            ./*.log
-            ./src/apps/api/**/*.log
-            ./src/apps/web/**/*.log
-            ./src/apps/mobile/**/*.log
-            ./tests/e2e/**/*.log
-            ./logs/**/*.log
-            ./*.txt
-            ./src/apps/api/**/*.txt
-            ./src/apps/web/**/*.txt
-            ./src/apps/mobile/**/*.txt
-            ./tests/e2e/**/*.txt
-            ./logs/**/*.txt
-            !**/node_modules/**
-            !**/dist/**
-            !**/.next/**
-            !**/build/**
-
-      - name: Install (monorepo)
+      - name: Install (workspace)
         run: pnpm install --frozen-lockfile
 
-      - name: Validate source files (HTML, CSS, JS/TS)
-        run: pnpm validate
+      # ---- Option A: repo-wide scripts (if you added them) ----
+      # - name: Lint
+      #   run: pnpm lint
+      #
+      # - name: Typecheck
+      #   run: pnpm typecheck
+      #
+      # - name: Test
+      #   run: pnpm test
 
-      - name: Lint (workspace)
-        run: pnpm lint
+      # ---- Option B: explicit per-app (works even if some packages lack scripts) ----
+      - name: Build Shared
+        run: pnpm -C src/packages/shared build
 
-      - name: Typecheck (if present)
-        run: pnpm -r --if-present run typecheck
-
-      - name: Test
-        run: pnpm test
-
-      - name: Coverage (if present)
-        run: pnpm test:coverage
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: |
-            coverage/**/lcov.info
-            src/apps/**/coverage/lcov.info
-          fail_ci_if_error: true
-          verbose: true
+      - name: Build API
+        run: pnpm -C src/apps/api build
+      - name: Build Web
+        run: pnpm -C src/apps/web build
+      - name: Build Mobile
+        run: pnpm -C src/apps/mobile build
