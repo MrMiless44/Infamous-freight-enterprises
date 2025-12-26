@@ -1,0 +1,26 @@
+name: CD
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-api:
+    name: Deploy API to Fly.io
+    uses: ./.github/workflows/fly-deploy.yml
+    secrets: inherit
+
+  deploy-web:
+    name: Deploy Web to Vercel
+    needs: deploy-api
+    uses: ./.github/workflows/vercel-deploy.yml
+    secrets: inherit
