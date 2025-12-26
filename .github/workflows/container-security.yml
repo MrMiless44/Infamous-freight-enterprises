@@ -67,6 +67,7 @@ jobs:
           image-ref: "infamous-freight-api:latest"
           format: "table"
           output: "api-trivy-results.txt"
+          exit-code: "0"
 
       - name: Fail if CRITICAL (API)
         run: |
