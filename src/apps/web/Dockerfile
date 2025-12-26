@@ -10,7 +10,7 @@ WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY src/apps/web/package.json ./src/apps/web/
 COPY src/packages/shared/package.json ./src/packages/shared/
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --filter=infamous-freight-web --filter=@infamous-freight/shared
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store HUSKY=0 pnpm install --frozen-lockfile --filter=infamous-freight-web --filter=@infamous-freight/shared
 
 # Build shared package
 FROM base AS builder-shared

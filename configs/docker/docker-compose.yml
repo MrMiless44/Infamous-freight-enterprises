@@ -42,7 +42,7 @@ services:
       - ./src/apps/api:/app/src/apps/api
       - pnpm-store:/root/.local/share/pnpm/store
       - node-modules-api:/app/src/apps/api/node_modules
-    command: sh -c "cd /app && pnpm install && cd src/apps/api && pnpm dev"
+    command: sh -c "cd /app && HUSKY=0 pnpm install && cd src/apps/api && pnpm dev"
     healthcheck:
       test:
         [
@@ -81,7 +81,7 @@ services:
       - pnpm-store:/root/.local/share/pnpm/store
       - node-modules-web:/app/src/apps/web/node_modules
       - nextjs-cache:/app/src/apps/web/.next
-    command: sh -c "cd /app && pnpm install && cd src/apps/web && pnpm dev"
+    command: sh -c "cd /app && HUSKY=0 pnpm install && cd src/apps/web && pnpm dev"
 
   nginx:
     image: nginx:stable-alpine
