@@ -3,6 +3,7 @@ import { track } from "@vercel/analytics";
 import { AvatarVoice } from "../components/AvatarVoice";
 import { VoicePanel } from "../components/VoicePanel";
 import { BillingPanel } from "../components/BillingPanel";
+import { resolveApiBase } from "../hooks/useApi";
 
 export default function Dashboard() {
   const [status, setStatus] = useState<unknown>(null);
@@ -14,7 +15,7 @@ export default function Dashboard() {
       timestamp: new Date().toISOString(),
     });
 
-    const base = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
+    const base = resolveApiBase();
     fetch(`${base}/health`)
       .then((res) => res.json())
       .then((data) => {
