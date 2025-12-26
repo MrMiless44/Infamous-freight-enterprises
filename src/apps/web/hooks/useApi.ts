@@ -23,7 +23,8 @@ export function resolveApiBase(): string {
     }
 
     // A non-root path was provided (e.g. /api, /api/v1) – respect it as-is
-    return trimmed;
+    // but return the normalized URL string from the URL object for consistency
+    return url.toString().replace(/\/+$/, "");
   } catch {
     // Not an absolute URL (likely a relative path); fall through to relative handling
   }
