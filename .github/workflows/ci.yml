@@ -20,16 +20,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.18.1
-          cache: pnpm
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8.15.9
           run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.1
+          cache: pnpm
 
       - name: Show repo tree (for debugging)
         run: |
