@@ -131,5 +131,6 @@ jobs:
             echo "❌ Critical vulnerabilities found in Web image!"
             cat web-trivy-results.txt
             exit 1
+          else
+            echo "✅ No critical vulnerabilities in Web image"
           fi
-          echo "✅ No critical vulnerabilities in Web image"
