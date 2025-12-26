@@ -1,9 +1,13 @@
 export function resolveApiBase(): string {
   const raw =
     process.env.NEXT_PUBLIC_API_URL ||
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    "/api";
+    process.env.NEXT_PUBLIC_API_BASE_URL;
 
+  if (!raw) {
+    throw new Error(
+      "API base URL is not configured. Set NEXT_PUBLIC_API_URL (or NEXT_PUBLIC_API_BASE_URL).",
+    );
+  }
   const trimmed = raw.replace(/\/+$/, "");
 
   // Ensure API prefix is present exactly once
