@@ -1,5 +1,21 @@
+export function resolveApiBase(): string {
+  const raw =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    "/api";
+
+  const trimmed = raw.replace(/\/+$/, "");
+
+  // Ensure API prefix is present exactly once
+  if (trimmed.endsWith("/api")) {
+    return trimmed;
+  }
+
+  return `${trimmed}/api`;
+}
+
 export function useApi() {
-  const base = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
+  const base = resolveApiBase();
 
   function buildHeaders(custom?: HeadersInit) {
     const headers: HeadersInit = { ...(custom || {}) };
