@@ -14,6 +14,9 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+
 jobs:
   analyze:
     name: Analyze Code
