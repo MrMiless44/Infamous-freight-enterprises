@@ -29,7 +29,7 @@ jobs:
       - name: Enable corepack (pnpm)
         run: corepack enable
 
-      - name: Guard: no npm/yarn lockfiles
+      - name: "Guard: no npm/yarn lockfiles"
         run: |
           # This project uses pnpm only
           # Ensure no root-level npm/yarn lockfiles
