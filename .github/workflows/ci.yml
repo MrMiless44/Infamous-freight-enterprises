@@ -30,9 +30,14 @@ jobs:
 
       - name: Guard: no package-lock.json anywhere
         run: |
+          # Ensure no root-level npm lockfile
           test ! -f package-lock.json
-          ! git ls-files '**/package-lock.json' | grep -q .
 
+          # Ensure no tracked package-lock.json files anywhere in the repo
+          if git ls-files '**/package-lock.json' | grep -q .; then
+            echo "Error: package-lock.json files found. This repo uses pnpm; please remove npm lockfiles."
+            exit 1
+          fi
       - name: Install (workspace)
         run: pnpm install --frozen-lockfile
 
