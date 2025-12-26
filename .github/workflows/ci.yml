@@ -55,5 +55,7 @@ jobs:
       - name: Build API
         run: pnpm -C src/apps/api build
 
+      - name: Build Shared
+        run: pnpm -C src/packages/shared build
       - name: Build Web
         run: pnpm -C src/apps/web build
