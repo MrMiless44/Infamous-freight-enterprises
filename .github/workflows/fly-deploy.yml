@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-api
+  group: deploy-api-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
