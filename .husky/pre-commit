@@ -10,9 +10,18 @@ check_lockfiles() {
   if [ -f "$REPO_ROOT/scripts/validation/check-lockfiles.sh" ]; then
     (cd "$REPO_ROOT" && bash scripts/validation/check-lockfiles.sh)
   else
-    # Fallback check if script doesn't exist
-    if [ -f "$REPO_ROOT/package-lock.json" ] || git ls-files '**/package-lock.json' | grep -q . || [ -f "$REPO_ROOT/yarn.lock" ]; then
+    # Fallback check if script doesn't exist - check all common lockfiles
+    if [ -f "$REPO_ROOT/package-lock.json" ] || \
+       [ -f "$REPO_ROOT/yarn.lock" ] || \
+       [ -f "$REPO_ROOT/npm-shrinkwrap.json" ] || \
+       git ls-files '**/package-lock.json' '**/yarn.lock' '**/npm-shrinkwrap.json' | grep -q .; then
       echo "❌ Error: npm/yarn lockfiles detected. This project uses pnpm only."
+      echo "   Run: rm -f package-lock.json yarn.lock npm-shrinkwrap.json && pnpm install"
+      exit 1
+    fi
+    # Verify pnpm-lock.yaml exists
+    if [ ! -f "$REPO_ROOT/pnpm-lock.yaml" ]; then
+      echo "⚠️  Warning: pnpm-lock.yaml not found. Run: pnpm install"
       exit 1
     fi
   fi

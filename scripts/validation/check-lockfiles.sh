@@ -37,6 +37,13 @@ if git ls-files '**/yarn.lock' | grep -q .; then
 fi
 
 # Check for npm-shrinkwrap.json
+if [ -f "npm-shrinkwrap.json" ]; then
+  echo "❌ Error: npm-shrinkwrap.json found in repository root"
+  echo "   This project uses pnpm. Please remove it."
+  exit 1
+fi
+
+# Check for any tracked npm-shrinkwrap.json files
 if git ls-files '**/npm-shrinkwrap.json' | grep -q .; then
   echo "❌ Error: npm-shrinkwrap.json files found in repository"
   echo "   This project uses pnpm. Please remove them."
