@@ -10,11 +10,33 @@ export function resolveApiBase(): string {
   }
   const trimmed = raw.replace(/\/+$/, "");
 
-  // Ensure API prefix is present exactly once
-  if (trimmed.endsWith("/api")) {
+  // Try to treat value as an absolute URL first
+  try {
+    const url = new URL(trimmed);
+    const pathname = url.pathname || "/";
+
+    // If no meaningful path was provided, default to /api
+    if (pathname === "/" || pathname === "") {
+      url.pathname = "/api";
+      // Normalize: remove trailing slash except the one after /api
+      return url.toString().replace(/\/+$/, "");
+    }
+
+    // A non-root path was provided (e.g. /api, /api/v1) – respect it as-is
     return trimmed;
+  } catch {
+    // Not an absolute URL (likely a relative path); fall through to relative handling
   }
 
+  // Relative path handling
+  if (trimmed === "" || trimmed === "/") {
+    return "/api";
+  }
+
+  // If /api already appears as a path segment, don't append it again
+  if (trimmed.endsWith("/api") || trimmed.includes("/api/")) {
+    return trimmed;
+  }
   return `${trimmed}/api`;
 }
 
