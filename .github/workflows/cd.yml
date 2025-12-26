@@ -31,7 +31,13 @@ jobs:
           version: 8
 
       - name: Guard: no package-lock.json
-        run: test ! -f package-lock.json
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "Error: package-lock.json detected in the repository."
+            echo "This project uses pnpm workspaces; npm's package-lock.json should not be committed."
+            echo "Please remove package-lock.json and commit pnpm-lock.yaml instead."
+            exit 1
+          fi
 
       - name: Install (pnpm workspace)
         run: pnpm install --frozen-lockfile
