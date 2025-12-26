@@ -12,6 +12,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Trigger Render deploy hook
         run: curl -sS -f -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
