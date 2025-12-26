@@ -45,7 +45,8 @@ fi
 
 # Check for any tracked npm-shrinkwrap.json files
 if git ls-files '**/npm-shrinkwrap.json' | grep -q .; then
-  echo "❌ Error: npm-shrinkwrap.json files found in repository"
+  echo "❌ Error: npm-shrinkwrap.json files found in repository:"
+  git ls-files '**/npm-shrinkwrap.json'
   echo "   This project uses pnpm. Please remove them."
   exit 1
 fi
