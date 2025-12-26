@@ -125,6 +125,7 @@ jobs:
           image-ref: "infamous-freight-web:latest"
           format: "table"
           output: "web-trivy-results.txt"
+          exit-code: "0"
 
       - name: Fail if CRITICAL (Web)
         run: |
