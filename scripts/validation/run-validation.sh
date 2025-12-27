@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 run_html_validation() {
-  mapfile -t html_files < <(find "$ROOT_DIR/src" "$ROOT_DIR/tests" -type f -name "*.html" 2>/dev/null || true)
+  mapfile -t html_files < <(find "$ROOT_DIR/src" "$ROOT_DIR/tests" -type f -name "*.html" ! -path "*/.next/*" ! -path "*/dist/*" ! -path "*/build/*" 2>/dev/null || true)
   if [ ${#html_files[@]} -eq 0 ]; then
     echo "No HTML files found; skipping HTML validation."
     return
