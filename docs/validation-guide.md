@@ -14,8 +14,9 @@ This guide documents the validation and quality gates used across the Infamous F
 
 ## HTML Validation
 
-- **Tool**: [`html-validate`](https://html-validate.org/)
-- **Configuration**: `configs/validation/html-validate.config.js`
+- **Tool (Local)**: [`html-validate`](https://html-validate.org/) for local development
+- **Tool (CI)**: `tidy` (HTML Tidy) for CI validation
+- **Configuration**: `configs/validation/html-validate.config.js` (for local html-validate runs)
 - **Ignores**: Node modules, build artifacts, Playwright reports, and coverage output
 - **Manual run**:
   ```bash
@@ -23,7 +24,9 @@ This guide documents the validation and quality gates used across the Infamous F
     --config configs/validation/html-validate.config.js \
     "src/**/*.html" "tests/**/*.html"
   ```
-- **CI**: Invoked via `pnpm validate` in `.github/workflows/ci.yml`.
+- **CI**: Uses `tidy -e -q -utf8` in `.github/workflows/ci.yml`
+  - Validates all HTML files in the repository
+  - Excludes build artifacts: `.next/`, `dist/`, `build/`
 
 ## CSS Validation
 

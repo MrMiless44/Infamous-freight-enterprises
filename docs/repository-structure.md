@@ -85,9 +85,11 @@ Testing configurations:
 ### configs/validation/
 
 Validation and static analysis configurations:
-- `html-validate.config.js` - HTML validation rules
+- `html-validate.config.js` - HTML validation rules (for local development)
 - `stylelint.config.cjs` - CSS validation rules
 - `.stylelintignore` - CSS validation exclusions
+
+Note: CI uses `tidy` for HTML validation instead of html-validate.
 
 ### Symlinks for Compatibility
 

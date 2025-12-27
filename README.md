@@ -140,10 +140,10 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## 🧹 Validation & Quality Gates
 
-- **Run everything**: `pnpm validate` (HTML via `html-validate`, CSS via `stylelint`, JS/TS via ESLint)
+- **Run everything**: `pnpm validate` (HTML via `html-validate` locally, CSS via `stylelint`, JS/TS via ESLint)
 - **Configs** live in `configs/validation/` (HTML & CSS) and `configs/linting/` (ESLint)
 - **Playwright config**: `configs/testing/playwright.config.js`
-- **CI**: `.github/workflows/ci.yml` runs validation, linting, tests, coverage, and uploads to Codecov
+- **CI**: `.github/workflows/ci.yml` runs validation, linting, tests, coverage, and uploads to Codecov. Note: CI uses `tidy` for HTML validation.
 
 ## 🧪 Testing
 
