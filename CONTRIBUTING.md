@@ -151,7 +151,7 @@ All code must pass automated checks:
 - ✅ Prettier formatting
 - ✅ TypeScript compilation (for TS files)
 - ✅ All tests passing
-- ✅ Code coverage 100% (enforced in CI)
+- ✅ Code coverage meets configured thresholds (enforced in CI; see [Testing Requirements](#testing-requirements))
 
 These run automatically on commit via Husky hooks.
 
