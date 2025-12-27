@@ -88,7 +88,7 @@ jobs:
       - name: Validate HTML files with tidy
         run: |
           set -e
-          HTML_FILES=$(find . -maxdepth 4 -type f -name "*.html" | tr '\n' ' ')
+          HTML_FILES=$(find . -maxdepth 4 -type f -name "*.html" ! -path "*/.next/*" ! -path "*/dist/*" ! -path "*/build/*" | tr '\n' ' ')
           if [ -z "$HTML_FILES" ]; then
             echo "No HTML files found; nothing to validate."
             exit 0
