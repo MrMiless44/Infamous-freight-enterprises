@@ -7,9 +7,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY src/apps/api/package.json ./src/apps/api/package.json
 RUN corepack enable && HUSKY=0 pnpm install --filter infamous-freight-api... --frozen-lockfile
 
-# Copy Prisma schema for the API (client is generated during build via prebuild hook)
+# Copy Prisma schema for the API (Prisma Client is generated via the prebuild hook in package.json)
 COPY src/apps/api/prisma ./src/apps/api/prisma
-RUN npx prisma generate
 
 # Copy the remaining API source and build
 COPY src/apps/api/tsconfig.json ./src/apps/api/tsconfig.json
