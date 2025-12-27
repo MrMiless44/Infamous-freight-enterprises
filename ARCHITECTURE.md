@@ -21,7 +21,7 @@
 ## CI/CD
 
 - **Lint**: ESLint, Prettier, Stylelint, html-validate
-- **Tests**: Jest with coverage (100% gate)
+- **Tests**: Jest with coverage gates (currently 85% for shared, 0% for web, targeting 100%)
 - **Container builds**: Docker multi-stage builds
 - **Security scans**: CodeQL, Trivy, Dependabot
 
