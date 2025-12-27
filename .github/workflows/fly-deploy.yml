@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-api-${{ github.ref }}
+  group: deploy-api
   cancel-in-progress: true
 
 jobs:
@@ -30,10 +30,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build API
+        run: pnpm -C src/apps/api build
+
       - name: Setup Flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy API
-        run: flyctl deploy --config configs/ci-cd/fly.toml --dockerfile src/apps/api/Dockerfile --remote-only
+        run: flyctl deploy --config configs/ci-cd/fly.toml --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
