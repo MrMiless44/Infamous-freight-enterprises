@@ -2,7 +2,7 @@ app = "infamous-freight-api"
 primary_region = "iad"
 
 [build]
-  dockerfile = "api/Dockerfile"
+  dockerfile = "src/apps/api/Dockerfile"
 
 [env]
   PORT = "4000"
