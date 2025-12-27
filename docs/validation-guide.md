@@ -24,7 +24,7 @@ This guide documents the validation and quality gates used across the Infamous F
     --config configs/validation/html-validate.config.js \
     "src/**/*.html" "tests/**/*.html"
   ```
-- **CI**: Uses `tidy -e -q -utf8` in `.github/workflows/ci.yml` to validate HTML files.
+- **CI**: Uses `tidy -e -q -utf8` in `.github/workflows/ci.yml` to validate all HTML files in the repository (excluding build artifacts like `.next/`, `dist/`, `build/`).
 
 ## CSS Validation
 
