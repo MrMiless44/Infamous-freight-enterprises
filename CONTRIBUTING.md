@@ -16,7 +16,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 ### Prerequisites
 
 - Node.js 20+
-- pnpm 7.5.1 (managed automatically via Corepack)
+- pnpm 8+ (managed automatically via Corepack)
 - PostgreSQL 14+ (or Docker)
 - Git
 
@@ -151,24 +151,31 @@ All code must pass automated checks:
 - ✅ Prettier formatting
 - ✅ TypeScript compilation (for TS files)
 - ✅ All tests passing
-- ✅ Code coverage ≥84%
+- ✅ Code coverage 100% (enforced in CI)
 
 These run automatically on commit via Husky hooks.
+
+### Package Manager Standards
+
+- **pnpm only** (no npm/yarn)
+- CI enforces pnpm with frozen lockfile
+- Archive directory is excluded from CI scope
+- No secrets in code; use environment variables
 
 ### Testing Requirements
 
 **Coverage Thresholds** (enforced in CI):
 
-- Branches: ≥75%
-- Functions: ≥80%
-- Lines: ≥84%
-- Statements: ≥84%
+- Branches: 100%
+- Functions: 100%
+- Lines: 100%
+- Statements: 100%
 
 **Before submitting a PR:**
 
-1. Run full test suite: `cd api && pnpm test`
-2. Check coverage: `cd api && pnpm test:coverage`
-3. Review uncovered code - is it intentional? See [COVERAGE_GAPS.md](./docs/COVERAGE_GAPS.md)
+1. Run full test suite: `pnpm test`
+2. Check coverage: `pnpm test:coverage`
+3. All tests must pass with 100% coverage
 
 **Writing Tests:**
 

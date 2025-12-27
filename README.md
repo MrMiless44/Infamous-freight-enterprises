@@ -20,6 +20,28 @@ This is enterprise software built for autonomous operations with auditable accou
 - 🔄 **Real-time Updates** - WebSocket-based real-time data synchronization
 - 📈 **Analytics & Monitoring** - Comprehensive metrics and monitoring
 
+## 🤖 AI Dispatch Operator v1 Flow
+
+The AI Dispatch Operator autonomously manages freight dispatch operations with intelligent decision-making:
+
+### Input
+- **Load Details**: Origin, destination, weight, special requirements
+- **Driver HOS**: Hours of service, available driving time, rest periods
+- **Locations**: Current positions, distance calculations, traffic patterns
+- **SLA**: Delivery commitments, time windows, priority levels
+
+### Logic
+- **Constraint Solver**: Matches loads to drivers based on HOS, location, and capacity
+- **Cost Optimization**: Minimizes deadhead miles, fuel costs, and empty runs
+- **Risk Scoring**: Evaluates on-time probability, weather, traffic, and driver performance
+
+### Output
+- **Dispatch Decision**: Optimal driver-load assignment with reasoning
+- **Driver Instructions**: Turn-by-turn guidance, pickup/delivery details
+- **ETA Updates**: Real-time arrival predictions with proactive alerts
+
+See [docs/AI_DISPATCH_OPERATOR_EXECUTION_PLAN.md](docs/AI_DISPATCH_OPERATOR_EXECUTION_PLAN.md) for complete implementation details.
+
 ## 🏗️ Monorepo Structure
 
 ```

@@ -9,6 +9,8 @@ on:
       - "**/package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+    paths-ignore:
+      - "archive/**"
   pull_request:
     branches: [main, develop]
     paths:
@@ -17,6 +19,8 @@ on:
       - "**/package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+    paths-ignore:
+      - "archive/**"
   schedule:
     - cron: "0 1 * * *"
 

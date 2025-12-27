@@ -2,8 +2,12 @@ name: CI
 
 on:
   pull_request:
+    paths-ignore:
+      - "archive/**"
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - "archive/**"
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -26,6 +30,11 @@ jobs:
           node-version: 20.18.1
           cache: pnpm
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Enable corepack (pnpm)
         run: corepack enable
 
@@ -39,28 +48,67 @@ jobs:
             echo "Error: package-lock.json files found. This repo uses pnpm; please remove npm lockfiles."
             exit 1
           fi
+
       - name: Install (workspace)
         env:
           HUSKY: 0
         run: pnpm install --frozen-lockfile
 
-      # ---- Option A: repo-wide scripts (if you added them) ----
-      # - name: Lint
-      #   run: pnpm lint
-      #
-      # - name: Typecheck
-      #   run: pnpm typecheck
-      #
-      # - name: Test
-      #   run: pnpm test
+      - name: Lint
+        run: pnpm lint
 
-      # ---- Option B: explicit per-app (works even if some packages lack scripts) ----
+      - name: Unit tests with coverage
+        run: pnpm test:coverage
+
       - name: Build Shared
         run: pnpm -C src/packages/shared build
 
       - name: Build API
         run: pnpm -C src/apps/api build
+
       - name: Build Web
         run: pnpm -C src/apps/web build
+
       - name: Build Mobile
         run: pnpm -C src/apps/mobile build
+
+      - name: Show repo tree (for debugging)
+        run: |
+          echo "Repository root:"
+          ls -la
+          echo "Top-level HTML files:"
+          ls -la *.html || true
+
+      - name: Install html tidy (libtidy)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y tidy
+          tidy -v || true
+
+      - name: Validate HTML files with tidy
+        run: |
+          set -e
+          HTML_FILES=$(find . -maxdepth 4 -type f -name "*.html" | tr '\n' ' ')
+          if [ -z "$HTML_FILES" ]; then
+            echo "No HTML files found; nothing to validate."
+            exit 0
+          fi
+          echo "HTML files found: $HTML_FILES"
+          ERR=0
+          for f in $HTML_FILES; do
+            echo "Validating $f"
+            tidy -e -q -utf8 "$f" || ERR=1
+          done
+          if [ $ERR -ne 0 ]; then
+            echo "::error::One or more HTML files failed tidy validation."
+            exit 1
+          fi
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-logs
+          path: |
+            **/*.log
+            **/*.txt

@@ -9,6 +9,7 @@ RUN corepack enable && HUSKY=0 pnpm install --filter infamous-freight-api... --f
 
 # Copy Prisma schema for the API (client is generated during build via prebuild hook)
 COPY src/apps/api/prisma ./src/apps/api/prisma
+RUN npx prisma generate
 
 # Copy the remaining API source and build
 COPY src/apps/api/tsconfig.json ./src/apps/api/tsconfig.json

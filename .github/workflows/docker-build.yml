@@ -3,7 +3,11 @@ name: Build Docker Images
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - "archive/**"
   pull_request:
+    paths-ignore:
+      - "archive/**"
 
 permissions:
   contents: read
