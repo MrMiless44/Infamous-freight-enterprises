@@ -53,6 +53,7 @@ The AI Dispatch Operator pilot demonstrated measurable operational improvements 
 ## Executive Summary
 
 **Total Annual Savings**: $102,000 (fleet of 10 trucks)  
+**Total Investment (One-Time)**: ~$35,700 implementation and configuration  
 **Payback Period**: 4.2 months  
 **ROI**: 285% first-year return
 
