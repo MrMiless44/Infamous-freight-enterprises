@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_VERSION: "20"
-      PNPM_VERSION: "8.15.9"
+      PNPM_VERSION: "8"
     permissions:
       actions: read
       contents: read
