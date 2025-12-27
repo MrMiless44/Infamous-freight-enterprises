@@ -26,7 +26,7 @@ The AI Dispatch Operator autonomously manages freight dispatch operations with i
 
 ### Input
 - **Load Details**: Origin, destination, weight, special requirements
-- **Driver HOS**: Hours of service, available driving time, rest periods
+- **Driver Hours of Service (HOS)**: Available driving time, rest periods
 - **Locations**: Current positions, distance calculations, traffic patterns
 - **SLA**: Delivery commitments, time windows, priority levels
 
