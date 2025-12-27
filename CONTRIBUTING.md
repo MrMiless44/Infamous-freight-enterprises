@@ -159,7 +159,7 @@ These run automatically on commit via Husky hooks.
 
 - **pnpm only** (no npm/yarn)
 - CI enforces pnpm with frozen lockfile
-- Archive directory is excluded from CI scope
+- Root-level `archive/**` paths are excluded from CI triggers
 - No secrets in code; use environment variables
 
 ### Testing Requirements
