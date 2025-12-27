@@ -47,9 +47,11 @@ infamous-freight-enterprise/
 ### Prerequisites
 
 - **Node.js** 20 or higher
-- **pnpm** 8.15.9
+- **pnpm** 8.15.9 (⚠️ **Required** - do not use npm or yarn)
 - **Docker** (for PostgreSQL and services)
 - **Git**
+
+> **Note**: This project exclusively uses pnpm for package management. Running `npm install` or `yarn install` is not supported and will cause CI failures.
 
 ### Installation
 

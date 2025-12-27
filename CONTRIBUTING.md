@@ -16,9 +16,11 @@ Thank you for your interest in contributing! This guide will help you get starte
 ### Prerequisites
 
 - Node.js 20+
-- pnpm 7.5.1 (managed automatically via Corepack)
+- pnpm 8.15.9 (managed automatically via Corepack)
 - PostgreSQL 14+ (or Docker)
 - Git
+
+> ⚠️ **Important**: This project uses **pnpm only**. Do not use `npm install` or `yarn install`. The CI will reject commits containing `package-lock.json` or `yarn.lock` files.
 
 ### Initial Setup
 
@@ -55,6 +57,22 @@ Thank you for your interest in contributing! This guide will help you get starte
    ```
 
 ## 💻 Development Workflow
+
+### Package Manager: pnpm Only
+
+This project exclusively uses **pnpm 8.15.9** for dependency management:
+
+- ✅ **Use**: `pnpm install`, `pnpm add <package>`
+- ❌ **Don't use**: `npm install`, `yarn install`, or `npm ci`
+- 🔒 **Enforced by**: CI checks will fail if `package-lock.json` or `yarn.lock` are present
+- 📝 **Lockfile**: Only `pnpm-lock.yaml` should be committed
+
+If you accidentally run `npm install`:
+```bash
+# Remove npm lockfile and reinstall with pnpm
+rm -f package-lock.json
+pnpm install
+```
 
 ### Monorepo Structure
 

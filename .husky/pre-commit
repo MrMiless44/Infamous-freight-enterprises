@@ -4,6 +4,29 @@ set -eu
 # Resolve repo root relative to this script so it works from any CWD
 REPO_ROOT="$(cd -- "$(dirname "$0")/.." && pwd -P)"
 
+# Check for npm/yarn lockfiles (must happen before any staging)
+check_lockfiles() {
+  echo "🔍 Checking for npm/yarn lockfiles..."
+  if [ -f "$REPO_ROOT/scripts/validation/check-lockfiles.sh" ]; then
+    (cd "$REPO_ROOT" && bash scripts/validation/check-lockfiles.sh)
+  else
+    # Fallback check if script doesn't exist - check all common lockfiles
+    if [ -f "$REPO_ROOT/package-lock.json" ] || \
+       [ -f "$REPO_ROOT/yarn.lock" ] || \
+       [ -f "$REPO_ROOT/npm-shrinkwrap.json" ] || \
+       git ls-files '**/package-lock.json' '**/yarn.lock' '**/npm-shrinkwrap.json' | grep -q .; then
+      echo "❌ Error: npm/yarn lockfiles detected. This project uses pnpm only."
+      echo "   Run: rm -f package-lock.json yarn.lock npm-shrinkwrap.json && pnpm install"
+      exit 1
+    fi
+    # Verify pnpm-lock.yaml exists
+    if [ ! -f "$REPO_ROOT/pnpm-lock.yaml" ]; then
+      echo "⚠️  Warning: pnpm-lock.yaml not found. Run: pnpm install"
+      exit 1
+    fi
+  fi
+}
+
 # Ensure pnpm is available (prefer Corepack) and fall back to npx/npm
 ensure_pnpm() {
   if command -v pnpm >/dev/null 2>&1; then
@@ -27,6 +50,12 @@ run_lint_staged() {
     exit 1
   fi
 }
+
+# Run checks in order
+if ! check_lockfiles; then
+  echo "❌ Lockfile check failed. Commit aborted."
+  exit 1
+fi
 
 if run_lint_staged; then
   echo "✅ Pre-commit checks passed!"
