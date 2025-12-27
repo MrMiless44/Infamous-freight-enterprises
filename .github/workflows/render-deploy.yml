@@ -3,7 +3,12 @@ name: Deploy API (Render)
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - "archive/**"
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: deploy-api-${{ github.ref }}
