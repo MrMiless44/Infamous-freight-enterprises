@@ -61,18 +61,18 @@
 ## Developer Workflow
 
 - Start dev: `pnpm dev` (all), `pnpm api:dev` (API on 3001 in Docker), `pnpm web:dev` (Web 3000).
-- Tests: `pnpm test`, coverage HTML in `api/coverage/`. API coverage thresholds enforced in CI (≈75–84%).
+- Tests: `pnpm test`, coverage HTML in `src/apps/api/coverage/`. API coverage thresholds enforced in CI (≈75–84%).
 - Lint/format: `pnpm lint && pnpm format`. Type check: `pnpm check:types`.
-- Prisma: edit `api/prisma/schema.prisma` → `cd api && pnpm prisma:migrate:dev --name <change>` → optional `pnpm prisma:studio` → `pnpm prisma:generate`.
+- Prisma: edit `src/apps/api/prisma/schema.prisma` → `cd src/apps/api && pnpm prisma:migrate:dev --name <change>` → optional `pnpm prisma:studio` → `pnpm prisma:generate`.
 - Codex CLI: AI coding agent available in devcontainer. Run `codex` for interactive mode, or use keyboard shortcut `Ctrl+Shift+C` in VS Code. See [QUICK_REFERENCE.md](QUICK_REFERENCE.md#codex-cli).
 
 ## File/Dir References
 
-- API routes: `api/src/routes/` (e.g., `health.js`, `shipments.js`, `ai.commands.js`, `voice.js`, `billing.js`).
-- Middleware: `api/src/middleware/` ([security.js](../api/src/middleware/security.js), [validation.js](../api/src/middleware/validation.js), `errorHandler.js`, `logger.js`, `securityHeaders.js`).
-- Services: `api/src/services/` (e.g., `aiSyntheticClient.js` with OpenAI/Anthropic/synthetic modes).
-- Shared: `packages/shared/src/` (`types.ts`, `constants.ts`, `utils.ts`, `env.ts`). Build outputs to `packages/shared/dist/`.
-- Web: `web/pages/`, `web/components/`. Use `ApiResponse<T>` and `SHIPMENT_STATUSES` from shared.
+- API routes: `src/apps/api/src/routes/` (e.g., `health.js`, `shipments.js`, `ai.commands.js`, `voice.js`, `billing.js`).
+- Middleware: `src/apps/api/src/middleware/` ([security.js](../src/apps/api/src/middleware/security.js), [validation.js](../src/apps/api/src/middleware/validation.js), `errorHandler.js`, `logger.js`, `securityHeaders.js`).
+- Services: `src/apps/api/src/services/` (e.g., `aiSyntheticClient.js` with OpenAI/Anthropic/synthetic modes).
+- Shared: `src/packages/shared/src/` (`types.ts`, `constants.ts`, `utils.ts`, `env.ts`). Build outputs to `src/packages/shared/dist/`.
+- Web: `src/apps/web/pages/`, `src/apps/web/components/`. Use `ApiResponse<T>` and `SHIPMENT_STATUSES` from shared.
 
 ## Examples
 
@@ -139,7 +139,7 @@
 
 - Build shared: `pnpm --filter @infamous-freight/shared build`
 - Run API tests only: `pnpm --filter api test`
-- Prisma generate: `cd api && pnpm prisma:generate`
+- Prisma generate: `cd src/apps/api && pnpm prisma:generate`
 - Kill ports: `lsof -ti:3001 | xargs kill -9` (API), `lsof -ti:3000 | xargs kill -9` (Web)
 - Env defaults: `AI_PROVIDER=synthetic` (see [.env.example](../.env.example#L27)), `VOICE_MAX_FILE_SIZE_MB=10` (see [.env.example](../.env.example#L42))
 - Env defaults: `AI_PROVIDER=synthetic` (see [.env.example](../.env.example#L27))
@@ -284,7 +284,7 @@ export default withBundleAnalyzer({
 **Run Bundle Analysis**:
 
 ```bash
-cd web
+cd src/apps/web
 ANALYZE=true pnpm build
 # Opens browser with interactive bundle visualization
 ```
@@ -389,7 +389,7 @@ router.get("/reports/analytics", complexLimiters.reports, async (req, res) => {
 
 ```bash
 # Run Lighthouse audit
-cd web
+cd src/apps/web
 pnpm build
 pnpm start &
 npx lighthouse http://localhost:3000 --view
