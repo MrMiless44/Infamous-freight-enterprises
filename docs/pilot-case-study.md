@@ -23,7 +23,7 @@
 ## Pilot Metrics (After 30 Days)
 
 - **Time saved**: 18 hours/week dispatcher time freed up
-- **Late deliveries prevented**: 85% reduction (2–3 late deliveries per week)
+- **Late deliveries prevented**: ≈80% reduction (2–3 late deliveries per week)
 - **Safety score delta**: +12% improvement in driver safety scores
 - **Human hours replaced**: 45% of manual dispatch work automated
 - **Revenue recovered**: $8,500/month from reduced deadhead miles
