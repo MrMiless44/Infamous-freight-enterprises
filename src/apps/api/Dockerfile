@@ -1,6 +1,7 @@
 FROM node:20-alpine AS builder
 
 WORKDIR /app
+ENV HUSKY=0
 
 # Install only the API workspace dependencies
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./

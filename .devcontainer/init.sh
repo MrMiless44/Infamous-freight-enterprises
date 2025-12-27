@@ -28,6 +28,7 @@ echo "✓ pnpm $(pnpm --version)"
 # Install dependencies if needed
 if [ ! -d "node_modules" ]; then
     echo "📦 Installing workspace dependencies..."
+    export HUSKY=0
     pnpm install
 fi
 
