@@ -14,6 +14,7 @@ build/
 coverage/
 .next/
 **/junit.xml
+*.tsbuildinfo
 
 # Environment files
 .env
