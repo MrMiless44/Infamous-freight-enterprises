@@ -1,0 +1,35 @@
+name: Container Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  trivy-dockerfile:
+    name: Scan Dockerfiles with Trivy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: repo
+          format: table
+          exit-code: 0
+
+      - name: Scan repository (Dockerfiles + dependencies)
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: fs
+          format: table
+          exit-code: 1
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
