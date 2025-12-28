@@ -11,9 +11,6 @@ This is enterprise software built for autonomous operations with auditable accou
 [![Node](https://img.shields.io/badge/node-18.x-339933?logo=node.js)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
 
-[![Node](https://img.shields.io/badge/node-18.x-339933?logo=node.js)](https://nodejs.org/)
-[![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
-
 ## 🏢 Enterprise Overview
 
 ### System Architecture
