@@ -166,16 +166,19 @@ These run automatically on commit via Husky hooks.
 
 **Coverage Thresholds** (enforced in CI):
 
-- Branches: 100%
-- Functions: 100%
-- Lines: 100%
-- Statements: 100%
+Coverage requirements vary by package:
+
+- **API**: Branches 75%, Functions 80%, Lines 84%, Statements 84%
+- **Web**: Branches 100%, Functions 100%, Lines 100%, Statements 100%
+- **Shared**: Branches 100%, Functions 100%, Lines 100%, Statements 100%
+
+See [COVERAGE_GAPS.md](./docs/COVERAGE_GAPS.md) for details on what is intentionally excluded from API coverage.
 
 **Before submitting a PR:**
 
 1. Run full test suite: `pnpm test`
 2. Check coverage: `pnpm test:coverage`
-3. All tests must pass with 100% coverage
+3. All tests must pass and meet the configured thresholds
 
 **Writing Tests:**
 
