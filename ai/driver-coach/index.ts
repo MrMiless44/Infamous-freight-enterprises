@@ -13,7 +13,7 @@ import type {
   ConfidenceScore,
   GuardrailViolation,
 } from '../contracts';
-import { logDecision, logConfidence } from '../observability/logger';
+import { logDecision } from '../observability/logger';
 
 /**
  * Helper: Generate coaching recommendation
