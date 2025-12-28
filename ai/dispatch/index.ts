@@ -117,9 +117,7 @@ export const dispatchRole: RoleContract = {
       if (violations.length > 0) {
         await logGuardrailViolations(decisionId, this.name, violations);
         
-        // If any critical violations, immediately escalate
-        const hasCritical = violations.some(v => v.severity === 'critical' || v.severity === 'high');
-        
+        // Guardrail violations always trigger escalation to human review
         return {
           decisionId,
           confidence: { value: 0, reasoning: 'Guardrail violations detected' },
