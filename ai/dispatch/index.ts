@@ -16,6 +16,77 @@ import type {
 import { logDecision, logConfidence, logGuardrailViolations } from '../observability/logger';
 
 /**
+ * Helper: Check if input involves billing data
+ */
+function involvesBillingData(input: DecisionInput): boolean {
+  const billingFields = ['payment', 'invoice', 'billing', 'price', 'rate', 'cost'];
+  const inputString = JSON.stringify(input).toLowerCase();
+  return billingFields.some(field => inputString.includes(field));
+}
+
+/**
+ * Helper: Check if proposed dispatch violates hours-of-service
+ */
+async function violatesHoursOfService(input: DecisionInput): Promise<boolean> {
+  // TODO: Implement actual HOS validation
+  // This would check against driver's current hours and regulations
+  return false;
+}
+
+/**
+ * Helper: Check if input accesses personal driver data
+ */
+function accessesPersonalDriverData(input: DecisionInput): boolean {
+  const personalFields = ['ssn', 'address', 'medical', 'personal', 'salary'];
+  const inputString = JSON.stringify(input).toLowerCase();
+  return personalFields.some(field => inputString.includes(field));
+}
+
+/**
+ * Helper: Generate recommendation for the dispatch action
+ */
+async function generateRecommendation(input: DecisionInput, context: RoleContext): Promise<Record<string, unknown>> {
+  // TODO: Implement actual recommendation generation based on:
+  // - Current traffic conditions
+  // - Weather forecasts
+  // - Driver availability and hours
+  // - Vehicle capacity and location
+  // - Historical performance data
+  
+  // Placeholder implementation
+  switch (input.action) {
+    case 'route-optimization':
+      return {
+        optimizedRoute: 'route-123',
+        estimatedTime: '4.5 hours',
+        estimatedDistance: '250 miles',
+        reasoning: 'Optimized for fuel efficiency and traffic conditions',
+      };
+    
+    case 'load-assignment':
+      return {
+        assignedDriver: 'driver-42',
+        vehicle: 'truck-7',
+        pickupTime: '08:00',
+        reasoning: 'Driver nearest to pickup location with available capacity',
+      };
+    
+    case 'delay-prediction':
+      return {
+        delayProbability: 0.15,
+        estimatedDelay: '30 minutes',
+        factors: ['Heavy traffic on I-95', 'Weather conditions'],
+        recommendation: 'Notify customer of potential delay',
+      };
+    
+    default:
+      return {
+        message: 'No specific recommendation available',
+      };
+  }
+}
+
+/**
  * Dispatch Operator AI Role Implementation
  */
 export const dispatchRole: RoleContract = {
@@ -61,7 +132,7 @@ export const dispatchRole: RoleContract = {
       await logConfidence(decisionId, this.name, confidence);
       
       // Step 3: Generate recommendation
-      const recommendation = await this.generateRecommendation(input, context);
+      const recommendation = await generateRecommendation(input, context);
       
       // Step 4: Determine if human review is needed
       const requiresHumanReview = confidence.value < this.confidenceThreshold;
@@ -117,7 +188,7 @@ export const dispatchRole: RoleContract = {
     const violations: GuardrailViolation[] = [];
     
     // Guardrail 1: Cannot access billing data
-    if (this.involvesBillingData(input)) {
+    if (involvesBillingData(input)) {
       violations.push({
         type: 'boundary',
         severity: 'critical',
@@ -137,7 +208,7 @@ export const dispatchRole: RoleContract = {
     }
     
     // Guardrail 3: Cannot violate hours-of-service regulations
-    if (await this.violatesHoursOfService(input)) {
+    if (await violatesHoursOfService(input)) {
       violations.push({
         type: 'safety',
         severity: 'critical',
@@ -147,7 +218,7 @@ export const dispatchRole: RoleContract = {
     }
     
     // Guardrail 4: Cannot access personal driver information beyond operational needs
-    if (this.accessesPersonalDriverData(input)) {
+    if (accessesPersonalDriverData(input)) {
       violations.push({
         type: 'data-access',
         severity: 'high',
@@ -200,77 +271,6 @@ export const dispatchRole: RoleContract = {
         contextCompleteness: 0.92,
       },
     };
-  },
-
-  /**
-   * Generate recommendation for the dispatch action (private helper)
-   */
-  async generateRecommendation(input: DecisionInput, context: RoleContext): Promise<Record<string, unknown>> {
-    // TODO: Implement actual recommendation generation based on:
-    // - Current traffic conditions
-    // - Weather forecasts
-    // - Driver availability and hours
-    // - Vehicle capacity and location
-    // - Historical performance data
-    
-    // Placeholder implementation
-    switch (input.action) {
-      case 'route-optimization':
-        return {
-          optimizedRoute: 'route-123',
-          estimatedTime: '4.5 hours',
-          estimatedDistance: '250 miles',
-          reasoning: 'Optimized for fuel efficiency and traffic conditions',
-        };
-      
-      case 'load-assignment':
-        return {
-          assignedDriver: 'driver-42',
-          vehicle: 'truck-7',
-          pickupTime: '08:00',
-          reasoning: 'Driver nearest to pickup location with available capacity',
-        };
-      
-      case 'delay-prediction':
-        return {
-          delayProbability: 0.15,
-          estimatedDelay: '30 minutes',
-          factors: ['Heavy traffic on I-95', 'Weather conditions'],
-          recommendation: 'Notify customer of potential delay',
-        };
-      
-      default:
-        return {
-          message: 'No specific recommendation available',
-        };
-    }
-  },
-
-  /**
-   * Check if input involves billing data (private helper)
-   */
-  involvesBillingData(input: DecisionInput): boolean {
-    const billingFields = ['payment', 'invoice', 'billing', 'price', 'rate', 'cost'];
-    const inputString = JSON.stringify(input).toLowerCase();
-    return billingFields.some(field => inputString.includes(field));
-  },
-
-  /**
-   * Check if proposed dispatch violates hours-of-service (private helper)
-   */
-  async violatesHoursOfService(input: DecisionInput): Promise<boolean> {
-    // TODO: Implement actual HOS validation
-    // This would check against driver's current hours and regulations
-    return false;
-  },
-
-  /**
-   * Check if input accesses personal driver data (private helper)
-   */
-  accessesPersonalDriverData(input: DecisionInput): boolean {
-    const personalFields = ['ssn', 'address', 'medical', 'personal', 'salary'];
-    const inputString = JSON.stringify(input).toLowerCase();
-    return personalFields.some(field => inputString.includes(field));
   },
 };
 

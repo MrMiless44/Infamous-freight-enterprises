@@ -16,6 +16,22 @@ import type {
 import { logDecision } from '../observability/logger';
 
 /**
+ * Helper: Generate fleet recommendation
+ */
+async function generateFleetRecommendation(input: DecisionInput): Promise<Record<string, unknown>> {
+  // TODO: Implement actual fleet intelligence logic
+  return {
+    maintenanceType: 'preventive',
+    vehicleId: 'truck-42',
+    issue: 'Brake pad wear detected',
+    urgency: 'medium',
+    estimatedCost: '$450',
+    recommendedSchedule: '2 weeks',
+    reasoning: 'Telemetry indicates 70% brake pad wear based on usage patterns',
+  };
+}
+
+/**
  * Fleet Intelligence AI Role Implementation
  */
 export const fleetIntelRole: RoleContract = {
@@ -36,7 +52,7 @@ export const fleetIntelRole: RoleContract = {
     
     const violations = await this.checkGuardrails(input, context);
     const confidence = await this.calculateConfidence(input, context);
-    const recommendation = await this.generateFleetRecommendation(input);
+    const recommendation = await generateFleetRecommendation(input);
     
     await logDecision({
       decisionId,
@@ -97,19 +113,6 @@ export const fleetIntelRole: RoleContract = {
         historicalAccuracy: 0.88,
         contextCompleteness: 0.92,
       },
-    };
-  },
-
-  async generateFleetRecommendation(input: DecisionInput): Promise<Record<string, unknown>> {
-    // TODO: Implement actual fleet intelligence logic
-    return {
-      maintenanceType: 'preventive',
-      vehicleId: 'truck-42',
-      issue: 'Brake pad wear detected',
-      urgency: 'medium',
-      estimatedCost: '$450',
-      recommendedSchedule: '2 weeks',
-      reasoning: 'Telemetry indicates 70% brake pad wear based on usage patterns',
     };
   },
 };

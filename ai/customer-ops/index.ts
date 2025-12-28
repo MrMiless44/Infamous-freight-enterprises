@@ -16,6 +16,23 @@ import type {
 import { logDecision } from '../observability/logger';
 
 /**
+ * Helper: Generate customer response
+ */
+async function generateCustomerResponse(input: DecisionInput): Promise<Record<string, unknown>> {
+  // TODO: Implement actual customer response generation
+  return {
+    responseType: 'status-update',
+    message: 'Your shipment is currently in transit and on schedule for delivery tomorrow by 5 PM.',
+    trackingInfo: {
+      status: 'in-transit',
+      location: 'Distribution Center - Chicago',
+      estimatedDelivery: '2025-12-29T17:00:00Z',
+    },
+    escalationNeeded: false,
+  };
+}
+
+/**
  * Customer Ops AI Role Implementation
  */
 export const customerOpsRole: RoleContract = {
@@ -36,7 +53,7 @@ export const customerOpsRole: RoleContract = {
     
     const violations = await this.checkGuardrails(input, context);
     const confidence = await this.calculateConfidence(input, context);
-    const recommendation = await this.generateCustomerResponse(input);
+    const recommendation = await generateCustomerResponse(input);
     
     await logDecision({
       decisionId,
@@ -107,20 +124,6 @@ export const customerOpsRole: RoleContract = {
         historicalAccuracy: 0.90,
         contextCompleteness: 0.94,
       },
-    };
-  },
-
-  async generateCustomerResponse(input: DecisionInput): Promise<Record<string, unknown>> {
-    // TODO: Implement actual customer response generation
-    return {
-      responseType: 'status-update',
-      message: 'Your shipment is currently in transit and on schedule for delivery tomorrow by 5 PM.',
-      trackingInfo: {
-        status: 'in-transit',
-        location: 'Distribution Center - Chicago',
-        estimatedDelivery: '2025-12-29T17:00:00Z',
-      },
-      escalationNeeded: false,
     };
   },
 };

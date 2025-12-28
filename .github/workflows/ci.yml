@@ -27,7 +27,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8.15.9
+          version: 8
 
       - name: Setup Node 18 + pnpm cache
         uses: actions/setup-node@v4
@@ -35,7 +35,7 @@ jobs:
           node-version: 18
           cache: pnpm
 
-      - name: Guard: no package-lock.json anywhere
+      - name: "Guard: no package-lock.json anywhere"
         run: |
           # Ensure no root-level npm lockfile
           test ! -f package-lock.json
@@ -45,6 +45,7 @@ jobs:
             echo "Error: package-lock.json files found. This repo uses pnpm; please remove npm lockfiles."
             exit 1
           fi
+      
       - name: Install (workspace)
         env:
           HUSKY: 0

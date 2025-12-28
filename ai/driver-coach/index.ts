@@ -16,6 +16,23 @@ import type {
 import { logDecision, logConfidence } from '../observability/logger';
 
 /**
+ * Helper: Generate coaching recommendation
+ */
+async function generateCoachingRecommendation(input: DecisionInput): Promise<Record<string, unknown>> {
+  // TODO: Implement actual coaching recommendation logic
+  return {
+    coachingType: 'fuel-efficiency',
+    severity: 'low',
+    message: 'Consider smoother acceleration to improve fuel efficiency',
+    targetMetrics: {
+      currentMPG: 6.2,
+      targetMPG: 7.5,
+      potentialSavings: '$150/month',
+    },
+  };
+}
+
+/**
  * Driver Coach AI Role Implementation
  */
 export const driverCoachRole: RoleContract = {
@@ -36,7 +53,7 @@ export const driverCoachRole: RoleContract = {
     
     const violations = await this.checkGuardrails(input, context);
     const confidence = await this.calculateConfidence(input, context);
-    const recommendation = await this.generateCoachingRecommendation(input);
+    const recommendation = await generateCoachingRecommendation(input);
     
     await logDecision({
       decisionId,
@@ -97,20 +114,6 @@ export const driverCoachRole: RoleContract = {
         modelCertainty: 0.80,
         historicalAccuracy: 0.85,
         contextCompleteness: 0.75,
-      },
-    };
-  },
-
-  async generateCoachingRecommendation(input: DecisionInput): Promise<Record<string, unknown>> {
-    // TODO: Implement actual coaching recommendation logic
-    return {
-      coachingType: 'fuel-efficiency',
-      severity: 'low',
-      message: 'Consider smoother acceleration to improve fuel efficiency',
-      targetMetrics: {
-        currentMPG: 6.2,
-        targetMPG: 7.5,
-        potentialSavings: '$150/month',
       },
     };
   },
