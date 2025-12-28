@@ -82,7 +82,7 @@ For detailed setup instructions, see the [Developer Guide](docs/developer-guide.
 
 - **pnpm only**: The repo declares `packageManager: pnpm@8.15.9` and CI installs with `pnpm install --frozen-lockfile`.
 - **Single source of truth**: `pnpm-lock.yaml` is the only lockfile used across CI and Vercel. Remove any stray `package-lock.json` or `npm-shrinkwrap.json` files that appear from npm commands to avoid dependency drift from pnpm installs.
-- **Prevention**: `.npmrc` disables npm lockfile generation (including shrinkwrap) and `.gitignore` blocks `package-lock.json`/`npm-shrinkwrap.json` across the workspace. Use pnpm for installs locally and in any deployment hooks to stay consistent.
+- **Prevention**: `.gitignore` blocks `package-lock.json`/`npm-shrinkwrap.json` across the workspace. Use pnpm for installs locally and in any deployment hooks to stay consistent.
 
 ## 📚 Documentation
 
