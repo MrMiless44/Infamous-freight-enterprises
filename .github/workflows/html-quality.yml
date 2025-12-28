@@ -23,7 +23,6 @@ jobs:
 
       - name: Show repo tree (for debugging)
         run: |
-          set -o pipefail
           mkdir -p ci-logs
           echo "Repository root:" | tee ci-logs/root.txt
           ls -la | tee -a ci-logs/root.txt
