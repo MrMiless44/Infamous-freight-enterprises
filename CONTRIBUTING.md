@@ -81,19 +81,19 @@ pnpm format
 
 ### Working with Services
 
-**API Service** (`/api`)
+**API Service** (`/src/apps/api`)
 
 ```bash
-cd api
+cd src/apps/api
 pnpm dev              # Start dev server
 pnpm test             # Run tests
 pnpm prisma:studio    # Open database GUI
 ```
 
-**Web Service** (`/web`)
+**Web Service** (`/src/apps/web`)
 
 ```bash
-cd web
+cd src/apps/web
 pnpm dev              # Start Next.js
 pnpm build            # Production build
 ```
@@ -101,7 +101,7 @@ pnpm build            # Production build
 **Shared Package** (`/src/packages/shared`)
 
 ```bash
-cd packages/shared
+cd src/packages/shared
 pnpm build            # Build TypeScript
 pnpm dev              # Watch mode
 ```
