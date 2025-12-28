@@ -1,4 +1,4 @@
-name: Container Security Scan
+name: Repository Security Scan
 
 on:
   push:
