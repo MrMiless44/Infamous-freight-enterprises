@@ -45,6 +45,7 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p ci-logs
+          # Search up to 6 directory levels deep for HTML files
           mapfile -t HTML_FILES < <(find "$HTML_ROOT" -maxdepth 6 -type f -name "*.html" \
             -not -path "*/node_modules/*" \
             -not -path "*/dist/*" \
