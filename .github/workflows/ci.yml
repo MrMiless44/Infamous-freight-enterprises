@@ -2,8 +2,12 @@ name: CI
 
 on:
   pull_request:
+    paths-ignore:
+      - 'archive/**'
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'archive/**'
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -20,14 +24,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node 20 + pnpm cache
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node 18 + pnpm cache
         uses: actions/setup-node@v4
         with:
-          node-version: 20.18.1
+          node-version: 18
           cache: pnpm
-
-      - name: Enable corepack (pnpm)
-        run: corepack enable
 
       - name: Guard: no package-lock.json anywhere
         run: |

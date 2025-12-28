@@ -2,6 +2,8 @@ name: Deploy Pages
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'archive/**'
   workflow_dispatch:
 
 permissions:
