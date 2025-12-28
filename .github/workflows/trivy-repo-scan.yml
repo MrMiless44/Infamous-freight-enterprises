@@ -18,13 +18,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: repo
-          format: table
-          exit-code: 0
-
       - name: Scan repository (Dockerfiles + dependencies)
         uses: aquasecurity/trivy-action@master
         with:
