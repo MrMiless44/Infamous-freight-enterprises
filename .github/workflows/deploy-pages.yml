@@ -1,0 +1,79 @@
+name: Deploy Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show repo tree (for debugging)
+        run: |
+          mkdir -p ci-logs
+          echo "Repository root:" | tee ci-logs/root.txt
+          ls -la | tee -a ci-logs/root.txt
+          echo "Top-level HTML files:" | tee -a ci-logs/root.txt
+          ls -la *.html 2>&1 | tee -a ci-logs/root.txt || true
+
+      - name: Install html tidy (libtidy)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y tidy
+          tidy -v || true
+
+      - name: Validate HTML files with tidy
+        run: |
+          set -e
+          mkdir -p ci-logs
+          HTML_FILES=$(find . -maxdepth 4 -type f -name "*.html" | tr '\n' ' ')
+          if [ -z "$HTML_FILES" ]; then
+            echo "No HTML files found; nothing to validate." | tee ci-logs/tidy.log
+            exit 0
+          fi
+          echo "HTML files found: $HTML_FILES" | tee ci-logs/tidy.log
+          ERR=0
+          for f in $HTML_FILES; do
+            echo "Validating $f" | tee -a ci-logs/tidy.log
+            tidy -e -q -utf8 "$f" 2>&1 | tee -a ci-logs/tidy.log || ERR=1
+          done
+          if [ $ERR -ne 0 ]; then
+            echo "::error::One or more HTML files failed tidy validation." | tee -a ci-logs/tidy.log
+            exit 1
+          fi
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-logs
+          path: ci-logs
+
+      - name: Upload artifact (static site)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+          # If your site is in a subfolder (e.g., web), change to: path: web
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
