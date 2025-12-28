@@ -8,6 +8,81 @@ This is enterprise software built for autonomous operations with auditable accou
 
 [![CI](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/MrMiless44/Infamous-freight-enterprises/branch/main/graph/badge.svg)](https://codecov.io/gh/MrMiless44/Infamous-freight-enterprises)
+[![Node](https://img.shields.io/badge/node-18.x-339933?logo=node.js)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
+
+[![Node](https://img.shields.io/badge/node-18.x-339933?logo=node.js)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
+
+## 🏢 Enterprise Overview
+
+### System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Client Layer (Web/Mobile)                     │
+│          Next.js Dashboard + React Native Mobile App             │
+└────────────────────────┬────────────────────────────────────────┘
+                         │ REST API + JWT Auth
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                      API Gateway Layer                           │
+│    Express.js • Rate Limiting • Scope-based Authorization        │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+        ┌────────────────┼────────────────┐
+        ↓                ↓                ↓
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│  AI Dispatch │  │ Fleet Intel  │  │ Customer Ops │
+│   Operator   │  │      AI      │  │      AI      │
+└──────────────┘  └──────────────┘  └──────────────┘
+        │                │                │
+        └────────────────┼────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                   Data & Memory Layer                            │
+│        PostgreSQL + Prisma ORM • Redis Cache                     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### AI Roles and Boundaries
+
+**AI roles are scoped, audited, and bounded:**
+
+- **Dispatch Operator AI**: Route optimization, load assignments, real-time dispatching
+  - **Allowed**: Suggest assignments, flag delays, optimize routes
+  - **Forbidden**: Override human dispatch decisions without approval, access billing data
+  
+- **Driver Coach AI**: Performance analytics, safety coaching, efficiency recommendations
+  - **Allowed**: Provide coaching, analyze driving patterns, suggest improvements
+  - **Forbidden**: Disciplinary actions, access to personal driver information
+  
+- **Fleet Intelligence AI**: Predictive maintenance, fuel optimization, asset tracking
+  - **Allowed**: Monitor vehicle health, predict maintenance needs, optimize fuel usage
+  - **Forbidden**: Approve maintenance expenditures, make purchasing decisions
+  
+- **Customer Ops AI**: Query handling, shipment updates, proactive communication
+  - **Allowed**: Answer queries, provide status updates, escalate issues
+  - **Forbidden**: Make pricing decisions, issue refunds without human approval
+
+### Non-Goals for AI System
+
+The AI system is **NOT** designed to:
+
+- Replace human judgment in safety-critical decisions
+- Operate without audit trails or human oversight
+- Make financial commitments or legal agreements
+- Access or modify sensitive personal employee data without authorization
+- Override regulatory compliance requirements
+
+### Safety & Auditability
+
+- **Decision Logging**: Every AI decision is logged with context, confidence scores, and reasoning
+- **Human-in-the-Loop**: Critical decisions require human approval before execution
+- **Confidence Thresholds**: AI actions below confidence thresholds are escalated to humans
+- **Guardrails**: Hard limits prevent AI from accessing unauthorized data or performing forbidden actions
+- **Audit Trail**: Complete audit trail for compliance and retrospective analysis
+- **Rollback Capability**: All AI decisions can be reviewed and reversed if necessary
 
 ## ✨ Key Features
 
@@ -46,8 +121,8 @@ infamous-freight-enterprise/
 
 ### Prerequisites
 
-- **Node.js** 20 or higher
-- **pnpm** 8.15.9
+- **Node.js** 18.x
+- **pnpm** 8.x
 - **Docker** (for PostgreSQL and services)
 - **Git**
 
@@ -212,7 +287,17 @@ The full go-to-market and operational rollout is documented in [`docs/AI_DISPATC
 
 ## 📄 License
 
-This project is licensed under the terms specified in [LICENSE](LICENSE).
+**Proprietary Software - All Rights Reserved**
+
+This project is proprietary software. All rights are reserved by Infæmous Freight Enterprise. 
+
+**Usage Rights:**
+- This software and associated documentation files (the "Software") are protected by copyright law
+- Unauthorized copying, distribution, modification, or use is strictly prohibited
+- Access to this repository does not grant any license or rights to use, copy, modify, or distribute the Software
+- For licensing inquiries or permission requests, please contact the project maintainers
+
+See [LICENSE](LICENSE) for complete terms.
 
 ## 👥 Team & Support
 
