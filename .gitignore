@@ -74,3 +74,4 @@ junit.xml
 coverage/
 
 .fake
+ci-logs/
