@@ -1,0 +1,30 @@
+# HTML Tidy Configuration
+# Standardizes HTML validation rules across the repository
+
+# Input/Output
+input-encoding: utf8
+output-encoding: utf8
+
+# Document Processing
+quiet: yes
+show-errors: 6
+show-warnings: yes
+
+# HTML Version
+doctype: html5
+
+# Treatment of Errors
+drop-empty-elements: no
+drop-empty-paras: no
+
+# Pretty Print
+indent: auto
+indent-spaces: 2
+wrap: 0
+
+# Character Encoding
+char-encoding: utf8
+
+# Miscellaneous
+markup: yes
+show-body-only: no
