@@ -121,6 +121,17 @@ codex                 # Interactive AI coding agent
 codex exec "task"     # Non-interactive mode
 ```
 
+**Configuration:**
+
+```bash
+# Optional: Customize Codex settings
+cd .codex
+cp config.toml.example config.toml
+# Edit config.toml for model preferences, execution policies, etc.
+```
+
+See [`.codex/README.md`](.codex/README.md) for complete configuration options.
+
 **VS Code Integration:**
 
 - Run Task: Terminal → Run Task → "Codex: Start"

@@ -39,6 +39,14 @@ codex
 
 # Non-interactive exec (see docs)
 codex exec --help
+
+# Configure Codex (optional)
+cd .codex
+cp config.toml.example config.toml
+# Edit config.toml for custom settings
+```
+
+> **📝 Configuration:** See [`.codex/README.md`](../.codex/README.md) for setup instructions, model preferences, and execution policies.
 ````
 
 ````
