@@ -1,0 +1,126 @@
+name: HTML Validation
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-html:
+    name: Validate HTML Files
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show repository tree structure
+        run: |
+          echo "=== Repository Tree Structure ==="
+          tree -L 3 -I 'node_modules|.git' || ls -R | head -100
+          echo ""
+
+      - name: List top-level HTML files
+        run: |
+          echo "=== Top-level HTML files ==="
+          find . -maxdepth 1 -name "*.html" -type f || \
+            echo "No top-level HTML files found"
+          echo ""
+
+      - name: Install HTML Tidy
+        run: |
+          echo "=== Installing HTML Tidy ==="
+          sudo apt-get update -qq
+          sudo apt-get install -y libtidy5deb1 tidy
+          echo "HTML Tidy version:"
+          tidy --version
+          echo ""
+
+      - name: Find HTML files (depth 4)
+        id: find-html
+        run: |
+          echo "=== Finding HTML files (up to depth 4) ==="
+          HTML_FILES=$(find . -maxdepth 4 -name "*.html" -type f \
+            -not -path "*/node_modules/*" -not -path "*/.git/*" \
+            2>/dev/null || true)
+
+          if [ -z "$HTML_FILES" ]; then
+            echo "No HTML files found - exiting successfully"
+            echo "html_found=false" >> $GITHUB_OUTPUT
+          else
+            echo "Found HTML files:"
+            echo "$HTML_FILES"
+            echo "$HTML_FILES" > /tmp/html_files.txt
+            echo "html_found=true" >> $GITHUB_OUTPUT
+          fi
+          echo ""
+
+      - name: Validate HTML files
+        if: steps.find-html.outputs.html_found == 'true'
+        id: validate
+        run: |
+          echo "=== Validating HTML files with Tidy ==="
+          mkdir -p /tmp/validation-logs
+          VALIDATION_FAILED=0
+
+          while IFS= read -r file; do
+            echo "Validating: $file"
+
+            # Run tidy with common options for HTML5
+            # -q: quiet mode (only errors)
+            # -e: show only errors and warnings
+            # --gnu-emacs: format output for better parsing
+            LOG_FILE="/tmp/validation-logs/$(basename "$file").log"
+            if tidy -q -e --gnu-emacs "$file" 2>&1 | tee "$LOG_FILE"; then
+              echo "✅ PASS: $file"
+            else
+              TIDY_EXIT=$?
+              # Tidy exit codes: 0=ok, 1=warnings, 2=errors
+              if [ $TIDY_EXIT -eq 2 ]; then
+                echo "❌ FAIL: $file (errors found)"
+                VALIDATION_FAILED=1
+              elif [ $TIDY_EXIT -eq 1 ]; then
+                echo "⚠️  WARN: $file (warnings found)"
+                # Warnings don't fail the build
+              fi
+            fi
+            echo "---"
+          done < /tmp/html_files.txt
+
+          echo ""
+          if [ $VALIDATION_FAILED -eq 1 ]; then
+            echo "❌ HTML validation failed for one or more files"
+            echo "validation_status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "✅ All HTML files validated successfully"
+            echo "validation_status=passed" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload validation logs
+        if: failure() && steps.find-html.outputs.html_found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-validation-logs
+          path: /tmp/validation-logs/
+          retention-days: 7
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "=== HTML Validation Summary ==="
+          HTML_FOUND="${{ steps.find-html.outputs.html_found }}"
+          VALIDATION_STATUS="${{ steps.validate.outputs.validation_status }}"
+
+          if [ "$HTML_FOUND" != "true" ]; then
+            echo "✅ No HTML files found - workflow completed"
+          elif [ "$VALIDATION_STATUS" == "passed" ]; then
+            echo "✅ All HTML files passed validation"
+          elif [ "$VALIDATION_STATUS" == "failed" ]; then
+            echo "❌ HTML validation failed - check artifacts"
+          fi
