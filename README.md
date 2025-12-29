@@ -7,6 +7,7 @@ Infamous Freight Enterprise deploys the **Infamous AI Dispatch Operator™**—a
 This is enterprise software built for autonomous operations with auditable accountability.
 
 [![CI](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci.yml)
+[![HTML Quality](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/html-quality.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/html-quality.yml)
 [![codecov](https://codecov.io/gh/MrMiless44/Infamous-freight-enterprises/branch/main/graph/badge.svg)](https://codecov.io/gh/MrMiless44/Infamous-freight-enterprises)
 [![Node](https://img.shields.io/badge/node-18.x-339933?logo=node.js)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
