@@ -1,10 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../db/prisma";
 import { AppError } from "../middleware/validate";
 import * as aiCoachService from "../services/aiCoach.service";
-
-const prisma = new PrismaClient();
-
 interface DriverQuery {
   isAvailable?: string;
   page?: string;
