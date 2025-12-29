@@ -3,7 +3,6 @@ import prisma from "../db/prisma";
 
 interface Load {
   id: string;
-  id: string;
   pickupLat: number;
   pickupLng: number;
   deliveryLat: number;
