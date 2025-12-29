@@ -9,12 +9,8 @@ cd "$ROOT_DIR"
 
 echo "🔍 Searching for top-level HTML files..."
 
-# Find top-level HTML files (maxdepth 1) with same exclusions as CI workflow
-mapfile -t HTML_FILES < <(find . -maxdepth 1 -type f -name "*.html" \
-  -not -path "*/node_modules/*" \
-  -not -path "*/dist/*" \
-  -not -path "*/build/*" \
-  -not -path "*/.git/*" 2>/dev/null || true)
+# Find top-level HTML files (maxdepth 1 only searches root directory)
+mapfile -t HTML_FILES < <(find . -maxdepth 1 -type f -name "*.html" 2>/dev/null || true)
 
 if [ ${#HTML_FILES[@]} -eq 0 ]; then
   echo "✅ No top-level HTML files found; nothing to validate."
@@ -41,16 +37,11 @@ echo ""
 # Function to validate a single HTML file
 validate_html_file() {
   local file=$1
-  local config_flag=""
   
   if [ -f ".tidyrc" ]; then
-    config_flag="-config .tidyrc"
-  fi
-  
-  if tidy -e -q -utf8 $config_flag "$file" 2>&1; then
-    return 0
+    tidy -e -q -utf8 -config .tidyrc "$file" 2>&1
   else
-    return 1
+    tidy -e -q -utf8 "$file" 2>&1
   fi
 }
 
