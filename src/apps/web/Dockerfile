@@ -21,6 +21,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 # Build shared package
 FROM base AS builder-shared
 WORKDIR /app
+COPY package.json ./
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY --from=dependencies /app/src/packages ./src/packages
 COPY src/packages/shared ./src/packages/shared

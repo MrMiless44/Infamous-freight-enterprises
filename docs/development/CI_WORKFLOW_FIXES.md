@@ -5,8 +5,8 @@
 GitHub Actions workflows were failing due to **pnpm version mismatch**:
 
 - Workflows specified pnpm version **10**
-- Project requires pnpm version **7.5.1** (specified in `package.json`)
-- pnpm v10 introduced `approve-builds` command that doesn't exist in v7.5.1
+- Project requires pnpm version **8.15.9** (specified in `package.json`)
+- pnpm v10 introduced `approve-builds` command that doesn't exist in v8.15.9
 
 ## Fixes Applied
 
@@ -14,12 +14,12 @@ GitHub Actions workflows were failing due to **pnpm version mismatch**:
 
 **Files Modified:**
 
-- `.github/workflows/ci.yml` - Changed `PNPM_VERSION: "10"` → `"7.5.1"`
-- `.github/workflows/codeql.yml` - Changed `PNPM_VERSION: "10"` → `"7.5.1"`
+- `.github/workflows/ci.yml` - Changed `PNPM_VERSION: "10"` → `"8.15.9"`
+- `.github/workflows/codeql.yml` - Changed `PNPM_VERSION: "10"` → `"8.15.9"`
 
 ### 2. Removed pnpm v10-Specific `approve-builds` Steps
 
-The `approve-builds` command is a pnpm v10 feature that doesn't exist in v7.5.1. Removed these steps from all workflows:
+The `approve-builds` command is a pnpm v10 feature that doesn't exist in v8.15.9. Removed these steps from all workflows:
 
 **Files Modified:**
 
@@ -39,7 +39,7 @@ The `approve-builds` command is a pnpm v10 feature that doesn't exist in v7.5.1.
 ### Removed Step Example:
 
 ```yaml
-# REMOVED - This step doesn't work with pnpm 7.5.1
+# REMOVED - This step doesn't work with pnpm 8.15.9
 - name: Approve required build scripts (pnpm >=10)
   run: pnpm -w approve-builds @prisma/client @prisma/engines prisma @scarf/scarf unrs-resolver
   continue-on-error: true
@@ -92,7 +92,7 @@ This error is incorrect - the YAML files follow proper indentation and structure
 
 All GitHub Actions workflows should now:
 
-- ✅ Use correct pnpm version (7.5.1)
+- ✅ Use correct pnpm version (8.15.9)
 - ✅ Skip non-existent `approve-builds` command
 - ✅ Successfully install dependencies
 - ✅ Run tests and builds without pnpm-related errors
@@ -107,7 +107,7 @@ Some workflows already had pnpm version hardcoded in the `pnpm/action-setup@v2` 
 - name: Setup pnpm
   uses: pnpm/action-setup@v2
   with:
-    version: 7.5.1 # Already correct
+    version: 8.15.9 # Already correct
 ```
 
 These workflows didn't need version updates, only removal of `approve-builds` steps.
@@ -130,4 +130,4 @@ December 2025
 
 - GitHub Actions workflows failing with pnpm command errors
 - CI/CD pipeline blocking development progress
-- Need to match project's pnpm version specification (7.5.1)
+- Need to match project's pnpm version specification (8.15.9)

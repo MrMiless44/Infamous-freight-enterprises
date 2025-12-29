@@ -42,7 +42,7 @@
 - **Status**: Configured, requires npm registry access
 - **Action Taken**:
   - Enabled Corepack for pnpm version management
-  - Prepared pnpm v7.5.1 as specified in package.json
+  - Prepared pnpm v8.15.9 as specified in package.json
   - Set up pre-commit hooks with proper PATH configuration
 
 **Status**: Ready for use once npm registry connectivity is restored
@@ -92,7 +92,7 @@ When npm registry is stable:
 ```bash
 # 1. Ensure Corepack is active
 corepack enable
-corepack prepare pnpm@7.5.1 --activate
+corepack prepare pnpm@8.15.9 --activate
 
 # 2. Clean install dependencies
 pnpm install
