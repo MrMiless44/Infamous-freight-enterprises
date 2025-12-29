@@ -8,8 +8,8 @@ avatar.use(requireAuth);
 
 avatar.get("/insights", async (req, res) => {
   const insights = await getAvatarInsights(
-    req.user.id,
-    req.user.organizationId,
+    req.user!.id,
+    req.user!.organizationId,
   );
   res.json(insights);
 });

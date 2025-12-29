@@ -8,7 +8,7 @@ route.use(requireAuth);
 
 route.post("/start", async (req, res) => {
   const session = await prisma.routeSession.create({
-    data: { userId: req.user.id, organizationId: req.user.organizationId },
+    data: { userId: req.user!.id, organizationId: req.user!.organizationId },
   });
   res.json(session);
 });
@@ -20,7 +20,7 @@ route.post("/:id/event", async (req, res) => {
     return res.status(400).json({ error: "type and meta required" });
 
   const session = await prisma.routeSession.findFirst({
-    where: { id, organizationId: req.user.organizationId },
+    where: { id, organizationId: req.user!.organizationId },
   });
 
   if (!session) return res.sendStatus(404);
@@ -34,7 +34,7 @@ route.post("/:id/event", async (req, res) => {
 route.post("/:id/end", async (req, res) => {
   const { id } = req.params;
   const session = await prisma.routeSession.findFirst({
-    where: { id, organizationId: req.user.organizationId },
+    where: { id, organizationId: req.user!.organizationId },
   });
 
   if (!session) return res.sendStatus(404);
