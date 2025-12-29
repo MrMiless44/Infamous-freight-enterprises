@@ -161,6 +161,7 @@ For detailed setup instructions, see the [Developer Guide](docs/developer-guide.
 
 Comprehensive documentation is available in the [`docs/`](docs/) directory:
 
+- **[Recommendations](RECOMMENDATIONS.md)** ⭐ **NEW** - Strategic roadmap for future improvements
 - **[Developer Guide](docs/developer-guide.md)** - Complete development setup and workflow
 - **[Developer Onboarding](docs/development/developer-onboarding.md)** - Quick-start steps and required commands
 - **[API Reference](docs/api/API_REFERENCE.md)** - API endpoints and usage
