@@ -1,14 +1,60 @@
 {
   "name": "infamous-freight-enterprises",
   "version": "1.0.0",
+  "description": "Infamous Freight Enterprises - AI-powered freight management platform",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.15.0"
+  },
   "scripts": {
-    "build": "node scripts/build-pages.mjs"
+    "dev": "pnpm --parallel --filter './src/apps/*' dev",
+    "dev:api": "pnpm --filter infamous-freight-api dev",
+    "dev:web": "pnpm --filter infamous-freight-web dev",
+    "dev:mobile": "pnpm --filter infamous-freight-mobile start",
+    "build": "pnpm run build:shared && pnpm run build:apps",
+    "build:shared": "pnpm --filter @infamous-freight/shared build",
+    "build:apps": "pnpm --filter './src/apps/*' build",
+    "build:api": "pnpm --filter infamous-freight-api build",
+    "build:web": "pnpm --filter infamous-freight-web build",
+    "build:mobile": "pnpm --filter infamous-freight-mobile build",
+    "build:pages": "node scripts/build-pages.mjs",
+    "start": "pnpm --parallel --filter './src/apps/*' start",
+    "start:api": "pnpm --filter infamous-freight-api start",
+    "start:web": "pnpm --filter infamous-freight-web start",
+    "test": "pnpm --filter './src/{apps,packages}/*' test",
+    "test:api": "pnpm --filter infamous-freight-api test",
+    "test:web": "pnpm --filter infamous-freight-web test",
+    "test:shared": "pnpm --filter @infamous-freight/shared test",
+    "test:e2e": "pnpm --filter e2e test",
+    "test:coverage": "pnpm --filter './src/{apps,packages}/*' test:coverage",
+    "lint": "pnpm --filter './src/{apps,packages}/*' lint",
+    "lint:fix": "pnpm --filter './src/{apps,packages}/*' lint:fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm --filter './src/{apps,packages}/*' --parallel typecheck",
+    "clean": "pnpm --filter './src/{apps,packages}/*' clean && rm -rf node_modules",
+    "prisma:generate": "pnpm --filter infamous-freight-api prisma:generate",
+    "prisma:migrate": "pnpm --filter infamous-freight-api prisma:migrate",
+    "prisma:migrate:dev": "pnpm --filter infamous-freight-api prisma:migrate -- dev",
+    "prisma:studio": "pnpm --filter infamous-freight-api prisma:studio",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:rebuild": "docker-compose up -d --build",
+    "prepare": "husky install"
   },
   "workspaces": [
     "src/apps/*",
     "src/packages/*",
     "tests/*"
-  ]
+  ],
+  "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0"
+  },
+  "packageManager": "pnpm@8.15.9"
 }

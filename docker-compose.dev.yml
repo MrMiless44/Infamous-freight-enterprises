@@ -1,0 +1,76 @@
+version: "3.9"
+
+# Development-specific Docker Compose configuration
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  # PostgreSQL with development settings
+  postgres:
+    environment:
+      # Enable more verbose logging in development
+      POSTGRES_LOG_STATEMENT: all
+    ports:
+      - "5432:5432" # Expose to host for local development tools
+
+  # Redis with development settings
+  redis:
+    command: redis-server --loglevel verbose
+    ports:
+      - "6379:6379" # Expose to host for local development tools
+
+  # API in development mode
+  api:
+    build:
+      context: .
+      dockerfile: src/apps/api/Dockerfile
+      target: builder # Use builder stage for development
+    command: pnpm --filter infamous-freight-api dev
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://infamous:infamouspass@postgres:5432/infamous_freight
+      REDIS_URL: redis://:redispass@redis:6379
+    volumes:
+      # Mount source code for hot reload
+      - ./src/apps/api/src:/app/src/apps/api/src:ro
+      - ./src/apps/api/prisma:/app/src/apps/api/prisma:ro
+    ports:
+      - "${API_PORT:-4000}:${API_PORT:-4000}"
+
+  # Web in development mode
+  web:
+    build:
+      context: .
+      dockerfile: src/apps/web/Dockerfile
+      target: builder # Use builder stage for development
+    command: pnpm --filter infamous-freight-web dev
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_BASE: http://localhost:${API_PORT:-4000}/api
+    volumes:
+      # Mount source code for hot reload
+      - ./src/apps/web/pages:/app/src/apps/web/pages:ro
+      - ./src/apps/web/components:/app/src/apps/web/components:ro
+      - ./src/apps/web/public:/app/src/apps/web/public:ro
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+
+  # pgAdmin for database management (development only)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: infamous_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@infamous.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+volumes:
+  pgadmin_data:
+    driver: local
