@@ -99,16 +99,22 @@ dispatch.post(
       .withMessage("Pickup latitude must be a valid number between -90 and 90"),
     body("pickupLng")
       .isFloat({ min: -180, max: 180 })
-      .withMessage("Pickup longitude must be a valid number between -180 and 180"),
+      .withMessage(
+        "Pickup longitude must be a valid number between -180 and 180",
+      ),
     body("deliveryAddress")
       .notEmpty()
       .withMessage("Delivery address is required"),
     body("deliveryLat")
       .isFloat({ min: -90, max: 90 })
-      .withMessage("Delivery latitude must be a valid number between -90 and 90"),
+      .withMessage(
+        "Delivery latitude must be a valid number between -90 and 90",
+      ),
     body("deliveryLng")
       .isFloat({ min: -180, max: 180 })
-      .withMessage("Delivery longitude must be a valid number between -180 and 180"),
+      .withMessage(
+        "Delivery longitude must be a valid number between -180 and 180",
+      ),
     body("pickupTime").isISO8601().withMessage("Invalid pickup time format"),
     body("deliveryTime")
       .isISO8601()
@@ -218,9 +224,7 @@ dispatch.post(
     body("loadIds")
       .isArray({ min: 1, max: 100 })
       .withMessage("loadIds must be a non-empty array with at most 100 items"),
-    body("loadIds.*")
-      .isUUID()
-      .withMessage("Each loadId must be a valid UUID"),
+    body("loadIds.*").isUUID().withMessage("Each loadId must be a valid UUID"),
   ],
   validate,
   dispatchController.optimizeRoutes,
