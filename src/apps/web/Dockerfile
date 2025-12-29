@@ -12,7 +12,7 @@ COPY src/apps/web/package.json ./src/apps/web/
 COPY src/packages/shared/package.json ./src/packages/shared/
 # Generate lockfile if placeholder exists, then install
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    if grep -q "placeholder" pnpm-lock.yaml 2>/dev/null; then \
+    if grep -qF "(pnpm-lock.yaml content placeholder)" pnpm-lock.yaml 2>/dev/null; then \
         echo "Generating lockfile..." && HUSKY=0 pnpm install --filter=infamous-freight-web --filter=@infamous-freight/shared; \
     else \
         echo "Using existing lockfile..." && HUSKY=0 pnpm install --frozen-lockfile --filter=infamous-freight-web --filter=@infamous-freight/shared; \
