@@ -1,1 +1,14 @@
-<updated package.json contents if changed>
+{
+  "name": "infamous-freight-enterprises",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-pages.mjs"
+  },
+  "workspaces": [
+    "src/apps/*",
+    "src/packages/*",
+    "tests/*"
+  ]
+}

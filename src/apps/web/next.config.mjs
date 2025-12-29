@@ -11,7 +11,8 @@ const apiBaseUrl =
 
 const nextConfig = {
   reactStrictMode: true,
-  output: "standalone", // Enable standalone output for Docker optimization
+  // Use static export for GitHub Pages, standalone for Docker
+  output: process.env.GITHUB_PAGES_BUILD === "true" ? "export" : "standalone",
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,

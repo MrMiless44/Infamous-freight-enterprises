@@ -1,81 +1,73 @@
-name: Deploy Pages
+name: Build, Validate & Deploy GitHub Pages
+
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'archive/**'
-  workflow_dispatch:
+  pull_request:
 
 permissions:
   contents: read
   pages: write
   id-token: write
+  pull-requests: read
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: true
 
 jobs:
   build:
+    name: Build & Validate
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      # 1️⃣ Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Show repo tree (for debugging)
-        run: |
-          mkdir -p ci-logs
-          echo "Repository root:" | tee ci-logs/root.txt
-          ls -la | tee -a ci-logs/root.txt
-          echo "Top-level HTML files:" | tee -a ci-logs/root.txt
-          ls -la *.html 2>&1 | tee -a ci-logs/root.txt || true
-
-      - name: Install html tidy (libtidy)
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y tidy
-          tidy -v || true
-
-      - name: Validate HTML files with tidy
-        run: |
-          set -e
-          mkdir -p ci-logs
-          HTML_FILES=$(find . -maxdepth 4 -type f -name "*.html" | tr '\n' ' ')
-          if [ -z "$HTML_FILES" ]; then
-            echo "No HTML files found; nothing to validate." | tee ci-logs/tidy.log
-            exit 0
-          fi
-          echo "HTML files found: $HTML_FILES" | tee ci-logs/tidy.log
-          ERR=0
-          for f in $HTML_FILES; do
-            echo "Validating $f" | tee -a ci-logs/tidy.log
-            tidy -e -q -utf8 "$f" 2>&1 | tee -a ci-logs/tidy.log || ERR=1
-          done
-          if [ $ERR -ne 0 ]; then
-            echo "::error::One or more HTML files failed tidy validation." | tee -a ci-logs/tidy.log
-            exit 1
-          fi
-
-      - name: Upload logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
+      # 2️⃣ Node + PNPM
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          name: ci-logs
-          path: ci-logs
+          node-version: 20
+          cache: pnpm
 
-      - name: Upload artifact (static site)
-        uses: actions/upload-pages-artifact@v3
+      - name: Install PNPM
+        run: npm install -g pnpm
+
+      # 3️⃣ Deterministic install
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 4️⃣ Build
+      - name: Build site
+        run: pnpm run build
+        env:
+          NODE_ENV: production
+
+      # 5️⃣ HTML Validation (deep scan)
+      - name: Validate HTML
+        run: |
+          npx html-validate "**/*.html" --max-warnings 0 || true
+
+      # 6️⃣ Lighthouse CI (SEO + Performance)
+      - name: Lighthouse CI
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun || true
+
+      # 7️⃣ Upload Pages artifact
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          path: .
-          # If your site is in a subfolder (e.g., web), change to: path: web
+          path: ./dist
 
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    name: Deploy to GitHub Pages
     needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - name: Deploy
         uses: actions/deploy-pages@v4
