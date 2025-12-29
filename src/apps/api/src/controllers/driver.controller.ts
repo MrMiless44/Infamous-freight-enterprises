@@ -198,7 +198,27 @@ export async function getPerformance(
     const metrics = {
       totalLoads: loads.length,
       onTimeDeliveries: loads.filter(
-        (l: { deliveryTime: Date | string }) => new Date(l.deliveryTime) <= new Date(l.deliveryTime),
+        (l: {
+          deliveryTime: Date | string;
+          actualDeliveryTime?: Date | string | null;
+          completedAt?: Date | string | null;
+        }) => {
+          const scheduled = l.deliveryTime;
+          const actualSource = l.actualDeliveryTime ?? l.completedAt ?? l.deliveryTime;
+
+          if (!scheduled || !actualSource) {
+            return false;
+          }
+
+          const scheduledDate = new Date(scheduled);
+          const actualDate = new Date(actualSource);
+
+          if (isNaN(scheduledDate.getTime()) || isNaN(actualDate.getTime())) {
+            return false;
+          }
+
+          return actualDate <= scheduledDate;
+        },
       ).length,
       totalRevenue: loads.reduce((sum: number, l: { rate: number }) => sum + l.rate, 0),
       averageRating:
