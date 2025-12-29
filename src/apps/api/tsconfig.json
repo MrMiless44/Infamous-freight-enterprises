@@ -5,7 +5,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "lib": ["ES2020"],
-    "types": ["node"],
+    "types": ["node", "jest"],
     "skipLibCheck": true,
     "strict": true,
     "esModuleInterop": true
