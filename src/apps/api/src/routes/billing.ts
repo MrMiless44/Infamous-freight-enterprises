@@ -123,7 +123,7 @@ billing.post("/paypal/order", async (req, res, next) => {
                 return false;
               }
               const obj = link as { rel?: unknown; href?: unknown };
-              return obj.rel === "approve";
+              return typeof obj.rel === "string" && obj.rel === "approve";
             },
           );
           return typeof approveLink?.href === "string" ? approveLink.href : null;
