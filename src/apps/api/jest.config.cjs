@@ -20,9 +20,11 @@ module.exports = {
     "^.+\\.(ts|tsx)$": [
       "ts-jest",
       {
+        isolatedModules: true,
         tsconfig: {
           esModuleInterop: true,
           allowSyntheticDefaultImports: true,
+          types: ["jest", "node"],
         },
       },
     ],
