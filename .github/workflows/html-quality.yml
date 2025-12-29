@@ -44,7 +44,7 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p ci-logs
-          mapfile -t HTML_FILES < <(find "$HTML_ROOT" -maxdepth 6 -type f -name "*.html" \
+          mapfile -t HTML_FILES < <(find "$HTML_ROOT" -maxdepth 4 -type f -name "*.html" \
             -not -path "*/node_modules/*" \
             -not -path "*/dist/*" \
             -not -path "*/build/*" \
@@ -69,6 +69,16 @@ jobs:
           fi
         # If you prefer non-blocking validation, uncomment:
         # continue-on-error: true
+
+      - name: Collect all log and text files
+        if: failure()
+        run: |
+          mkdir -p ci-logs/collected-logs
+          echo "Collecting .log and .txt files from ci-logs directory..."
+          find ci-logs -type f \( -name "*.log" -o -name "*.txt" \) \
+            -exec cp --parents {} ci-logs/collected-logs/ \; 2>&1 | tee ci-logs/collection.log || true
+          echo "Log collection complete."
+          ls -la ci-logs/collected-logs/ 2>&1 | tee -a ci-logs/collection.log || true
 
       - name: Upload logs on failure
         if: failure()
