@@ -1,7 +1,7 @@
 name: Deploy Pages
+# NOTE: This workflow requires GitHub Pages to be enabled in repository settings
+# with source set to "GitHub Actions". Run manually until Pages is configured.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
