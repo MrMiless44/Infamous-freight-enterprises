@@ -25,38 +25,41 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Node + PNPM
+      # 2️⃣ PNPM setup (must be before setup-node for caching)
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+
+      # 3️⃣ Node + PNPM cache
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
-      - name: Install PNPM
-        run: npm install -g pnpm
-
-      # 3️⃣ Deterministic install
+      # 4️⃣ Deterministic install
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 4️⃣ Build
+      # 5️⃣ Build
       - name: Build site
         run: pnpm run build
         env:
           NODE_ENV: production
 
-      # 5️⃣ HTML Validation (deep scan)
+      # 6️⃣ HTML Validation (deep scan)
       - name: Validate HTML
         run: |
           npx html-validate "**/*.html" --max-warnings 0 || true
 
-      # 6️⃣ Lighthouse CI (SEO + Performance)
+      # 7️⃣ Lighthouse CI (SEO + Performance)
       - name: Lighthouse CI
         run: |
           npm install -g @lhci/cli
           lhci autorun || true
 
-      # 7️⃣ Upload Pages artifact
+      # 8️⃣ Upload Pages artifact
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v2
         with:
