@@ -181,7 +181,7 @@ export const dispatchRole: RoleContract = {
   /**
    * Check if the proposed action violates any guardrails
    */
-  async checkGuardrails(input: DecisionInput, context: RoleContext): Promise<GuardrailViolation[]> {
+  async checkGuardrails(input: DecisionInput, _context: RoleContext): Promise<GuardrailViolation[]> {
     const violations: GuardrailViolation[] = [];
     
     // Guardrail 1: Cannot access billing data
