@@ -112,7 +112,24 @@ dispatch.post(
     body("pickupTime").isISO8601().withMessage("Invalid pickup time format"),
     body("deliveryTime")
       .isISO8601()
-      .withMessage("Invalid delivery time format"),
+      .withMessage("Invalid delivery time format")
+      .custom((value, { req }) => {
+        const pickupTime = req.body.pickupTime;
+        if (!pickupTime) {
+          // pickupTime is validated separately; if it's missing, let that validator handle it
+          return true;
+        }
+        const pickup = new Date(pickupTime);
+        const delivery = new Date(value);
+        if (isNaN(pickup.getTime()) || isNaN(delivery.getTime())) {
+          // Format errors are handled by .isISO8601(); do not duplicate here
+          return true;
+        }
+        if (delivery <= pickup) {
+          throw new Error("deliveryTime must be after pickupTime");
+        }
+        return true;
+      }),
     body("weight")
       .isFloat({ min: 0 })
       .withMessage("Weight must be a positive number"),
