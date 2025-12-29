@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../db/prisma";
 import { AppError } from "../middleware/validate";
 import * as aiDispatchService from "../services/aiDispatch.service";
-
-const prisma = new PrismaClient();
 
 interface LoadQuery {
   status?: string;
@@ -183,9 +181,7 @@ export async function createLoad(
       },
     });
 
-    console.log(
-      `Load created: ${load.loadNumber} by user ${req.user!.id}`,
-    );
+    console.log(`Load created: ${load.loadNumber} by user ${req.user!.id}`);
 
     res.status(201).json({
       status: "success",

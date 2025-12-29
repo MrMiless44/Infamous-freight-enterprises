@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../db/prisma";
 import { AppError } from "../middleware/validate";
 import * as aiFleetService from "../services/aiFleet.service";
-
-const prisma = new PrismaClient();
 
 interface VehicleQuery {
   status?: string;
@@ -214,20 +212,32 @@ export async function getAnalytics(
 
     const analytics = {
       totalVehicles: vehicles.length,
-      availableVehicles: vehicles.filter((v: { status: string }) => v.status === "AVAILABLE")
-        .length,
-      inUseVehicles: vehicles.filter((v: { status: string }) => v.status === "IN_USE").length,
-      maintenanceVehicles: vehicles.filter((v: { status: string }) => v.status === "MAINTENANCE")
-        .length,
-      totalMileage: vehicles.reduce((sum: number, v: { mileage: number }) => sum + v.mileage, 0),
+      availableVehicles: vehicles.filter(
+        (v: { status: string }) => v.status === "AVAILABLE",
+      ).length,
+      inUseVehicles: vehicles.filter(
+        (v: { status: string }) => v.status === "IN_USE",
+      ).length,
+      maintenanceVehicles: vehicles.filter(
+        (v: { status: string }) => v.status === "MAINTENANCE",
+      ).length,
+      totalMileage: vehicles.reduce(
+        (sum: number, v: { mileage: number }) => sum + v.mileage,
+        0,
+      ),
       maintenanceCosts: vehicles.reduce(
         (sum: number, v: { maintenanceLogs: Array<{ cost: number }> }) =>
-          sum + v.maintenanceLogs.reduce((s: number, log: { cost: number }) => s + log.cost, 0),
+          sum +
+          v.maintenanceLogs.reduce(
+            (s: number, log: { cost: number }) => s + log.cost,
+            0,
+          ),
         0,
       ),
       utilizationRate:
         vehicles.length > 0
-          ? (vehicles.filter((v: { status: string }) => v.status === "IN_USE").length /
+          ? (vehicles.filter((v: { status: string }) => v.status === "IN_USE")
+              .length /
               vehicles.length) *
             100
           : 0,
