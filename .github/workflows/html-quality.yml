@@ -73,14 +73,9 @@ jobs:
       - name: Collect all log and text files
         if: failure()
         run: |
-          set -o pipefail
           mkdir -p ci-logs/collected-logs
-          echo "Collecting all .log and .txt files from root and nested directories..."
-          find . -type f \( -name "*.log" -o -name "*.txt" \) \
-            -not -path "*/node_modules/*" \
-            -not -path "*/.git/*" \
-            -not -path "*/dist/*" \
-            -not -path "*/build/*" \
+          echo "Collecting .log and .txt files from ci-logs directory..."
+          find ci-logs -type f \( -name "*.log" -o -name "*.txt" \) \
             -exec cp --parents {} ci-logs/collected-logs/ \; 2>&1 | tee ci-logs/collection.log || true
           echo "Log collection complete."
           ls -la ci-logs/collected-logs/ 2>&1 | tee -a ci-logs/collection.log || true
