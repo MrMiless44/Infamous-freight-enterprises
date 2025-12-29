@@ -45,16 +45,13 @@ function accessesPersonalDriverData(input: DecisionInput): boolean {
 /**
  * Helper: Generate recommendation for the dispatch action
  */
-async function generateRecommendation(input: DecisionInput, context: RoleContext): Promise<Record<string, unknown>> {
-  // Mark context as intentionally unused until recommendation logic is implemented
-  void context;
+async function generateRecommendation(input: DecisionInput, _context: RoleContext): Promise<Record<string, unknown>> {
   // TODO: Implement actual recommendation generation based on:
   // - Current traffic conditions
   // - Weather forecasts
   // - Driver availability and hours
   // - Vehicle capacity and location
   // - Historical performance data
-  
   // Placeholder implementation
   switch (input.action) {
     case 'route-optimization':
