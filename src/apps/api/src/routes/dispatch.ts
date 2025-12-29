@@ -205,8 +205,11 @@ dispatch.post(
  *             properties:
  *               loadIds:
  *                 type: array
+ *                 minItems: 1
+ *                 maxItems: 100
  *                 items:
  *                   type: string
+ *                   format: uuid
  *     responses:
  *       200:
  *         description: Optimization recommendations
