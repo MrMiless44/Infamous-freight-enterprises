@@ -44,14 +44,14 @@ ai.post("/driver/coach", requireAuth, async (req, res) => {
 
   const result = await driverCoach(
     parsed.data.driverId,
-    req.user.organizationId,
+    req.user!.organizationId,
     parsed.data.event,
   );
 
   return res.json({
     ...result,
     driverId: parsed.data.driverId,
-    organizationId: req.user.organizationId,
+    organizationId: req.user!.organizationId,
   });
 });
 
@@ -64,7 +64,7 @@ ai.post("/dispatch/evaluate", requireAuth, async (req, res) => {
   const result = dispatchIntel(parsed.data.route, parsed.data.driver);
   const decision = await prisma.aiDecision.create({
     data: {
-      organizationId: req.user.organizationId,
+      organizationId: req.user!.organizationId,
       type: "dispatch:evaluate",
       confidence: result.confidence,
       rationale: JSON.stringify({
