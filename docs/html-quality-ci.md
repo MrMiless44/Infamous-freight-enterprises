@@ -53,7 +53,8 @@ Recursively finds and validates all HTML files using the `.tidyrc` configuration
 
 **File Discovery**:
 - Searches up to 4 levels deep from the repository root
-- Excludes: `node_modules/`, `dist/`, `build/`, `.git/`, `archive/`
+- Excludes: `node_modules/`, `dist/`, `build/`, `.git/`
+- Note: `archive/` is excluded at the workflow trigger level via `paths-ignore`
 
 **Validation**:
 - Uses `.tidyrc` configuration for consistent validation rules
@@ -155,5 +156,5 @@ Refer to [HTML Tidy documentation](http://api.html-tidy.org/tidy/quickref_5.6.0.
 ## Related Documentation
 
 - [GitHub Actions Workflows](../.github/workflows/)
-- [Contributing Guidelines](../CONTRIBUTING.md)
-- [Development Guide](./developer-guide.md)
+- [Quality Enforcement Summary](./QUALITY_ENFORCEMENT_SUMMARY.md)
+- [Testing Strategy](./TESTING_STRATEGY.md)
