@@ -294,6 +294,29 @@ docker-compose down -v
 docker-compose up -d
 ```
 
+### Automated Repository Fixes
+
+If you're experiencing multiple issues (lint errors, test failures, dependency problems), use the automated fix script:
+
+```bash
+# Download from GitHub Actions artifact (if available)
+# Or run directly from repository root:
+chmod +x fix-repo.sh
+./fix-repo.sh
+```
+
+This script will:
+- Clean and reinstall dependencies
+- Build the shared package
+- Apply lint fixes
+- Format code
+- Update test snapshots
+- Clean build artifacts
+- Rebuild all projects
+- Run tests to verify fixes
+
+**Note**: The script is also available as a GitHub Actions artifact when the CI workflow detects test failures.
+
 ## Additional Resources
 
 - [Testing Guide](testing/TESTING_STRATEGY.md)

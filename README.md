@@ -151,6 +151,19 @@ The application will be available at:
 
 For detailed setup instructions, see the [Developer Guide](docs/developer-guide.md).
 
+### Troubleshooting
+
+If you encounter issues with dependencies, tests, or build errors, use the automated fix script:
+
+```bash
+# Download fix-repo.sh artifact from GitHub Actions (when available)
+# or run from repository root:
+chmod +x fix-repo.sh
+./fix-repo.sh
+```
+
+The script automatically fixes common issues including dependency problems, lint errors, test failures, and build artifacts. See the [Developer Guide](docs/developer-guide.md#automated-repository-fixes) for more details.
+
 ## 🧩 Package Manager & Lockfiles
 
 - **pnpm only**: The repo declares `packageManager: pnpm@8.15.9` and CI installs with `pnpm install --frozen-lockfile`.
