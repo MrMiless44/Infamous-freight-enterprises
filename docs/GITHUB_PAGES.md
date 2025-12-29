@@ -54,3 +54,5 @@ ls -la dist/
 - The workflow uses `|| true` for HTML validation and Lighthouse CI, allowing them to fail without blocking deployment
 - The Next.js app is configured to use `output: "export"` when `GITHUB_PAGES_BUILD=true`
 - Static export disables API routes and middleware (as expected for static hosting)
+- In a GitHub Pages deployment, the web app communicates with the backend via direct HTTP(S) calls to the production API, using the configured `API_URL` (as consumed by `useApi.ts`)
+- Ensure that `API_URL` is set to an absolute URL for the production API and that the API is configured with CORS to allow requests from the GitHub Pages origin
