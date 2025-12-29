@@ -26,9 +26,7 @@ if (existsSync(distDir)) {
 mkdirSync(distDir, { recursive: true });
 
 // Set environment for static export
-process.env.NEXT_PUBLIC_STATIC_EXPORT = 'true';
 process.env.NODE_ENV = 'production';
-
 try {
   // Build shared package first (if needed)
   const sharedDir = join(rootDir, 'src/packages/shared');
