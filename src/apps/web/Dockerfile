@@ -7,12 +7,12 @@ RUN corepack enable && corepack prepare pnpm@8.15.9 --activate && apk add --no-c
 # Install dependencies for all workspaces
 FROM base AS dependencies
 WORKDIR /app
-COPY pnpm-workspace.yaml package.json ./
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY src/apps/web/package.json ./src/apps/web/
 COPY src/packages/shared/package.json ./src/packages/shared/
 # Generate lockfile if placeholder exists, then install
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    if [ ! -f pnpm-lock.yaml ] || grep -q "placeholder" pnpm-lock.yaml 2>/dev/null; then \
+    if grep -q "placeholder" pnpm-lock.yaml 2>/dev/null; then \
         echo "Generating lockfile..." && HUSKY=0 pnpm install --filter=infamous-freight-web --filter=@infamous-freight/shared; \
     else \
         echo "Using existing lockfile..." && HUSKY=0 pnpm install --frozen-lockfile --filter=infamous-freight-web --filter=@infamous-freight/shared; \

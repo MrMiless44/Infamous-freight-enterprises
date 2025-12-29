@@ -3,11 +3,11 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Install only the API workspace dependencies
-COPY package.json pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY src/apps/api/package.json ./src/apps/api/package.json
 # Generate lockfile if placeholder exists, then install
 RUN corepack enable && corepack prepare pnpm@8.15.9 --activate && \
-    if [ ! -f pnpm-lock.yaml ] || grep -q "placeholder" pnpm-lock.yaml 2>/dev/null; then \
+    if grep -q "placeholder" pnpm-lock.yaml 2>/dev/null; then \
         echo "Generating lockfile..." && HUSKY=0 pnpm install --filter infamous-freight-api...; \
     else \
         echo "Using existing lockfile..." && HUSKY=0 pnpm install --filter infamous-freight-api... --frozen-lockfile; \
