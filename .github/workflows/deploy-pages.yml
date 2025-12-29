@@ -48,7 +48,7 @@ jobs:
       # 5️⃣ HTML Validation (deep scan)
       - name: Validate HTML
         run: |
-          npx html-validate "**/*.html" --max-warnings 0 || true
+          npx html-validate "dist/**/*.html" --max-warnings 0 || true
 
       # 6️⃣ Lighthouse CI (SEO + Performance)
       - name: Lighthouse CI
