@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/build-pages.mjs"
+    "build": "node scripts/build-pages.mjs",
+    "validate:html": "bash scripts/validation/validate-html.sh"
   },
   "workspaces": [
     "src/apps/*",
