@@ -1,5 +1,5 @@
-#!/usr/bin/env sh
-set -euo pipefail
+#!/bin/sh
+set -eu
 
 # Pre-push hook - Run tests before pushing
 echo "🧪 Running tests before push..."
@@ -26,10 +26,10 @@ RUN_API_TESTS() {
   echo "📦 Running API tests..."
   if ensure_pnpm; then
     # Pass Jest flags after -- so pnpm forwards them to the script
-    (cd "$REPO_ROOT/api" && pnpm test -- --bail --maxWorkers=50%)
+    (cd "$REPO_ROOT/src/apps/api" && pnpm test -- --bail --maxWorkers=50%)
   else
     echo "⚠️ pnpm unavailable; using npm fallback for API tests"
-    (cd "$REPO_ROOT/api" && npm test --silent)
+    (cd "$REPO_ROOT/src/apps/api" && npm test --silent)
   fi
 }
 
