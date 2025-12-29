@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
 import { AppError } from "../middleware/validate";
 import * as aiCustomerService from "../services/aiCustomer.service";
-
-const prisma = new PrismaClient();
+import prisma from "../db/prisma";
 
 export async function getCustomers(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   req: Request,
   res: Response,
   next: NextFunction,
