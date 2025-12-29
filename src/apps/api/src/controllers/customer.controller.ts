@@ -1,13 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../middleware/validate";
 import * as aiCustomerService from "../services/aiCustomer.service";
-import prisma from "../db/prisma";
+import { prisma } from "../db/prisma";
 
 export async function getCustomers(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
   req: Request,
   res: Response,
   next: NextFunction,
