@@ -19,7 +19,7 @@ invoices.use(requireAuth);
 
 invoices.get("/", async (req, res) => {
   const items = await prisma.invoice.findMany({
-    where: { organizationId: req.user.organizationId },
+    where: { organizationId: req.user!.organizationId },
   });
   res.json(items);
 });
@@ -32,7 +32,7 @@ invoices.post("/", async (req, res) => {
 
   const invoice = await prisma.invoice.create({
     data: {
-      organizationId: req.user.organizationId,
+      organizationId: req.user!.organizationId,
       amount: parsed.data.amount,
       vendor: parsed.data.vendor,
       status: parsed.data.status ?? "pending",
@@ -48,7 +48,7 @@ invoices.patch("/:id/status", async (req, res) => {
     return res.status(400).json({ error: parsed.error.message });
 
   const invoice = await prisma.invoice.findFirst({
-    where: { id: req.params.id, organizationId: req.user.organizationId },
+    where: { id: req.params.id, organizationId: req.user!.organizationId },
   });
 
   if (!invoice) return res.sendStatus(404);
