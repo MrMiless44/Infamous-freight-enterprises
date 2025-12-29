@@ -65,9 +65,6 @@ jobs:
       - name: Build Shared
         run: pnpm -C src/packages/shared build
 
-      - name: Generate Prisma Client
-        run: pnpm -C src/apps/api prisma:generate
-
       - name: Build API
         run: pnpm -C src/apps/api build
       - name: Build Web
