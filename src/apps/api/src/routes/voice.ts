@@ -109,8 +109,8 @@ voice.post("/command", async (req, res) => {
 
   const memory: AvatarMemoryRecord[] = await prisma.avatarMemory.findMany({
     where: {
-      userId: req.user.id,
-      organizationId: req.user.organizationId,
+      userId: req.user!.id,
+      organizationId: req.user!.organizationId,
     },
     orderBy: { confidence: "desc" },
     take: 3,
@@ -123,7 +123,7 @@ voice.post("/command", async (req, res) => {
 
   const decision = await prisma.aiDecision.create({
     data: {
-      organizationId: req.user.organizationId,
+      organizationId: req.user!.organizationId,
       type: `voice:${intent}`,
       confidence,
       rationale: JSON.stringify({
@@ -165,7 +165,7 @@ voice.post("/ingest", upload.single("audio"), async (req, res) => {
 
   await prisma.aiDecision.create({
     data: {
-      organizationId: req.user.organizationId,
+      organizationId: req.user!.organizationId,
       type: "voice:ingest",
       confidence: 1,
       rationale: JSON.stringify({
