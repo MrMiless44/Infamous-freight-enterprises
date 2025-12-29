@@ -95,19 +95,19 @@ dispatch.post(
     body("customerId").notEmpty().withMessage("Customer ID is required"),
     body("pickupAddress").notEmpty().withMessage("Pickup address is required"),
     body("pickupLat")
-      .isFloat()
+      .isFloat({ min: -90, max: 90 })
       .withMessage("Pickup latitude must be a number"),
     body("pickupLng")
-      .isFloat()
+      .isFloat({ min: -180, max: 180 })
       .withMessage("Pickup longitude must be a number"),
     body("deliveryAddress")
       .notEmpty()
       .withMessage("Delivery address is required"),
     body("deliveryLat")
-      .isFloat()
+      .isFloat({ min: -90, max: 90 })
       .withMessage("Delivery latitude must be a number"),
     body("deliveryLng")
-      .isFloat()
+      .isFloat({ min: -180, max: 180 })
       .withMessage("Delivery longitude must be a number"),
     body("pickupTime").isISO8601().withMessage("Invalid pickup time format"),
     body("deliveryTime")
