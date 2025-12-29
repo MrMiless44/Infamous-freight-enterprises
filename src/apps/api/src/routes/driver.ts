@@ -71,11 +71,11 @@ driver.put(
   [
     param("id").notEmpty().withMessage("Driver ID is required"),
     body("latitude")
-      .isFloat()
-      .withMessage("Latitude must be a valid number"),
+      .isFloat({ min: -90, max: 90 })
+      .withMessage("Latitude must be a valid number between -90 and 90"),
     body("longitude")
-      .isFloat()
-      .withMessage("Longitude must be a valid number"),
+      .isFloat({ min: -180, max: 180 })
+      .withMessage("Longitude must be a valid number between -180 and 180"),
   ],
   validate,
   driverController.updateLocation,
