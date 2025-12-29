@@ -1,7 +1,3 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
 interface SupportRequest {
   question: string;
   customerId?: string;
