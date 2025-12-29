@@ -30,7 +30,7 @@ export async function getLoads(
     const [loads, total] = await Promise.all([
       prisma.load.findMany({
         where,
-        skip: parseInt(skip.toString()),
+        skip,
         take: parseInt(limit),
         include: {
           customer: {
