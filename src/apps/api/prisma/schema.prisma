@@ -116,7 +116,7 @@ model AiEvent {
 }
 
 model DriverMemory {
-  id                 String   @id @default(uuid())
+  id                 String   @id @default(cuid())
   driverId           String   @unique
   preferences        Json
   drivingStyle       String?

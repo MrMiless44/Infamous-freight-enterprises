@@ -6,6 +6,19 @@ export const driverMemory = Router();
 
 driverMemory.use(requireAuth);
 
+// Common driver select for basic operations
+const basicDriverSelect = {
+  id: true,
+  name: true,
+  status: true,
+};
+
+// Extended driver select when avatar info is needed
+const extendedDriverSelect = {
+  ...basicDriverSelect,
+  avatarCode: true,
+};
+
 // GET /api/driver-memory/:driverId - Get driver memory by driver ID
 driverMemory.get("/:driverId", async (req, res) => {
   try {
@@ -15,12 +28,7 @@ driverMemory.get("/:driverId", async (req, res) => {
       where: { driverId },
       include: {
         driver: {
-          select: {
-            id: true,
-            name: true,
-            status: true,
-            avatarCode: true,
-          },
+          select: extendedDriverSelect,
         },
       },
     });
@@ -42,12 +50,8 @@ driverMemory.get("/", async (req, res) => {
     const memories = await prisma.driverMemory.findMany({
       include: {
         driver: {
-          select: {
-            id: true,
-            name: true,
-            status: true,
-            avatarCode: true,
-          },
+          select: basicDriverSelect,
+        },
         },
       },
     });
@@ -112,12 +116,7 @@ driverMemory.post("/", async (req, res) => {
       },
       include: {
         driver: {
-          select: {
-            id: true,
-            name: true,
-            status: true,
-            avatarCode: true,
-          },
+          select: basicDriverSelect,
         },
       },
     });
@@ -143,35 +142,37 @@ driverMemory.put("/:driverId", async (req, res) => {
       learnedConstraints,
     } = req.body;
 
-    // Check if memory exists
-    const existingMemory = await prisma.driverMemory.findUnique({
-      where: { driverId },
-    });
+    // Build update data object with only provided fields
+    const updateData: {
+      preferences?: typeof preferences;
+      drivingStyle?: string | null;
+      riskTolerance?: string | null;
+      pastRoutes?: typeof pastRoutes;
+      earningsPatterns?: typeof earningsPatterns;
+      communicationTone?: string | null;
+      learnedConstraints?: typeof learnedConstraints;
+    } = {};
 
-    if (!existingMemory) {
-      return res.status(404).json({ error: "Driver memory not found" });
-    }
+    if (preferences !== undefined) updateData.preferences = preferences;
+    if (drivingStyle !== undefined) updateData.drivingStyle = drivingStyle;
+    if (riskTolerance !== undefined) updateData.riskTolerance = riskTolerance;
+    if (pastRoutes !== undefined) updateData.pastRoutes = pastRoutes;
+    if (earningsPatterns !== undefined)
+      updateData.earningsPatterns = earningsPatterns;
+    if (communicationTone !== undefined)
+      updateData.communicationTone = communicationTone;
+    if (learnedConstraints !== undefined)
+      updateData.learnedConstraints = learnedConstraints;
 
     const memory = await prisma.driverMemory.update({
       where: { driverId },
-      data: {
-        preferences: preferences ?? existingMemory.preferences,
-        drivingStyle: drivingStyle ?? existingMemory.drivingStyle,
-        riskTolerance: riskTolerance ?? existingMemory.riskTolerance,
-        pastRoutes: pastRoutes ?? existingMemory.pastRoutes,
-        earningsPatterns: earningsPatterns ?? existingMemory.earningsPatterns,
-        communicationTone:
-          communicationTone ?? existingMemory.communicationTone,
-        learnedConstraints:
-          learnedConstraints ?? existingMemory.learnedConstraints,
-      },
+      data: updateData,
       include: {
         driver: {
           select: {
             id: true,
             name: true,
             status: true,
-            avatarCode: true,
           },
         },
       },
@@ -180,6 +181,9 @@ driverMemory.put("/:driverId", async (req, res) => {
     res.json(memory);
   } catch (error) {
     console.error("Error updating driver memory:", error);
+    if ((error as { code?: string }).code === "P2025") {
+      return res.status(404).json({ error: "Driver memory not found" });
+    }
     res.status(500).json({ error: "Failed to update driver memory" });
   }
 });
