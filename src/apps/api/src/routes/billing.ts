@@ -118,11 +118,13 @@ billing.post("/paypal/order", async (req, res, next) => {
     const approvalUrl = Array.isArray(links)
       ? (() => {
           const approveLink = links.find(
-            (link: unknown): link is { rel: string; href?: unknown } =>
-              typeof link === "object" &&
-              link !== null &&
-              "rel" in link &&
-              (link as { rel: unknown }).rel === "approve",
+            (link: unknown): link is { rel: string; href?: unknown } => {
+              if (typeof link !== "object" || link === null) {
+                return false;
+              }
+              const obj = link as { rel?: unknown; href?: unknown };
+              return obj.rel === "approve";
+            },
           );
           return typeof approveLink?.href === "string" ? approveLink.href : null;
         })()
