@@ -2,8 +2,12 @@ name: HTML Quality
 
 on:
   pull_request:
+    paths-ignore:
+      - 'archive/**'
   push:
     branches: ["main"]
+    paths-ignore:
+      - 'archive/**'
 
 concurrency:
   group: html-quality-${{ github.ref }}

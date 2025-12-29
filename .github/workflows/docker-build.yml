@@ -3,7 +3,11 @@ name: Build Docker Images
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - 'archive/**'
   pull_request:
+    paths-ignore:
+      - 'archive/**'
 
 permissions:
   contents: read
@@ -24,7 +28,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version: 18
           cache: "pnpm"
 
       - name: Install dependencies
