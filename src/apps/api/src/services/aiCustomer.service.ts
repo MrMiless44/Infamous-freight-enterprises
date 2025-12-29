@@ -14,7 +14,7 @@ interface SupportResponse {
 export async function getSupport(
   request: SupportRequest,
 ): Promise<SupportResponse> {
-  const { question, customerId } = request;
+  const { question } = request;
 
   // Simple keyword-based AI support
   const lowerQuestion = question.toLowerCase();
