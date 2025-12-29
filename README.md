@@ -11,6 +11,20 @@ This is enterprise software built for autonomous operations with auditable accou
 [![Node](https://img.shields.io/badge/node-18.x-339933?logo=node.js)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
 
+## 🎉 Latest Release: v2.0.0 - Infrastructure & Tooling
+
+**Major infrastructure enhancements are now live!** This release includes:
+
+- 🛠️ **Codex CLI Integration** - AI coding assistant built into the devcontainer with keyboard shortcuts
+- 🐳 **DevContainer Setup** - Full-featured development environment with VS Code integration
+- 🚀 **GitHub Pages Deployment** - Automated static site deployment with HTML validation and Lighthouse CI
+- 🔄 **Enhanced CI/CD** - Comprehensive workflows for testing, security scanning, and deployment
+- 📦 **Docker Optimization** - Multi-stage builds with BuildKit caching and health checks
+- 🔒 **Security Automation** - CodeQL scanning and container security checks
+- 📝 **Quality Gates** - HTML validation, CSS linting, and performance auditing
+
+**See [CHANGELOG.md](CHANGELOG.md) for complete release notes and migration guide.**
+
 ## 🏢 Enterprise Overview
 
 ### System Architecture
