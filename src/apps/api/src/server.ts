@@ -12,6 +12,7 @@ import { invoices } from "./routes/invoices";
 import { admin } from "./routes/admin";
 import { voice } from "./routes/voice";
 import { billing } from "./routes/billing";
+import { driverMemory } from "./routes/driverMemory";
 import { rateLimit } from "./middleware/rateLimit";
 import { auditTrail } from "./middleware/audit";
 import errorHandler from "./middleware/errorHandler";
@@ -31,6 +32,7 @@ app.use("/api/invoices", invoices);
 app.use("/api/admin", admin);
 app.use("/api/voice", voice);
 app.use("/api/billing", billing);
+app.use("/api/driver-memory", driverMemory);
 app.use(errorHandler);
 
 const apiConfig = config.getApiConfig();

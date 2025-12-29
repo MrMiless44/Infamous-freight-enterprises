@@ -63,6 +63,62 @@ async function main() {
     },
   });
 
+  await prisma.driverMemory.create({
+    data: {
+      driverId: driver1.id,
+      preferences: {
+        preferredRoutes: ["I-10", "I-40"],
+        restStopFrequency: "medium",
+        musicPreference: "classic-rock",
+      },
+      drivingStyle: "efficient",
+      riskTolerance: "moderate",
+      pastRoutes: [
+        { route: "LA to Dallas", frequency: 15, avgTime: "18h" },
+        { route: "Dallas to Atlanta", frequency: 8, avgTime: "12h" },
+      ],
+      earningsPatterns: {
+        averageWeekly: 2400,
+        peakSeason: "Q4",
+        bonusEligible: true,
+      },
+      communicationTone: "professional",
+      learnedConstraints: {
+        avoidNightDriving: false,
+        maxDailyHours: 11,
+        preferredStartTime: "06:00",
+      },
+    },
+  });
+
+  await prisma.driverMemory.create({
+    data: {
+      driverId: driver2.id,
+      preferences: {
+        preferredRoutes: ["I-55", "I-75"],
+        restStopFrequency: "high",
+        musicPreference: "hip-hop",
+      },
+      drivingStyle: "cautious",
+      riskTolerance: "low",
+      pastRoutes: [
+        { route: "Chicago to Atlanta", frequency: 22, avgTime: "11h" },
+        { route: "Atlanta to Miami", frequency: 10, avgTime: "10h" },
+      ],
+      earningsPatterns: {
+        averageWeekly: 2200,
+        peakSeason: "Q2",
+        bonusEligible: true,
+      },
+      communicationTone: "friendly",
+      learnedConstraints: {
+        avoidNightDriving: true,
+        maxDailyHours: 10,
+        preferredStartTime: "07:00",
+      },
+    },
+  });
+
   await prisma.aiEvent.create({
     data: {
       type: "seed",
