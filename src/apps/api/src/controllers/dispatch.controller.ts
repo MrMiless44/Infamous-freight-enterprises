@@ -3,8 +3,17 @@ import { PrismaClient } from "@prisma/client";
 import { AppError } from "../middleware/validate";
 import * as aiDispatchService from "../services/aiDispatch.service";
 
-const prisma = new PrismaClient();
+declare global {
+  // eslint-disable-next-line no-var
+  // Using var on the global object to allow reuse across modules
+  var prisma: PrismaClient | undefined;
+}
 
+const prisma = globalThis.prisma ?? new PrismaClient();
+
+if (!globalThis.prisma) {
+  globalThis.prisma = prisma;
+}
 interface LoadQuery {
   status?: string;
   page?: string;
