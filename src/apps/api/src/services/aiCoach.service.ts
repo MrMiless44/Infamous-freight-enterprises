@@ -1,10 +1,6 @@
-
-
-
 interface Driver {
   id: string;
   loads: Array<{
-    status: string;
     status: string;
     pickupTime: Date;
     deliveryTime: Date;
@@ -43,9 +39,8 @@ export async function generateCoaching(
       : 0;
 
   // Calculate on-time performance
-  const onTimeLoads = deliveredLoads.filter((load) => {
-    return new Date(load.deliveryTime) <= new Date(load.deliveryTime); // Simplified
-  }).length;
+  // Note: Without actual delivery times, all delivered loads are considered on-time (simplified)
+  const onTimeLoads = deliveredLoads.length;
 
   const onTimePerformance =
     totalLoads > 0 ? (onTimeLoads / totalLoads) * 100 : 0;
