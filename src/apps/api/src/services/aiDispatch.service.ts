@@ -67,14 +67,9 @@ export async function recommendAssignment(
   }
 
   // Simple AI logic: Find driver with least current loads
-  const bestDriver = availableDrivers.reduce(
-    (
-      best: { loads: unknown[] },
-      current: { loads: unknown[] },
-    ) => {
-      return current.loads.length < best.loads.length ? current : best;
-    },
-  );
+  const bestDriver = availableDrivers.reduce((best, current) => {
+    return current.loads.length < best.loads.length ? current : best;
+  });
 
   // Find vehicle with capacity for the load weight
   const bestVehicle = availableVehicles[0]; // Simplified selection
