@@ -70,19 +70,6 @@ export async function predictMaintenance(
     });
   }
 
-  // Analyze maintenance history for patterns
-  const recentMaintenance = vehicle.maintenanceLogs.filter((log) => {
-    const logDate = new Date(log.performedAt);
-    const threeMonthsAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
-    return logDate > threeMonthsAgo;
-  });
-
-  const averageMaintenanceCost =
-    recentMaintenance.length > 0
-      ? recentMaintenance.reduce((sum, log) => sum + log.cost, 0) /
-        recentMaintenance.length
-      : 0;
-
   // Determine overall risk
   let overallRisk = "low";
   if (predictions.some((p) => p.urgency === "high")) {
