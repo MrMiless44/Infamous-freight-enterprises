@@ -75,3 +75,6 @@ coverage/
 
 .fake
 ci-logs/
+
+# Lighthouse CI
+.lighthouseci/
