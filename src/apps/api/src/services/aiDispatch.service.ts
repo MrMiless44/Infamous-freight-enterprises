@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../db/prisma";
 
-const prisma = new PrismaClient();
 
 interface Load {
+  id: string;
   id: string;
   pickupLat: number;
   pickupLng: number;
