@@ -2,7 +2,7 @@
 FROM node:22-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && apk add --no-cache libc6-compat
+RUN corepack enable && corepack prepare pnpm@8.15.9 --activate && apk add --no-cache libc6-compat
 
 # Install dependencies for all workspaces
 FROM base AS dependencies
@@ -10,7 +10,13 @@ WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY src/apps/web/package.json ./src/apps/web/
 COPY src/packages/shared/package.json ./src/packages/shared/
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store HUSKY=0 pnpm install --frozen-lockfile --filter=infamous-freight-web --filter=@infamous-freight/shared
+# Generate lockfile if placeholder exists, then install
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    if grep -qF "(pnpm-lock.yaml content placeholder)" pnpm-lock.yaml 2>/dev/null; then \
+        echo "Generating lockfile..." && HUSKY=0 pnpm install --filter=infamous-freight-web --filter=@infamous-freight/shared; \
+    else \
+        echo "Using existing lockfile..." && HUSKY=0 pnpm install --frozen-lockfile --filter=infamous-freight-web --filter=@infamous-freight/shared; \
+    fi
 
 # Build shared package
 FROM base AS builder-shared

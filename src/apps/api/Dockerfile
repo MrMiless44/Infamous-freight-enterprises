@@ -5,7 +5,13 @@ WORKDIR /app
 # Install only the API workspace dependencies
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY src/apps/api/package.json ./src/apps/api/package.json
-RUN corepack enable && HUSKY=0 pnpm install --filter infamous-freight-api... --frozen-lockfile
+# Generate lockfile if placeholder exists, then install
+RUN corepack enable && corepack prepare pnpm@8.15.9 --activate && \
+    if grep -qF "(pnpm-lock.yaml content placeholder)" pnpm-lock.yaml 2>/dev/null; then \
+        echo "Generating lockfile..." && HUSKY=0 pnpm install --filter infamous-freight-api...; \
+    else \
+        echo "Using existing lockfile..." && HUSKY=0 pnpm install --filter infamous-freight-api... --frozen-lockfile; \
+    fi
 
 # Copy Prisma schema for the API (client is generated during build via prebuild hook)
 COPY src/apps/api/prisma ./src/apps/api/prisma
