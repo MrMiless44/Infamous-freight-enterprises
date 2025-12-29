@@ -26,7 +26,7 @@ export async function getDrivers(
 
     const drivers = await prisma.driver.findMany({
       where,
-      skip: parseInt(skip.toString()),
+      skip,
       take: parseInt(limit),
       include: {
         user: {
