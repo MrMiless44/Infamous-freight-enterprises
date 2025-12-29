@@ -77,7 +77,7 @@ Current status: Failing (expected - requires configuration)
 
 - **botid**: v1.5.10 (Bot detection)
 - **Node.js**: v22.16.0
-- **pnpm**: v7.5.1
+- **pnpm**: v8.15.9
 - **PostgreSQL**: v17.7 (installed, awaiting configuration)
 
 ## 📝 Recent Changes
