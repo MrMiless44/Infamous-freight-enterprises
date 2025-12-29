@@ -15,13 +15,18 @@ model Organization {
 }
 
 model User {
-  id             String   @id @default(cuid())
-  email          String   @unique
+  id             String         @id @default(cuid())
+  email          String         @unique
   passwordHash   String
+  firstName      String?
+  lastName       String?
+  phone          String?
   role           String
   organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  createdAt      DateTime @default(now())
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+  customer       Customer?      @relation("CustomerUser")
+  driver         Driver?        @relation("DriverUser")
+  createdAt      DateTime       @default(now())
 }
 
 model Invoice {
@@ -76,4 +81,109 @@ model RouteEvent {
   type      String
   meta      String
   createdAt DateTime @default(now())
+}
+
+model Customer {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation("CustomerUser", fields: [userId], references: [id])
+  organizationId String
+  companyName    String?
+  loads          Load[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Driver {
+  id                   String              @id @default(cuid())
+  userId               String              @unique
+  user                 User                @relation("DriverUser", fields: [userId], references: [id])
+  organizationId       String
+  licenseNumber        String
+  isAvailable          Boolean             @default(true)
+  currentLocation      Json?
+  loads                Load[]
+  aiCoachingSessions   AICoachingSession[]
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+}
+
+model Vehicle {
+  id                String           @id @default(cuid())
+  organizationId    String
+  vehicleNumber     String           @unique
+  make              String
+  model             String
+  year              Int
+  vin               String           @unique
+  status            String           @default("AVAILABLE")
+  mileage           Float            @default(0)
+  lastMaintenance   DateTime?
+  nextMaintenance   DateTime?
+  maintenanceLogs   MaintenanceLog[]
+  loads             Load[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+}
+
+model Load {
+  id              String        @id @default(cuid())
+  loadNumber      String        @unique
+  organizationId  String
+  customerId      String
+  customer        Customer      @relation(fields: [customerId], references: [id])
+  driverId        String?
+  driver          Driver?       @relation(fields: [driverId], references: [id])
+  vehicleId       String?
+  vehicle         Vehicle?      @relation(fields: [vehicleId], references: [id])
+  pickupAddress   String
+  pickupLat       Float
+  pickupLng       Float
+  deliveryAddress String
+  deliveryLat     Float
+  deliveryLng     Float
+  pickupTime      DateTime
+  deliveryTime    DateTime
+  weight          Float
+  rate            Float
+  description     String?
+  status          String        @default("PENDING")
+  rating          Float?
+  aiDecisions     AIDecision[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model AIDecision {
+  id            String   @id @default(cuid())
+  loadId        String
+  load          Load     @relation(fields: [loadId], references: [id])
+  aiRole        String
+  decision      String
+  reasoning     String
+  confidence    Float
+  humanApproved Boolean  @default(false)
+  createdAt     DateTime @default(now())
+}
+
+model AICoachingSession {
+  id          String   @id @default(cuid())
+  driverId    String
+  driver      Driver   @relation(fields: [driverId], references: [id])
+  feedback    String
+  metrics     Json
+  suggestions Json
+  createdAt   DateTime @default(now())
+}
+
+model MaintenanceLog {
+  id          String    @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle   @relation(fields: [vehicleId], references: [id])
+  type        String
+  description String
+  cost        Float
+  performedAt DateTime  @default(now())
+  nextDue     DateTime?
+  createdAt   DateTime  @default(now())
 }
