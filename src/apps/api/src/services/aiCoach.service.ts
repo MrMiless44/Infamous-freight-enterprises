@@ -1,10 +1,10 @@
-import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+
 
 interface Driver {
   id: string;
   loads: Array<{
+    status: string;
     status: string;
     pickupTime: Date;
     deliveryTime: Date;
