@@ -46,13 +46,16 @@ echo ""
 # Step 1: Clean and reinstall dependencies
 print_status "Step 1: Cleaning and reinstalling dependencies..."
 if command -v pnpm &> /dev/null; then
-    print_status "Removing node_modules and lockfile..."
-    find . -name "node_modules" -type d -prune -exec rm -rf {} + 2>/dev/null || true
+    print_status "Removing node_modules..."
+    find . -maxdepth 4 -name "node_modules" -type d -prune -exec rm -rf {} + 2>/dev/null || true
     rm -f pnpm-lock.yaml
     
     print_status "Installing fresh dependencies..."
-    HUSKY=0 pnpm install --no-frozen-lockfile
-    print_success "Dependencies reinstalled"
+    if HUSKY=0 pnpm install --no-frozen-lockfile; then
+        print_success "Dependencies reinstalled"
+    else
+        print_error "Failed to reinstall dependencies"
+    fi
 else
     print_warning "pnpm not found. Skipping dependency reinstall."
 fi
@@ -70,8 +73,13 @@ if [ -d "packages/shared" ] || [ -d "src/packages/shared" ]; then
     
     if [ -n "$SHARED_PATH" ]; then
         print_status "Building $SHARED_PATH..."
-        pnpm --filter @infamous-freight/shared build || pnpm -C "$SHARED_PATH" build || true
-        print_success "Shared package built"
+        if pnpm --filter @infamous-freight/shared build 2>/dev/null; then
+            print_success "Shared package built (using filter)"
+        elif pnpm -C "$SHARED_PATH" build 2>/dev/null; then
+            print_success "Shared package built (using -C)"
+        else
+            print_warning "Failed to build shared package, continuing..."
+        fi
     fi
 else
     print_warning "Shared package not found. Skipping."
@@ -82,8 +90,15 @@ echo ""
 print_status "Step 3: Applying lint fixes..."
 if command -v pnpm &> /dev/null; then
     print_status "Running lint --fix on all workspaces..."
-    pnpm -r --if-present lint -- --fix || pnpm lint --fix || true
-    print_success "Lint fixes applied"
+    set +e
+    pnpm -r --if-present lint -- --fix 2>/dev/null || pnpm lint --fix 2>/dev/null
+    lint_status=$?
+    set -e
+    if [ "$lint_status" -eq 0 ]; then
+        print_success "Lint fixes applied successfully"
+    else
+        print_warning "Some lint fixes may have failed, continuing..."
+    fi
 else
     print_warning "pnpm not available. Skipping lint fixes."
 fi
@@ -93,8 +108,15 @@ echo ""
 print_status "Step 4: Formatting code..."
 if command -v pnpm &> /dev/null; then
     print_status "Running prettier/format on all workspaces..."
-    pnpm -r --if-present format || pnpm format || true
-    print_success "Code formatted"
+    set +e
+    pnpm -r --if-present format 2>/dev/null || pnpm format 2>/dev/null
+    format_status=$?
+    set -e
+    if [ "$format_status" -eq 0 ]; then
+        print_success "Code formatted successfully"
+    else
+        print_warning "Some formatting may have failed, continuing..."
+    fi
 else
     print_warning "pnpm not available. Skipping code formatting."
 fi
@@ -104,8 +126,15 @@ echo ""
 print_status "Step 5: Updating test snapshots..."
 if command -v pnpm &> /dev/null; then
     print_status "Updating Jest snapshots..."
-    pnpm -r --if-present test -- --updateSnapshot --passWithNoTests || true
-    print_success "Test snapshots updated"
+    set +e
+    pnpm -r --if-present test -- --updateSnapshot --passWithNoTests 2>/dev/null
+    snapshot_status=$?
+    set -e
+    if [ "$snapshot_status" -eq 0 ]; then
+        print_success "Test snapshots updated successfully"
+    else
+        print_warning "Some snapshot updates may have failed, continuing..."
+    fi
 else
     print_warning "pnpm not available. Skipping snapshot updates."
 fi
@@ -114,7 +143,7 @@ echo ""
 # Step 6: Clean build artifacts
 print_status "Step 6: Cleaning build artifacts..."
 print_status "Removing common build directories..."
-find . -type d \( -name "dist" -o -name "build" -o -name ".next" -o -name "coverage" \) -not -path "./node_modules/*" -exec rm -rf {} + 2>/dev/null || true
+find . -maxdepth 3 -type d \( -name "dist" -o -name "build" -o -name ".next" -o -name "coverage" \) -not -path "./node_modules/*" -exec rm -rf {} + 2>/dev/null || true
 print_success "Build artifacts cleaned"
 echo ""
 
@@ -122,8 +151,15 @@ echo ""
 print_status "Step 7: Rebuilding projects..."
 if command -v pnpm &> /dev/null; then
     print_status "Building all workspaces..."
-    pnpm -r --if-present build || true
-    print_success "Projects rebuilt"
+    set +e
+    pnpm -r --if-present build 2>/dev/null
+    build_status=$?
+    set -e
+    if [ "$build_status" -eq 0 ]; then
+        print_success "Projects rebuilt successfully"
+    else
+        print_warning "Some builds may have failed, continuing..."
+    fi
 else
     print_warning "pnpm not available. Skipping rebuild."
 fi
