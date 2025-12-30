@@ -1,3 +1,10 @@
+/**
+ * © 2025 Infæmous Freight. All Rights Reserved.
+ *
+ * Proprietary Software - Sole Proprietor: Santorio Djuan Miles
+ * Unauthorized copying, modification, or distribution is prohibited
+ */
+
 import express from "express";
 import { createServer } from "http";
 import cors from "cors";
@@ -17,11 +24,14 @@ import { dispatch } from "./routes/dispatch";
 import { driver } from "./routes/driver";
 import { fleet } from "./routes/fleet";
 import { customer } from "./routes/customer";
+import { predictions } from "./routes/predictions";
 import { rateLimit } from "./middleware/rateLimit";
 import { auditTrail } from "./middleware/audit";
 import errorHandler from "./middleware/errorHandler";
 import { websocketService } from "./services/websocket";
 import { cacheService } from "./services/cache";
+import { monitoring } from "./routes/monitoring";
+import { tracingMiddleware } from "./services/tracing";
 
 const app = express();
 const httpServer = createServer(app);
@@ -30,11 +40,11 @@ const httpServer = createServer(app);
 async function initializeServices() {
   try {
     // Initialize cache service (with optional Redis)
-    await cacheService.initialize();
-    console.info("Cache service initialized");
+    const redisAvailable = await cacheService.initializeRedis();
+    console.info("Cache service initialized", { redisAvailable });
 
     // Initialize WebSocket service
-    websocketService.initialize(httpServer);
+    websocketService.initializeWebSocket(httpServer);
     console.info("WebSocket service initialized");
   } catch (error) {
     console.error("Failed to initialize services:", error);
@@ -44,10 +54,12 @@ async function initializeServices() {
 
 app.use(cors());
 app.use(express.json());
+app.use(tracingMiddleware()); // Phase 3: Distributed tracing
 app.use(rateLimit);
 app.use(auditTrail);
 
 app.use("/api/health", health);
+app.use("/api/metrics", monitoring);
 app.use("/api/auth", auth);
 app.use("/api/ai", ai);
 app.use("/api/avatar", avatar);
@@ -60,6 +72,7 @@ app.use("/api/dispatch", dispatch);
 app.use("/api/drivers", driver);
 app.use("/api/fleet", fleet);
 app.use("/api/customers", customer);
+app.use("/api/predictions", predictions);
 app.use(errorHandler);
 
 const apiConfig = config.getApiConfig();

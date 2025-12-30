@@ -1,10 +1,10 @@
 /**
  * Phase 3 Feature 2: Route Optimization Algorithm
- * 
+ *
  * Implements A* and Dijkstra algorithms with traffic awareness
  * Minimizes distance, time, and fuel consumption
  * Integrates with real-time traffic data and historical patterns
- * 
+ *
  * Deployment: Days 3-4 of Phase 3
  * Target Improvement: 15-20% route efficiency
  * Business Impact: 15-20% fuel savings, faster deliveries
@@ -90,7 +90,7 @@ class RouteOptimizer {
   optimizeRoute(
     startLocation: Location,
     endLocation: Location,
-    waypoints: Location[] = []
+    waypoints: Location[] = [],
   ): OptimizedRoute {
     // Create ordered waypoints
     const allWaypoints = [startLocation, ...waypoints, endLocation];
@@ -105,7 +105,11 @@ class RouteOptimizer {
       const to = allWaypoints[i + 1];
 
       const distance = haversineDistance(from, to);
-      const trafficMultiplier = getTrafficMultiplier(from.lat, from.lng, new Date().getHours());
+      const trafficMultiplier = getTrafficMultiplier(
+        from.lat,
+        from.lng,
+        new Date().getHours(),
+      );
 
       // Estimate time: base on 60 km/h average speed
       const baseTime = (distance / 60) * 60; // minutes
@@ -125,7 +129,8 @@ class RouteOptimizer {
 
     // Baseline route (direct distance)
     const baselineDistance = haversineDistance(startLocation, endLocation);
-    const efficiency = ((baselineDistance - totalDistance) / baselineDistance) * 100;
+    const efficiency =
+      ((baselineDistance - totalDistance) / baselineDistance) * 100;
 
     // Fuel estimate (6.5 L/100km average consumption)
     const fuelEstimate = (totalDistance / 100) * 6.5;
@@ -185,7 +190,7 @@ class RouteOptimizer {
   compareRoutes(
     start: Location,
     end: Location,
-    alternatives: Location[][] = []
+    alternatives: Location[][] = [],
   ): {
     recommended: OptimizedRoute;
     alternatives: OptimizedRoute[];
@@ -193,12 +198,14 @@ class RouteOptimizer {
     const recommended = this.optimizeRoute(start, end);
 
     const alternativeRoutes = alternatives.map((waypoints) =>
-      this.optimizeRoute(start, end, waypoints)
+      this.optimizeRoute(start, end, waypoints),
     );
 
     return {
       recommended,
-      alternatives: alternativeRoutes.sort((a, b) => a.totalTime - b.totalTime),
+      alternatives: alternativeRoutes.sort(
+        (a, b) => a.estimatedTime - b.estimatedTime,
+      ),
     };
   }
 }
@@ -211,7 +218,7 @@ export async function optimizeRoute(req: any, res: any) {
 
   if (!start || !end) {
     return res.status(400).json({
-      error: 'start and end locations are required',
+      error: "start and end locations are required",
     });
   }
 
@@ -233,8 +240,8 @@ export async function optimizeRoute(req: any, res: any) {
     });
   } catch (error) {
     res.status(500).json({
-      error: 'Route optimization failed',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      error: "Route optimization failed",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
@@ -247,7 +254,7 @@ export async function optimizeMultiStop(req: any, res: any) {
 
   if (!start || !stops || !Array.isArray(stops) || stops.length === 0) {
     return res.status(400).json({
-      error: 'start and stops array are required',
+      error: "start and stops array are required",
     });
   }
 
@@ -269,7 +276,7 @@ export async function optimizeMultiStop(req: any, res: any) {
     });
   } catch (error) {
     res.status(500).json({
-      error: 'Multi-stop optimization failed',
+      error: "Multi-stop optimization failed",
     });
   }
 }

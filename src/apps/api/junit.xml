@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="5" failures="0" errors="0" time="4.085">
-  <testsuite name="Rate Limiting Load Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-30T07:04:51" time="3.793" tests="5">
+<testsuites name="jest tests" tests="35" failures="0" errors="0" time="4.83">
+  <testsuite name="RouteOptimizer" errors="0" failures="0" skipped="1" timestamp="2025-12-30T21:10:44" time="4.052" tests="9">
+    <testcase classname="RouteOptimizer › optimizeRoute()" name="should optimize simple two-point route" time="0.011">
+    </testcase>
+    <testcase classname="RouteOptimizer › optimizeRoute()" name="should calculate fuel and cost estimates" time="0">
+    </testcase>
+    <testcase classname="RouteOptimizer › optimizeRoute()" name="should apply traffic multipliers correctly" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="RouteOptimizer › optimizeMultiStop()" name="should optimize multi-stop delivery route" time="0.001">
+    </testcase>
+    <testcase classname="RouteOptimizer › optimizeMultiStop()" name="should achieve efficiency improvement" time="0.001">
+    </testcase>
+    <testcase classname="RouteOptimizer › optimizeMultiStop()" name="should handle large number of stops" time="0.001">
+    </testcase>
+    <testcase classname="RouteOptimizer › compareRoutes()" name="should compare multiple route options" time="0.001">
+    </testcase>
+    <testcase classname="RouteOptimizer › distance calculations" name="should calculate distance accurately in routes" time="0.001">
+    </testcase>
+    <testcase classname="RouteOptimizer › performance" name="should optimize route in under 500ms" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Rate Limiting Load Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-30T21:10:48" time="0.251" tests="5">
     <testcase classname="Rate Limiting Load Tests" name="should export runLoadTest function" time="0.003">
     </testcase>
     <testcase classname="Rate Limiting Load Tests" name="should export runLoadTestSuite function" time="0">
@@ -10,6 +31,52 @@
     <testcase classname="Rate Limiting Load Tests" name="should export exampleRateLimitingTests function" time="0">
     </testcase>
     <testcase classname="Rate Limiting Load Tests" name="analyzeRateLimitCompliance should identify compliant tests" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="GPSTrackingManager" errors="0" failures="0" skipped="0" timestamp="2025-12-30T21:10:48" time="0.128" tests="12">
+    <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should store driver location" time="0.009">
+    </testcase>
+    <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should track multiple location updates" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should trigger speed alerts for excessive speed" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › calculateETA()" name="should calculate ETA based on current location" time="0.002">
+    </testcase>
+    <testcase classname="GPSTrackingManager › calculateETA()" name="should handle stationary drivers with lower confidence" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › calculateETA()" name="should return null for unknown driver" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › getLocationHistory()" name="should retrieve location history for a load" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › getActiveDrivers()" name="should return all active drivers" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › geofencing" name="should register geofences" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › geofencing" name="should detect geofence entry" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › performance" name="should handle high-frequency updates" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › edge cases" name="should handle invalid coordinates gracefully" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="DriverAvailabilityPredictor" errors="0" failures="0" skipped="0" timestamp="2025-12-30T21:10:48" time="0.127" tests="9">
+    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should have proper type definitions" time="0.003">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should have proper prediction input type" time="0">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should validate prediction result structure" time="0.002">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate weather conditions" time="0">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate traffic levels" time="0.001">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate time of day ranges" time="0.01">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support HIGH recommendation" time="0">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support MEDIUM recommendation" time="0">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support LOW recommendation" time="0">
     </testcase>
   </testsuite>
 </testsuites>
