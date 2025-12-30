@@ -242,7 +242,7 @@ export const SkeletonShipmentList: React.FC<{ count?: number }> = ({
   return (
     <>
       <style>{pulseStyles}</style>
-      <div style={{ space: '1rem' }}>
+      <div style={{ gap: '1rem' }}>
         {items.map((i) => (
           <div
             key={i}
