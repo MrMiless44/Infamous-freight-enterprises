@@ -74,20 +74,20 @@ jobs:
             const commits = context.payload.commits || [];
             const latestCommit = commits[commits.length - 1];
             const status = '${{ job.status }}' === 'success' ? '✅' : '❌';
-            
+
             const comment = `## ${status} Deployment to Vercel
-            
-**Build Status:** ${{ job.status }}
-**Commit:** [\`${context.sha.substring(0, 7)}\`](${latestCommit?.url || '#'})
-**Author:** ${latestCommit?.author.name || 'Unknown'}
 
-### Deployment Details
-- **Environment:** Production
-- **URL:** https://infamous-freight-enterprises-git-f34b9b-santorio-miles-projects.vercel.app
-- **Timestamp:** ${new Date().toISOString()}
+            **Build Status:** ${{ job.status }}
+            **Commit:** [\`${context.sha.substring(0, 7)}\`](${latestCommit?.url || '#'})
+            **Author:** ${latestCommit?.author.name || 'Unknown'}
 
-${status === '✅' ? '✨ **Deployment successful!**' : '⚠️ **Deployment failed. Check logs above.**'}`;
-            
+            ### Deployment Details
+            - **Environment:** Production
+            - **URL:** https://infamous-freight-enterprises-git-f34b9b-santorio-miles-projects.vercel.app
+            - **Timestamp:** ${new Date().toISOString()}
+
+            ${status === '✅' ? '✨ **Deployment successful!**' : '⚠️ **Deployment failed. Check logs above.**'}`;
+
             // Only comment if we can find a related PR
             const { data: pullRequests } = await github.rest.pulls.list({
               owner: context.repo.owner,
@@ -97,7 +97,7 @@ ${status === '✅' ? '✨ **Deployment successful!**' : '⚠️ **Deployment fai
               direction: 'desc',
               per_page: 1
             });
-            
+
             if (pullRequests.length > 0) {
               github.rest.issues.createComment({
                 issue_number: pullRequests[0].number,

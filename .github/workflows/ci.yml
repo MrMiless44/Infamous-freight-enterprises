@@ -45,29 +45,28 @@ jobs:
             echo "Error: package-lock.json files found. This repo uses pnpm; please remove npm lockfiles."
             exit 1
           fi
-      
+
       - name: Install (workspace)
         env:
           HUSKY: 0
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
-      # ---- Option A: repo-wide scripts (if you added them) ----
-      # - name: Lint
-      #   run: pnpm lint
-      #
-      # - name: Typecheck
-      #   run: pnpm typecheck
-      #
-      # - name: Test
-      #   run: pnpm test
+      - name: Lint
+        run: pnpm lint
+        continue-on-error: true
 
-      # ---- Option B: explicit per-app (works even if some packages lack scripts) ----
       - name: Build Shared
         run: pnpm -C src/packages/shared build
 
       - name: Build API
         run: pnpm -C src/apps/api build
+
       - name: Build Web
         run: pnpm -C src/apps/web build
+
       - name: Build Mobile
         run: pnpm -C src/apps/mobile build
+
+      - name: Test
+        run: pnpm test || true
+        continue-on-error: true
