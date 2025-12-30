@@ -1,10 +1,10 @@
 /** @type {import('jest').Config} */
-module.exports = {
+export default {
   // Use Node.js test environment
   testEnvironment: "node",
 
   // Transform TypeScript files
-  preset: "ts-jest",
+  preset: "ts-jest/presets/default-esm",
 
   // Root directory for tests
   roots: ["<rootDir>/src"],
@@ -15,11 +15,15 @@ module.exports = {
     "**/?(*.)+(spec|test).+(ts|tsx|js)",
   ],
 
+  // Extensions
+  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
+
   // Transform files
   transform: {
-    "^.+\\.(ts|tsx)$": [
+    "^.+\\.tsx?$": [
       "ts-jest",
       {
+        useESM: true,
         tsconfig: {
           esModuleInterop: true,
           allowSyntheticDefaultImports: true,
