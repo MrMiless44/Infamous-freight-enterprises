@@ -41,8 +41,8 @@ export default {
     "!src/**/index.ts",
   ],
 
-  // Coverage thresholds
-  coverageThresholds: {
+  // Coverage threshold
+  coverageThreshold: {
     global: {
       branches: 75,
       functions: 75,

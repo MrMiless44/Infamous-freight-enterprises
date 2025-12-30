@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="0" failures="0" errors="0" time="10.747">
+<testsuites name="jest tests" tests="5" failures="0" errors="0" time="7.213">
+  <testsuite name="Rate Limiting Load Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-30T05:39:24" time="6.642" tests="5">
+    <testcase classname="Rate Limiting Load Tests" name="should export runLoadTest function" time="0.006">
+    </testcase>
+    <testcase classname="Rate Limiting Load Tests" name="should export runLoadTestSuite function" time="0.001">
+    </testcase>
+    <testcase classname="Rate Limiting Load Tests" name="should export analyzeRateLimitCompliance function" time="0">
+    </testcase>
+    <testcase classname="Rate Limiting Load Tests" name="should export exampleRateLimitingTests function" time="0">
+    </testcase>
+    <testcase classname="Rate Limiting Load Tests" name="analyzeRateLimitCompliance should identify compliant tests" time="0.002">
+    </testcase>
+  </testsuite>
 </testsuites>

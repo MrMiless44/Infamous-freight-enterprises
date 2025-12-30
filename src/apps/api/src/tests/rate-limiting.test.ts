@@ -282,10 +282,40 @@ export async function exampleRateLimitingTests() {
   return results;
 }
 
-// Export for testing
-export default {
-  runLoadTest,
-  runLoadTestSuite,
-  analyzeRateLimitCompliance,
-  exampleRateLimitingTests,
-};
+// Jest Test Suite
+describe("Rate Limiting Load Tests", () => {
+  test("should export runLoadTest function", () => {
+    expect(typeof runLoadTest).toBe("function");
+  });
+
+  test("should export runLoadTestSuite function", () => {
+    expect(typeof runLoadTestSuite).toBe("function");
+  });
+
+  test("should export analyzeRateLimitCompliance function", () => {
+    expect(typeof analyzeRateLimitCompliance).toBe("function");
+  });
+
+  test("should export exampleRateLimitingTests function", () => {
+    expect(typeof exampleRateLimitingTests).toBe("function");
+  });
+
+  test("analyzeRateLimitCompliance should identify compliant tests", () => {
+    const result: LoadTestResult = {
+      endpoint: "/test",
+      totalRequests: 100,
+      successfulRequests: 95,
+      throttledRequests: 3,
+      errorRequests: 2,
+      averageResponseTime: 150,
+      minResponseTime: 10,
+      maxResponseTime: 500,
+      requestsPerSecond: 10,
+      duration: 10,
+    };
+
+    const compliance = analyzeRateLimitCompliance(result);
+    expect(compliance).toHaveProperty("compliant");
+    expect(compliance).toHaveProperty("violations");
+  });
+});

@@ -10,6 +10,10 @@ import { prisma } from "../../lib/prisma";
 import bcrypt from "bcrypt";
 
 jest.mock("../../lib/prisma");
+jest.mock("bcrypt", () => ({
+  hash: jest.fn().mockResolvedValue("hashed-password"),
+  compare: jest.fn().mockResolvedValue(true),
+}));
 
 describe("Authentication Routes", () => {
   let app: express.Application;
