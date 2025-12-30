@@ -1,3 +1,6 @@
+/* eslint-env es6 */
+/* global __ENV */
+
 import http from 'k6/http';
 import { check, sleep, group } from 'k6';
 
@@ -135,12 +138,16 @@ export default function () {
   sleep(Math.random() * 3);
 }
 
-// Custom metric definitions
+// Custom metric definitions (for reference, not actively used in this test)
 import { Trend, Counter, Gauge, Rate } from 'k6/metrics';
 
+// eslint-disable-next-line no-unused-vars
 const httpDuration = new Trend('http_req_duration');
+// eslint-disable-next-line no-unused-vars
 const httpErrors = new Counter('http_req_failed');
+// eslint-disable-next-line no-unused-vars
 const activeUsers = new Gauge('active_users');
+// eslint-disable-next-line no-unused-vars
 const requestRate = new Rate('request_rate');
 
 export function handleSummary(data) {
@@ -151,7 +158,7 @@ export function handleSummary(data) {
 }
 
 // Text summary formatter
-function textSummary(data, options) {
+function textSummary(data, _options) {
   let summary = '';
   summary += '\n=== K6 Load Test Summary ===\n';
   summary += `Total Duration: ${(data.state.testRunDurationMs / 1000).toFixed(2)}s\n`;
