@@ -54,12 +54,12 @@ This document outlines the comprehensive testing strategy for Infamous Freight E
 ```javascript
 describe("validateShipment", () => {
   test("should validate correct shipment", () => {
-    const shipment = { trackingNumber: "TEST-001", origin: "NY" };
+    const shipment = { reference: "TEST-001", origin: "NY" };
     expect(validateShipment(shipment)).toBe(true);
   });
 
-  test("should reject invalid tracking number", () => {
-    const shipment = { trackingNumber: "", origin: "NY" };
+  test("should reject invalid reference", () => {
+    const shipment = { reference: "", origin: "NY" };
     expect(validateShipment(shipment)).toBe(false);
   });
 });
@@ -285,7 +285,7 @@ Store reusable test data:
 ```javascript
 // __tests__/helpers/fixtures.js
 export const validShipment = {
-  trackingNumber: "TEST-001",
+  reference: "TEST-001",
   origin: "New York, NY",
   destination: "LA, CA",
   weight: 25.5,
@@ -300,7 +300,7 @@ Generate test data programmatically:
 function createShipment(overrides = {}) {
   return {
     id: `test-${Date.now()}`,
-    trackingNumber: `TEST-${Date.now()}`,
+    reference: `TEST-${Date.now()}`,
     ...defaultShipment,
     ...overrides,
   };

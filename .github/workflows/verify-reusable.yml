@@ -1,0 +1,74 @@
+name: Verify Image (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+
+jobs:
+  verify:
+    name: Verify ${{ inputs.service }}:${{ inputs.tag }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR (read)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve image digest from tag
+        id: digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          OWNER="${{ github.repository_owner }}"
+          SERVICE="${{ inputs.service }}"
+          TAG="${{ inputs.tag }}"
+          IMAGE="ghcr.io/${OWNER}/infamous-freight-enterprises-${SERVICE}:${TAG}"
+          echo "Resolving digest for ${IMAGE}"
+          OUT=$(docker buildx imagetools inspect "${IMAGE}")
+          DIGEST=$(echo "${OUT}" | sed -n 's/^Digest:\s*//p' | head -n1)
+          if [[ -z "${DIGEST}" ]]; then
+            echo "Failed to resolve digest for ${IMAGE}" >&2
+            exit 1
+          fi
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+          echo "image_ref=ghcr.io/${OWNER}/infamous-freight-enterprises-${SERVICE}@${DIGEST}" >> $GITHUB_OUTPUT
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Verify signature
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+        run: |
+          cosign verify \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/docker-ghcr.yml@refs/heads/main" \
+            "${{ steps.digest.outputs.image_ref }}"
+
+      - name: Verify CycloneDX attestation
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+        run: |
+          cosign verify-attestation \
+            --type cyclonedx \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/docker-ghcr.yml@refs/heads/main" \
+            "${{ steps.digest.outputs.image_ref }}"
+
+      - name: Summary
+        run: |
+          echo "Verified: ${{ steps.digest.outputs.image_ref }}" >> $GITHUB_STEP_SUMMARY

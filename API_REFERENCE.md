@@ -102,14 +102,15 @@ Search users with filtering, sorting, and pagination.
 **Rate Limit**: 100/15min
 
 **Query Parameters**:
-| Parameter | Type | Default | Max | Description |
-|-----------|------|---------|-----|-------------|
-| `q` | string | "" | 100 | Search query (email/name, case-insensitive) |
-| `page` | number | 1 | - | Page number (1-indexed) |
-| `limit` | number | 10 | 100 | Results per page |
-| `role` | string | - | - | Filter by role: `user`, `admin`, `driver` |
-| `sortBy` | string | createdAt | - | Sort field: `name`, `email`, `createdAt` |
-| `order` | string | desc | - | Sort order: `asc`, `desc` |
+
+| Parameter | Type   | Default   | Max | Description                                 |
+| --------- | ------ | --------- | --- | ------------------------------------------- |
+| `q`       | string | ""        | 100 | Search query (email/name, case-insensitive) |
+| `page`    | number | 1         | -   | Page number (1-indexed)                     |
+| `limit`   | number | 10        | 100 | Results per page                            |
+| `role`    | string | -         | -   | Filter by role: `user`, `admin`, `driver`   |
+| `sortBy`  | string | createdAt | -   | Sort field: `name`, `email`, `createdAt`    |
+| `order`   | string | desc      | -   | Sort order: `asc`, `desc`                   |
 
 **Examples**:
 
@@ -378,7 +379,7 @@ List all shipments.
   "shipments": [
     {
       "id": "shipment-001",
-      "trackingNumber": "TRK-2025-001",
+      "reference": "TRK-2025-001",
       "origin": "New York",
       "destination": "Los Angeles",
       "status": "in_transit",
@@ -410,10 +411,10 @@ Create a new shipment.
 
 ```json
 {
-  "trackingNumber": "TRK-2025-002",
+  "reference": "TRK-2025-002",
   "origin": "Chicago",
   "destination": "Miami",
-  "status": "pending"
+  "status": "created"
 }
 ```
 
@@ -524,7 +525,7 @@ Rate limits apply per endpoint and scope:
 
 **Headers in Response**:
 
-```
+```text
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 99
 X-RateLimit-Reset: 1702760400
@@ -585,4 +586,4 @@ curl -X POST \
 
 **Last Updated**: December 16, 2025  
 **API Version**: 1.0.0  
-**Status**: Production (https://infamous-freight-api.fly.dev)
+**Status**: Production ([https://infamous-freight-api.fly.dev](https://infamous-freight-api.fly.dev))

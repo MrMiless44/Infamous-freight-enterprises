@@ -9,12 +9,18 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  role      String   @default("user")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String         @id @default(cuid())
+  email        String         @unique
+  name         String?
+  role         String         @default("user")
+  twoFactorEnabled Boolean     @default(false)
+  twoFactorSecret  String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  refreshTokens RefreshToken[]
+
+  @@index([role])
+  @@index([createdAt])
 }
 
 model Driver {
@@ -26,6 +32,9 @@ model Driver {
   shipments  Shipment[]
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
+
+  @@index([status])
+  @@index([name])
 }
 
 model Shipment {
@@ -38,6 +47,11 @@ model Shipment {
   driver      Driver?  @relation(fields: [driverId], references: [id], onUpdate: Cascade, onDelete: SetNull)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([driverId])
+  @@index([createdAt])
+  @@index([status, createdAt])
 }
 
 model AiEvent {
@@ -45,4 +59,21 @@ model AiEvent {
   type      String
   payload   Json
   createdAt DateTime @default(now())
+
+  @@index([type])
+  @@index([createdAt])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
 }

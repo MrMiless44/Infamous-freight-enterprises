@@ -148,7 +148,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./api/coverage/lcov.info,./web/coverage/lcov.info,./packages/shared/coverage/lcov.info
+          files: ./api/coverage/lcov.info,./web/coverage/lcov.info,./packages/shared/coverage/lcov.info,./infamous-freight-ai/coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
@@ -170,6 +170,7 @@ jobs:
             api/coverage/
             web/junit.xml
             web/coverage/
+            infamous-freight-ai/coverage/
           retention-days: 30
 
   smoke-tests:

@@ -126,8 +126,27 @@ const port = apiConfig.port;
 const host = apiConfig.host;
 
 if (require.main === module) {
-  app.listen(port, host, () => {
+  const httpServer = app.listen(port, host, async () => {
     logger.info(`Infamous Freight API listening on ${host}:${port}`);
+
+    // Initialize WebSocket server
+    try {
+      const { initializeWebSocket } = require("./services/websocket");
+      initializeWebSocket(httpServer);
+      logger.info("WebSocket server initialized");
+    } catch (error) {
+      logger.warn("WebSocket initialization failed", { error: error.message });
+    }
+
+    // Initialize Redis cache (optional)
+    try {
+      const { initializeRedis } = require("./services/cache");
+      await initializeRedis();
+    } catch (error) {
+      logger.warn("Redis initialization failed, using memory cache", {
+        error: error.message,
+      });
+    }
   });
 }
 

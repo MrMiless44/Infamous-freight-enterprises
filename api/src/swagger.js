@@ -75,6 +75,257 @@
 
 /**
  * @swagger
+ * /api/shipments:
+ *   get:
+ *     summary: Get all shipments
+ *     tags: [Shipments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [created, in_transit, delivered, cancelled]
+ *         description: Filter by shipment status
+ *       - in: query
+ *         name: driverId
+ *         schema:
+ *           type: string
+ *         description: Filter by driver ID
+ *     responses:
+ *       200:
+ *         description: List of shipments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 shipments:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Shipment'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Insufficient permissions
+ *   post:
+ *     summary: Create a new shipment
+ *     tags: [Shipments]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [reference, origin, destination]
+ *             properties:
+ *               reference:
+ *                 type: string
+ *                 example: "SHP-001"
+ *               origin:
+ *                 type: string
+ *                 example: "New York, NY"
+ *               destination:
+ *                 type: string
+ *                 example: "Los Angeles, CA"
+ *               driverId:
+ *                 type: string
+ *                 example: "driver-123"
+ *     responses:
+ *       201:
+ *         description: Shipment created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 shipment:
+ *                   $ref: '#/components/schemas/Shipment'
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Reference already exists
+ *
+ * /api/shipments/{id}:
+ *   get:
+ *     summary: Get shipment by ID
+ *     tags: [Shipments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Shipment ID
+ *     responses:
+ *       200:
+ *         description: Shipment details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 shipment:
+ *                   $ref: '#/components/schemas/Shipment'
+ *       404:
+ *         description: Shipment not found
+ *   patch:
+ *     summary: Update shipment
+ *     tags: [Shipments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [created, in_transit, delivered, cancelled]
+ *               driverId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Shipment updated
+ *       404:
+ *         description: Shipment not found
+ *   delete:
+ *     summary: Delete shipment
+ *     tags: [Shipments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Shipment deleted
+ *       404:
+ *         description: Shipment not found
+ *
+ * /api/users:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, name, role]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               name:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *                 enum: [user, admin, dispatcher]
+ *     responses:
+ *       201:
+ *         description: User created
+ *       400:
+ *         description: Invalid input
+ *
+ * /api/users/{id}:
+ *   get:
+ *     summary: Get user by ID
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User details
+ *       404:
+ *         description: User not found
+ *
+ * /api/ai/commands:
+ *   post:
+ *     summary: Execute AI command
+ *     tags: [AI]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [command]
+ *             properties:
+ *               command:
+ *                 type: string
+ *                 example: "Find shipment SHP-001"
+ *               context:
+ *                 type: object
+ *     responses:
+ *       200:
+ *         description: AI response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 response:
+ *                   type: string
+ *       400:
+ *         description: Invalid command
+ *
  * components:
  *   schemas:
  *     User:
@@ -92,7 +343,7 @@
  *           example: "John Doe"
  *         role:
  *           type: string
- *           enum: [user, admin, driver]
+ *           enum: [user, admin, dispatcher]
  *           example: "user"
  *         createdAt:
  *           type: string
@@ -117,8 +368,8 @@
  *           example: "Los Angeles, CA"
  *         status:
  *           type: string
- *           enum: [pending, in_transit, delivered, cancelled]
- *           example: "pending"
+ *           enum: [created, in_transit, delivered, cancelled]
+ *           example: "created"
  *         driverId:
  *           type: string
  *           example: "driver-123"
@@ -141,11 +392,22 @@
  *           type: string
  *         status:
  *           type: string
+ *           enum: [available, busy, offline]
+ *     Error:
+ *       type: object
+ *       properties:
+ *         ok:
+ *           type: boolean
+ *           example: false
+ *         error:
+ *           type: string
+ *           example: "An error occurred"
  *   securitySchemes:
  *     bearerAuth:
  *       type: http
  *       scheme: bearer
  *       bearerFormat: JWT
+ *       description: "JWT token from /api/auth/login"
  */
 
 /**

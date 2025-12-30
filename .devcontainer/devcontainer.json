@@ -44,7 +44,9 @@
         "Prisma.prisma",
         "ms-edgedevtools.vscode-edge-devtools",
         "Ionide.Ionide-fsharp",
-        "endjin.endjin-recommendedpractices-build"
+        "endjin.endjin-recommendedpractices-build",
+        "ms-azuretools.vscode-containers",
+        "DavidAnson.vscode-markdownlint"
       ]
     }
   },

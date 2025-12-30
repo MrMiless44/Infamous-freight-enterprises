@@ -12,7 +12,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   api:
-    build: ./api
+    image: ghcr.io/${GHCR_OWNER:-mrmiless44}/infamous-freight-enterprises-api:latest
     restart: always
     env_file: .env
     depends_on:
@@ -21,7 +21,7 @@ services:
       - "4000:4000"
 
   web:
-    build: ./web
+    image: ghcr.io/${GHCR_OWNER:-mrmiless44}/infamous-freight-enterprises-web:latest
     restart: always
     env_file: .env
     depends_on:

@@ -28,8 +28,14 @@ RUN_API_TESTS() {
     # Pass Jest flags after -- so pnpm forwards them to the script
     (cd "$REPO_ROOT/api" && pnpm test -- --bail --maxWorkers=50%)
   else
-    echo "⚠️ pnpm unavailable; using npm fallback for API tests"
-    (cd "$REPO_ROOT/api" && npm test --silent)
+    if command -v npm >/dev/null 2>&1; then
+      echo "⚠️ pnpm unavailable; using npm fallback for API tests"
+      (cd "$REPO_ROOT/api" && npm test --silent)
+    else
+      echo "⚠️ pnpm and npm not found; skipping tests in pre-push hook"
+      echo "   Tip: install Node + pnpm, or push with --no-verify"
+      return 0
+    fi
   fi
 }
 

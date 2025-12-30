@@ -10,7 +10,7 @@ export const JWT_EXPIRES_IN = "7d";
 export const REFRESH_TOKEN_EXPIRES_IN = "30d";
 
 export const SHIPMENT_STATUSES = {
-  PENDING: "pending",
+  CREATED: "created",
   IN_TRANSIT: "in_transit",
   DELIVERED: "delivered",
   CANCELLED: "cancelled",
@@ -18,8 +18,8 @@ export const SHIPMENT_STATUSES = {
 
 export const USER_ROLES = {
   ADMIN: "admin",
-  DRIVER: "driver",
-  CUSTOMER: "customer",
+  DISPATCHER: "dispatcher",
+  USER: "user",
 } as const;
 
 export const HTTP_STATUS = {

@@ -205,10 +205,10 @@ curl -X POST \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "trackingNumber": "TRACK-001-2025",
+    "reference": "TRACK-001-2025",
     "origin": "123 Main St, New York, NY",
     "destination": "456 Oak Ave, Los Angeles, CA",
-    "status": "pending",
+    "status": "created",
     "driverId": "driver-123"
   }' \
   https://infamous-freight-api.fly.dev/api/shipments
@@ -367,11 +367,11 @@ curl -X POST \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d "{
-    \"trackingNumber\": \"TRACK-$RANDOM\",
+    \"reference\": \"TRACK-$RANDOM\",
     \"origin\": \"New York\",
     \"destination\": \"Los Angeles\",
     \"driverId\": \"$USER_ID\",
-    \"status\": \"pending\"
+    \"status\": \"created\"
   }" \
   https://infamous-freight-api.fly.dev/api/shipments
 ```

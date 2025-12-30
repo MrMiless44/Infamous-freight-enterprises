@@ -2,25 +2,25 @@
 export interface User {
   id: string;
   email: string;
-  name: string;
-  role: "admin" | "driver" | "customer";
+  name?: string;
+  role: "admin" | "dispatcher" | "user";
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface Shipment {
   id: string;
-  trackingNumber: string;
+  reference: string;
   origin: string;
   destination: string;
   status: ShipmentStatus;
-  estimatedDelivery: Date;
+  driverId?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export type ShipmentStatus =
-  | "pending"
+  | "created"
   | "in_transit"
   | "delivered"
   | "cancelled";

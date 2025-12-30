@@ -1,0 +1,162 @@
+name: Deploy via Docker Compose (Staging)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag to deploy (e.g., latest or v1.2.3)"
+        required: true
+        default: latest
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+
+jobs:
+  verify-api:
+    name: Verify API image
+    uses: ./.github/workflows/verify-reusable.yml
+    with:
+      service: api
+      tag: ${{ inputs.tag }}
+
+  verify-web:
+    name: Verify Web image
+    needs: verify-api
+    uses: ./.github/workflows/verify-reusable.yml
+    with:
+      service: web
+      tag: ${{ inputs.tag }}
+
+  deploy:
+    name: SSH deploy docker-compose (staging)
+    needs: [verify-api, verify-web]
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: GHCR login (read)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare deploy variables
+        id: prep
+        run: |
+          echo "OWNER=${GITHUB_REPOSITORY_OWNER}" >> $GITHUB_ENV
+          echo "TAG=${{ inputs.tag }}" >> $GITHUB_ENV
+
+      - name: Resolve digests locally
+        id: digests
+        shell: bash
+        run: |
+          set -euo pipefail
+          for svc in api web; do
+            REF="ghcr.io/${{ env.OWNER }}/infamous-freight-enterprises-${svc}:${{ env.TAG }}"
+            DIGEST=$(docker buildx imagetools inspect "$REF" | sed -n 's/^Digest:\s*//p' | head -n1)
+            if [ -z "$DIGEST" ]; then
+              echo "Failed to resolve digest for $REF" >&2
+              exit 1
+            fi
+            echo "DIGEST_${svc^^}=$DIGEST" >> $GITHUB_ENV
+          done
+
+      - name: Write deploy digests artifact
+        run: |
+          mkdir -p out
+          cat > out/digests.json <<JSON
+          {
+            "environment": "staging",
+            "tag": "${{ env.TAG }}",
+            "apiDigest": "${{ env.DIGEST_API }}",
+            "webDigest": "${{ env.DIGEST_WEB }}",
+            "owner": "${{ env.OWNER }}",
+            "timestamp": "${{ github.run_id }}-${{ github.run_number }}"
+          }
+          JSON
+
+      - name: Upload deploy digests artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-digests-staging
+          path: out/digests.json
+
+      - name: Deploy over SSH (staging)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST_STAGING }}
+          username: ${{ secrets.SSH_USER_STAGING }}
+          key: ${{ secrets.SSH_KEY_STAGING }}
+          port: ${{ secrets.SSH_PORT_STAGING || 22 }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            export OWNER="${{ env.OWNER }}"
+            export TAG="${{ env.TAG }}"
+
+            if ! command -v cosign >/dev/null 2>&1; then
+              curl -fsSL -o /usr/local/bin/cosign https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64
+              chmod +x /usr/local/bin/cosign
+            fi
+
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+
+            for svc in api web; do
+              REF="ghcr.io/${OWNER}/infamous-freight-enterprises-${svc}:${TAG}"
+              DIGEST=$(docker buildx imagetools inspect "$REF" | sed -n 's/^Digest:\s*//p' | head -n1)
+              if [ -z "$DIGEST" ]; then
+                echo "Failed to resolve digest for $REF" >&2
+                exit 1
+              fi
+              export "DIGEST_${svc^^}"="$DIGEST"
+            done
+
+            ISSUER="https://token.actions.githubusercontent.com"
+            IDENTITY="https://github.com/${{ github.repository }}/.github/workflows/docker-ghcr.yml@refs/heads/main"
+            for svc in api web; do
+              IMG_REF="ghcr.io/${OWNER}/infamous-freight-enterprises-${svc}@$(eval echo \$DIGEST_${svc^^})"
+              COSIGN_EXPERIMENTAL=true cosign verify --certificate-oidc-issuer "$ISSUER" --certificate-identity "$IDENTITY" "$IMG_REF"
+              COSIGN_EXPERIMENTAL=true cosign verify-attestation --type cyclonedx --certificate-oidc-issuer "$ISSUER" --certificate-identity "$IDENTITY" "$IMG_REF"
+            done
+
+            export GHCR_OWNER="$OWNER"
+            cat > docker-compose.override.yml <<EOF
+            services:
+              api:
+                image: ghcr.io/${OWNER}/infamous-freight-enterprises-api@${DIGEST_API}
+              web:
+                image: ghcr.io/${OWNER}/infamous-freight-enterprises-web@${DIGEST_WEB}
+            EOF
+
+            docker compose -f docker-compose.prod.yml -f docker-compose.override.yml pull
+            docker compose -f docker-compose.prod.yml -f docker-compose.override.yml up -d
+
+      - name: Notify Slack (success)
+        if: ${{ success() && secrets.SLACK_WEBHOOK_URL != '' }}
+        run: |
+          payload=$(jq -n --arg text "✅ Staging deploy succeeded for tag '${{ env.TAG }}'\nAPI: ghcr.io/${{ env.OWNER }}/infamous-freight-enterprises-api@${{ env.DIGEST_API }}\nWEB: ghcr.io/${{ env.OWNER }}/infamous-freight-enterprises-web@${{ env.DIGEST_WEB }}" '{text: $text}')
+          curl -X POST -H 'Content-type: application/json' --data "$payload" "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+      - name: Notify Slack (failure)
+        if: ${{ failure() && secrets.SLACK_WEBHOOK_URL != '' }}
+        run: |
+          payload=$(jq -n --arg text "❌ Staging deploy FAILED for tag '${{ env.TAG }}'. Check workflow run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" '{text: $text}')
+          curl -X POST -H 'Content-type: application/json' --data "$payload" "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+      - name: Notify Teams (success)
+        if: ${{ success() && secrets.TEAMS_WEBHOOK_URL != '' }}
+        run: |
+          text="✅ Staging deploy succeeded for tag '${{ env.TAG }}'%0AAPI: ghcr.io/${{ env.OWNER }}/infamous-freight-enterprises-api@${{ env.DIGEST_API }}%0AWEB: ghcr.io/${{ env.OWNER }}/infamous-freight-enterprises-web@${{ env.DIGEST_WEB }}"
+          curl -H 'Content-Type: application/json' -d "{\"text\": \"$text\"}" "${{ secrets.TEAMS_WEBHOOK_URL }}"
+
+      - name: Notify Teams (failure)
+        if: ${{ failure() && secrets.TEAMS_WEBHOOK_URL != '' }}
+        run: |
+          text="❌ Staging deploy FAILED for tag '${{ env.TAG }}'. See run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -H 'Content-Type: application/json' -d "{\"text\": \"$text\"}" "${{ secrets.TEAMS_WEBHOOK_URL }}"

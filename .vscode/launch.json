@@ -1,16 +1,63 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch",
-      "type": "lldb",
+      "name": "API: Launch (Inspector 9229)",
+      "type": "pwa-node",
       "request": "launch",
-      "program": "${workspaceRoot}/<your program>",
-      "args": [],
-      "cwd": "${workspaceRoot}"
+      "cwd": "${workspaceFolder}/api",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--inspect=9229"
+      ],
+      "program": "${workspaceFolder}/api/src/server.js",
+      "envFile": "${workspaceFolder}/.env.local",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "API: Attach (9229)",
+      "type": "pwa-node",
+      "request": "attach",
+      "port": 9229,
+      "restart": true
+    },
+    {
+      "name": "Web: Launch Next.js (Inspector 9230)",
+      "type": "pwa-node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/web",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--inspect=9230"
+      ],
+      "program": "${workspaceFolder}/web/node_modules/next/dist/bin/next",
+      "args": [
+        "dev"
+      ],
+      "envFile": "${workspaceFolder}/.env.local",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Web: Attach (9230)",
+      "type": "pwa-node",
+      "request": "attach",
+      "port": 9230,
+      "restart": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug API + Web",
+      "configurations": [
+        "API: Launch (Inspector 9229)",
+        "Web: Launch Next.js (Inspector 9230)"
+      ]
     }
   ]
 }

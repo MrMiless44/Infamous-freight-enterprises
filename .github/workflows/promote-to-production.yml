@@ -1,0 +1,191 @@
+name: Promote Staging to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to comment on (optional)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download latest staging deploy digests
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: deploy-staging.yml
+          workflow_conclusion: success
+          name: deploy-digests-staging
+          path: staging-digests
+
+      - name: Show digests
+        run: |
+          ls -R staging-digests || true
+          cat staging-digests/digests.json
+
+      - name: Parse digests
+        id: digests
+        run: |
+          api=$(jq -r .api staging-digests/digests.json)
+          web=$(jq -r .web staging-digests/digests.json)
+          echo "api=$api" >> $GITHUB_OUTPUT
+          echo "web=$web" >> $GITHUB_OUTPUT
+
+      - name: Setup cosign
+        uses: sigstore/cosign-installer@v3.4.0
+
+      - name: Login to GHCR
+        if: ${{ secrets.GHCR_TOKEN != '' && secrets.GHCR_USERNAME != '' }}
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+
+      - name: Verify signature (api)
+        env:
+          COSIGN_EXPERIMENTAL: 1
+        run: |
+          cosign verify \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/docker-ghcr.yml@refs/heads/main" \
+            "${{ steps.digests.outputs.api }}"
+
+      - name: Verify attestation (api)
+        env:
+          COSIGN_EXPERIMENTAL: 1
+        run: |
+          cosign verify-attestation \
+            --type cyclonedx \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/docker-ghcr.yml@refs/heads/main" \
+            --certificate-identity-regexp ".*" \
+            "${{ steps.digests.outputs.api }}"
+
+      - name: Verify signature (web)
+        env:
+          COSIGN_EXPERIMENTAL: 1
+        run: |
+          cosign verify \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/docker-ghcr.yml@refs/heads/main" \
+            "${{ steps.digests.outputs.web }}"
+
+      - name: Verify attestation (web)
+        env:
+          COSIGN_EXPERIMENTAL: 1
+        run: |
+          cosign verify-attestation \
+            --type cyclonedx \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/docker-ghcr.yml@refs/heads/main" \
+            --certificate-identity-regexp ".*" \
+            "${{ steps.digests.outputs.web }}"
+
+      - name: Generate compose override with pinned digests
+        run: |
+          cat > docker-compose.override.yml <<'YAML'
+          services:
+            api:
+              image: "${{ steps.digests.outputs.api }}"
+            web:
+              image: "${{ steps.digests.outputs.web }}"
+          YAML
+
+      - name: Upload override artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: promote-compose-override
+          path: docker-compose.override.yml
+
+      - name: Copy override to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: "docker-compose.override.yml"
+          target: "~/app"
+
+      - name: Deploy (compose up)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -euo pipefail
+            mkdir -p ~/app
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+            cd ~/app
+            # Expect docker-compose.prod.yml to be present on server
+            docker compose -f docker-compose.prod.yml -f docker-compose.override.yml pull
+            docker compose -f docker-compose.prod.yml -f docker-compose.override.yml up -d
+
+      - name: Write run summary
+        if: always()
+        run: |
+          {
+            echo "## Promote to Production"
+            echo "- API: ${{ steps.digests.outputs.api }}"
+            echo "- Web: ${{ steps.digests.outputs.web }}"
+            echo "- GHCR Owner: ${{ github.repository_owner }}"
+            echo "- Triggered by: ${{ github.actor }}"
+            echo "- PR: ${{ inputs.pr_number || 'n/a' }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment on PR (success)
+        if: ${{ inputs.pr_number != '' && success() }}
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ inputs.pr_number }}
+          body: |
+            ✅ Promotion to production succeeded.
+
+            - API: `${{ steps.digests.outputs.api }}`
+            - Web: `${{ steps.digests.outputs.web }}`
+
+            Images were verified (cosign) and deployed via docker compose.
+
+      - name: Comment on PR (failure)
+        if: ${{ inputs.pr_number != '' && failure() }}
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ inputs.pr_number }}
+          body: |
+            ❌ Promotion to production failed.
+
+            Check workflow logs for details.
+
+      - name: Notify Slack (success)
+        if: ${{ success() && secrets.SLACK_WEBHOOK_URL != '' }}
+        run: |
+          payload=$(jq -n --arg text "✅ Promotion succeeded\nAPI: ${{ steps.digests.outputs.api }}\nWEB: ${{ steps.digests.outputs.web }}" '{text: $text}')
+          curl -X POST -H 'Content-type: application/json' --data "$payload" "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+      - name: Notify Slack (failure)
+        if: ${{ failure() && secrets.SLACK_WEBHOOK_URL != '' }}
+        run: |
+          payload=$(jq -n --arg text "❌ Promotion FAILED. See run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" '{text: $text}')
+          curl -X POST -H 'Content-type: application/json' --data "$payload" "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+      - name: Notify Teams (success)
+        if: ${{ success() && secrets.TEAMS_WEBHOOK_URL != '' }}
+        run: |
+          text="✅ Promotion succeeded%0AAPI: ${{ steps.digests.outputs.api }}%0AWEB: ${{ steps.digests.outputs.web }}"
+          curl -H 'Content-Type: application/json' -d "{\"text\": \"$text\"}" "${{ secrets.TEAMS_WEBHOOK_URL }}"
+
+      - name: Notify Teams (failure)
+        if: ${{ failure() && secrets.TEAMS_WEBHOOK_URL != '' }}
+        run: |
+          text="❌ Promotion FAILED. See run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -H 'Content-Type: application/json' -d "{\"text\": \"$text\"}" "${{ secrets.TEAMS_WEBHOOK_URL }}"

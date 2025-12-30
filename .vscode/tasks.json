@@ -23,6 +23,56 @@
                 "panel": "dedicated"
             },
             "problemMatcher": []
+        },
+        {
+            "label": "api:debug",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "--inspect=9229",
+                "src/server.js"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/api"
+            },
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "web:debug",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "--inspect=9230",
+                "node_modules/next/dist/bin/next",
+                "dev"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/web"
+            },
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Dev: API+Web (filtered)",
+            "type": "shell",
+            "command": "pnpm",
+            "args": [
+                "-r",
+                "--parallel",
+                "dev",
+                "--filter",
+                "infamous-freight-api",
+                "--filter",
+                "infamous-freight-web",
+                "--filter",
+                "@infamous-freight/shared"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "isBackground": true,
+            "problemMatcher": []
         }
     ]
 }

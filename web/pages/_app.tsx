@@ -14,15 +14,12 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     // Track Core Web Vitals
     if (typeof window !== "undefined") {
-      import("web-vitals").then(
-        ({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-          getCLS(reportWebVitals);
-          getFID(reportWebVitals);
-          getFCP(reportWebVitals);
-          getLCP(reportWebVitals);
-          getTTFB(reportWebVitals);
-        },
-      );
+      import("web-vitals").then(({ getCLS, getCFP, getLCP, getTTFB }) => {
+        getCLS(reportWebVitals);
+        getCFP?.(reportWebVitals);
+        getLCP(reportWebVitals);
+        getTTFB(reportWebVitals);
+      });
 
       // Track layout shifts and long tasks
       trackCLS();

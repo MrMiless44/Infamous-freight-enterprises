@@ -1,4 +1,4 @@
-# 🚀 All Improvements Implemented Successfully!
+# 🚀 All Improvements Implemented Successfully
 
 ## Summary
 
@@ -19,7 +19,7 @@ All suggested improvements have been fully implemented for the Infamous Freight 
 
 - Created `packages/shared` TypeScript package
 - Implemented common types (User, Shipment, ApiResponse, etc.)
-- Added utility functions (formatDate, formatCurrency, generateTrackingNumber, etc.)
+- Added utility functions (formatDate, formatCurrency, etc.)
 - Defined constants (HTTP_STATUS, ERROR_MESSAGES, SHIPMENT_STATUSES, etc.)
 - Added environment validation utilities
 - Integrated into API and Web services
@@ -221,15 +221,11 @@ Documentation/
 ### In API (JavaScript)
 
 ```javascript
-const {
-  HTTP_STATUS,
-  formatCurrency,
-  generateTrackingNumber,
-} = require("@infamous-freight/shared");
+const { HTTP_STATUS, formatCurrency } = require("@infamous-freight/shared");
 
 // Use it
-const trackingNumber = generateTrackingNumber();
-res.status(HTTP_STATUS.OK).json({ trackingNumber });
+const reference = `TRK-${Date.now()}`;
+res.status(HTTP_STATUS.OK).json({ reference });
 ```
 
 ### In Web (TypeScript)

@@ -1,0 +1,39 @@
+name: Pre-Deploy Verify (Cosign)
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: "Service to verify (api, web, both)"
+        required: true
+        default: both
+        type: choice
+        options:
+          - api
+          - web
+          - both
+      tag:
+        description: "Image tag to verify (e.g., latest or v1.2.3)"
+        required: true
+        default: latest
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+
+jobs:
+  verify-api:
+    if: ${{ inputs.service == 'both' || inputs.service == 'api' }}
+    uses: ./.github/workflows/verify-reusable.yml
+    with:
+      service: api
+      tag: ${{ inputs.tag }}
+
+  verify-web:
+    if: ${{ inputs.service == 'both' || inputs.service == 'web' }}
+    uses: ./.github/workflows/verify-reusable.yml
+    with:
+      service: web
+      tag: ${{ inputs.tag }}

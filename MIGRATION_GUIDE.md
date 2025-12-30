@@ -134,17 +134,13 @@ pnpm lint:fix
 ### In API (api/src/example.js)
 
 ```javascript
-const {
-  HTTP_STATUS,
-  formatCurrency,
-  generateTrackingNumber,
-} = require("@infamous-freight/shared");
+const { HTTP_STATUS, formatCurrency } = require("@infamous-freight/shared");
 
 // Use constants
 res.status(HTTP_STATUS.OK).json({ success: true });
 
 // Use utilities
-const trackingNumber = generateTrackingNumber();
+const reference = `TRK-${Date.now()}`;
 const price = formatCurrency(1999.99);
 ```
 

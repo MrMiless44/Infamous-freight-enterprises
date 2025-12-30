@@ -1,3 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+      include: "scope"
 # Dependabot configuration for automated dependency updates and security scanning
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 

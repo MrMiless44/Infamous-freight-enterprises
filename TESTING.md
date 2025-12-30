@@ -117,8 +117,8 @@ Test individual functions/modules in isolation.
 
 ```javascript
 describe("validateShipment", () => {
-  test("should reject invalid tracking number", () => {
-    const result = validateShipment({ trackingNumber: "" });
+  test("should reject invalid reference", () => {
+    const result = validateShipment({ reference: "" });
     expect(result.valid).toBe(false);
   });
 });
@@ -185,7 +185,7 @@ describe("Security - Input Fuzzing", () => {
     test(`should sanitize: ${input}`, async () => {
       const res = await request(app)
         .post("/api/shipments")
-        .send({ trackingNumber: input });
+        .send({ reference: input });
 
       expect(res.status).toBe(400);
     });
@@ -301,14 +301,14 @@ Store reusable test data in fixtures:
 ```javascript
 // __tests__/fixtures/shipments.js
 export const validShipment = {
-  trackingNumber: "TEST-001",
+  reference: "TEST-001",
   origin: "New York, NY",
   destination: "Los Angeles, CA",
-  status: "PENDING",
+  status: "CREATED",
 };
 
 export const invalidShipment = {
-  trackingNumber: "", // Invalid
+  reference: "", // Invalid
   origin: "New York, NY",
 };
 ```

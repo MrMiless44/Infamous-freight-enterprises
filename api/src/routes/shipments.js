@@ -5,6 +5,14 @@ const {
   requireScope,
   auditLog,
 } = require("../middleware/security");
+const {
+  exportToCSV,
+  exportToPDF,
+  exportToJSON,
+} = require("../services/export");
+const {
+  emitShipmentUpdate,
+} = require("../services/websocket");
 
 const router = express.Router();
 
@@ -141,6 +149,12 @@ router.post(
       );
 
       res.status(201).json({ ok: true, shipment: result });
+
+      // Emit WebSocket event
+      emitShipmentUpdate(result.id, {
+        type: "created",
+        shipment: result,
+      });
     } catch (err) {
       if (err.code === "P2002") {
         return res
@@ -206,6 +220,13 @@ router.patch(
       );
 
       res.json({ ok: true, shipment: result });
+
+      // Emit WebSocket event
+      emitShipmentUpdate(result.id, {
+        type: "updated",
+        shipment: result,
+        changes: updates,
+      });
     } catch (err) {
       if (err.code === "P2025") {
         return res.status(404).json({ ok: false, error: "Shipment not found" });
@@ -232,6 +253,84 @@ router.delete(
       if (err.code === "P2025") {
         return res.status(404).json({ ok: false, error: "Shipment not found" });
       }
+      next(err);
+    }
+  },
+);
+
+// Export shipments
+router.get(
+  "/shipments/export/:format",
+  authenticate,
+  requireScope("shipments:read"),
+  auditLog,
+  async (req, res, next) => {
+    try {
+      const { format } = req.params;
+      const { status, driverId } = req.query;
+
+      // Build query
+      const where = {};
+      if (status) where.status = status;
+      if (driverId) where.driverId = driverId;
+
+      // Fetch shipments
+      const shipments = await prisma.shipment.findMany({
+        where,
+        include: {
+          driver: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              status: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      // Export based on format
+      switch (format.toLowerCase()) {
+        case "csv":
+          const csv = exportToCSV(shipments);
+          res.setHeader("Content-Type", "text/csv");
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="shipments-${Date.now()}.csv"`,
+          );
+          res.send(csv);
+          break;
+
+        case "pdf":
+          const pdf = await exportToPDF(shipments);
+          res.setHeader("Content-Type", "application/pdf");
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="shipments-${Date.now()}.pdf"`,
+          );
+          res.send(pdf);
+          break;
+
+        case "json":
+          const json = exportToJSON(shipments);
+          res.setHeader("Content-Type", "application/json");
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="shipments-${Date.now()}.json"`,
+          );
+          res.send(json);
+          break;
+
+        default:
+          return res.status(400).json({
+            ok: false,
+            error: "Invalid format. Use: csv, pdf, or json",
+          });
+      }
+    } catch (err) {
       next(err);
     }
   },

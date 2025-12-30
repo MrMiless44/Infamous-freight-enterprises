@@ -4,6 +4,14 @@
 [![Tests](https://img.shields.io/badge/tests-197%20passing-brightgreen.svg)](./api)
 [![Node.js](https://img.shields.io/badge/node-20.18.1-brightgreen.svg)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-8.15.9-orange.svg)](https://pnpm.io)
+[![Quality Checks](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/quality.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/quality.yml)
+[![CodeQL](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/codeql.yml)
+[![GHCR Build](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/docker-ghcr.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/docker-ghcr.yml)
+[![Staging Deploy](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-staging.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-staging.yml)
+[![Prod Deploy](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-docker-compose.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-docker-compose.yml)
+[![Promote→Prod](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/promote-to-production.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/promote-to-production.yml)
+[![Secrets Check](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/secrets-check.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/secrets-check.yml)
+[![Compose Validate](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/compose-validate.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/compose-validate.yml)
 
 A modern full-stack freight management platform with AI-powered features, real-time voice capabilities, and integrated billing system.
 
@@ -11,50 +19,48 @@ A modern full-stack freight management platform with AI-powered features, real-t
 
 Infamous Freight Enterprises is a comprehensive logistics and fleet management solution built as a monorepo with:
 
-- **Backend**: Node.js/Express API with PostgreSQL database
-- **Frontend**: Next.js React application with TypeScript
-- **Mobile**: React Native/Expo mobile application
-- **Shared Package**: Common types, utilities, and constants
-- **AI Integration**: OpenAI and Anthropic APIs for intelligent features
-- **Payment Processing**: Stripe and PayPal integration
-- **Voice**: Real-time voice communication capabilities
-- **Infrastructure**: Docker containerization with deployment to Fly.io, Render, or Vercel
+## ✨ Latest Updates (December 30, 2025)
 
-## ✨ Latest Updates (December 2025)
+🎉 **Major System Enhancements Complete:**
 
-🎉 **Production Deployment Complete:**
+✅ **Real-time Features**
+- WebSocket support for live shipment tracking
+- Driver location updates
+- Push notifications
 
-- ✅ **API live in production** at https://infamous-freight-api.fly.dev (Fly.io, iad region)
-- ✅ **Search endpoint** implemented with filtering, pagination, and sorting
-- ✅ **API documentation** with all endpoints, auth, rate limiting, curl examples
-- ✅ **Deployment runbook** created (see [DEPLOYMENT_RUNBOOK.md](DEPLOYMENT_RUNBOOK.md))
-- ✅ Converted to **pnpm workspace monorepo** for better dependency management
-- ✅ Created **shared package** (`@infamous-freight/shared`) for code reuse
-- ✅ Added **mobile app** as workspace package
-- ✅ Enhanced **CI/CD pipeline** with testing and coverage
+✅ **Performance & Scalability**
+- Redis caching layer
+- Database indexes optimized
+- Per-user rate limiting
 
-See [IMPROVEMENTS_COMPLETE.md](IMPROVEMENTS_COMPLETE.md) for full details.
+✅ **Developer Experience**
+- Comprehensive Swagger API docs at `/api/docs`
+- Export functionality (CSV, PDF, JSON)
+- Enhanced health monitoring
+- React error boundaries
+- Loading skeleton components
+
+✅ **CI/CD & Deployment**
+- Mobile CI/CD workflow
+- Automated deployment scripts
+- Integration test suite
+
+📚 **Documentation**:
+- [ENHANCEMENTS_COMPLETE.md](ENHANCEMENTS_COMPLETE.md) - Full feature list & setup guide
+- [QUICK_REFERENCE_ENHANCEMENTS.md](QUICK_REFERENCE_ENHANCEMENTS.md) - Quick reference card
+- [API_REFERENCE.md](API_REFERENCE.md) - API endpoints & examples
+- [IMPROVEMENTS_COMPLETE.md](IMPROVEMENTS_COMPLETE.md) - Previous improvements
 
 ## 🚀 Quick Start
 
-### ⚡ Production API (Live)
-
-**Endpoint**: `https://infamous-freight-api.fly.dev`
-
-Test the live API:
-
-```bash
-# Health check
-curl https://infamous-freight-api.fly.dev/api/health
-
 # Response
-{
-  "uptime": 3600,
-  "timestamp": 1702756800000,
-  "status": "ok",
-  "database": "connected"
+
+"timestamp": 1702756800000,
+"status": "ok",
+"database": "connected"
 }
-```
+
+````
 
 **Full API Reference**: See [API_REFERENCE.md](API_REFERENCE.md) for all endpoints, auth, and curl examples
 
@@ -69,7 +75,7 @@ curl https://infamous-freight-api.fly.dev/api/health
 ```bash
 # Run automated setup script
 ./setup.sh
-```
+````
 
 This will:
 
@@ -280,6 +286,29 @@ docker-compose up --build
 docker-compose -f docker-compose.prod.yml up
 ```
 
+### GHCR Images
+
+CI publishes multi-arch images to GitHub Container Registry (GHCR):
+
+- ghcr.io/<owner>/infamous-freight-enterprises-api
+- ghcr.io/<owner>/infamous-freight-enterprises-web
+
+Tags:
+
+- `latest` on `main`
+- release tags (e.g., `v1.2.3`)
+- commit `sha`
+
+Login and pull:
+
+```bash
+echo "$GHCR_TOKEN" | docker login ghcr.io -u <github-username> --password-stdin
+docker pull ghcr.io/<owner>/infamous-freight-enterprises-api:latest
+docker pull ghcr.io/<owner>/infamous-freight-enterprises-web:latest
+```
+
+`docker-compose.prod.yml` consumes GHCR images; set `GHCR_OWNER` env to override the default owner.
+
 ## 🚢 Deployment
 
 Deployment guides are available for:
@@ -389,3 +418,17 @@ npm install
 ## 📞 Support
 
 For issues or questions, please open a GitHub issue or contact the development team.
+
+## 🔐 Required Secrets
+
+- `GHCR_USERNAME`, `GHCR_TOKEN`: GHCR login for deploy hosts (read:packages).
+- `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `[SSH_PORT]`: Production SSH access for compose deploys.
+- `SSH_HOST_STAGING`, `SSH_USER_STAGING`, `SSH_KEY_STAGING`, `[SSH_PORT_STAGING]`: Staging SSH access.
+- `CODECOV_TOKEN`: For code coverage uploads (if used in CI).
+- `FLY_API_TOKEN`: For Fly.io deployment workflow.
+- `VERCEL_TOKEN`: For Vercel deployment workflow.
+- `TEST_EMAIL`, `TEST_PASSWORD`: For e2e tests gated by secrets.
+- `[optional] SLACK_WEBHOOK_URL`: To receive deploy/promotion/rollback notifications in Slack.
+- `[optional] TEAMS_WEBHOOK_URL`: To receive deploy/promotion/rollback notifications in Microsoft Teams.
+
+See docs/ENVIRONMENT_PROTECTION_CHECKLIST.md for environment-scoped setup.
