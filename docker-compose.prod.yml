@@ -1,0 +1,78 @@
+version: "3.8"
+
+services:
+  api:
+    image: infamous-freight-api:latest
+    container_name: infamous-api-prod
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - infamous-network
+
+  web:
+    image: infamous-freight-web:latest
+    container_name: infamous-web-prod
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://api:4000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    networks:
+      - infamous-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: infamous-postgres-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: infamous_freight
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - infamous-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: infamous-redis-prod
+    restart: unless-stopped
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - infamous-network
+
+networks:
+  infamous-network:
+    driver: bridge
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:
