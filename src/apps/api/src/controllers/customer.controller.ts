@@ -8,10 +8,6 @@ export async function getCustomers(
   res: Response,
   next: NextFunction,
 ) {
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
   try {
     const customers = await prisma.customer.findMany({
       where: {
