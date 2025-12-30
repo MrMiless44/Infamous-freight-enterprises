@@ -141,4 +141,132 @@ describe("RouteOptimizer", () => {
       expect(duration).toBeLessThan(500);
     });
   });
+
+  describe("edge cases and validation", () => {
+    it("should handle routes with same start and end", () => {
+      const location = { lat: 40.7128, lng: -74.006, name: "Same" };
+
+      const route = optimizer.optimizeRoute(location, location);
+
+      expect(route.totalDistance).toBe(0);
+      expect(route.estimatedTime).toBe(0);
+      expect(route.fuelEstimate).toBe(0);
+    });
+
+    it("should handle routes with very close waypoints", () => {
+      const start = { lat: 40.7128, lng: -74.006 };
+      const end = { lat: 40.7129, lng: -74.0061 }; // Very close
+
+      const route = optimizer.optimizeRoute(start, end);
+
+      expect(route.totalDistance).toBeGreaterThan(0);
+      expect(route.totalDistance).toBeLessThan(1); // Less than 1 km
+    });
+
+    it("should calculate fuel for long routes", () => {
+      const start = { lat: 40.7128, lng: -74.006, name: "NYC" };
+      const end = { lat: 42.3601, lng: -71.0589, name: "Boston" };
+
+      const route = optimizer.optimizeRoute(start, end);
+
+      expect(route.fuelEstimate).toBeGreaterThan(10); // Should need fuel
+      expect(route.cost).toBeGreaterThan(0);
+    });
+
+    it("should optimize routes without names", () => {
+      const start = { lat: 40.7128, lng: -74.006 };
+      const end = { lat: 40.758, lng: -73.9855 };
+
+      const route = optimizer.optimizeRoute(start, end);
+
+      expect(route).toBeDefined();
+      expect(route.waypoints.length).toBe(2);
+    });
+
+    it("should handle empty alternatives in compareRoutes", () => {
+      const start = { lat: 40.7128, lng: -74.006 };
+      const end = { lat: 40.758, lng: -73.9855 };
+
+      const comparison = optimizer.compareRoutes(start, end, []);
+
+      expect(comparison.recommended).toBeDefined();
+      expect(comparison.alternatives).toHaveLength(0);
+    });
+
+    it("should sort alternatives by estimated time", () => {
+      const start = { lat: 40.7128, lng: -74.006 };
+      const end = { lat: 40.758, lng: -73.9855 };
+      const alternatives = [
+        [
+          { lat: 40.75, lng: -73.97 },
+          { lat: 40.76, lng: -73.96 },
+        ],
+        [{ lat: 40.74, lng: -73.98 }],
+      ];
+
+      const comparison = optimizer.compareRoutes(start, end, alternatives);
+
+      // Alternatives should be sorted by estimatedTime
+      for (let i = 0; i < comparison.alternatives.length - 1; i++) {
+        expect(comparison.alternatives[i].estimatedTime).toBeLessThanOrEqual(
+          comparison.alternatives[i + 1].estimatedTime,
+        );
+      }
+    });
+  });
+
+  describe("multi-stop optimization with waypoints", () => {
+    it("should handle single stop", () => {
+      const start = { lat: 40.7128, lng: -74.006 };
+      const stops = [{ lat: 40.758, lng: -73.9855 }];
+
+      const route = optimizer.optimizeMultiStop(start, stops);
+
+      expect(route.waypoints.length).toBeGreaterThanOrEqual(2);
+      expect(route.totalDistance).toBeGreaterThan(0);
+    });
+
+    it("should optimize with many stops", () => {
+      const start = { lat: 40.7128, lng: -74.006 };
+      const stops = Array.from({ length: 20 }, (_, i) => ({
+        lat: 40.7128 + (i + 1) * 0.005,
+        lng: -74.006 + (i + 1) * 0.005,
+      }));
+
+      const startTime = Date.now();
+      const route = optimizer.optimizeMultiStop(start, stops);
+      const duration = Date.now() - startTime;
+
+      expect(route.waypoints.length).toBeGreaterThanOrEqual(stops.length);
+      expect(duration).toBeLessThan(5000); // Should complete in <5 seconds
+    });
+
+    it("should calculate efficiency improvement", () => {
+      const start = { lat: 40.7128, lng: -74.006 };
+      const stops = [
+        { lat: 40.758, lng: -73.9855 },
+        { lat: 40.7489, lng: -73.968 },
+        { lat: 40.7614, lng: -73.9776 },
+      ];
+
+      const route = optimizer.optimizeMultiStop(start, stops);
+
+      expect(route.efficiency).toBeDefined();
+      expect(route.efficiency).toBeGreaterThanOrEqual(0);
+      expect(route.legs).toHaveLength(stops.length + 1);
+    });
+
+    it("should handle stops with duplicate locations", () => {
+      const start = { lat: 40.7128, lng: -74.006 };
+      const stops = [
+        { lat: 40.758, lng: -73.9855 },
+        { lat: 40.758, lng: -73.9855 }, // Duplicate
+      ];
+
+      const route = optimizer.optimizeMultiStop(start, stops);
+
+      expect(route).toBeDefined();
+      expect(route.totalDistance).toBeGreaterThan(0);
+    });
+  });
 });
