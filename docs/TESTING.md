@@ -204,7 +204,7 @@ test("should create user", async () => {
 ```javascript
 test("should handle database errors gracefully", async () => {
   prisma.user.findUnique.mockRejectedValueOnce(
-    new Error("Database connection failed")
+    new Error("Database connection failed"),
   );
 
   const response = await request(app)
@@ -240,7 +240,7 @@ test("should reject invalid email", async () => {
   expect(response.body.errors).toContainEqual(
     expect.objectContaining({
       field: "email",
-    })
+    }),
   );
 });
 ```

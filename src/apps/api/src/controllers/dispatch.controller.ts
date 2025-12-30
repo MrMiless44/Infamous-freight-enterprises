@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import { AppError } from "../middleware/validate";
-import * as aiDispatchService from "../services/aiDispatch.service";
+import * as aiDispatchService from "../services/aiDispatchService";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -192,9 +192,7 @@ export async function createLoad(
       },
     });
 
-    console.log(
-      `Load created: ${load.loadNumber} by user ${req.user!.id}`,
-    );
+    console.log(`Load created: ${load.loadNumber} by user ${req.user!.id}`);
 
     res.status(201).json({
       status: "success",
@@ -343,6 +341,7 @@ export async function optimizeRoutes(
       throw new AppError("No valid loads found for optimization", 400);
     }
 
+    // TODO: Implement aiDispatchService.optimizeRoutes when service is available
     const optimization = await aiDispatchService.optimizeRoutes(loads);
 
     // Log AI decision

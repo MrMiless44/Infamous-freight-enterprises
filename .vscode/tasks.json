@@ -1,28 +1,26 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Codex: Start",
-            "type": "shell",
-            "command": "codex",
-            "presentation": {
-                "reveal": "always",
-                "panel": "dedicated"
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Codex: Exec (prompt)",
-            "type": "shell",
-            "command": "codex exec",
-            "args": [
-                "--help"
-            ],
-            "presentation": {
-                "reveal": "always",
-                "panel": "dedicated"
-            },
-            "problemMatcher": []
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Codex: Start",
+      "type": "shell",
+      "command": "codex",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Codex: Exec (prompt)",
+      "type": "shell",
+      "command": "codex exec",
+      "args": ["--help"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    }
+  ]
 }

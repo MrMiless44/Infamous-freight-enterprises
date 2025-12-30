@@ -29,13 +29,13 @@ This comprehensive guide organizes all information about the 15 system enhanceme
 
 ## 📄 Main Documentation Files
 
-| Document | Purpose | Length | Read Time |
-|----------|---------|--------|-----------|
-| [DEPLOYMENT_READY.md](DEPLOYMENT_READY.md) | Status summary and next steps | 250 lines | 10 min |
-| [QUICK_REFERENCE_ENHANCEMENTS.md](QUICK_REFERENCE_ENHANCEMENTS.md) | Quick code examples and tasks | 350 lines | 15 min |
-| [ENHANCEMENTS_COMPLETE.md](ENHANCEMENTS_COMPLETE.md) | Full feature documentation | 600 lines | 30 min |
-| [REBUILD_STATUS.md](REBUILD_STATUS.md) | Detailed rebuild report | 400 lines | 20 min |
-| [SYSTEM_ENHANCEMENTS_INDEX.md](SYSTEM_ENHANCEMENTS_INDEX.md) | This file - navigation guide | - | 5 min |
+| Document                                                           | Purpose                       | Length    | Read Time |
+| ------------------------------------------------------------------ | ----------------------------- | --------- | --------- |
+| [DEPLOYMENT_READY.md](DEPLOYMENT_READY.md)                         | Status summary and next steps | 250 lines | 10 min    |
+| [QUICK_REFERENCE_ENHANCEMENTS.md](QUICK_REFERENCE_ENHANCEMENTS.md) | Quick code examples and tasks | 350 lines | 15 min    |
+| [ENHANCEMENTS_COMPLETE.md](ENHANCEMENTS_COMPLETE.md)               | Full feature documentation    | 600 lines | 30 min    |
+| [REBUILD_STATUS.md](REBUILD_STATUS.md)                             | Detailed rebuild report       | 400 lines | 20 min    |
+| [SYSTEM_ENHANCEMENTS_INDEX.md](SYSTEM_ENHANCEMENTS_INDEX.md)       | This file - navigation guide  | -         | 5 min     |
 
 ---
 
@@ -44,30 +44,35 @@ This comprehensive guide organizes all information about the 15 system enhanceme
 ### Core Services (API)
 
 #### 1. Real-time Tracking (WebSocket)
+
 - **Location**: `src/apps/api/src/services/websocket.ts` (156 lines)
 - **Purpose**: Real-time shipment and driver updates
 - **Quick Start**: [QUICK_REFERENCE_ENHANCEMENTS.md#websocket-service](QUICK_REFERENCE_ENHANCEMENTS.md#websocket-service)
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#1-real-time-tracking](ENHANCEMENTS_COMPLETE.md#1-real-time-tracking-with-websocket-socketio)
 
 #### 2. Distributed Caching (Redis)
+
 - **Location**: `src/apps/api/src/services/cache.ts` (165 lines)
 - **Purpose**: Reduce database load and improve performance
 - **Quick Start**: [QUICK_REFERENCE_ENHANCEMENTS.md#cache-service](QUICK_REFERENCE_ENHANCEMENTS.md#cache-service)
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#2-distributed-caching](ENHANCEMENTS_COMPLETE.md#2-distributed-caching-with-redis)
 
 #### 3. User Rate Limiting
+
 - **Location**: `src/apps/api/src/middleware/userRateLimit.ts` (126 lines)
 - **Purpose**: Prevent abuse and ensure fair resource allocation
 - **Quick Start**: [QUICK_REFERENCE_ENHANCEMENTS.md#rate-limiting](QUICK_REFERENCE_ENHANCEMENTS.md#-rate-limiting-middleware)
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#3-user-level-rate-limiting](ENHANCEMENTS_COMPLETE.md#3-user-level-rate-limiting)
 
 #### 4. Enhanced Health Checks
+
 - **Location**: `src/apps/api/src/routes/health.ts` (Enhanced)
 - **Purpose**: Monitor service health and K8s readiness
 - **Quick Start**: [QUICK_REFERENCE_ENHANCEMENTS.md#health-endpoints](QUICK_REFERENCE_ENHANCEMENTS.md#-health-endpoints)
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#4-enhanced-health-checks](ENHANCEMENTS_COMPLETE.md#4-enhanced-health-checks)
 
 #### 5. Data Export Functionality
+
 - **Location**: `src/apps/api/src/services/export.ts` (228 lines)
 - **Purpose**: Export shipments as CSV/PDF/JSON
 - **Quick Start**: [QUICK_REFERENCE_ENHANCEMENTS.md#export-shipments](QUICK_REFERENCE_ENHANCEMENTS.md#export-shipments)
@@ -76,12 +81,14 @@ This comprehensive guide organizes all information about the 15 system enhanceme
 ### Web Components (React)
 
 #### 6. Error Boundary Component
+
 - **Location**: `src/apps/web/components/ErrorBoundary.tsx` (142 lines)
 - **Purpose**: Gracefully handle component errors
 - **Quick Start**: [QUICK_REFERENCE_ENHANCEMENTS.md#error-boundary](QUICK_REFERENCE_ENHANCEMENTS.md#error-boundary)
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#6-error-boundary-component](ENHANCEMENTS_COMPLETE.md#6-error-boundary-component-react)
 
 #### 7. Loading Skeleton Components
+
 - **Location**: `src/apps/web/components/Skeleton.tsx` (296 lines)
 - **Purpose**: Professional loading states
 - **Quick Start**: [QUICK_REFERENCE_ENHANCEMENTS.md#loading-skeletons](QUICK_REFERENCE_ENHANCEMENTS.md#loading-skeletons)
@@ -90,11 +97,13 @@ This comprehensive guide organizes all information about the 15 system enhanceme
 ### Testing & Integration
 
 #### 8. API Documentation (Swagger/OpenAPI)
+
 - **Updates**: Route files with OpenAPI schemas
 - **Access**: `/api/docs` when running
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#8-api-documentation](ENHANCEMENTS_COMPLETE.md#8-api-documentation-swaggeropenapi)
 
 #### 9. Integration Tests
+
 - **Location**: `src/apps/api/__tests__/integration/realtime-tracking.test.ts` (185 lines)
 - **Purpose**: Validate end-to-end functionality
 - **Run**: `pnpm test`
@@ -103,30 +112,36 @@ This comprehensive guide organizes all information about the 15 system enhanceme
 ### Infrastructure & Deployment
 
 #### 10. Mobile CI/CD Pipeline
+
 - **Location**: `.github/workflows/mobile.yml`
 - **Purpose**: Automate React Native testing and building
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#10-mobile-cicd-pipeline](ENHANCEMENTS_COMPLETE.md#10-mobile-cicd-pipeline)
 
 #### 11. Deployment Automation
+
 - **Location**: `scripts/deploy.sh`
 - **Purpose**: One-command deployment to Vercel and Fly.io
 - **Run**: `bash scripts/deploy.sh`
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#11-deployment-automation](ENHANCEMENTS_COMPLETE.md#11-deployment-automation)
 
 #### 12. Server WebSocket Integration
+
 - **Location**: `src/apps/api/src/server.ts` (Enhanced)
 - **Purpose**: HTTP server with WebSocket support
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#12-server-websocket-integration](ENHANCEMENTS_COMPLETE.md#12-server-websocket-integration)
 
 #### 13. Performance Monitoring Setup
+
 - **Included**: Health check endpoints, metrics collection
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#13-performance-monitoring-setup](ENHANCEMENTS_COMPLETE.md#13-performance-monitoring-setup)
 
 #### 14. Security Enhancements
+
 - **Features**: JWT auth, rate limiting, graceful degradation
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#14-security-enhancements](ENHANCEMENTS_COMPLETE.md#14-security-enhancements)
 
 #### 15. Developer Documentation
+
 - **Files**: This index + 3 comprehensive guides
 - **Deep Dive**: [ENHANCEMENTS_COMPLETE.md#15-developer-documentation](ENHANCEMENTS_COMPLETE.md#15-developer-documentation)
 
@@ -200,12 +215,12 @@ See: [ENHANCEMENTS_COMPLETE.md#4-enhanced-health-checks](ENHANCEMENTS_COMPLETE.m
 
 ### Expected Improvements
 
-| Metric | Before | After | Change |
-|--------|--------|-------|--------|
-| API Response Time | 150ms | 75ms | -50% |
-| Database Queries | 100% | 40% | -60% |
-| Real-time Latency | N/A | <100ms | New |
-| Bundle Size | 180KB | 185KB | +3% |
+| Metric            | Before | After  | Change |
+| ----------------- | ------ | ------ | ------ |
+| API Response Time | 150ms  | 75ms   | -50%   |
+| Database Queries  | 100%   | 40%    | -60%   |
+| Real-time Latency | N/A    | <100ms | New    |
+| Bundle Size       | 180KB  | 185KB  | +3%    |
 
 See: [ENHANCEMENTS_COMPLETE.md#-performance-impact](ENHANCEMENTS_COMPLETE.md#-performance-impact)
 
@@ -214,21 +229,25 @@ See: [ENHANCEMENTS_COMPLETE.md#-performance-impact](ENHANCEMENTS_COMPLETE.md#-pe
 ## 🧪 Testing & Validation
 
 ### Run All Tests
+
 ```bash
 pnpm test
 ```
 
 ### Run API Tests Only
+
 ```bash
 pnpm --filter infamous-freight-api test
 ```
 
 ### Run Integration Tests
+
 ```bash
 pnpm --filter infamous-freight-api test -- integration
 ```
 
 ### View Coverage
+
 ```bash
 pnpm --filter infamous-freight-api test -- --coverage
 # Open api/coverage/index.html
@@ -241,6 +260,7 @@ See: [ENHANCEMENTS_COMPLETE.md#-testing](ENHANCEMENTS_COMPLETE.md#-testing)
 ## 🚀 Deployment
 
 ### Prerequisites
+
 - `pnpm` 8.15.9+
 - Node.js 20+
 - Docker (for local development)
@@ -268,29 +288,34 @@ See: [DEPLOYMENT_READY.md](DEPLOYMENT_READY.md)
 ## 🎯 Use Case Examples
 
 ### Real-time Shipment Tracking
+
 - WebSocket emits updates on status change
 - Client receives instant notification
 - UI updates without polling
 - **File**: [websocket.ts](src/apps/api/src/services/websocket.ts)
 
 ### Optimized Database Queries
+
 - Query result cached for 1 hour
 - Cache invalidated on data change
 - 60% reduction in database load
 - **File**: [cache.ts](src/apps/api/src/services/cache.ts)
 
 ### Export Shipment Data
+
 - User clicks "Export"
 - Backend generates CSV/PDF/JSON
 - File downloads to client
 - **File**: [export.ts](src/apps/api/src/services/export.ts)
 
 ### Component Error Handling
+
 - Error occurs in ShipmentsDashboard
 - ErrorBoundary catches error
-- Showsle**: [ErrorBoundary.tsx](src/apps/web/components/ErrorBoundary.tsx)
+- Showsle\*\*: [ErrorBoundary.tsx](src/apps/web/components/ErrorBoundary.tsx)
 
 ### Loading State UX
+
 - Data fetching starts
 - SkeletonShipmentList shows placeholder
 - Data arrives, skeletons replaced with actual data
@@ -339,17 +364,20 @@ Infamous-freight-enterprises/
 ## 💡 Learning Path
 
 ### Beginner (30 minutes)
+
 1. Read this file (5 min)
 2. Read [QUICK_REFERENCE_ENHANCEMENTS.md](QUICK_REFERENCE_ENHANCEMENTS.md) (15 min)
 3. Review service files in IDE (10 min)
 
 ### Intermediate (2 hours)
+
 1. Complete Beginner path
 2. Read [ENHANCEMENTS_COMPLETE.md](ENHANCEMENTS_COMPLETE.md) (30 min)
 3. Review integration tests (20 min)
 4. Try code examples locally (40 min)
 
 ### Advanced (4 hours)
+
 1. Complete Intermediate path
 2. Read [REBUILD_STATUS.md](REBUILD_STATUS.md) (20 min)
 3. Trace code execution in debugger (1 hour)
@@ -386,14 +414,14 @@ See: [ENHANCEMENTS_COMPLETE.md#troubleshooting](ENHANCEMENTS_COMPLETE.md#-troubl
 
 ### For Specific Questions
 
-| Question | Document |
-|----------|----------|
-| How do I use WebSocket? | [QUICK_REFERENCE_ENHANCEMENTS.md#websocket-service](QUICK_REFERENCE_ENHANCEMENTS.md#websocket-service) |
-| How do I add caching? | [QUICK_REFERENCE_ENHANCEMENTS.md#cache-service](QUICK_REFERENCE_ENHANCEMENTS.md#cache-service) |
-| How do I export data? | [QUICK_REFERENCE_ENHANCEMENTS.md#export-shipments](QUICK_REFERENCE_ENHANCEMENTS.md#export-shipments) |
-| What's the architecture? | [ENHANCEMENTS_COMPLETE.md](#architecture-overview) |
-| How do I deploy? | [DEPLOYMENT_READY.md#-next-steps-to-deploy](DEPLOYMENT_READY.md#-next-steps-to-deploy) |
-| What was changed? | [REBUILD_STATUS.md](REBUILD_STATUS.md) |
+| Question                 | Document                                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| How do I use WebSocket?  | [QUICK_REFERENCE_ENHANCEMENTS.md#websocket-service](QUICK_REFERENCE_ENHANCEMENTS.md#websocket-service) |
+| How do I add caching?    | [QUICK_REFERENCE_ENHANCEMENTS.md#cache-service](QUICK_REFERENCE_ENHANCEMENTS.md#cache-service)         |
+| How do I export data?    | [QUICK_REFERENCE_ENHANCEMENTS.md#export-shipments](QUICK_REFERENCE_ENHANCEMENTS.md#export-shipments)   |
+| What's the architecture? | [ENHANCEMENTS_COMPLETE.md](#architecture-overview)                                                     |
+| How do I deploy?         | [DEPLOYMENT_READY.md#-next-steps-to-deploy](DEPLOYMENT_READY.md#-next-steps-to-deploy)                 |
+| What was changed?        | [REBUILD_STATUS.md](REBUILD_STATUS.md)                                                                 |
 
 ---
 
@@ -411,15 +439,15 @@ See: [ENHANCEMENTS_COMPLETE.md#troubleshooting](ENHANCEMENTS_COMPLETE.md#-troubl
 
 ## 📅 Timeline
 
-| Phase | Status | Completion |
-|-------|--------|-----------|
-| Initial Analysis | ✅ Complete | Dec 29 |
-| Implementation | ✅ Complete | Dec 29 |
-| First Commit | ✅ Complete | Dec 29 |
-| Repository Rebuild | ✅ Complete | Dec 30 |
-| Second Commit | ✅ Complete | Dec 30 |
-| Documentation | ✅ Complete | Dec 30 |
-| Ready for Deployment | ✅ Complete | Dec 30 |
+| Phase                | Status      | Completion |
+| -------------------- | ----------- | ---------- |
+| Initial Analysis     | ✅ Complete | Dec 29     |
+| Implementation       | ✅ Complete | Dec 29     |
+| First Commit         | ✅ Complete | Dec 29     |
+| Repository Rebuild   | ✅ Complete | Dec 30     |
+| Second Commit        | ✅ Complete | Dec 30     |
+| Documentation        | ✅ Complete | Dec 30     |
+| Ready for Deployment | ✅ Complete | Dec 30     |
 
 ---
 

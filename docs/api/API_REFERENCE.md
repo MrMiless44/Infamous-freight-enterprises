@@ -554,7 +554,7 @@ Process a text command from the voice interface.
 {
   "text": "Audit invoice 1234",
   "channel": "mobile",
-  "metadata": {"priority": "high"}
+  "metadata": { "priority": "high" }
 }
 ```
 
@@ -570,7 +570,7 @@ Process a text command from the voice interface.
   "trace": {
     "tags": ["invoice", "audit"],
     "summary": "Audit invoice 1234",
-    "memory": [{"key": "vendor:abc", "confidence": 0.9}]
+    "memory": [{ "key": "vendor:abc", "confidence": 0.9 }]
   }
 }
 ```

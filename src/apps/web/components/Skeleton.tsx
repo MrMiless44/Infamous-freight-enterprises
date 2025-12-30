@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface SkeletonProps {
   className?: string;
@@ -23,21 +23,21 @@ const pulseStyles = `
  * Base Skeleton Loader Component
  */
 export const Skeleton: React.FC<SkeletonProps> = ({
-  className = '',
+  className = "",
   count = 1,
-  height = '1rem',
-  width = '100%',
+  height = "1rem",
+  width = "100%",
   circle = false,
 }) => {
   const items = Array.from({ length: count }, (_, i) => i);
 
   const skeletonStyle: React.CSSProperties = {
-    backgroundColor: '#e5e7eb',
-    borderRadius: circle ? '50%' : '0.375rem',
-    height: typeof height === 'number' ? `${height}px` : height,
-    width: typeof width === 'number' ? `${width}px` : width,
-    animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-    marginBottom: '0.5rem',
+    backgroundColor: "#e5e7eb",
+    borderRadius: circle ? "50%" : "0.375rem",
+    height: typeof height === "number" ? `${height}px` : height,
+    width: typeof width === "number" ? `${width}px` : width,
+    animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+    marginBottom: "0.5rem",
   };
 
   return (
@@ -55,12 +55,12 @@ export const Skeleton: React.FC<SkeletonProps> = ({
  */
 export const SkeletonText: React.FC<SkeletonProps> = ({
   count = 3,
-  height = '1rem',
+  height = "1rem",
   ...props
 }) => {
   const items = Array.from({ length: count }, (_, i) => {
     // Vary width to look more natural
-    const widths = ['100%', '95%', '85%'];
+    const widths = ["100%", "95%", "85%"];
     return widths[i % widths.length];
   });
 
@@ -71,12 +71,12 @@ export const SkeletonText: React.FC<SkeletonProps> = ({
         <div
           key={i}
           style={{
-            backgroundColor: '#e5e7eb',
-            borderRadius: '0.375rem',
-            height: typeof height === 'number' ? `${height}px` : height,
+            backgroundColor: "#e5e7eb",
+            borderRadius: "0.375rem",
+            height: typeof height === "number" ? `${height}px` : height,
             width,
-            marginBottom: '0.5rem',
-            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            marginBottom: "0.5rem",
+            animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
           }}
           className={props.className}
         />
@@ -98,22 +98,22 @@ export const SkeletonCard: React.FC<{ count?: number }> = ({ count = 1 }) => {
         <div
           key={i}
           style={{
-            padding: '1rem',
-            border: '1px solid #e5e7eb',
-            borderRadius: '0.5rem',
-            marginBottom: '1rem',
-            backgroundColor: '#f9fafb',
+            padding: "1rem",
+            border: "1px solid #e5e7eb",
+            borderRadius: "0.5rem",
+            marginBottom: "1rem",
+            backgroundColor: "#f9fafb",
           }}
         >
           {/* Header */}
           <div
             style={{
-              height: '1.5rem',
-              width: '40%',
-              backgroundColor: '#e5e7eb',
-              borderRadius: '0.375rem',
-              marginBottom: '1rem',
-              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              height: "1.5rem",
+              width: "40%",
+              backgroundColor: "#e5e7eb",
+              borderRadius: "0.375rem",
+              marginBottom: "1rem",
+              animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
             }}
           />
 
@@ -122,12 +122,12 @@ export const SkeletonCard: React.FC<{ count?: number }> = ({ count = 1 }) => {
             <div
               key={j}
               style={{
-                height: '1rem',
-                width: j === 3 ? '70%' : '100%',
-                backgroundColor: '#e5e7eb',
-                borderRadius: '0.375rem',
-                marginBottom: '0.5rem',
-                animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                height: "1rem",
+                width: j === 3 ? "70%" : "100%",
+                backgroundColor: "#e5e7eb",
+                borderRadius: "0.375rem",
+                marginBottom: "0.5rem",
+                animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
               }}
             />
           ))}
@@ -150,20 +150,20 @@ export const SkeletonTable: React.FC<{
   return (
     <>
       <style>{pulseStyles}</style>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <tbody>
           {rowArray.map((i) => (
-            <tr key={i} style={{ borderBottom: '1px solid #e5e7eb' }}>
+            <tr key={i} style={{ borderBottom: "1px solid #e5e7eb" }}>
               {colArray.map((j) => (
-                <td key={j} style={{ padding: '1rem' }}>
+                <td key={j} style={{ padding: "1rem" }}>
                   <div
                     style={{
-                      height: '1rem',
-                      width: j === 0 ? '80%' : '100%',
-                      backgroundColor: '#e5e7eb',
-                      borderRadius: '0.375rem',
+                      height: "1rem",
+                      width: j === 0 ? "80%" : "100%",
+                      backgroundColor: "#e5e7eb",
+                      borderRadius: "0.375rem",
                       animation:
-                        'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
                     }}
                   />
                 </td>
@@ -187,41 +187,41 @@ export const SkeletonStats: React.FC<{ count?: number }> = ({ count = 4 }) => {
       <style>{pulseStyles}</style>
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '1rem',
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: "1rem",
         }}
       >
         {items.map((i) => (
           <div
             key={i}
             style={{
-              padding: '1rem',
-              border: '1px solid #e5e7eb',
-              borderRadius: '0.5rem',
-              backgroundColor: '#f9fafb',
+              padding: "1rem",
+              border: "1px solid #e5e7eb",
+              borderRadius: "0.5rem",
+              backgroundColor: "#f9fafb",
             }}
           >
             {/* Label */}
             <div
               style={{
-                height: '0.875rem',
-                width: '60%',
-                backgroundColor: '#e5e7eb',
-                borderRadius: '0.375rem',
-                marginBottom: '0.75rem',
-                animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                height: "0.875rem",
+                width: "60%",
+                backgroundColor: "#e5e7eb",
+                borderRadius: "0.375rem",
+                marginBottom: "0.75rem",
+                animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
               }}
             />
 
             {/* Value */}
             <div
               style={{
-                height: '2rem',
-                width: '80%',
-                backgroundColor: '#e5e7eb',
-                borderRadius: '0.375rem',
-                animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                height: "2rem",
+                width: "80%",
+                backgroundColor: "#e5e7eb",
+                borderRadius: "0.375rem",
+                animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
               }}
             />
           </div>
@@ -242,53 +242,59 @@ export const SkeletonShipmentList: React.FC<{ count?: number }> = ({
   return (
     <>
       <style>{pulseStyles}</style>
-      <div style={{ gap: '1rem' }}>
+      <div style={{ gap: "1rem" }}>
         {items.map((i) => (
           <div
             key={i}
             style={{
-              padding: '1rem',
-              border: '1px solid #e5e7eb',
-              borderRadius: '0.5rem',
-              marginBottom: '1rem',
-              backgroundColor: '#f9fafb',
+              padding: "1rem",
+              border: "1px solid #e5e7eb",
+              borderRadius: "0.5rem",
+              marginBottom: "1rem",
+              backgroundColor: "#f9fafb",
             }}
           >
             {/* Shipment ID */}
             <div
               style={{
-                height: '1.25rem',
-                width: '30%',
-                backgroundColor: '#e5e7eb',
-                borderRadius: '0.375rem',
-                marginBottom: '0.75rem',
-                animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                height: "1.25rem",
+                width: "30%",
+                backgroundColor: "#e5e7eb",
+                borderRadius: "0.375rem",
+                marginBottom: "0.75rem",
+                animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
               }}
             />
 
             {/* Details row */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "1rem",
+              }}
+            >
               {[1, 2].map((j) => (
                 <div key={j}>
                   <div
                     style={{
-                      height: '0.875rem',
-                      width: '50%',
-                      backgroundColor: '#e5e7eb',
-                      borderRadius: '0.375rem',
-                      marginBottom: '0.5rem',
+                      height: "0.875rem",
+                      width: "50%",
+                      backgroundColor: "#e5e7eb",
+                      borderRadius: "0.375rem",
+                      marginBottom: "0.5rem",
                       animation:
-                        'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
                     }}
                   />
                   <div
                     style={{
-                      height: '1rem',
-                      width: '100%',
-                      backgroundColor: '#e5e7eb',
-                      borderRadius: '0.375rem',
+                      height: "1rem",
+                      width: "100%",
+                      backgroundColor: "#e5e7eb",
+                      borderRadius: "0.375rem",
                       animation:
-                        'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
                     }}
                   />
                 </div>
@@ -298,12 +304,12 @@ export const SkeletonShipmentList: React.FC<{ count?: number }> = ({
             {/* Status badge */}
             <div
               style={{
-                height: '1.5rem',
-                width: '20%',
-                backgroundColor: '#e5e7eb',
-                borderRadius: '9999px',
-                marginTop: '1rem',
-                animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                height: "1.5rem",
+                width: "20%",
+                backgroundColor: "#e5e7eb",
+                borderRadius: "9999px",
+                marginTop: "1rem",
+                animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
               }}
             />
           </div>

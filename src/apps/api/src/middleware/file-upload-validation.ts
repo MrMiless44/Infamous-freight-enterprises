@@ -49,7 +49,11 @@ const maxFileSizes = {
  * File type validator
  */
 function fileTypeValidator(allowedTypes: string[]) {
-  return (file: Express.Multer.File, cb: Function) => {
+  return (
+    req: Request,
+    file: Express.Multer.File,
+    cb: multer.FileFilterCallback,
+  ) => {
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
@@ -66,7 +70,11 @@ function fileTypeValidator(allowedTypes: string[]) {
  * File size validator
  */
 function fileSizeValidator(maxSize: number) {
-  return (req: Request, file: Express.Multer.File, cb: Function) => {
+  return (
+    req: Request,
+    file: Express.Multer.File,
+    cb: multer.FileFilterCallback,
+  ) => {
     if (file.size <= maxSize) {
       cb(null, true);
     } else {
@@ -131,9 +139,13 @@ export function validateFileUpload(
   }
 
   // Validate file extension matches mime type
-  const file = req.file || (req.files && req.files[0]);
-  const ext = path.extname(file!.originalname).toLowerCase();
-  const mimeType = file!.mimetype;
+  const files = req.files as Express.Multer.File[] | undefined;
+  const file = req.file || (files && files.length > 0 ? files[0] : undefined);
+  if (!file) {
+    return res.status(400).json({ error: "No valid file found" });
+  }
+  const ext = path.extname(file.originalname).toLowerCase();
+  const mimeType = file.mimetype;
 
   const extensionMimeMap: { [key: string]: string[] } = {
     ".pdf": ["application/pdf"],
@@ -205,7 +217,7 @@ export function cleanupFailedUpload(
   next: NextFunction,
 ) {
   if (err instanceof multer.MulterError) {
-    if (err.code === "FILE_TOO_LARGE") {
+    if (err.code === "LIMIT_FILE_SIZE") {
       return res.status(413).json({
         error: "File too large",
         message: err.message,

@@ -22,7 +22,7 @@ const driverCoachSchema = z.object({
 const dispatchSchema = z.object({
   route: z.object({
     id: z.string().optional(),
-    trafficRisk: z.number().min(0).max(1),
+    trafficRisk: z.number().min(0).max(1), // Required field
     delayMinutes: z.number().optional(),
     etaMinutes: z.number().optional(),
     customerPriority: z.enum(["standard", "priority", "expedite"]).optional(),
@@ -61,7 +61,10 @@ ai.post("/dispatch/evaluate", requireAuth, async (req, res) => {
     return res.status(400).json({ error: parsed.error.message });
   }
 
-  const result = dispatchIntel(parsed.data.route, parsed.data.driver);
+  const result = dispatchIntel(
+    parsed.data.route as any,
+    parsed.data.driver as any,
+  );
   const decision = await prisma.aiDecision.create({
     data: {
       organizationId: req.user!.organizationId,

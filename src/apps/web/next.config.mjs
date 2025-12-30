@@ -21,8 +21,13 @@ const nextConfig = {
   },
   // Image optimization for Core Web Vitals
   images: {
-    domains: ['localhost', 'infamous-freight.fly.dev', 'infamous-freight-ai.fly.dev', 'vercel.app'],
-    formats: ['image/avif', 'image/webp'],
+    domains: [
+      "localhost",
+      "infamous-freight.fly.dev",
+      "infamous-freight-ai.fly.dev",
+      "vercel.app",
+    ],
+    formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year for optimized images
   },
   // Rewrites: forward API calls to Fly after filesystem routes
@@ -30,7 +35,7 @@ const nextConfig = {
   rewrites: async () => ({
     afterFiles: [
       {
-        source: '/api/:path*',
+        source: "/api/:path*",
         destination: `${apiBaseUrl}/api/:path*`,
       },
     ],
@@ -38,32 +43,32 @@ const nextConfig = {
   // Response headers for caching and security
   headers: async () => [
     {
-      source: '/images/(.*)',
+      source: "/images/(.*)",
       headers: [
         {
-          key: 'Cache-Control',
-          value: 'public, max-age=31536000, immutable'
-        }
-      ]
+          key: "Cache-Control",
+          value: "public, max-age=31536000, immutable",
+        },
+      ],
     },
     {
-      source: '/_next/static/(.*)',
+      source: "/_next/static/(.*)",
       headers: [
         {
-          key: 'Cache-Control',
-          value: 'public, max-age=31536000, immutable'
-        }
-      ]
+          key: "Cache-Control",
+          value: "public, max-age=31536000, immutable",
+        },
+      ],
     },
     {
-      source: '/api/(.*)',
+      source: "/api/(.*)",
       headers: [
         {
-          key: 'Cache-Control',
-          value: 'public, max-age=300, s-maxage=600'
-        }
-      ]
-    }
+          key: "Cache-Control",
+          value: "public, max-age=300, s-maxage=600",
+        },
+      ],
+    },
   ],
   // Optimize for production
   poweredByHeader: false,

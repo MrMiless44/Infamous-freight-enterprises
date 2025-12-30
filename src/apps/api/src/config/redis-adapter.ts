@@ -3,34 +3,73 @@
  * Enables horizontal scaling across multiple servers
  */
 
-import { createAdapter } from '@socket.io/redis-adapter';
-import { createClient } from 'redis';
+import { createClient } from "redis";
+import type { Server } from "socket.io";
 
 const pubClient = createClient({
-  url: process.env.REDIS_URL || 'redis://localhost:6379',
+  url: process.env.REDIS_URL || "redis://localhost:6379",
+  socket: {
+    reconnectStrategy: (retries: number) => {
+      if (retries > 10) {
+        console.error("Redis reconnection failed after 10 attempts");
+        return new Error("Redis unavailable");
+      }
+      return Math.min(retries * 100, 3000);
+    },
+  },
 });
 
 const subClient = pubClient.duplicate();
 
-export async function initializeRedisAdapter(io: any) {
-  // Connect both clients
-  await Promise.all([pubClient.connect(), subClient.connect()]);
+/**
+ * Initialize Redis adapter for Socket.IO
+ * Falls back to memory adapter if Redis is unavailable
+ */
+export async function initializeRedisAdapter(io: Server) {
+  try {
+    if (!process.env.REDIS_URL) {
+      console.log(
+        "⚠️  REDIS_URL not set - using memory adapter (not suitable for production scaling)",
+      );
+      return { pubClient: null, subClient: null };
+    }
 
-  // Attach Redis adapter
-  io.adapter(createAdapter(pubClient, subClient));
+    // Try to import Redis adapter
+    let createAdapter: any;
+    try {
+      const module = await import("@socket.io/redis-adapter");
+      createAdapter = module.createAdapter;
+    } catch (err) {
+      console.log(
+        "⚠️  @socket.io/redis-adapter not installed - using memory adapter",
+      );
+      console.log("   Install with: pnpm add @socket.io/redis-adapter");
+      return { pubClient: null, subClient: null };
+    }
 
-  console.log('✅ Socket.IO Redis adapter initialized');
+    // Connect Redis clients
+    await Promise.all([pubClient.connect(), subClient.connect()]);
 
-  // Handle connection errors
-  pubClient.on('error', (err) => {
-    console.error('Redis Pub Client Error:', err);
-  });
+    // Attach Redis adapter
+    io.adapter(createAdapter(pubClient, subClient));
 
-  subClient.on('error', (err) => {
-    console.error('Redis Sub Client Error:', err);
-  });
+    console.log("✅ Socket.IO Redis adapter initialized");
 
-  return { pubClient, subClient };
+    // Handle connection errors
+    pubClient.on("error", (err) => {
+      console.error("Redis Pub Client Error:", err);
+    });
+
+    subClient.on("error", (err) => {
+      console.error("Redis Sub Client Error:", err);
+    });
+
+    return { pubClient, subClient };
+  } catch (error) {
+    console.error("Failed to initialize Redis adapter:", error);
+    console.log("⚠️  Continuing with memory adapter");
+    return { pubClient: null, subClient: null };
+  }
 }
 
 /**
@@ -60,20 +99,20 @@ export const redisAdapterConfig = {
   persistence: {
     enabled: true,
     ttl: 86400, // 24 hours
-    prefix: 'socket:',
+    prefix: "socket:",
   },
 
   // Scaling parameters
   scaling: {
     maxConnections: 100000,
-    serverCount: parseInt(process.env.SERVER_INSTANCES || '1', 10),
-    loadBalancing: 'round-robin',
+    serverCount: parseInt(process.env.SERVER_INSTANCES || "1", 10),
+    loadBalancing: "round-robin",
   },
 
   // Health check
   healthCheck: {
     interval: 30000, // 30 seconds
     timeout: 5000,
-    key: 'health:socket.io',
+    key: "health:socket.io",
   },
 };

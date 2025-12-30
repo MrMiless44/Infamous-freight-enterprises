@@ -2,7 +2,7 @@ name: Deploy API (Render)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 concurrency:

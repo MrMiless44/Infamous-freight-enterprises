@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import prisma from "../db/prisma";
+import { prisma } from "../db/prisma";
 import { AppError } from "../middleware/validate";
-import * as aiCoachService from "../services/aiCoach.service";
+import * as aiCoachService from "../services/aiCoachService";
+
 interface DriverQuery {
   isAvailable?: string;
   page?: string;
@@ -146,6 +147,24 @@ export async function getAICoaching(
       data: {
         driverId: driver.id,
         feedback: coaching.feedback,
+        metrics: coaching.metrics as any,
+        suggestions: coaching.suggestions as any,
+      },
+    });
+
+    res.json({
+      status: "success",
+      data: session,
+    });
+    /*
+    // Get AI coaching insights
+    const coaching = await aiCoachService.generateCoaching(driver);
+
+    // Save coaching session
+    const session = await prisma.aICoachingSession.create({
+      data: {
+        driverId: driver.id,
+        feedback: coaching.feedback,
         metrics: coaching.metrics as never,
         suggestions: coaching.suggestions as never,
       },
@@ -153,8 +172,9 @@ export async function getAICoaching(
 
     res.json({
       status: "success",
-      data: { coaching, session },
+      data: session,
     });
+    */
   } catch (error) {
     next(error);
   }
@@ -204,7 +224,8 @@ export async function getPerformance(
           completedAt?: Date | string | null;
         }) => {
           const scheduled = l.deliveryTime;
-          const actualSource = l.actualDeliveryTime ?? l.completedAt ?? l.deliveryTime;
+          const actualSource =
+            l.actualDeliveryTime ?? l.completedAt ?? l.deliveryTime;
 
           if (!scheduled || !actualSource) {
             return false;
@@ -220,10 +241,17 @@ export async function getPerformance(
           return actualDate <= scheduledDate;
         },
       ).length,
-      totalRevenue: loads.reduce((sum: number, l: { rate: number }) => sum + l.rate, 0),
+      totalRevenue: loads.reduce(
+        (sum: number, l: { rate: number }) => sum + l.rate,
+        0,
+      ),
       averageRating:
         loads.length > 0
-          ? loads.reduce((sum: number, l: { rating: number | null }) => sum + (l.rating || 0), 0) / loads.length
+          ? loads.reduce(
+              (sum: number, l: { rating: number | null }) =>
+                sum + (l.rating || 0),
+              0,
+            ) / loads.length
           : 0,
     };
 
@@ -254,10 +282,7 @@ export async function updateLocation(
       throw new AppError("Driver not found", 404);
     }
 
-    if (
-      req.user!.role !== "ADMIN" &&
-      existingDriver.userId !== req.user!.id
-    ) {
+    if (req.user!.role !== "ADMIN" && existingDriver.userId !== req.user!.id) {
       throw new AppError("Unauthorized", 403);
     }
 

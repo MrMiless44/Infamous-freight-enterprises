@@ -254,7 +254,12 @@ monitoring.get("/metrics/health", async (_: Request, res: Response) => {
       uptime: process.uptime(),
       checks: {
         database: databaseOk ? "ok" : "error",
-        memory: heapUsedPercent > 90 ? "critical" : heapUsedPercent > 75 ? "warning" : "ok",
+        memory:
+          heapUsedPercent > 90
+            ? "critical"
+            : heapUsedPercent > 75
+              ? "warning"
+              : "ok",
       },
       issues,
     });
@@ -278,7 +283,10 @@ function formatUptime(seconds: number): string {
   return `${days}d ${hours}h ${minutes}m ${secs}s`;
 }
 
-function generateAlerts(memory: NodeJS.MemoryUsage, heapUsedPercent: number): string[] {
+function generateAlerts(
+  memory: NodeJS.MemoryUsage,
+  heapUsedPercent: number,
+): string[] {
   const alerts: string[] = [];
 
   if (heapUsedPercent > 90) {

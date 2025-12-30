@@ -3,11 +3,11 @@ name: HTML Quality
 on:
   pull_request:
     paths-ignore:
-      - 'archive/**'
+      - "archive/**"
   push:
     branches: ["main"]
     paths-ignore:
-      - 'archive/**'
+      - "archive/**"
 
 concurrency:
   group: html-quality-${{ github.ref }}

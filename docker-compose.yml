@@ -57,7 +57,11 @@ services:
     ports:
       - "${API_PORT:-4000}:${API_PORT:-4000}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:${API_PORT:-4000}/api/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://localhost:${API_PORT:-4000}/api/health || exit 1",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3

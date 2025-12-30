@@ -53,6 +53,7 @@ All configuration files are organized in the `configs/` directory:
 ### configs/ci-cd/
 
 Deployment and CI/CD platform configurations:
+
 - `codecov.yml` - Code coverage reporting
 - `fly.toml` - Fly.io deployment
 - `netlify.toml` - Netlify deployment
@@ -63,6 +64,7 @@ Deployment and CI/CD platform configurations:
 ### configs/docker/
 
 Docker and container configurations:
+
 - `configs/docker/docker-compose.yml` - Main Docker Compose configuration
 - `docker-compose.dev.yml` - Development overrides
 - `docker-compose.prod.yml` - Production configuration
@@ -71,6 +73,7 @@ Docker and container configurations:
 ### configs/linting/
 
 Code quality and formatting configurations:
+
 - `.editorconfig` - Editor configuration
 - `.lintstagedrc` - Pre-commit lint configuration
 - `.nvmrc` - Node.js version
@@ -80,11 +83,13 @@ Code quality and formatting configurations:
 ### configs/testing/
 
 Testing configurations:
+
 - `playwright.config.js` - Playwright test configuration shared by CI and local runs
 
 ### configs/validation/
 
 Validation and static analysis configurations:
+
 - `html-validate.config.js` - HTML validation rules
 - `stylelint.config.cjs` - CSS validation rules
 - `.stylelintignore` - CSS validation exclusions
@@ -109,27 +114,33 @@ This approach keeps the root directory clean while maintaining tool compatibilit
 Documentation is organized by topic:
 
 ### docs/api/
+
 - API reference and testing guides
 
 ### docs/deployment/
+
 - Deployment runbooks
 - Platform-specific deployment guides
 - Migration guides
 
 ### docs/development/
+
 - Development setup and workflow
 - CI/CD configuration
 - Planning and roadmap documents
 
 ### docs/sessions/
+
 - Historical development session notes
 - Implementation status documents
 
 ### docs/testing/
+
 - Testing strategy and guides
 - Coverage reports and roadmaps
 
 ### Root Documentation
+
 - `docs/README.md` - Documentation index
 - `docs/developer-guide.md` - Comprehensive developer guide
 - `docs/QUICK_REFERENCE.md` - Quick command reference
@@ -138,7 +149,9 @@ Documentation is organized by topic:
 ## Source Code
 
 ### api/
+
 Express.js backend API using CommonJS:
+
 ```
 api/
 ├── prisma/               # Database schema and migrations
@@ -153,7 +166,9 @@ api/
 ```
 
 ### web/
+
 Next.js 14 frontend using TypeScript/ESM:
+
 ```
 web/
 ├── components/          # React components
@@ -167,7 +182,9 @@ web/
 ```
 
 ### mobile/
+
 React Native/Expo mobile app:
+
 ```
 mobile/
 ├── assets/              # Images, fonts, etc.
@@ -177,7 +194,9 @@ mobile/
 ```
 
 ### packages/shared/
+
 Shared TypeScript package:
+
 ```
 packages/shared/
 ├── src/
@@ -193,6 +212,7 @@ packages/shared/
 ## Scripts
 
 Utility scripts in `scripts/`:
+
 - `auto-fix-tests.sh` - Automated test fixing
 - `backup-database.sh` - Database backup utility
 - `db-indexes.sql` - Database index definitions
@@ -206,6 +226,7 @@ Utility scripts in `scripts/`:
 ## Build Artifacts
 
 Generated files and directories (excluded from git):
+
 - `node_modules/` - Dependencies
 - `dist/` - Compiled output
 - `build/` - Build artifacts
@@ -215,6 +236,7 @@ Generated files and directories (excluded from git):
 ## Environment Files
 
 Environment configuration:
+
 - `.env.example` - Template for environment variables
 - `.env` - Local environment (git-ignored)
 - `web/.env.production` - Web production env
@@ -231,12 +253,14 @@ Environment configuration:
 The repository follows these naming conventions:
 
 ### Files
+
 - **Documentation**: UPPERCASE with underscores (e.g., `README.md`, `CONTRIBUTING.md`)
 - **Scripts**: kebab-case with `.sh` extension (e.g., `backup-database.sh`)
 - **Config files**: kebab-case or dot-prefix (e.g., `.eslintrc.json`, `configs/docker/docker-compose.yml`)
 - **Source files**: PascalCase for components, camelCase for utilities
 
 ### Directories
+
 - **kebab-case** for most directories (e.g., `ci-cd`, `end-to-end`)
 - **lowercase** for standard directories (e.g., `api`, `web`, `mobile`, `docs`)
 
@@ -246,19 +270,21 @@ The project uses pnpm workspaces defined in `pnpm-workspace.yaml`:
 
 ```yaml
 packages:
-  - 'api'
-  - 'web'
-  - 'mobile'
-  - 'packages/*'
+  - "api"
+  - "web"
+  - "mobile"
+  - "packages/*"
 ```
 
 Each workspace has its own:
+
 - `package.json` - Dependencies and scripts
 - `node_modules/` - Workspace-specific dependencies (via pnpm linking)
 
 ## CI/CD Structure
 
 GitHub Actions workflows in `.github/workflows/`:
+
 - `ci.yml` - Main CI pipeline (lint, test, build, validate)
 - `codeql.yml` - Security scanning
 - `container-security.yml` - Container security checks
@@ -273,21 +299,25 @@ GitHub Actions workflows in `.github/workflows/`:
 When adding new files, follow these guidelines:
 
 ### Configuration Files
+
 - Add to appropriate `configs/` subdirectory
 - Create symlink at root if tool requires it
 - Document in this file
 
 ### Documentation
+
 - Add to appropriate `docs/` subdirectory
 - Update `docs/README.md` index
 - Link from main README if important
 
 ### Source Code
+
 - Add to appropriate workspace (`api/`, `web/`, `mobile/`, or `packages/shared/`)
 - Follow existing directory structure
 - Update workspace package.json if adding dependencies
 
 ### Scripts
+
 - Add to `scripts/` directory
 - Use kebab-case naming
 - Make executable: `chmod +x scripts/new-script.sh`
@@ -296,17 +326,20 @@ When adding new files, follow these guidelines:
 ## Maintenance
 
 ### Updating Configuration
+
 1. Edit files in `configs/` (not symlinks)
 2. Test changes locally
 3. Update documentation if needed
 
 ### Moving Files
+
 1. Update all references (imports, paths)
 2. Update symlinks if necessary
 3. Test build and CI pipelines
 4. Update documentation
 
 ### Cleaning Up
+
 - Temporary files are git-ignored (see `.gitignore`)
 - Run `pnpm store prune` to clean dependency cache
 - Run `pnpm clean` in workspaces to remove build artifacts

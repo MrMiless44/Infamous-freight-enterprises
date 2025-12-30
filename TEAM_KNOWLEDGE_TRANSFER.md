@@ -248,17 +248,17 @@ function MyComponent() {
 
 ```typescript
 // Broadcasting updates to all connected clients
-io.emit('shipment:update', {
+io.emit("shipment:update", {
   id: shipment.id,
   status: shipment.status,
   timestamp: new Date(),
 });
 
 // Broadcasting to specific room
-io.to(`shipment:${shipmentId}`).emit('shipment:update', shipment);
+io.to(`shipment:${shipmentId}`).emit("shipment:update", shipment);
 
 // Broadcasting to user
-io.to(`user:${userId}`).emit('notification', message);
+io.to(`user:${userId}`).emit("notification", message);
 ```
 
 ## Real-Time Features
@@ -296,11 +296,11 @@ ws.subscribe(`user:${userId}:notification`, (notification) => {
 
 ```typescript
 // Track who's online
-socket.on('user:online', (user) => {
+socket.on("user:online", (user) => {
   console.log(`${user.name} is now online`);
 });
 
-socket.on('user:offline', (user) => {
+socket.on("user:offline", (user) => {
   console.log(`${user.name} went offline`);
 });
 ```
@@ -440,17 +440,17 @@ import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 
 ```typescript
 // JWT authentication
-const token = localStorage.getItem('auth_token');
+const token = localStorage.getItem("auth_token");
 
 // Include in API requests
-const res = await fetch('/api/shipments', {
+const res = await fetch("/api/shipments", {
   headers: {
     Authorization: `Bearer ${token}`,
   },
 });
 
 // WebSocket authentication
-const socket = io('http://localhost:4000', {
+const socket = io("http://localhost:4000", {
   auth: { token },
 });
 ```
@@ -461,7 +461,7 @@ const socket = io('http://localhost:4000', {
 // Scope-based authorization
 // Client must have correct scope for endpoint
 
-const shipments = await fetch('/api/shipments', {
+const shipments = await fetch("/api/shipments", {
   headers: {
     Authorization: `Bearer ${token}`, // Token must have 'shipment:read' scope
   },
@@ -472,14 +472,14 @@ const shipments = await fetch('/api/shipments', {
 
 ```typescript
 // Server-side validation
-import { body, validationResult } from 'express-validator';
+import { body, validationResult } from "express-validator";
 
 app.post(
-  '/api/shipments',
+  "/api/shipments",
   [
-    body('origin').notEmpty().trim(),
-    body('destination').notEmpty().trim(),
-    body('weight').isFloat({ min: 0 }),
+    body("origin").notEmpty().trim(),
+    body("destination").notEmpty().trim(),
+    body("weight").isFloat({ min: 0 }),
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -487,7 +487,7 @@ app.post(
       return res.status(400).json({ errors });
     }
     // Process valid request
-  }
+  },
 );
 ```
 
@@ -500,8 +500,8 @@ app.post(
 // Auth endpoints: 5 per 15 minutes
 
 // Check headers for limit info
-const remaining = res.headers['X-RateLimit-Remaining'];
-const reset = res.headers['X-RateLimit-Reset'];
+const remaining = res.headers["X-RateLimit-Remaining"];
+const reset = res.headers["X-RateLimit-Reset"];
 ```
 
 ## Troubleshooting

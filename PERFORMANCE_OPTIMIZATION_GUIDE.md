@@ -17,6 +17,7 @@ cd web && ANALYZE=true pnpm build
 ```
 
 ### Current Targets
+
 - First Load JS: < 150KB
 - Total bundle: < 500KB
 - Code split per route
@@ -25,6 +26,7 @@ cd web && ANALYZE=true pnpm build
 ### Recommendations
 
 #### 1.1 Implement Code Splitting
+
 ```typescript
 // web/pages/dashboard.tsx
 import dynamic from 'next/dynamic';
@@ -51,6 +53,7 @@ export default function Dashboard() {
 ```
 
 #### 1.2 Optimize Images
+
 ```typescript
 // Use Next.js Image component with optimization
 import Image from 'next/image';
@@ -71,6 +74,7 @@ export function ShipmentCard({ shipment }) {
 ```
 
 #### 1.3 Remove Unused Dependencies
+
 ```bash
 # Identify unused packages
 npm ls --depth=0
@@ -90,6 +94,7 @@ webbundlesize  # Compare against baseline
 ### N+1 Query Problem
 
 **❌ BAD:**
+
 ```typescript
 // Loads shipments + N queries for drivers
 const shipments = await prisma.shipment.findMany();
@@ -101,6 +106,7 @@ for (const shipment of shipments) {
 ```
 
 **✅ GOOD:**
+
 ```typescript
 // Single query with JOIN
 const shipments = await prisma.shipment.findMany({
@@ -139,19 +145,20 @@ model Shipment {
 const prisma = new PrismaClient({
   log: [
     {
-      emit: 'event',
-      level: 'query',
+      emit: "event",
+      level: "query",
     },
     {
-      emit: 'stdout',
-      level: 'error',
+      emit: "stdout",
+      level: "error",
     },
   ],
 });
 
-prisma.$on('query', (e) => {
-  if (e.duration > 1000) {  // Log queries > 1 second
-    logger.warn('SLOW_QUERY', {
+prisma.$on("query", (e) => {
+  if (e.duration > 1000) {
+    // Log queries > 1 second
+    logger.warn("SLOW_QUERY", {
       query: e.query,
       duration: e.duration,
       params: e.params,
@@ -172,9 +179,9 @@ export class CacheService {
   private cache = new Map(); // L1: In-memory
   private redis: RedisClient; // L2: Redis
   private ttl = {
-    SHORT: 5 * 60,       // 5 minutes
-    MEDIUM: 30 * 60,     // 30 minutes
-    LONG: 24 * 60 * 60,  // 24 hours
+    SHORT: 5 * 60, // 5 minutes
+    MEDIUM: 30 * 60, // 30 minutes
+    LONG: 24 * 60 * 60, // 24 hours
   };
 
   async get(key: string) {
@@ -219,12 +226,12 @@ export class CacheService {
 
 ```typescript
 // API endpoint modifications should invalidate cache
-router.put('/shipments/:id', async (req, res) => {
+router.put("/shipments/:id", async (req, res) => {
   const shipment = await updateShipment(req.params.id, req.body);
 
   // Invalidate related caches
   await cacheService.invalidate(`shipment:${req.params.id}*`);
-  await cacheService.invalidate(`shipments:*`);  // List cache
+  await cacheService.invalidate(`shipments:*`); // List cache
   await cacheService.invalidate(`driver:${shipment.driverId}*`);
 
   res.json(shipment);
@@ -238,32 +245,34 @@ router.put('/shipments/:id', async (req, res) => {
 ### Response Compression
 
 ```typescript
-import compression from 'compression';
+import compression from "compression";
 
 // Enable gzip compression
-app.use(compression({
-  filter: (req, res) => {
-    if (req.headers['x-no-compression']) {
-      return false;
-    }
-    return compression.filter(req, res);
-  },
-  level: 6,  // Compression level (0-9)
-}));
+app.use(
+  compression({
+    filter: (req, res) => {
+      if (req.headers["x-no-compression"]) {
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+    level: 6, // Compression level (0-9)
+  }),
+);
 ```
 
 ### Pagination for Large Results
 
 ```typescript
 // Implement cursor-based pagination
-router.get('/shipments', async (req, res) => {
+router.get("/shipments", async (req, res) => {
   const { limit = 20, cursor } = req.query;
 
   const shipments = await prisma.shipment.findMany({
-    take: parseInt(limit) + 1,  // Fetch one extra to check if more exist
+    take: parseInt(limit) + 1, // Fetch one extra to check if more exist
     cursor: cursor ? { id: cursor } : undefined,
     skip: cursor ? 1 : 0,
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
 
   const hasMore = shipments.length > parseInt(limit);
@@ -283,16 +292,17 @@ router.get('/shipments', async (req, res) => {
 
 ```typescript
 // Allow clients to request only needed fields
-router.get('/shipments/:id', async (req, res) => {
-  const fields = req.query.fields?.split(',') || [
-    'id', 'status', 'customerId', 'driverId',
+router.get("/shipments/:id", async (req, res) => {
+  const fields = req.query.fields?.split(",") || [
+    "id",
+    "status",
+    "customerId",
+    "driverId",
   ];
 
   const shipment = await prisma.shipment.findUnique({
     where: { id: req.params.id },
-    select: Object.fromEntries(
-      fields.map(f => [f, true])
-    ),
+    select: Object.fromEntries(fields.map((f) => [f, true])),
   });
 
   res.json(shipment);
@@ -349,14 +359,13 @@ setInterval(() => batcher.flush(), 100);
 
 ```typescript
 // Compress large payloads
-import pako from 'pako';
+import pako from "pako";
 
-socket.on('bulk_update', (data) => {
+socket.on("bulk_update", (data) => {
   if (data.compressed) {
-    const decompressed = pako.inflate(
-      Buffer.from(data.payload, 'base64'),
-      { to: 'string' }
-    );
+    const decompressed = pako.inflate(Buffer.from(data.payload, "base64"), {
+      to: "string",
+    });
     const parsed = JSON.parse(decompressed);
     handleUpdate(parsed);
   } else {
@@ -373,37 +382,37 @@ socket.on('bulk_update', (data) => {
 
 ```javascript
 // scripts/load-test-performance.js
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+import http from "k6/http";
+import { check, sleep } from "k6";
 
 export const options = {
   stages: [
-    { duration: '30s', target: 100 },   // Ramp up
-    { duration: '1m30s', target: 100 }, // Stable
-    { duration: '30s', target: 0 },     // Ramp down
+    { duration: "30s", target: 100 }, // Ramp up
+    { duration: "1m30s", target: 100 }, // Stable
+    { duration: "30s", target: 0 }, // Ramp down
   ],
   thresholds: {
-    http_req_duration: ['p(95)<500', 'p(99)<1000'],
-    http_req_failed: ['rate<0.1'],
+    http_req_duration: ["p(95)<500", "p(99)<1000"],
+    http_req_failed: ["rate<0.1"],
   },
 };
 
 export default function () {
   // Test shipment list endpoint
-  let res = http.get('http://localhost:4000/api/shipments?limit=50');
+  let res = http.get("http://localhost:4000/api/shipments?limit=50");
   check(res, {
-    'status is 200': (r) => r.status === 200,
-    'response time < 500ms': (r) => r.timings.duration < 500,
-    'has pagination': (r) => r.json().pagination !== undefined,
+    "status is 200": (r) => r.status === 200,
+    "response time < 500ms": (r) => r.timings.duration < 500,
+    "has pagination": (r) => r.json().pagination !== undefined,
   });
 
   sleep(1);
 
   // Test single shipment fetch
-  res = http.get('http://localhost:4000/api/shipments/1');
+  res = http.get("http://localhost:4000/api/shipments/1");
   check(res, {
-    'status is 200': (r) => r.status === 200,
-    'response time < 200ms': (r) => r.timings.duration < 200,
+    "status is 200": (r) => r.status === 200,
+    "response time < 200ms": (r) => r.timings.duration < 200,
   });
 
   sleep(1);
@@ -434,25 +443,25 @@ k6 run --out html=report.html scripts/load-test-performance.js
 // Monitor these metrics
 export const kpis = {
   // API Performance
-  p50_latency: 'Median response time (target: < 100ms)',
-  p95_latency: 'P95 response time (target: < 500ms)',
-  p99_latency: 'P99 response time (target: < 1000ms)',
-  error_rate: 'Percentage of failed requests (target: < 1%)',
-  
+  p50_latency: "Median response time (target: < 100ms)",
+  p95_latency: "P95 response time (target: < 500ms)",
+  p99_latency: "P99 response time (target: < 1000ms)",
+  error_rate: "Percentage of failed requests (target: < 1%)",
+
   // User Experience
-  fcp: 'First Contentful Paint (target: < 1.8s)',
-  lcp: 'Largest Contentful Paint (target: < 2.5s)',
-  cls: 'Cumulative Layout Shift (target: < 0.1)',
-  ttfb: 'Time to First Byte (target: < 600ms)',
+  fcp: "First Contentful Paint (target: < 1.8s)",
+  lcp: "Largest Contentful Paint (target: < 2.5s)",
+  cls: "Cumulative Layout Shift (target: < 0.1)",
+  ttfb: "Time to First Byte (target: < 600ms)",
 
   // Infrastructure
-  cpu_usage: 'CPU utilization (target: < 70%)',
-  memory_usage: 'Memory utilization (target: < 80%)',
-  disk_io: 'Disk I/O operations (monitor for spikes)',
-  
+  cpu_usage: "CPU utilization (target: < 70%)",
+  memory_usage: "Memory utilization (target: < 80%)",
+  disk_io: "Disk I/O operations (monitor for spikes)",
+
   // Cache
-  cache_hit_rate: 'Cache hit ratio (target: > 70%)',
-  cache_size: 'Redis memory usage (monitor for growth)',
+  cache_hit_rate: "Cache hit ratio (target: > 70%)",
+  cache_size: "Redis memory usage (monitor for growth)",
 };
 ```
 
@@ -462,17 +471,18 @@ export const kpis = {
 // Prometheus queries for Grafana dashboard
 const queries = {
   // API latency
-  p95_latency: 'histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))',
-  
+  p95_latency:
+    "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+
   // Error rate
   error_rate: 'rate(http_requests_total{status=~"5.."}[1m])',
-  
+
   // Cache hit rate
-  cache_hits: 'rate(cache_hits_total[1m])',
-  cache_misses: 'rate(cache_misses_total[1m])',
-  
+  cache_hits: "rate(cache_hits_total[1m])",
+  cache_misses: "rate(cache_misses_total[1m])",
+
   // Memory usage
-  memory_usage: 'process_resident_memory_bytes / 1024 / 1024',
+  memory_usage: "process_resident_memory_bytes / 1024 / 1024",
 };
 ```
 
@@ -483,27 +493,31 @@ const queries = {
 ### ✅ Easy Optimizations
 
 1. **Enable Gzip Compression** (5 min)
+
    ```bash
    # Already configured with compression middleware
    # Verify in responses: "Content-Encoding: gzip"
    ```
 
 2. **Add Cache Headers** (5 min)
+
    ```typescript
    app.use((req, res, next) => {
-     res.set('Cache-Control', 'public, max-age=3600');
+     res.set("Cache-Control", "public, max-age=3600");
      next();
    });
    ```
 
 3. **Enable HTTP/2** (10 min)
+
    ```typescript
    // Use spdy or native http2 module
-   import spdy from 'spdy';
+   import spdy from "spdy";
    spdy.createServer(app);
    ```
 
 4. **Database Indexes** (10 min)
+
    ```bash
    cd api && pnpm prisma migrate dev --name add_performance_indexes
    ```
@@ -520,13 +534,13 @@ const queries = {
 
 After implementing these optimizations:
 
-| Metric | Before | After | Target |
-|--------|--------|-------|--------|
-| First Load JS | 250KB | 120KB | < 150KB |
-| API P95 Latency | 800ms | 350ms | < 500ms |
-| Cache Hit Rate | 45% | 80% | > 70% |
-| Error Rate | 2% | 0.5% | < 1% |
-| PageLoad Time | 4.2s | 1.8s | < 2.5s |
+| Metric          | Before | After | Target  |
+| --------------- | ------ | ----- | ------- |
+| First Load JS   | 250KB  | 120KB | < 150KB |
+| API P95 Latency | 800ms  | 350ms | < 500ms |
+| Cache Hit Rate  | 45%    | 80%   | > 70%   |
+| Error Rate      | 2%     | 0.5%  | < 1%    |
+| PageLoad Time   | 4.2s   | 1.8s  | < 2.5s  |
 
 ---
 
@@ -552,6 +566,7 @@ After implementing these optimizations:
 ---
 
 **Next Steps**:
+
 1. ✅ Run bundle analyzer
 2. Implement database indexes
 3. Add Redis caching layer

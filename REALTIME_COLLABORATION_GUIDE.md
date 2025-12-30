@@ -50,7 +50,7 @@ Implementation guide for real-time collaboration features including presence, li
 interface UserPresence {
   userId: string;
   username: string;
-  status: 'online' | 'away' | 'offline';
+  status: "online" | "away" | "offline";
   lastSeen: Date;
   location?: string;
   color: string;
@@ -72,7 +72,7 @@ export class PresenceService {
 
   getOnlineUsers(): UserPresence[] {
     return Array.from(this.presence.values()).filter(
-      (p) => p.status === 'online'
+      (p) => p.status === "online",
     );
   }
 
@@ -80,7 +80,7 @@ export class PresenceService {
     this.presence.delete(userId);
   }
 
-  updateStatus(userId: string, status: 'online' | 'away' | 'offline') {
+  updateStatus(userId: string, status: "online" | "away" | "offline") {
     const presence = this.presence.get(userId);
     if (presence) {
       presence.status = status;
@@ -96,53 +96,53 @@ export const presenceService = new PresenceService();
 
 ```typescript
 // src/apps/api/src/websocket/presence.ts
-import { presenceService } from '../services/presenceService';
+import { presenceService } from "../services/presenceService";
 
 export function initPresenceHandlers(io: SocketIO.Server) {
-  io.on('connection', (socket) => {
+  io.on("connection", (socket) => {
     // User comes online
-    socket.on('user:online', (userData) => {
+    socket.on("user:online", (userData) => {
       const presence = {
         userId: userData.id,
         username: userData.name,
-        status: 'online' as const,
+        status: "online" as const,
         color: generateUserColor(userData.id),
       };
 
       presenceService.setPresence(userData.id, presence);
 
       // Broadcast to all connected clients
-      io.emit('presence:updated', {
-        type: 'online',
+      io.emit("presence:updated", {
+        type: "online",
         user: presence,
       });
     });
 
     // User goes away (idle)
-    socket.on('user:away', (userId) => {
-      presenceService.updateStatus(userId, 'away');
-      io.emit('presence:updated', {
-        type: 'away',
+    socket.on("user:away", (userId) => {
+      presenceService.updateStatus(userId, "away");
+      io.emit("presence:updated", {
+        type: "away",
         userId,
       });
     });
 
     // User comes back
-    socket.on('user:back', (userId) => {
-      presenceService.updateStatus(userId, 'online');
-      io.emit('presence:updated', {
-        type: 'online',
+    socket.on("user:back", (userId) => {
+      presenceService.updateStatus(userId, "online");
+      io.emit("presence:updated", {
+        type: "online",
         userId,
       });
     });
 
     // User disconnects
-    socket.on('disconnect', () => {
+    socket.on("disconnect", () => {
       // Mark as offline after 30 seconds of inactivity
       setTimeout(() => {
-        presenceService.updateStatus(socket.data.userId, 'offline');
-        io.emit('presence:updated', {
-          type: 'offline',
+        presenceService.updateStatus(socket.data.userId, "offline");
+        io.emit("presence:updated", {
+          type: "offline",
           userId: socket.data.userId,
         });
       }, 30000);
@@ -152,12 +152,12 @@ export function initPresenceHandlers(io: SocketIO.Server) {
 
 function generateUserColor(userId: string): string {
   const colors = [
-    '#FF6B6B', // Red
-    '#4ECDC4', // Teal
-    '#45B7D1', // Blue
-    '#FFA07A', // Orange
-    '#98D8C8', // Mint
-    '#F7DC6F', // Yellow
+    "#FF6B6B", // Red
+    "#4ECDC4", // Teal
+    "#45B7D1", // Blue
+    "#FFA07A", // Orange
+    "#98D8C8", // Mint
+    "#F7DC6F", // Yellow
   ];
   const hash = userId.charCodeAt(0) + userId.charCodeAt(1);
   return colors[hash % colors.length];
@@ -241,14 +241,10 @@ export class DocumentService {
     return this.documents.get(id);
   }
 
-  updateDocument(
-    id: string,
-    content: string,
-    userId: string
-  ): Document {
+  updateDocument(id: string, content: string, userId: string): Document {
     const doc = this.documents.get(id) || {
       id,
-      content: '',
+      content: "",
       version: 0,
       lastModified: new Date(),
       modifiedBy: userId,
@@ -296,26 +292,26 @@ export const documentService = new DocumentService();
 ```typescript
 // src/apps/api/src/websocket/documents.ts
 export function initDocumentHandlers(io: SocketIO.Server) {
-  io.on('connection', (socket) => {
+  io.on("connection", (socket) => {
     // Subscribe to document changes
-    socket.on('document:subscribe', (docId) => {
+    socket.on("document:subscribe", (docId) => {
       socket.join(`document:${docId}`);
 
       const doc = documentService.getDocument(docId);
       if (doc) {
-        socket.emit('document:loaded', doc);
+        socket.emit("document:loaded", doc);
       }
     });
 
     // Handle field lock
-    socket.on('document:lock', (docId, field) => {
+    socket.on("document:lock", (docId, field) => {
       const success = documentService.lockField(
         docId,
         field,
-        socket.data.userId
+        socket.data.userId,
       );
 
-      io.to(`document:${docId}`).emit('document:field-locked', {
+      io.to(`document:${docId}`).emit("document:field-locked", {
         field,
         userId: socket.data.userId,
         locked: success,
@@ -323,23 +319,23 @@ export function initDocumentHandlers(io: SocketIO.Server) {
     });
 
     // Handle field unlock
-    socket.on('document:unlock', (docId, field) => {
+    socket.on("document:unlock", (docId, field) => {
       documentService.unlockField(docId, field);
 
-      io.to(`document:${docId}`).emit('document:field-unlocked', {
+      io.to(`document:${docId}`).emit("document:field-unlocked", {
         field,
       });
     });
 
     // Handle content update
-    socket.on('document:update', (docId, content) => {
+    socket.on("document:update", (docId, content) => {
       const doc = documentService.updateDocument(
         docId,
         content,
-        socket.data.userId
+        socket.data.userId,
       );
 
-      io.to(`document:${docId}`).emit('document:updated', {
+      io.to(`document:${docId}`).emit("document:updated", {
         version: doc.version,
         content: doc.content,
         modifiedBy: doc.modifiedBy,
@@ -347,7 +343,7 @@ export function initDocumentHandlers(io: SocketIO.Server) {
     });
 
     // Unsubscribe
-    socket.on('document:unsubscribe', (docId) => {
+    socket.on("document:unsubscribe", (docId) => {
       socket.leave(`document:${docId}`);
     });
   });
@@ -457,7 +453,7 @@ export function CollaborativeEditor({ docId }: { docId: string }) {
 ```typescript
 // src/apps/api/src/services/operationalTransform.ts
 interface Operation {
-  type: 'insert' | 'delete';
+  type: "insert" | "delete";
   position: number;
   content?: string;
   length?: number;
@@ -471,7 +467,7 @@ export class OperationalTransform {
   static transform(op1: Operation, op2: Operation): Operation {
     const result = { ...op1 };
 
-    if (op1.type === 'insert' && op2.type === 'insert') {
+    if (op1.type === "insert" && op2.type === "insert") {
       // Both inserting
       if (op1.position < op2.position) {
         // op1 comes first, op2 position shifts
@@ -487,17 +483,17 @@ export class OperationalTransform {
           result.position += op2.content!.length;
         }
       }
-    } else if (op1.type === 'delete' && op2.type === 'insert') {
+    } else if (op1.type === "delete" && op2.type === "insert") {
       // Deleting against insert
       if (op1.position > op2.position) {
         result.position += op2.content!.length;
       }
-    } else if (op1.type === 'insert' && op2.type === 'delete') {
+    } else if (op1.type === "insert" && op2.type === "delete") {
       // Inserting against delete
       if (op1.position > op2.position) {
         result.position = Math.max(op2.position, op1.position - op2.length!);
       }
-    } else if (op1.type === 'delete' && op2.type === 'delete') {
+    } else if (op1.type === "delete" && op2.type === "delete") {
       // Both deleting
       if (op1.position > op2.position) {
         result.position -= op2.length!;
@@ -531,21 +527,21 @@ export class OperationalTransform {
 
 ```typescript
 // Strategies for resolving conflicts
-type ResolutionStrategy = 'last-write-wins' | 'first-write-wins' | 'merge';
+type ResolutionStrategy = "last-write-wins" | "first-write-wins" | "merge";
 
 function resolveConflict(
   local: any,
   remote: any,
-  strategy: ResolutionStrategy = 'last-write-wins'
+  strategy: ResolutionStrategy = "last-write-wins",
 ): any {
   switch (strategy) {
-    case 'last-write-wins':
+    case "last-write-wins":
       return remote.timestamp > local.timestamp ? remote : local;
 
-    case 'first-write-wins':
+    case "first-write-wins":
       return local.timestamp < remote.timestamp ? local : remote;
 
-    case 'merge':
+    case "merge":
       // Smart merge strategy
       return {
         ...local,
@@ -602,20 +598,20 @@ export class MessageBatcher {
 
 ```typescript
 // src/apps/api/src/middleware/compression.ts
-import compress from 'compression';
+import compress from "compression";
 
 export function setupCompression(app: Express) {
   // Compress all responses larger than 1kb
   app.use(
     compress({
       filter: (req, res) => {
-        if (req.headers['x-no-compression']) {
+        if (req.headers["x-no-compression"]) {
           return false;
         }
         return compress.filter(req, res);
       },
       level: 6, // Balance between compression ratio and CPU usage
-    })
+    }),
   );
 }
 ```

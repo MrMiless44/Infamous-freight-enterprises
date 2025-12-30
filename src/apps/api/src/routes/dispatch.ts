@@ -218,9 +218,7 @@ dispatch.post(
     body("loadIds")
       .isArray({ min: 1, max: 100 })
       .withMessage("loadIds must be a non-empty array with at most 100 items"),
-    body("loadIds.*")
-      .isUUID()
-      .withMessage("Each loadId must be a valid UUID"),
+    body("loadIds.*").isUUID().withMessage("Each loadId must be a valid UUID"),
   ],
   validate,
   dispatchController.optimizeRoutes,

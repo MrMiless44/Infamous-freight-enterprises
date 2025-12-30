@@ -93,7 +93,10 @@ export class Config {
   }
 
   getStripeConfig(): StripeConfig {
-    const secretKey = this.getEnv("STRIPE_SECRET_KEY", this.getEnv("STRIPE_API_KEY"));
+    const secretKey = this.getEnv(
+      "STRIPE_SECRET_KEY",
+      this.getEnv("STRIPE_API_KEY"),
+    );
     const publishableKey = this.getEnv("STRIPE_PUBLISHABLE_KEY", "");
     const successUrl = this.getEnv("STRIPE_SUCCESS_URL", "");
     const cancelUrl = this.getEnv("STRIPE_CANCEL_URL", "");
@@ -109,7 +112,10 @@ export class Config {
 
   getPayPalConfig(): PayPalConfig {
     const clientId = this.getEnv("PAYPAL_CLIENT_ID", "");
-    const clientSecret = this.getEnv("PAYPAL_CLIENT_SECRET", this.getEnv("PAYPAL_SECRET", ""));
+    const clientSecret = this.getEnv(
+      "PAYPAL_CLIENT_SECRET",
+      this.getEnv("PAYPAL_SECRET", ""),
+    );
     const returnUrl = this.getEnv("PAYPAL_RETURN_URL", "");
     const cancelUrl = this.getEnv("PAYPAL_CANCEL_URL", "");
 

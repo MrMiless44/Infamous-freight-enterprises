@@ -3,6 +3,7 @@
 ## 🎯 At a Glance
 
 **15 enhancements** implemented across API, Web, and infrastructure:
+
 - Real-time tracking (WebSocket)
 - Distributed caching (Redis)
 - User rate limiting
@@ -29,62 +30,66 @@
 ## 🔌 API Services
 
 ### WebSocket Service
+
 ```typescript
-import { WebSocketService } from '@/services/websocket';
+import { WebSocketService } from "@/services/websocket";
 
 // Emit shipment update
 WebSocketService.emitShipmentUpdate({
-  shipmentId: 'SHIP-001',
-  status: 'in_transit'
+  shipmentId: "SHIP-001",
+  status: "in_transit",
 });
 
 // Emit driver location
 WebSocketService.emitDriverUpdate({
-  driverId: 'DRV-001',
-  location: { lat: 40.7128, lng: -74.0060 }
+  driverId: "DRV-001",
+  location: { lat: 40.7128, lng: -74.006 },
 });
 ```
 
 ### Cache Service
+
 ```typescript
-import { CacheService } from '@/services/cache';
+import { CacheService } from "@/services/cache";
 
 // Simple get/set
-await CacheService.set('key', value, 3600); // TTL in seconds
-const value = await CacheService.get('key');
-await CacheService.del('key');
+await CacheService.set("key", value, 3600); // TTL in seconds
+const value = await CacheService.get("key");
+await CacheService.del("key");
 
 // Atomic get-or-set pattern
 const data = await CacheService.getOrSet(
-  'expensive-query',
+  "expensive-query",
   async () => {
     // Only runs if cache miss
     return await db.query();
   },
-  3600
+  3600,
 );
 ```
 
 ### Export Service
+
 ```typescript
-import { ExportService } from '@/services/export';
+import { ExportService } from "@/services/export";
 
 // CSV
-ExportService.sendCSV(res, data, 'export.csv');
+ExportService.sendCSV(res, data, "export.csv");
 
 // PDF (with streaming)
-await ExportService.exportToPDF(res, shipments, 'report.pdf');
+await ExportService.exportToPDF(res, shipments, "report.pdf");
 
 // JSON
-ExportService.sendJSON(res, data, 'export.json');
+ExportService.sendJSON(res, data, "export.json");
 ```
 
 ### Rate Limiting Middleware
+
 ```typescript
-import { userRateLimit } from '@/middleware/userRateLimit';
+import { userRateLimit } from "@/middleware/userRateLimit";
 
 // Apply to route
-router.get('/api/expensive', userRateLimit('ai'), handler);
+router.get("/api/expensive", userRateLimit("ai"), handler);
 
 // Options: 'general', 'ai', 'billing'
 // Limits: 100/15min, 20/1min, 30/15min
@@ -93,20 +98,24 @@ router.get('/api/expensive', userRateLimit('ai'), handler);
 ## 🎨 Web Components
 
 ### Error Boundary
-```tsx
-import { ErrorBoundary } from '@/components/ErrorBoundary';
 
-<ErrorBoundary fallback={(error, reset) => (
-  <div>
-    <p>Error: {error.message}</p>
-    <button onClick={reset}>Retry</button>
-  </div>
-)}>
+```tsx
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+
+<ErrorBoundary
+  fallback={(error, reset) => (
+    <div>
+      <p>Error: {error.message}</p>
+      <button onClick={reset}>Retry</button>
+    </div>
+  )}
+>
   <App />
-</ErrorBoundary>
+</ErrorBoundary>;
 ```
 
 ### Loading Skeletons
+
 ```tsx
 import {
   Skeleton,
@@ -192,6 +201,7 @@ pnpm --filter infamous-freight-api test -- integration
 ## 🚀 Common Tasks
 
 ### Monitor Service Health
+
 ```bash
 # Check if services are ready
 curl http://localhost:4000/api/health/detailed
@@ -200,6 +210,7 @@ curl http://localhost:4000/api/health/detailed
 ```
 
 ### Enable WebSocket Real-time
+
 ```typescript
 // In server.ts - already done!
 WebSocketService.initialize(httpServer);
@@ -209,6 +220,7 @@ WebSocketService.emitShipmentUpdate({...});
 ```
 
 ### Add Caching to Query
+
 ```typescript
 // Before: Always hits database
 const shipment = await prisma.shipment.findUnique({...});
@@ -222,6 +234,7 @@ const shipment = await CacheService.getOrSet(
 ```
 
 ### Export Shipments
+
 ```bash
 # CSV
 curl http://localhost:4000/api/shipments?format=csv > export.csv
@@ -234,6 +247,7 @@ curl http://localhost:4000/api/shipments?format=json > export.json
 ```
 
 ### Handle Errors in UI
+
 ```tsx
 // Wrap component to catch errors
 <ErrorBoundary>
@@ -247,6 +261,7 @@ curl http://localhost:4000/api/shipments?format=json > export.json
 ## 📊 Files Changed/Created
 
 ### API (`src/apps/api/src/`)
+
 - ✅ **NEW** `services/websocket.ts` - Real-time WebSocket server
 - ✅ **NEW** `services/cache.ts` - Redis caching with fallback
 - ✅ **NEW** `services/export.ts` - CSV/PDF/JSON export
@@ -255,17 +270,21 @@ curl http://localhost:4000/api/shipments?format=json > export.json
 - ✅ **ENHANCED** `server.ts` - WebSocket & cache initialization
 
 ### Web (`src/apps/web/`)
+
 - ✅ **NEW** `components/ErrorBoundary.tsx` - Error handling
 - ✅ **NEW** `components/Skeleton.tsx` - Loading states
 
 ### Tests (`src/apps/api/__tests__/`)
+
 - ✅ **NEW** `integration/realtime-tracking.test.ts` - Integration tests
 
 ### Deployment
+
 - ✅ **NEW** `.github/workflows/mobile.yml` - Mobile CI/CD
 - ✅ **NEW** `scripts/deploy.sh` - Deployment automation
 
 ### Documentation
+
 - ✅ **NEW** `ENHANCEMENTS_COMPLETE.md` - Full feature guide
 - ✅ **NEW** `QUICK_REFERENCE_ENHANCEMENTS.md` - This file!
 - ✅ **ENHANCED** `SETUP_STATUS.md` - Setup checklist
@@ -282,13 +301,13 @@ curl http://localhost:4000/api/shipments?format=json > export.json
 
 ## ⚠️ Common Issues
 
-| Issue | Solution |
-|-------|----------|
+| Issue                   | Solution                                         |
+| ----------------------- | ------------------------------------------------ |
 | WebSocket won't connect | Check `server.ts` initializes `WebSocketService` |
-| Cache not working | Verify `CacheService.initialize()` called |
-| Rate limits too strict | Increase `RATE_LIMIT_*_MAX` env vars |
-| Export fails | Ensure `json2csv` and `pdfkit` installed |
-| Health check 503 | Database connection may be down |
+| Cache not working       | Verify `CacheService.initialize()` called        |
+| Rate limits too strict  | Increase `RATE_LIMIT_*_MAX` env vars             |
+| Export fails            | Ensure `json2csv` and `pdfkit` installed         |
+| Health check 503        | Database connection may be down                  |
 
 ## 🔗 File Links
 

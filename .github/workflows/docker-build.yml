@@ -4,10 +4,10 @@ on:
   push:
     branches: ["main"]
     paths-ignore:
-      - 'archive/**'
+      - "archive/**"
   pull_request:
     paths-ignore:
-      - 'archive/**'
+      - "archive/**"
 
 permissions:
   contents: read

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import type { Shipment } from '@infamous-freight/shared';
+import React, { useState } from "react";
+import type { Shipment } from "@infamous-freight/shared";
 
 interface ExportModalProps {
   isOpen: boolean;
   shipments: Shipment[];
   onClose: () => void;
-  onExport: (format: 'csv' | 'pdf' | 'json', filtered?: boolean) => Promise<void>;
+  onExport: (
+    format: "csv" | "pdf" | "json",
+    filtered?: boolean,
+  ) => Promise<void>;
 }
 
 /**
@@ -18,10 +21,10 @@ export function ExportModal({
   onClose,
   onExport,
 }: ExportModalProps) {
-  const [selectedFormat, setSelectedFormat] = useState<'csv' | 'pdf' | 'json'>(
-    'csv'
+  const [selectedFormat, setSelectedFormat] = useState<"csv" | "pdf" | "json">(
+    "csv",
   );
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState<string>("all");
   const [isExporting, setIsExporting] = useState(false);
 
   if (!isOpen) return null;
@@ -29,17 +32,17 @@ export function ExportModal({
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      await onExport(selectedFormat, filterStatus !== 'all');
+      await onExport(selectedFormat, filterStatus !== "all");
       onClose();
     } catch (error) {
-      console.error('Export failed:', error);
+      console.error("Export failed:", error);
     } finally {
       setIsExporting(false);
     }
   };
 
   const filteredCount =
-    filterStatus === 'all'
+    filterStatus === "all"
       ? shipments.length
       : shipments.filter((s) => s.status === filterStatus).length;
 
@@ -48,9 +51,11 @@ export function ExportModal({
       <div className="rounded-lg bg-white shadow-lg max-w-md w-full mx-4">
         {/* Header */}
         <div className="border-b border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900">Export Shipments</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Export Shipments
+          </h2>
           <p className="mt-1 text-sm text-gray-600">
-            Download {filteredCount} shipment{filteredCount !== 1 ? 's' : ''}
+            Download {filteredCount} shipment{filteredCount !== 1 ? "s" : ""}
           </p>
         </div>
 
@@ -62,7 +67,7 @@ export function ExportModal({
               Export Format
             </label>
             <div className="space-y-2">
-              {['csv', 'pdf', 'json'].map((format) => (
+              {["csv", "pdf", "json"].map((format) => (
                 <label
                   key={format}
                   className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
@@ -73,7 +78,9 @@ export function ExportModal({
                     value={format}
                     checked={selectedFormat === format}
                     onChange={(e) =>
-                      setSelectedFormat(e.target.value as 'csv' | 'pdf' | 'json')
+                      setSelectedFormat(
+                        e.target.value as "csv" | "pdf" | "json",
+                      )
                     }
                     className="mr-3"
                   />
@@ -82,12 +89,11 @@ export function ExportModal({
                       {format.toUpperCase()}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {format === 'csv' &&
-                        'Spreadsheet format, opens in Excel or Sheets'}
-                      {format === 'pdf' &&
-                        'Professional report with statistics'}
-                      {format === 'json' &&
-                        'Raw data format with metadata'}
+                      {format === "csv" &&
+                        "Spreadsheet format, opens in Excel or Sheets"}
+                      {format === "pdf" &&
+                        "Professional report with statistics"}
+                      {format === "json" && "Raw data format with metadata"}
                     </p>
                   </div>
                 </label>
@@ -97,7 +103,10 @@ export function ExportModal({
 
           {/* Status Filter */}
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="status"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Filter by Status (Optional)
             </label>
             <select
@@ -109,15 +118,15 @@ export function ExportModal({
               <option value="all">All Shipments ({shipments.length})</option>
               <option value="pending">
                 Pending (
-                {shipments.filter((s) => s.status === 'pending').length})
+                {shipments.filter((s) => s.status === "pending").length})
               </option>
               <option value="in_transit">
                 In Transit (
-                {shipments.filter((s) => s.status === 'in_transit').length})
+                {shipments.filter((s) => s.status === "in_transit").length})
               </option>
               <option value="delivered">
                 Delivered (
-                {shipments.filter((s) => s.status === 'delivered').length})
+                {shipments.filter((s) => s.status === "delivered").length})
               </option>
             </select>
           </div>
@@ -147,9 +156,7 @@ export function ExportModal({
                 <span className="animate-spin">⌛</span> Exporting...
               </>
             ) : (
-              <>
-                📥 Export as {selectedFormat.toUpperCase()}
-              </>
+              <>📥 Export as {selectedFormat.toUpperCase()}</>
             )}
           </button>
         </div>
@@ -167,7 +174,7 @@ export function ExportButton({
   onExport,
 }: {
   shipments: Shipment[];
-  onExport: (format: 'csv' | 'pdf' | 'json') => Promise<void>;
+  onExport: (format: "csv" | "pdf" | "json") => Promise<void>;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 

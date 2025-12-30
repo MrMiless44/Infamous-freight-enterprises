@@ -1,11 +1,11 @@
-import { RateLimiterMemory } from 'rate-limiter-flexible';
-import { logger } from './logger';
+import { RateLimiterMemory } from "rate-limiter-flexible";
+import { logger } from "./logger";
 
 // User-specific rate limiters (in addition to global rate limiting)
 const userLimiters = {
   // Per user: 100 requests per 15 minutes
   general: new RateLimiterMemory({
-    keyPrefix: 'user_general',
+    keyPrefix: "user_general",
     points: 100,
     duration: 15 * 60,
     blockDuration: 15 * 60,
@@ -13,7 +13,7 @@ const userLimiters = {
 
   // Per user AI commands: 30 requests per minute
   ai: new RateLimiterMemory({
-    keyPrefix: 'user_ai',
+    keyPrefix: "user_ai",
     points: 30,
     duration: 60,
     blockDuration: 60,
@@ -21,7 +21,7 @@ const userLimiters = {
 
   // Per user billing: 20 requests per 15 minutes
   billing: new RateLimiterMemory({
-    keyPrefix: 'user_billing',
+    keyPrefix: "user_billing",
     points: 20,
     duration: 15 * 60,
     blockDuration: 15 * 60,
@@ -32,7 +32,7 @@ const userLimiters = {
  * User-level rate limiting middleware
  */
 export async function userRateLimit(
-  limiterType: 'general' | 'ai' | 'billing' = 'general',
+  limiterType: "general" | "ai" | "billing" = "general",
 ) {
   return async (req: any, res: any, next: any) => {
     // Skip if user is not authenticated
@@ -47,10 +47,10 @@ export async function userRateLimit(
       const rateLimitRes = await limiter.consume(userId, 1);
 
       // Add rate limit headers
-      res.setHeader('X-RateLimit-User-Limit', limiter.points);
-      res.setHeader('X-RateLimit-User-Remaining', rateLimitRes.remainingPoints);
+      res.setHeader("X-RateLimit-User-Limit", limiter.points);
+      res.setHeader("X-RateLimit-User-Remaining", rateLimitRes.remainingPoints);
       res.setHeader(
-        'X-RateLimit-User-Reset',
+        "X-RateLimit-User-Reset",
         new Date(Date.now() + rateLimitRes.msBeforeNext).toISOString(),
       );
 
@@ -58,23 +58,23 @@ export async function userRateLimit(
     } catch (rejRes: any) {
       const retryAfter = Math.ceil(rejRes.msBeforeNext / 1000);
 
-      logger.warn('User rate limit exceeded', {
+      logger.warn("User rate limit exceeded", {
         userId,
         limiterType,
         retryAfter,
       });
 
-      res.setHeader('Retry-After', retryAfter);
-      res.setHeader('X-RateLimit-User-Limit', limiter.points);
-      res.setHeader('X-RateLimit-User-Remaining', 0);
+      res.setHeader("Retry-After", retryAfter);
+      res.setHeader("X-RateLimit-User-Limit", limiter.points);
+      res.setHeader("X-RateLimit-User-Remaining", 0);
       res.setHeader(
-        'X-RateLimit-User-Reset',
+        "X-RateLimit-User-Reset",
         new Date(Date.now() + rejRes.msBeforeNext).toISOString(),
       );
 
       return res.status(429).json({
         success: false,
-        error: 'Too many requests from this user',
+        error: "Too many requests from this user",
         message: `User rate limit exceeded. Try again in ${retryAfter} seconds.`,
         retryAfter,
       });

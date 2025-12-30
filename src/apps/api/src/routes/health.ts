@@ -32,13 +32,14 @@ health.get("/", async (_: Request, res: Response) => {
  */
 health.get("/detailed", async (_: Request, res: Response) => {
   const startTime = Date.now();
-  const health = {
-    status: "healthy" as const,
+
+  const health: any = {
+    status: "healthy",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     checks: {
-      database: { status: "unknown" as const, latency: 0 },
-      memory: { status: "ok" as const, usage: 0 },
+      database: { status: "unknown", latency: 0 },
+      memory: { status: "ok", usage: 0 },
     },
     latency: 0,
   };

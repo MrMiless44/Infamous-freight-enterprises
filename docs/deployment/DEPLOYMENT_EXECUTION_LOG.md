@@ -10,33 +10,41 @@
 ### Steps Executed
 
 1. **Installed container tooling (daemonless host)**
+
    ```bash
    apt-get update
    apt-get install -y docker.io docker-buildx
    ```
+
    - Docker CLI/daemon installed.
    - Buildx plugin installed for BuildKit support.
 
 2. **Started Docker daemon with restricted options**  
    Host lacks `CAP_NET_ADMIN` and iptables support, so the daemon was started without NAT/bridge networking and with the VFS storage driver:
+
    ```bash
    dockerd --host=unix:///var/run/docker.sock \
      --storage-driver=vfs \
      --iptables=false --bridge=none \
      --ip-forward=false --ip-masq=false
    ```
+
    - Daemon is running with BuildKit enabled; only `host` and `none` networks are available.
 
-3. **Attempted to build the API image (legacy builder)**  
+3. **Attempted to build the API image (legacy builder)**
+
    ```bash
    docker build --network host -t infamous-api ./api
    ```
+
    - Result: `unshare: operation not permitted` (host disallows required namespaces).
 
-4. **Attempted to build with BuildKit**  
+4. **Attempted to build with BuildKit**
+
    ```bash
    docker buildx build --network host -t infamous-api ./api --load
    ```
+
    - Result: BuildKit failed to mount the build context (`operation not permitted`) because the host kernel does not grant `CAP_SYS_ADMIN` for mount operations.
 
 ### Current Status

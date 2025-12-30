@@ -53,6 +53,7 @@ pnpm dev
 ```
 
 This starts:
+
 - API server (port 3001 in Docker, 4000 locally)
 - Web dashboard (port 3000)
 - Mobile development server
@@ -147,7 +148,11 @@ Then restart any services that depend on it.
 
 ```typescript
 // Import types, constants, or utilities
-import { ApiResponse, HTTP_STATUS, SHIPMENT_STATUSES } from '@infamous-freight/shared';
+import {
+  ApiResponse,
+  HTTP_STATUS,
+  SHIPMENT_STATUSES,
+} from "@infamous-freight/shared";
 ```
 
 ## Database Migrations
@@ -163,6 +168,7 @@ When you need to modify the database schema:
 3. The Prisma client will be automatically regenerated
 
 To view the database in a GUI:
+
 ```bash
 cd api
 pnpm prisma:studio
@@ -171,6 +177,7 @@ pnpm prisma:studio
 ## API Development
 
 The API uses:
+
 - **Express.js** with CommonJS (`require()`)
 - **Prisma ORM** for database access
 - **JWT** for authentication with scope-based authorization
@@ -181,14 +188,15 @@ The API uses:
 1. Create route file in `api/src/routes/`
 2. Apply middleware in order:
    ```javascript
-   router.post('/endpoint',
+   router.post(
+     "/endpoint",
      limiters.general,
      authenticate,
-     requireScope('scope:name'),
+     requireScope("scope:name"),
      auditLog,
      validators,
      handleValidationErrors,
-     handler
+     handler,
    );
    ```
 3. Use `ApiResponse` for responses
@@ -199,6 +207,7 @@ See [API Reference](api/API_REFERENCE.md) for more details.
 ## Web Development
 
 The web frontend uses:
+
 - **Next.js 14** with App Router
 - **TypeScript** with ESM imports
 - **React** for UI components
@@ -248,6 +257,7 @@ Coverage reports are uploaded to Codecov automatically.
 Configuration: `configs/linting/eslint.config.js`
 
 The project uses ESLint with:
+
 - Recommended rules for JavaScript and TypeScript
 - Prettier integration
 - Different configs for CommonJS (api) and ESM (web)
@@ -255,6 +265,7 @@ The project uses ESLint with:
 ### Prettier
 
 Format code with:
+
 ```bash
 pnpm format
 ```
@@ -268,12 +279,14 @@ The project uses Husky for pre-commit hooks. Configured in `.husky/` directory.
 ### Port Already in Use
 
 If you get port conflicts:
+
 - API: Set `API_PORT` environment variable
 - Web: Set `WEB_PORT` environment variable
 
 ### Prisma Client Issues
 
 If you get Prisma client errors:
+
 ```bash
 cd api
 pnpm prisma:generate
@@ -282,6 +295,7 @@ pnpm prisma:generate
 ### Shared Package Not Found
 
 Rebuild the shared package:
+
 ```bash
 pnpm --filter @infamous-freight/shared build
 ```
@@ -289,6 +303,7 @@ pnpm --filter @infamous-freight/shared build
 ### Docker Issues
 
 Reset Docker containers:
+
 ```bash
 docker-compose down -v
 docker-compose up -d
@@ -306,6 +321,7 @@ chmod +x fix-repo.sh
 ```
 
 This script will:
+
 - Clean and reinstall dependencies
 - Build the shared package
 - Apply lint fixes

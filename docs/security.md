@@ -41,6 +41,7 @@ User Login → Credentials Validation → JWT Token Generation → Token Storage
 ### JWT Token Structure
 
 **Access Token Payload:**
+
 ```json
 {
   "userId": "uuid",
@@ -55,25 +56,27 @@ User Login → Credentials Validation → JWT Token Generation → Token Storage
 
 Every API endpoint enforces specific scopes:
 
-| Scope | Description | Granted To |
-|-------|-------------|------------|
-| `dispatch:read` | View dispatch information | All users |
-| `dispatch:write` | Modify dispatch assignments | Dispatchers, Admins |
-| `ai:command` | Interact with AI agents | Authenticated users |
-| `fleet:read` | View fleet information | Fleet managers, Admins |
-| `fleet:write` | Modify fleet data | Fleet managers, Admins |
-| `billing:read` | View billing information | Billing team, Admins |
-| `billing:write` | Modify billing data | Billing team, Admins |
-| `admin:*` | Full administrative access | System administrators only |
+| Scope            | Description                 | Granted To                 |
+| ---------------- | --------------------------- | -------------------------- |
+| `dispatch:read`  | View dispatch information   | All users                  |
+| `dispatch:write` | Modify dispatch assignments | Dispatchers, Admins        |
+| `ai:command`     | Interact with AI agents     | Authenticated users        |
+| `fleet:read`     | View fleet information      | Fleet managers, Admins     |
+| `fleet:write`    | Modify fleet data           | Fleet managers, Admins     |
+| `billing:read`   | View billing information    | Billing team, Admins       |
+| `billing:write`  | Modify billing data         | Billing team, Admins       |
+| `admin:*`        | Full administrative access  | System administrators only |
 
 **Example Enforcement:**
+
 ```javascript
 // Route requires specific scope
-router.post('/ai/command',
-  authenticate,              // Verify JWT token
-  requireScope('ai:command'), // Check scope permission
-  auditLog,                  // Log access
-  handleCommand              // Execute
+router.post(
+  "/ai/command",
+  authenticate, // Verify JWT token
+  requireScope("ai:command"), // Check scope permission
+  auditLog, // Log access
+  handleCommand, // Execute
 );
 ```
 
@@ -83,14 +86,15 @@ router.post('/ai/command',
 
 All API endpoints are protected by rate limiting to prevent abuse:
 
-| Endpoint Type | Rate Limit | Window | Notes |
-|---------------|------------|--------|-------|
-| General API | 100 requests | 15 minutes | Most endpoints |
-| Authentication | 5 requests | 15 minutes | Login, password reset |
-| AI Commands | 20 requests | 1 minute | AI inference endpoints |
-| Billing | 30 requests | 15 minutes | Payment operations |
+| Endpoint Type  | Rate Limit   | Window     | Notes                  |
+| -------------- | ------------ | ---------- | ---------------------- |
+| General API    | 100 requests | 15 minutes | Most endpoints         |
+| Authentication | 5 requests   | 15 minutes | Login, password reset  |
+| AI Commands    | 20 requests  | 1 minute   | AI inference endpoints |
+| Billing        | 30 requests  | 15 minutes | Payment operations     |
 
 **Response on Rate Limit Exceeded:**
+
 ```json
 {
   "error": "Too many requests",
@@ -105,27 +109,30 @@ All API endpoints are protected by rate limiting to prevent abuse:
 ### Encryption
 
 **At Rest:**
+
 - Database: AES-256 encryption on PostgreSQL
 - File storage: Server-side encryption on all object storage
 - Backups: Encrypted with separate keys
 
 **In Transit:**
+
 - TLS 1.3 for all API communications
 - Certificate pinning on mobile apps
 - Secure WebSocket connections (WSS) for real-time updates
 
 ### Data Classification
 
-| Classification | Examples | Storage | Access |
-|----------------|----------|---------|--------|
-| **Public** | Marketing content, public docs | Unencrypted | Anyone |
-| **Internal** | Shipment data, routes | Encrypted at rest | Authenticated users |
-| **Confidential** | Driver PII, financial data | Encrypted at rest + in transit | Role-based access |
-| **Restricted** | Passwords, API keys, tokens | Hashed/encrypted + vault | System only, never logged |
+| Classification   | Examples                       | Storage                        | Access                    |
+| ---------------- | ------------------------------ | ------------------------------ | ------------------------- |
+| **Public**       | Marketing content, public docs | Unencrypted                    | Anyone                    |
+| **Internal**     | Shipment data, routes          | Encrypted at rest              | Authenticated users       |
+| **Confidential** | Driver PII, financial data     | Encrypted at rest + in transit | Role-based access         |
+| **Restricted**   | Passwords, API keys, tokens    | Hashed/encrypted + vault       | System only, never logged |
 
 ### Sensitive Data Handling
 
 **Never stored in logs:**
+
 - Passwords
 - API keys and secrets
 - Credit card numbers
@@ -133,6 +140,7 @@ All API endpoints are protected by rate limiting to prevent abuse:
 - Authentication tokens (full)
 
 **Redaction in logs:**
+
 ```javascript
 // Email redacted
 logger.info(`User logged in: u***@example.com`);
@@ -149,11 +157,7 @@ All user inputs are validated using express-validator:
 
 ```javascript
 // Example validation chain
-[
-  validateString('email', 'Email'),
-  validateEmail(),
-  handleValidationErrors
-]
+[validateString("email", "Email"), validateEmail(), handleValidationErrors];
 ```
 
 ### Sanitization
@@ -164,6 +168,7 @@ All user inputs are validated using express-validator:
 - **Path Traversal**: All file paths validated and sanitized
 
 **Sanitization Functions:**
+
 - `sanitizeString()`: Remove dangerous characters
 - `sanitizeHTML()`: Escape HTML entities
 - `validateUUID()`: Ensure valid UUID format
@@ -174,12 +179,14 @@ All user inputs are validated using express-validator:
 ### Secret Storage
 
 **Never committed to repository:**
+
 - ✅ All secrets in `.env` files
 - ✅ `.env` files in `.gitignore`
 - ✅ Example `.env.example` with dummy values
 - ✅ Secrets managed in platform-specific vaults (Vercel, Render)
 
 **Secret Rotation:**
+
 - JWT secrets: Rotated quarterly
 - API keys: Rotated after any suspected compromise
 - Database passwords: Rotated annually or on staff changes
@@ -189,6 +196,7 @@ All user inputs are validated using express-validator:
 Required secrets documented in [ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md).
 
 **Critical Secrets:**
+
 ```bash
 # Never expose these
 DATABASE_URL=postgresql://...
@@ -204,6 +212,7 @@ STRIPE_SECRET_KEY=sk_live_...
 Every security-relevant event is logged:
 
 **Logged Events:**
+
 - User authentication (success and failure)
 - Authorization failures
 - AI decisions and overrides
@@ -213,6 +222,7 @@ Every security-relevant event is logged:
 - Rate limit violations
 
 **Audit Log Format:**
+
 ```json
 {
   "timestamp": "2025-12-28T21:00:00Z",
@@ -229,6 +239,7 @@ Every security-relevant event is logged:
 ```
 
 **Retention:**
+
 - Audit logs: 7 years (compliance requirement)
 - Application logs: 90 days
 - Security logs: Permanent
@@ -238,12 +249,14 @@ Every security-relevant event is logged:
 ### Security Scanning
 
 **Automated Scans:**
+
 - **CodeQL**: Daily scans for code vulnerabilities
 - **Trivy**: Container image scanning on every build
 - **Dependabot**: Daily dependency vulnerability checks
 - **SAST**: Static application security testing in CI/CD
 
 **Manual Reviews:**
+
 - Quarterly penetration testing
 - Annual third-party security audit
 - Regular code reviews with security focus
@@ -259,14 +272,15 @@ Every security-relevant event is logged:
 
 **Severity Levels:**
 
-| Severity | Response Time | Examples |
-|----------|---------------|----------|
-| **Critical** | Immediate | Active breach, data exposure |
-| **High** | 4 hours | Exploitable vulnerability, authentication bypass |
-| **Medium** | 24 hours | DoS vulnerability, information disclosure |
-| **Low** | 1 week | Minor security improvements |
+| Severity     | Response Time | Examples                                         |
+| ------------ | ------------- | ------------------------------------------------ |
+| **Critical** | Immediate     | Active breach, data exposure                     |
+| **High**     | 4 hours       | Exploitable vulnerability, authentication bypass |
+| **Medium**   | 24 hours      | DoS vulnerability, information disclosure        |
+| **Low**      | 1 week        | Minor security improvements                      |
 
 **Incident Response Process:**
+
 1. **Detect**: Monitoring alerts or security report
 2. **Contain**: Isolate affected systems
 3. **Investigate**: Determine scope and impact
@@ -279,6 +293,7 @@ Every security-relevant event is logged:
 ### SOC2 Type II Readiness
 
 **Security Controls Implemented:**
+
 - CC6.1: Logical and physical access controls
 - CC6.2: Transmission of data protection
 - CC6.3: Data confidentiality protection
@@ -287,6 +302,7 @@ Every security-relevant event is logged:
 - CC7.2: Risk assessment and mitigation
 
 **Audit Trail:**
+
 - All system access logged
 - Change management process documented
 - Security policies documented and enforced
@@ -295,6 +311,7 @@ Every security-relevant event is logged:
 ### Data Privacy
 
 **GDPR Compliance:**
+
 - User data consent management
 - Right to access personal data
 - Right to deletion (data erasure)
@@ -302,6 +319,7 @@ Every security-relevant event is logged:
 - Privacy by design
 
 **Data Retention:**
+
 - User data: Retained while account is active + 30 days after deletion request
 - Transactional data: 7 years (regulatory requirement)
 - Audit logs: 7 years
@@ -311,21 +329,25 @@ Every security-relevant event is logged:
 ### Security in SDLC
 
 **Development Phase:**
+
 - Threat modeling for new features
 - Security requirements documented
 - Secure coding standards enforced
 
 **Testing Phase:**
+
 - Security test cases
 - Penetration testing for critical features
 - Dependency vulnerability scanning
 
 **Deployment Phase:**
+
 - Security review before production deployment
 - Secrets never in source code
 - Container security scanning
 
 **Operations Phase:**
+
 - Continuous monitoring
 - Regular security patching
 - Incident response procedures
@@ -333,6 +355,7 @@ Every security-relevant event is logged:
 ### Code Review Standards
 
 **Security Checklist:**
+
 - [ ] No hardcoded secrets or credentials
 - [ ] Input validation on all user inputs
 - [ ] Output encoding to prevent XSS
@@ -345,12 +368,14 @@ Every security-relevant event is logged:
 ## Security Training
 
 **Team Training:**
+
 - Onboarding security training for all developers
 - Quarterly security awareness training
 - Incident response drills
 - Secure coding workshops
 
 **Topics Covered:**
+
 - OWASP Top 10 vulnerabilities
 - Secure authentication and authorization
 - Input validation and sanitization
@@ -360,11 +385,13 @@ Every security-relevant event is logged:
 ## Security Contacts
 
 **Security Team:**
+
 - Security Lead: security@infamousfreight.com
 - Incident Response: incidents@infamousfreight.com
 - Bug Bounty: bugbounty@infamousfreight.com
 
 **Responsible Disclosure:**
+
 - Report vulnerabilities to security@infamousfreight.com
 - Use PGP key (available on website) for sensitive reports
 - We respond to all reports within 48 hours

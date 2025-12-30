@@ -22,11 +22,13 @@ This landing page provides quick access to all deployment documentation and runb
 ### Platform-Specific Deployment
 
 #### API Deployment
+
 - **[Render API Testing](deployment/RENDER_API_TESTING.md)** - API deployment on Render platform
 - **[Deploy Action](deployment/DEPLOY_ACTION.md)** - GitHub Actions deployment workflow
 - **[Secrets Configuration](deployment/SECRETS_CONFIGURED.md)** - Required secrets and environment variables
 
 #### Web Deployment
+
 - **[Web Deployment on Vercel](deployment/WEB_DEPLOYMENT_VERCEL.md)** - Next.js app deployment to Vercel
 - **[Vercel Build Fixes](deployment/VERCEL_BUILD_FIXES.md)** - Common Vercel build issues and solutions
 - **[Vercel Analytics Setup](deployment/VERCEL_ANALYTICS_SETUP.md)** - Setting up analytics and monitoring
@@ -66,13 +68,13 @@ This landing page provides quick access to all deployment documentation and runb
 
 ### Deployment Targets
 
-| Component | Platform | Environment | Access |
-|-----------|----------|-------------|--------|
-| Web Dashboard | Vercel | Production | https://infamous-freight-enterprises.vercel.app |
-| API (Primary) | Render | Production | https://infamous-freight-api.onrender.com |
-| API (Backup) | Fly.io | Production | https://infamous-freight-api.fly.dev |
-| Database | Supabase | Production | Managed PostgreSQL |
-| Redis Cache | Upstash | Production | Managed Redis |
+| Component     | Platform | Environment | Access                                          |
+| ------------- | -------- | ----------- | ----------------------------------------------- |
+| Web Dashboard | Vercel   | Production  | https://infamous-freight-enterprises.vercel.app |
+| API (Primary) | Render   | Production  | https://infamous-freight-api.onrender.com       |
+| API (Backup)  | Fly.io   | Production  | https://infamous-freight-api.fly.dev            |
+| Database      | Supabase | Production  | Managed PostgreSQL                              |
+| Redis Cache   | Upstash  | Production  | Managed Redis                                   |
 
 ## Deployment Workflows
 
@@ -121,6 +123,7 @@ Before deploying to production:
 ### Manual Deployment (Emergency Only)
 
 **API Deployment to Render:**
+
 ```bash
 # From project root
 cd src/apps/api
@@ -128,6 +131,7 @@ git push render main
 ```
 
 **Web Deployment to Vercel:**
+
 ```bash
 # From project root
 cd src/apps/web
@@ -137,6 +141,7 @@ vercel --prod
 ### Automated Deployment (Recommended)
 
 **Trigger via GitHub Actions:**
+
 ```bash
 # Deploy to production
 gh workflow run cd.yml
@@ -150,11 +155,13 @@ gh workflow run cd.yml --ref develop
 ### Health Checks
 
 **API Health:**
+
 ```bash
 curl https://infamous-freight-api.onrender.com/api/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "healthy",
@@ -165,6 +172,7 @@ Expected response:
 ```
 
 **Web Health:**
+
 ```bash
 curl https://infamous-freight-enterprises.vercel.app/
 ```
@@ -174,6 +182,7 @@ Expected: HTTP 200 status code
 ### Smoke Tests
 
 Run automated smoke tests:
+
 ```bash
 pnpm test:e2e --grep "@smoke"
 ```
@@ -192,10 +201,11 @@ pnpm test:e2e --grep "@smoke"
 **If deployment fails:**
 
 1. **Immediate**: Revert to previous deployment
+
    ```bash
    # Vercel
    vercel rollback
-   
+
    # Render
    render rollback infamous-freight-api
    ```
@@ -222,6 +232,7 @@ pnpm prisma migrate resolve --rolled-back <migration-name>
 All required secrets are documented in [deployment/SECRETS_CONFIGURED.md](deployment/SECRETS_CONFIGURED.md).
 
 **Critical secrets:**
+
 - `DATABASE_URL`: PostgreSQL connection string
 - `JWT_SECRET`: Authentication token secret
 - `VERCEL_TOKEN`: Vercel deployment token
@@ -230,6 +241,7 @@ All required secrets are documented in [deployment/SECRETS_CONFIGURED.md](deploy
 ### Managing Secrets
 
 **Update secrets on Vercel:**
+
 ```bash
 vercel env add SECRET_NAME production
 ```
@@ -242,21 +254,25 @@ Via Render dashboard → Environment → Environment Variables
 ### Common Issues
 
 **1. Build Failure on Vercel**
+
 - Check [Vercel Build Fixes](deployment/VERCEL_BUILD_FIXES.md)
 - Verify all dependencies are in package.json
 - Check build logs for specific errors
 
 **2. API Not Starting**
+
 - Verify DATABASE_URL is correct
 - Check Prisma client is generated
 - Review API logs on Render dashboard
 
 **3. Database Connection Issues**
+
 - Verify database is accessible from deployment platform
 - Check connection string format
 - Verify IP whitelist includes deployment platform
 
 **4. Environment Variable Issues**
+
 - Verify all required variables are set
 - Check for typos in variable names
 - Ensure secrets are not exposed in logs
@@ -264,6 +280,7 @@ Via Render dashboard → Environment → Environment Variables
 ### Getting Help
 
 **Deployment Support:**
+
 - **Slack**: #deployments channel
 - **On-call**: Page on-call engineer for P0/P1 incidents
 - **Documentation**: Check deployment runbooks for specific issues
@@ -288,10 +305,12 @@ Via Render dashboard → Environment → Environment Variables
 ## Maintenance Windows
 
 **Scheduled maintenance:**
+
 - **Weekly**: Sunday 2:00 AM - 4:00 AM UTC (database backups)
 - **Monthly**: First Sunday of month, 2:00 AM - 6:00 AM UTC (system updates)
 
 **Emergency maintenance:**
+
 - Coordinated via #incidents Slack channel
 - Stakeholders notified via status page
 

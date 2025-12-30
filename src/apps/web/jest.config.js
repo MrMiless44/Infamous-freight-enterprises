@@ -15,7 +15,8 @@ const customJestConfig = {
   testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
-    "^@infamous-freight/shared$": "<rootDir>/../../packages/shared/src/index.ts",
+    "^@infamous-freight/shared$":
+      "<rootDir>/../../packages/shared/src/index.ts",
   },
   testMatch: [
     "**/__tests__/**/*.{js,jsx,ts,tsx}",

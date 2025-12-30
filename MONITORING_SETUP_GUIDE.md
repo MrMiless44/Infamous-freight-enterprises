@@ -19,7 +19,7 @@
 
 ```yaml
 # docker-compose.monitoring.yml
-version: '3.8'
+version: "3.8"
 
 services:
   prometheus:
@@ -30,7 +30,7 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+      - "--config.file=/etc/prometheus/prometheus.yml"
 
   grafana:
     image: grafana/grafana:latest
@@ -86,7 +86,7 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    monitor: 'freight-api'
+    monitor: "freight-api"
 
 alerting:
   alertmanagers:
@@ -99,20 +99,20 @@ rule_files:
 
 scrape_configs:
   # API metrics
-  - job_name: 'freight-api'
+  - job_name: "freight-api"
     static_configs:
-      - targets: ['localhost:4000']
-    metrics_path: '/api/metrics'
+      - targets: ["localhost:4000"]
+    metrics_path: "/api/metrics"
 
   # Node exporter (system metrics)
-  - job_name: 'node'
+  - job_name: "node"
     static_configs:
-      - targets: ['localhost:9100']
+      - targets: ["localhost:9100"]
 
   # Redis exporter
-  - job_name: 'redis'
+  - job_name: "redis"
     static_configs:
-      - targets: ['localhost:6379']
+      - targets: ["localhost:6379"]
 ```
 
 ### alert_rules.yml
@@ -265,10 +265,10 @@ Query: rate(cache_evictions_total[1m])
 ```typescript
 // Already configured in src/apps/api/src/middleware/logger.ts
 
-import winston from 'winston';
+import winston from "winston";
 
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
+  level: process.env.LOG_LEVEL || "info",
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.json(),
@@ -280,12 +280,12 @@ const logger = winston.createLogger({
     }),
     // Error log
     new winston.transports.File({
-      filename: 'logs/error.log',
-      level: 'error',
+      filename: "logs/error.log",
+      level: "error",
     }),
     // Combined log
     new winston.transports.File({
-      filename: 'logs/combined.log',
+      filename: "logs/combined.log",
     }),
   ],
 });
@@ -323,26 +323,28 @@ docker run -d --name elasticsearch docker.elastic.co/elasticsearch/elasticsearch
 
 ```typescript
 // In your alert handler
-import axios from 'axios';
+import axios from "axios";
 
 async function notifySlack(alert: {
-  severity: 'critical' | 'warning' | 'info';
+  severity: "critical" | "warning" | "info";
   title: string;
   description: string;
 }) {
   const color = {
-    critical: '#ff0000',
-    warning: '#ffaa00',
-    info: '#0099ff',
+    critical: "#ff0000",
+    warning: "#ffaa00",
+    info: "#0099ff",
   }[alert.severity];
 
   await axios.post(process.env.SLACK_WEBHOOK_URL, {
-    attachments: [{
-      color,
-      title: alert.title,
-      text: alert.description,
-      ts: Math.floor(Date.now() / 1000),
-    }],
+    attachments: [
+      {
+        color,
+        title: alert.title,
+        text: alert.description,
+        ts: Math.floor(Date.now() / 1000),
+      },
+    ],
   });
 }
 ```
@@ -473,22 +475,25 @@ Disk Usage              | < 70%       | > 85%       | > 95%
 ### High API Latency
 
 1. **Check database**
+
    ```bash
    # Slow queries
    psql -c "SELECT query, mean_exec_time FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;"
    ```
 
 2. **Check cache**
+
    ```bash
    redis-cli info stats
    # Look for: hit_ratio (should be > 0.7)
    ```
 
 3. **Check system resources**
+
    ```bash
    # CPU
    top -bn1 | grep "Cpu(s)" | awk '{print $2}'
-   
+
    # Memory
    free -m | grep Mem | awk '{print "Used:", $3, "MB, Free:", $4, "MB"}'
    ```
@@ -502,11 +507,13 @@ Disk Usage              | < 70%       | > 85%       | > 95%
 ### High Error Rate
 
 1. **View error logs**
+
    ```bash
    tail -f logs/error.log | grep "ERROR"
    ```
 
 2. **Check Sentry**
+
    ```
    Visit: https://sentry.yourdomain.com
    Filter: Last 1 hour
@@ -523,12 +530,14 @@ Disk Usage              | < 70%       | > 85%       | > 95%
 ### WebSocket Disconnections
 
 1. **Check Redis connection**
+
    ```bash
    redis-cli PING  # Should return PONG
    redis-cli INFO
    ```
 
 2. **Check Socket.IO metrics**
+
    ```bash
    curl http://localhost:4000/api/metrics/websocket
    ```
@@ -573,6 +582,7 @@ docker-compose start prometheus
 ## Success Indicators
 
 ✅ **Monitoring is working if**:
+
 - Grafana dashboards display real-time data
 - Metrics update every 15 seconds
 - Alerts trigger on thresholds

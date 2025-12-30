@@ -3,6 +3,7 @@
 ## 🎉 Successfully Completed Tasks
 
 ### 1. ✅ Environment Configuration
+
 - Created `.env.local` with development settings
 - Configured API (port 4000), Web (port 3000)
 - Set `AI_PROVIDER=synthetic` (no external API keys needed for development)
@@ -10,6 +11,7 @@
 - PostgreSQL connection string configured
 
 ### 2. ✅ Dependencies Installed
+
 - **Node.js**: v22.16.0
 - **npm**: v11.6.4
 - **pnpm**: v9 (installed globally)
@@ -17,11 +19,13 @@
 - Fixed registry issues by using mirror
 
 ### 3. ✅ Build Complete
+
 - **Shared package**: TypeScript compiled to JavaScript ✓
 - **Web package**: Next.js production build optimized ✓
 - All workspace packages ready for development
 
 ### 4. ✅ Project Structure Verified
+
 - `api/` - Express.js backend
 - `web/` - Next.js frontend (built)
 - `mobile/` - React Native/Expo app
@@ -33,14 +37,17 @@
 ## 🚀 Ready to Start Development!
 
 ### Option 1: Start All Services
+
 ```bash
 pnpm dev
 # or
 npm run dev
 ```
+
 This starts both API and Web in parallel.
 
 ### Option 2: Start Individual Services
+
 ```bash
 # API only (Express server):
 pnpm api:dev
@@ -55,18 +62,18 @@ pnpm web:dev
 
 ## 📚 Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start API + Web services |
-| `pnpm api:dev` | Start API only |
-| `pnpm web:dev` | Start Web only |
-| `pnpm build` | Build all packages |
-| `pnpm test` | Run all tests |
-| `pnpm test:coverage` | Run tests with coverage |
-| `pnpm lint` | Lint all code |
-| `pnpm lint:fix` | Fix linting issues |
-| `pnpm format` | Format all code with Prettier |
-| `pnpm e2e` | Run Playwright E2E tests |
+| Command              | Description                   |
+| -------------------- | ----------------------------- |
+| `pnpm dev`           | Start API + Web services      |
+| `pnpm api:dev`       | Start API only                |
+| `pnpm web:dev`       | Start Web only                |
+| `pnpm build`         | Build all packages            |
+| `pnpm test`          | Run all tests                 |
+| `pnpm test:coverage` | Run tests with coverage       |
+| `pnpm lint`          | Lint all code                 |
+| `pnpm lint:fix`      | Fix linting issues            |
+| `pnpm format`        | Format all code with Prettier |
+| `pnpm e2e`           | Run Playwright E2E tests      |
 
 ---
 
@@ -75,23 +82,27 @@ pnpm web:dev
 If you need to work with the database:
 
 ### Start PostgreSQL (Docker)
+
 ```bash
 docker-compose up postgres
 ```
 
 ### Run Migrations
+
 ```bash
 cd api
 pnpm prisma:migrate:dev
 ```
 
 ### Seed Test Data (Optional)
+
 ```bash
 cd api
 pnpm prisma:seed
 ```
 
 ### Open Database GUI
+
 ```bash
 cd api
 pnpm prisma:studio
@@ -121,11 +132,14 @@ pnpm prisma:studio
 ## 🔧 Troubleshooting
 
 ### If `pnpm` commands fail:
+
 Use `npm run <command>` instead. Example:
+
 - `npm run dev` instead of `pnpm dev`
 - `npm run api:dev` instead of `pnpm api:dev`
 
 ### If port already in use:
+
 ```bash
 # Kill processes on ports
 lsof -ti:4000 | xargs kill -9  # API
@@ -133,6 +147,7 @@ lsof -ti:3000 | xargs kill -9  # Web
 ```
 
 ### To rebuild shared package:
+
 ```bash
 cd packages/shared
 npm run build

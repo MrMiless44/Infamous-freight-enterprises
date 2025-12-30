@@ -50,6 +50,7 @@ Input → Role Handler → Confidence Check → Guardrails → Execute or Escala
 ### Guardrails
 
 Guardrails are pre-execution checks that prevent:
+
 - Boundary violations (accessing forbidden data)
 - Policy violations (actions outside defined scope)
 - Safety violations (actions that could cause harm)
@@ -57,6 +58,7 @@ Guardrails are pre-execution checks that prevent:
 ### Audit Trail
 
 Every decision generates an audit log with:
+
 - Timestamp and unique decision ID
 - Input context and parameters
 - Confidence score and reasoning
@@ -66,28 +68,31 @@ Every decision generates an audit log with:
 ## Usage Example
 
 ```typescript
-import { dispatchRole } from './dispatch';
-import { RoleContext } from './contracts';
+import { dispatchRole } from "./dispatch";
+import { RoleContext } from "./contracts";
 
 // Create context for decision
 const context: RoleContext = {
-  userId: 'user-123',
-  requestId: 'req-456',
+  userId: "user-123",
+  requestId: "req-456",
   timestamp: new Date(),
   metadata: {
-    shipmentId: 'ship-789',
-    priority: 'high'
-  }
+    shipmentId: "ship-789",
+    priority: "high",
+  },
 };
 
 // Execute AI decision
-const result = await dispatchRole.decide({
-  action: 'assign-driver',
-  parameters: {
-    shipmentId: 'ship-789',
-    availableDrivers: ['driver-1', 'driver-2']
-  }
-}, context);
+const result = await dispatchRole.decide(
+  {
+    action: "assign-driver",
+    parameters: {
+      shipmentId: "ship-789",
+      availableDrivers: ["driver-1", "driver-2"],
+    },
+  },
+  context,
+);
 
 // Check result
 if (result.requiresHumanReview) {
@@ -112,6 +117,7 @@ API Endpoint → Authentication → Authorization → AI Role Dispatcher → Spe
 ### With Database
 
 AI roles access data through:
+
 - Prisma ORM for structured data
 - Read-only views where possible
 - Audit logging for all data access
@@ -119,6 +125,7 @@ AI roles access data through:
 ### With External Services
 
 AI roles may integrate with:
+
 - OpenAI/Anthropic for LLM inference
 - Weather APIs for route optimization
 - Traffic APIs for delay prediction
@@ -139,6 +146,7 @@ AI roles may integrate with:
 ### Testing
 
 Each role should have:
+
 - Unit tests for decision logic
 - Integration tests with guardrails
 - Confidence score validation tests
@@ -147,6 +155,7 @@ Each role should have:
 ### Monitoring
 
 Monitor these metrics for each role:
+
 - Decision volume per hour
 - Confidence score distribution
 - Override rate
@@ -165,6 +174,7 @@ Monitor these metrics for each role:
 ## Deployment
 
 AI roles are:
+
 - Deployed with the API service
 - Versioned independently
 - Can be disabled/enabled per environment
@@ -173,24 +183,28 @@ AI roles are:
 ## Roadmap
 
 ### Phase 1 (Current): Scaffolding
+
 - ✅ Define role contracts
 - ✅ Create directory structure
 - ✅ Implement basic logging
 - 🔄 Create placeholder roles
 
 ### Phase 2: Core Implementation
+
 - Implement dispatch operator decision logic
 - Add LLM integration for complex decisions
 - Implement confidence scoring models
 - Add comprehensive guardrails
 
 ### Phase 3: Advanced Features
+
 - Multi-role coordination
 - Learning from human overrides
 - Adaptive confidence thresholds
 - Proactive recommendations
 
 ### Phase 4: Production Readiness
+
 - Load testing at scale
 - Chaos engineering for failure modes
 - Security audit and penetration testing
@@ -199,6 +213,7 @@ AI roles are:
 ## Contributing
 
 When contributing to AI roles:
+
 1. Follow TypeScript best practices
 2. Add comprehensive JSDoc comments
 3. Include unit tests for new features
@@ -209,6 +224,7 @@ When contributing to AI roles:
 ## Questions?
 
 Contact the AI team:
+
 - **Technical questions**: ai-dev@infamousfreight.com
 - **Security concerns**: security@infamousfreight.com
 - **Product questions**: product@infamousfreight.com

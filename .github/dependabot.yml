@@ -21,7 +21,7 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "MrMiless44"
-    
+
   # API service
   - package-ecosystem: "npm"
     directory: "/api"
@@ -32,7 +32,7 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "MrMiless44"
-    
+
   # Web application
   - package-ecosystem: "npm"
     directory: "/web"
@@ -43,7 +43,7 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "MrMiless44"
-    
+
   # Infamous-freight-ai API
   - package-ecosystem: "npm"
     directory: "/infamous-freight-ai/api"
@@ -52,7 +52,7 @@ updates:
       day: "tuesday"
       time: "03:00"
     open-pull-requests-limit: 3
-    
+
   # Infamous-freight-ai Web
   - package-ecosystem: "npm"
     directory: "/infamous-freight-ai/web"
@@ -61,7 +61,7 @@ updates:
       day: "tuesday"
       time: "03:30"
     open-pull-requests-limit: 3
-    
+
   # Infamous-freight-ai Mobile
   - package-ecosystem: "npm"
     directory: "/infamous-freight-ai/mobile"

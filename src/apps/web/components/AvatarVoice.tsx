@@ -59,9 +59,7 @@ export function AvatarVoice() {
           fontWeight: 700,
           border: "none",
           cursor: supported ? "pointer" : "not-allowed",
-          boxShadow: supported
-            ? "0 10px 30px rgba(126,109,255,0.35)"
-            : "none",
+          boxShadow: supported ? "0 10px 30px rgba(126,109,255,0.35)" : "none",
         }}
       >
         {status === "speaking" ? "Speaking…" : "🎤 Speak"}

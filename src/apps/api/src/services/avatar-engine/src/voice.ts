@@ -35,7 +35,9 @@ export async function handleVoiceCommand(
   }
 
   if (normalized.includes("dispatch")) {
-    return context.dispatchNote ?? "Dispatch acknowledged. Monitoring your route.";
+    return (
+      context.dispatchNote ?? "Dispatch acknowledged. Monitoring your route."
+    );
   }
 
   return "Command acknowledged.";

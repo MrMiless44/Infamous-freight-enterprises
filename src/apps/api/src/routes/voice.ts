@@ -182,7 +182,6 @@ voice.post("/ingest", upload.single("audio"), async (req, res) => {
     sizeMb: Number((req.file.size / 1024 / 1024).toFixed(2)),
     mimetype: req.file.mimetype,
     filename: req.file.originalname,
-    note:
-      "File accepted. Connect a speech-to-text provider to stream transcripts.",
+    note: "File accepted. Connect a speech-to-text provider to stream transcripts.",
   });
 });

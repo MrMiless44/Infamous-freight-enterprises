@@ -54,7 +54,8 @@ export function dispatchIntel(
   const isPriority = route.customerPriority === "priority";
 
   if (baseRisk > 0.7 || delayMinutes > 15) {
-    const etaDeltaMinutes = delayMinutes > 0 ? -Math.min(delayMinutes, 25) : -18;
+    const etaDeltaMinutes =
+      delayMinutes > 0 ? -Math.min(delayMinutes, 25) : -18;
     const confidence = calibrate(0.86 + baseRisk * 0.1);
     const rerouteMessage =
       baseRisk > 0.7

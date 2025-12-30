@@ -39,15 +39,15 @@ Comprehensive caching strategies for Infamous Freight Enterprises to improve per
 
 ### Cache TTL Strategy
 
-| Data Type | TTL | Invalidation Trigger |
-|-----------|-----|---------------------|
-| User Profile | 1 hour | Profile update |
-| Shipment Status | 5 minutes | Status change |
-| Driver Info | 30 minutes | Profile update |
-| Route Data | 1 hour | Route change |
-| Listing Queries | 10 minutes | Data modification |
-| Counts/Stats | 5 minutes | Related update |
-| Configuration | 24 hours | Manual update |
+| Data Type       | TTL        | Invalidation Trigger |
+| --------------- | ---------- | -------------------- |
+| User Profile    | 1 hour     | Profile update       |
+| Shipment Status | 5 minutes  | Status change        |
+| Driver Info     | 30 minutes | Profile update       |
+| Route Data      | 1 hour     | Route change         |
+| Listing Queries | 10 minutes | Data modification    |
+| Counts/Stats    | 5 minutes  | Related update       |
+| Configuration   | 24 hours   | Manual update        |
 
 ## In-Memory Caching
 
@@ -99,7 +99,7 @@ export class CacheService {
 
   invalidatePattern(pattern: RegExp): void {
     const keysToDelete = Array.from(this.cache.keys()).filter((key) =>
-      pattern.test(key)
+      pattern.test(key),
     );
     keysToDelete.forEach((key) => this.cache.delete(key));
   }
@@ -128,7 +128,7 @@ export const cacheService = new CacheService();
 
 ```typescript
 // src/apps/api/src/routes/shipments.ts
-router.get('/shipments/:id', async (req, res, next) => {
+router.get("/shipments/:id", async (req, res, next) => {
   try {
     const cacheKey = `shipment:${req.params.id}`;
     let shipment = cacheService.get(cacheKey);
@@ -157,22 +157,22 @@ router.get('/shipments/:id', async (req, res, next) => {
 
 ```typescript
 // src/apps/api/src/services/redisCache.ts
-import redis from 'redis';
+import redis from "redis";
 
 const redisClient = redis.createClient({
-  url: process.env.REDIS_URL || 'redis://localhost:6379',
+  url: process.env.REDIS_URL || "redis://localhost:6379",
   socket: {
     reconnectStrategy: (retries) => {
       if (retries > 10) {
-        return new Error('Redis max retries exceeded');
+        return new Error("Redis max retries exceeded");
       }
       return retries * 100;
     },
   },
 });
 
-redisClient.on('error', (err) => console.error('Redis error:', err));
-redisClient.on('connect', () => console.log('Redis connected'));
+redisClient.on("error", (err) => console.error("Redis error:", err));
+redisClient.on("connect", () => console.log("Redis connected"));
 
 await redisClient.connect();
 
@@ -208,12 +208,12 @@ export const redisCache = {
   },
 
   async getStats() {
-    const info = await redisClient.info('stats');
+    const info = await redisClient.info("stats");
     return {
-      connectedClients: info?.includes('connected_clients'),
-      usedMemory: info?.includes('used_memory'),
-      totalHits: info?.includes('keyspace_hits'),
-      totalMisses: info?.includes('keyspace_misses'),
+      connectedClients: info?.includes("connected_clients"),
+      usedMemory: info?.includes("used_memory"),
+      totalHits: info?.includes("keyspace_hits"),
+      totalMisses: info?.includes("keyspace_misses"),
     };
   },
 };
@@ -223,18 +223,18 @@ export const redisCache = {
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 
 services:
   redis:
     image: redis:7-alpine
     ports:
-      - '6379:6379'
+      - "6379:6379"
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -251,19 +251,19 @@ volumes:
 // src/apps/api/src/middleware/cacheHeaders.ts
 export const cacheHeaders = (maxAge: number) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    res.set('Cache-Control', `public, max-age=${maxAge}`);
-    res.set('ETag', `W/"${Date.now()}"`);
+    res.set("Cache-Control", `public, max-age=${maxAge}`);
+    res.set("ETag", `W/"${Date.now()}"`);
     next();
   };
 };
 
 // Usage
 router.get(
-  '/api/shipments/:id',
+  "/api/shipments/:id",
   cacheHeaders(300), // 5 minutes
   async (req, res, next) => {
     // Handler
-  }
+  },
 );
 ```
 
@@ -271,13 +271,13 @@ router.get(
 
 ```typescript
 // Check ETag
-router.get('/api/shipments/:id', async (req, res, next) => {
+router.get("/api/shipments/:id", async (req, res, next) => {
   const shipment = await getShipment(req.params.id);
   const etag = `W/"${shipment.updatedAt.getTime()}"`;
 
-  res.set('ETag', etag);
+  res.set("ETag", etag);
 
-  if (req.headers['if-none-match'] === etag) {
+  if (req.headers["if-none-match"] === etag) {
     return res.status(304).end();
   }
 
@@ -298,7 +298,7 @@ cacheService.set(key, value, 300); // Auto-expire after 5 minutes
 
 ```typescript
 // Invalidate on update
-router.put('/api/shipments/:id', async (req, res, next) => {
+router.put("/api/shipments/:id", async (req, res, next) => {
   try {
     const shipment = await prisma.shipment.update({
       where: { id: req.params.id },
@@ -322,8 +322,8 @@ router.put('/api/shipments/:id', async (req, res, next) => {
 ```typescript
 // Admin endpoint to clear cache
 router.post(
-  '/api/admin/cache/clear',
-  requireRole('admin'),
+  "/api/admin/cache/clear",
+  requireRole("admin"),
   async (req, res) => {
     const { pattern } = req.body;
 
@@ -333,8 +333,8 @@ router.post(
       cacheService.clear();
     }
 
-    res.json({ success: true, message: 'Cache cleared' });
-  }
+    res.json({ success: true, message: "Cache cleared" });
+  },
 );
 ```
 
@@ -368,13 +368,13 @@ class DependencyCache {
 ```typescript
 // src/apps/api/src/services/cacheWarmer.ts
 export async function warmCache() {
-  console.log('Starting cache warm-up...');
+  console.log("Starting cache warm-up...");
 
   // Warm up popular shipments
   const popularShipments = await prisma.shipment.findMany({
-    where: { status: 'in_transit' },
+    where: { status: "in_transit" },
     take: 50,
-    orderBy: { updatedAt: 'desc' },
+    orderBy: { updatedAt: "desc" },
   });
 
   popularShipments.forEach((shipment) => {
@@ -393,7 +393,7 @@ export async function warmCache() {
     cacheService.set(key, driver, 3600);
   });
 
-  console.log('Cache warm-up complete');
+  console.log("Cache warm-up complete");
 }
 
 // Call on server startup
@@ -406,16 +406,16 @@ app.listen(port, () => {
 
 ```typescript
 // src/apps/api/src/services/cacheRefresher.ts
-import schedule from 'node-schedule';
+import schedule from "node-schedule";
 
 // Refresh cache every 30 minutes
 export function initCacheRefresher() {
-  schedule.scheduleJob('*/30 * * * *', async () => {
-    console.log('Running scheduled cache refresh...');
+  schedule.scheduleJob("*/30 * * * *", async () => {
+    console.log("Running scheduled cache refresh...");
     try {
       await warmCache();
     } catch (err) {
-      console.error('Cache refresh failed:', err);
+      console.error("Cache refresh failed:", err);
     }
   });
 }
@@ -430,7 +430,7 @@ initCacheRefresher();
 
 ```typescript
 // src/apps/api/src/services/distributedCache.ts
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 
 class DistributedCache extends EventEmitter {
   constructor(private redisClient: any) {
@@ -440,29 +440,21 @@ class DistributedCache extends EventEmitter {
 
   private subscribeToInvalidations() {
     const subscriber = this.redisClient.duplicate();
-    subscriber.subscribe('cache:invalidate', (message: string) => {
+    subscriber.subscribe("cache:invalidate", (message: string) => {
       const { key, pattern } = JSON.parse(message);
-      this.emit('invalidate', { key, pattern });
+      this.emit("invalidate", { key, pattern });
     });
   }
 
   async publishInvalidation(key: string, pattern?: string) {
     await this.redisClient.publish(
-      'cache:invalidate',
-      JSON.stringify({ key, pattern })
+      "cache:invalidate",
+      JSON.stringify({ key, pattern }),
     );
   }
 
-  async set<T>(
-    key: string,
-    value: T,
-    ttlSeconds: number = 300
-  ): Promise<void> {
-    await this.redisClient.setEx(
-      key,
-      ttlSeconds,
-      JSON.stringify(value)
-    );
+  async set<T>(key: string, value: T, ttlSeconds: number = 300): Promise<void> {
+    await this.redisClient.setEx(key, ttlSeconds, JSON.stringify(value));
     // Don't broadcast set operations, only invalidations
   }
 
@@ -484,7 +476,7 @@ class DistributedCache extends EventEmitter {
 
 ```typescript
 // src/apps/api/src/routes/metrics.ts
-router.get('/api/metrics/cache', (req, res) => {
+router.get("/api/metrics/cache", (req, res) => {
   const stats = cacheService.getStats();
 
   res.json({
@@ -499,12 +491,14 @@ function generateCacheRecommendations(stats: any) {
 
   if (stats.hitRate < 50) {
     recommendations.push(
-      'Hit rate is low. Consider increasing TTL or improving cache key strategy.'
+      "Hit rate is low. Consider increasing TTL or improving cache key strategy.",
     );
   }
 
   if (stats.size > 10000) {
-    recommendations.push('Cache size is large. Consider implementing LRU eviction.');
+    recommendations.push(
+      "Cache size is large. Consider implementing LRU eviction.",
+    );
   }
 
   return recommendations;

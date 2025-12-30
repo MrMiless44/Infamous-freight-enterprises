@@ -1,5 +1,5 @@
-import { useEffect, useRef, useCallback } from 'react';
-import io, { Socket } from 'socket.io-client';
+import { useEffect, useRef, useCallback } from "react";
+import io, { Socket } from "socket.io-client";
 
 interface UseWebSocketOptions {
   url?: string;
@@ -20,9 +20,11 @@ interface WebSocketContextValue {
  * Hook for WebSocket connection management
  * Automatically handles reconnection, token refresh, and cleanup
  */
-export function useWebSocket(options: UseWebSocketOptions = {}): WebSocketContextValue {
+export function useWebSocket(
+  options: UseWebSocketOptions = {},
+): WebSocketContextValue {
   const {
-    url = process.env.REACT_APP_API_URL || 'http://localhost:4000',
+    url = process.env.REACT_APP_API_URL || "http://localhost:4000",
     autoConnect = true,
     reconnection = true,
     reconnectionDelay = 5000,
@@ -34,8 +36,8 @@ export function useWebSocket(options: UseWebSocketOptions = {}): WebSocketContex
   const getAuthToken = useCallback((): string | null => {
     // Get JWT token from localStorage, sessionStorage, or your auth service
     return (
-      localStorage.getItem('authToken') ||
-      sessionStorage.getItem('authToken') ||
+      localStorage.getItem("authToken") ||
+      sessionStorage.getItem("authToken") ||
       null
     );
   }, []);
@@ -47,7 +49,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}): WebSocketContex
 
     const token = getAuthToken();
     if (!token) {
-      console.warn('No auth token available for WebSocket connection');
+      console.warn("No auth token available for WebSocket connection");
       return;
     }
 
@@ -57,32 +59,32 @@ export function useWebSocket(options: UseWebSocketOptions = {}): WebSocketContex
         reconnection,
         reconnectionDelay,
         autoConnect,
-        transports: ['websocket', 'polling'],
+        transports: ["websocket", "polling"],
       });
 
       // Connection established
-      socketRef.current.on('connect', () => {
-        console.log('WebSocket connected:', socketRef.current?.id);
+      socketRef.current.on("connect", () => {
+        console.log("WebSocket connected:", socketRef.current?.id);
         isConnectedRef.current = true;
       });
 
       // Connection closed
-      socketRef.current.on('disconnect', (reason) => {
-        console.log('WebSocket disconnected:', reason);
+      socketRef.current.on("disconnect", (reason) => {
+        console.log("WebSocket disconnected:", reason);
         isConnectedRef.current = false;
       });
 
       // Authentication error
-      socketRef.current.on('connect_error', (error) => {
-        console.error('WebSocket connection error:', error);
-        if (error.message === 'Unauthorized') {
+      socketRef.current.on("connect_error", (error) => {
+        console.error("WebSocket connection error:", error);
+        if (error.message === "Unauthorized") {
           // Token expired, clear and redirect to login
-          localStorage.removeItem('authToken');
-          window.location.href = '/login';
+          localStorage.removeItem("authToken");
+          window.location.href = "/login";
         }
       });
     } catch (error) {
-      console.error('Failed to initialize WebSocket:', error);
+      console.error("Failed to initialize WebSocket:", error);
     }
   }, [url, autoConnect, reconnection, reconnectionDelay, getAuthToken]);
 
@@ -97,12 +99,12 @@ export function useWebSocket(options: UseWebSocketOptions = {}): WebSocketContex
   const subscribe = useCallback(
     (event: string, callback: (...args: any[]) => void) => {
       if (!socketRef.current) {
-        console.warn('WebSocket not connected');
+        console.warn("WebSocket not connected");
         return;
       }
       socketRef.current.on(event, callback);
     },
-    []
+    [],
   );
 
   const unsubscribe = useCallback((event: string) => {
@@ -113,7 +115,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}): WebSocketContex
 
   const emit = useCallback((event: string, data: any) => {
     if (!socketRef.current?.connected) {
-      console.warn('WebSocket not connected');
+      console.warn("WebSocket not connected");
       return;
     }
     socketRef.current.emit(event, data);

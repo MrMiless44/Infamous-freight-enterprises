@@ -11,6 +11,7 @@
 User Acceptance Testing validates that the system meets business requirements and is ready for production deployment.
 
 ### Scope
+
 - ✅ Core freight management workflows
 - ✅ Real-time tracking and dispatch
 - ✅ Customer and driver experience
@@ -18,6 +19,7 @@ User Acceptance Testing validates that the system meets business requirements an
 - ✅ System performance and reliability
 
 ### Timeline
+
 - **UAT Preparation**: 1 week
 - **UAT Execution**: 2 weeks
 - **Bug Fixes & Retesting**: 1 week
@@ -30,6 +32,7 @@ User Acceptance Testing validates that the system meets business requirements an
 ### 2.1 Shipment Management
 
 #### Scenario: Create and Track Shipment
+
 ```gherkin
 Feature: Shipment Management
   Background:
@@ -58,6 +61,7 @@ Feature: Shipment Management
 ```
 
 #### Acceptance Criteria
+
 - [ ] Shipment created with all required fields
 - [ ] Confirmation email sent within 30 seconds
 - [ ] Status transitions work correctly
@@ -68,6 +72,7 @@ Feature: Shipment Management
 ### 2.2 Driver Dispatch
 
 #### Scenario: Assign Load to Driver
+
 ```gherkin
 Feature: Driver Dispatch
   Background:
@@ -92,6 +97,7 @@ Feature: Driver Dispatch
 ```
 
 #### Acceptance Criteria
+
 - [ ] Auto-assignment algorithm selects appropriate driver
 - [ ] Driver receives notification within 5 seconds
 - [ ] Load status updates in real-time
@@ -102,6 +108,7 @@ Feature: Driver Dispatch
 ### 2.3 Real-time Collaboration
 
 #### Scenario: Multiple Users Viewing Same Shipment
+
 ```gherkin
 Feature: Real-time Collaboration
   Scenario: Live view synchronization
@@ -119,6 +126,7 @@ Feature: Real-time Collaboration
 ```
 
 #### Acceptance Criteria
+
 - [ ] WebSocket updates within 1 second
 - [ ] No duplicate notifications
 - [ ] All users see consistent data
@@ -128,6 +136,7 @@ Feature: Real-time Collaboration
 ### 2.4 Billing & Payments
 
 #### Scenario: Process Payment
+
 ```gherkin
 Feature: Payment Processing
   Scenario: Customer pays shipment invoice
@@ -144,6 +153,7 @@ Feature: Payment Processing
 ```
 
 #### Acceptance Criteria
+
 - [ ] All payment fields are validated
 - [ ] Payment processes within 5 seconds
 - [ ] Secure transmission (HTTPS)
@@ -154,6 +164,7 @@ Feature: Payment Processing
 ### 2.5 Performance & Scale
 
 #### Scenario: Handle Peak Load
+
 ```gherkin
 Feature: Performance Under Load
   Scenario: 100 concurrent users
@@ -170,6 +181,7 @@ Feature: Performance Under Load
 ```
 
 #### Acceptance Criteria
+
 - [ ] P95 latency < 500ms
 - [ ] Error rate < 1%
 - [ ] No data loss
@@ -184,6 +196,7 @@ Feature: Performance Under Load
 ### Phase 1: Preparation (Week 1)
 
 **Environment Setup**
+
 ```bash
 # 1. Deploy to staging environment
 git checkout main
@@ -198,6 +211,7 @@ curl http://staging-api.example.com/api/health
 ```
 
 **Test Team Briefing**
+
 - [ ] Review system architecture
 - [ ] Explain key workflows
 - [ ] Provide test credentials
@@ -208,36 +222,42 @@ curl http://staging-api.example.com/api/health
 **Day-by-day testing schedule**
 
 **Week 2, Day 1: Shipment Management**
+
 - [ ] Create shipment (various types)
 - [ ] Update shipment details
 - [ ] Cancel shipment
 - [ ] Generate shipment report
 
 **Week 2, Day 2: Driver Management**
+
 - [ ] Register new driver
 - [ ] Update driver profile
 - [ ] View driver statistics
 - [ ] Manage driver availability
 
 **Week 2, Day 3: Dispatch & Tracking**
+
 - [ ] Assign loads to drivers
 - [ ] Track in real-time
 - [ ] Update location manually
 - [ ] Handle delivery confirmation
 
 **Week 2, Day 4: Collaboration**
+
 - [ ] Multiple users on same shipment
 - [ ] Live messaging
 - [ ] Note-taking and annotations
 - [ ] Document sharing
 
 **Week 2, Day 5: Billing**
+
 - [ ] Generate invoice
 - [ ] Process payment (test card)
 - [ ] Refund transaction
 - [ ] Generate billing report
 
 **Week 3, Day 1-5: Performance & Edge Cases**
+
 - [ ] Load testing
 - [ ] Error scenarios
 - [ ] Network disconnection
@@ -246,6 +266,7 @@ curl http://staging-api.example.com/api/health
 ### Phase 3: Bug Fixes (Week 4)
 
 **Triage Process**
+
 ```
 Severity 1 (Critical): Block production release
 Severity 2 (High): Must fix before release
@@ -254,6 +275,7 @@ Severity 4 (Low): Document as enhancement
 ```
 
 **Fix & Retest Cycle**
+
 1. Developer fixes issue
 2. QA retests the fix
 3. Regression testing
@@ -264,6 +286,7 @@ Severity 4 (Low): Document as enhancement
 ## 4. Test Cases
 
 ### TC-001: Create Shipment
+
 ```
 Preconditions:
   - User is logged in as customer
@@ -292,6 +315,7 @@ Acceptance Criteria:
 ```
 
 ### TC-002: Real-time Location Tracking
+
 ```
 Preconditions:
   - Shipment is assigned to driver
@@ -318,6 +342,7 @@ Acceptance Criteria:
 ```
 
 ### TC-003: Concurrent User Access
+
 ```
 Preconditions:
   - 5 users have access to same shipment
@@ -345,6 +370,7 @@ Acceptance Criteria:
 ```
 
 ### TC-004: Payment Processing
+
 ```
 Preconditions:
   - Invoice generated
@@ -381,42 +407,48 @@ const seedUATData = async () => {
   // Create test organizations
   const org = await prisma.organization.create({
     data: {
-      name: 'UAT Test Company',
+      name: "UAT Test Company",
     },
   });
 
   // Create test users (customer, driver, dispatcher)
   const customer = await prisma.user.create({
     data: {
-      email: 'customer@uat.test',
-      passwordHash: bcrypt.hashSync('UAT12345!'),
-      role: 'CUSTOMER',
+      email: "customer@uat.test",
+      passwordHash: bcrypt.hashSync("UAT12345!"),
+      role: "CUSTOMER",
       organizationId: org.id,
     },
   });
 
   const driver = await prisma.user.create({
     data: {
-      email: 'driver@uat.test',
-      passwordHash: bcrypt.hashSync('UAT12345!'),
-      role: 'DRIVER',
+      email: "driver@uat.test",
+      passwordHash: bcrypt.hashSync("UAT12345!"),
+      role: "DRIVER",
       organizationId: org.id,
     },
   });
 
   const dispatcher = await prisma.user.create({
     data: {
-      email: 'dispatcher@uat.test',
-      passwordHash: bcrypt.hashSync('UAT12345!'),
-      role: 'DISPATCHER',
+      email: "dispatcher@uat.test",
+      passwordHash: bcrypt.hashSync("UAT12345!"),
+      role: "DISPATCHER",
       organizationId: org.id,
     },
   });
 
   // Create test shipments (various statuses)
   const shipments = [];
-  const statuses = ['PENDING', 'ASSIGNED', 'PICKED_UP', 'IN_TRANSIT', 'DELIVERED'];
-  
+  const statuses = [
+    "PENDING",
+    "ASSIGNED",
+    "PICKED_UP",
+    "IN_TRANSIT",
+    "DELIVERED",
+  ];
+
   for (let i = 0; i < 50; i++) {
     shipments.push(
       await prisma.load.create({
@@ -425,10 +457,10 @@ const seedUATData = async () => {
           customerId: customer.id,
           driverId: driver.id,
           organizationId: org.id,
-          pickupAddress: '123 Main St, New York, NY',
+          pickupAddress: "123 Main St, New York, NY",
           pickupLat: 40.7128,
-          pickupLng: -74.0060,
-          deliveryAddress: '456 Oak Ave, Los Angeles, CA',
+          pickupLng: -74.006,
+          deliveryAddress: "456 Oak Ave, Los Angeles, CA",
           deliveryLat: 34.0522,
           deliveryLng: -118.2437,
           pickupTime: new Date(),
@@ -437,11 +469,11 @@ const seedUATData = async () => {
           rate: 1500,
           status: statuses[i % statuses.length],
         },
-      })
+      }),
     );
   }
 
-  console.log('✅ UAT test data created');
+  console.log("✅ UAT test data created");
   console.log(`Organizations: 1`);
   console.log(`Users: 3`);
   console.log(`Shipments: ${shipments.length}`);
@@ -455,6 +487,7 @@ seedUATData();
 ## 6. Sign-off Checklist
 
 ### Business Stakeholder Sign-off
+
 - [ ] All critical workflows tested
 - [ ] Performance meets requirements
 - [ ] Data security validated
@@ -463,6 +496,7 @@ seedUATData();
 - [ ] Rollback plan documented
 
 ### IT/Operations Sign-off
+
 - [ ] Infrastructure capacity verified
 - [ ] Monitoring configured
 - [ ] Backups tested
@@ -471,6 +505,7 @@ seedUATData();
 - [ ] Incident response plan ready
 
 ### Developer Sign-off
+
 - [ ] No known critical bugs
 - [ ] Code review complete
 - [ ] Performance optimization done
@@ -486,33 +521,42 @@ seedUATData();
 ## Issue Template
 
 ### Issue ID: INC-001
+
 **Severity**: [Critical / High / Medium / Low]
 **Status**: [Open / In Progress / Fixed / Verified]
 
 ### Description
+
 [Clear description of issue]
 
 ### Steps to Reproduce
+
 1. [Step 1]
 2. [Step 2]
 3. [Step 3]
 
 ### Expected Behavior
+
 [What should happen]
 
 ### Actual Behavior
+
 [What actually happened]
 
 ### Screenshot/Video
+
 [Attachment]
 
 ### Root Cause
+
 [If known]
 
 ### Fix
+
 [Fix description]
 
 ### Verified By
+
 [Name, Date]
 ```
 
@@ -560,26 +604,27 @@ Before go-live approval:
 **Test Team Lead**: [Name]  
 **Business Sponsor**: [Name]  
 **Technical Lead**: [Name]  
-**Support Lead**: [Name]  
+**Support Lead**: [Name]
 
 **Testing Environment**: https://staging-api.example.com  
 **Reporting Tool**: https://jira.example.com  
-**Communication Channel**: #uat-team (Slack)  
+**Communication Channel**: #uat-team (Slack)
 
 ---
 
 **Sign-off**
 
-| Role | Name | Date | Signature |
-|------|------|------|-----------|
-| Business Sponsor | | | |
-| Tech Lead | | | |
-| QA Lead | | | |
-| Project Manager | | | |
+| Role             | Name | Date | Signature |
+| ---------------- | ---- | ---- | --------- |
+| Business Sponsor |      |      |           |
+| Tech Lead        |      |      |           |
+| QA Lead          |      |      |           |
+| Project Manager  |      |      |           |
 
 ---
 
 **Next Steps**:
+
 1. ✅ Distribute to UAT team
 2. Schedule UAT kickoff meeting
 3. Prepare staging environment

@@ -3,7 +3,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, devices } from "@playwright/test";
 
-const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const ROOT_DIR = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../..",
+);
 
 /**
  * See https://playwright.dev/docs/test-configuration.

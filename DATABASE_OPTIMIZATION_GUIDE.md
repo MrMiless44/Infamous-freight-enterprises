@@ -20,7 +20,7 @@ DATABASE_LOG_THRESHOLD_MS=1000
 
 ```sql
 -- Find slow queries in PostgreSQL
-SELECT 
+SELECT
   query,
   calls,
   mean_exec_time,
@@ -104,7 +104,7 @@ model Shipment {
   id       String @id @default(cuid())
   driverId String?
   status   String
-  
+
   // Index for filtering by status and driver
   @@index([driverId, status])
 }
@@ -114,7 +114,7 @@ model Shipment {
 
 ```sql
 -- View all indexes
-SELECT 
+SELECT
   schemaname,
   tablename,
   indexname,
@@ -124,7 +124,7 @@ WHERE schemaname = 'public'
 ORDER BY tablename, indexname;
 
 -- Check index size
-SELECT 
+SELECT
   schemaname,
   tablename,
   indexname,
@@ -153,7 +153,7 @@ const shipments = await prisma.shipment.findMany({
     },
   },
   where: {
-    status: 'in_transit',
+    status: "in_transit",
   },
   take: 100,
 });
@@ -169,7 +169,7 @@ const pageSize = 20;
 const shipments = await prisma.shipment.findMany({
   skip: (page - 1) * pageSize,
   take: pageSize,
-  orderBy: { createdAt: 'desc' },
+  orderBy: { createdAt: "desc" },
   include: { driver: true },
 });
 ```
@@ -181,14 +181,14 @@ const shipments = await prisma.shipment.findMany({
 for (const id of shipmentIds) {
   await prisma.shipment.update({
     where: { id },
-    data: { status: 'delivered' },
+    data: { status: "delivered" },
   });
 }
 
 // ✅ GOOD: Batch update
 await prisma.shipment.updateMany({
   where: { id: { in: shipmentIds } },
-  data: { status: 'delivered' },
+  data: { status: "delivered" },
 });
 ```
 
@@ -225,7 +225,7 @@ async function getShipmentWithCache(id: string) {
 ### Redis Caching (Production)
 
 ```typescript
-import redis from 'redis';
+import redis from "redis";
 
 const client = redis.createClient({
   url: process.env.REDIS_URL,
@@ -269,14 +269,14 @@ DATABASE_IDLE_TIMEOUT=30
 
 ```typescript
 // prisma/client.ts
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
     log: [
       {
-        emit: 'event',
-        level: 'query',
+        emit: "event",
+        level: "query",
       },
     ],
   });
@@ -288,12 +288,12 @@ declare global {
 
 const prisma = globalThis.prisma ?? prismaClientSingleton();
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   globalThis.prisma = prisma;
 }
 
 // Log slow queries in development
-prisma.$on('query', (e) => {
+prisma.$on("query", (e) => {
   if (e.duration > 1000) {
     console.warn(`Slow query (${e.duration}ms): ${e.query}`);
   }
@@ -366,7 +366,7 @@ ANALYZE shipment;
 
 ```sql
 -- Find unused indexes
-SELECT 
+SELECT
   schemaname,
   tablename,
   indexname,
@@ -385,7 +385,7 @@ DROP INDEX CONCURRENTLY idx_unused_index;
 
 ```sql
 -- Table size
-SELECT 
+SELECT
   tablename,
   pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS total_size
 FROM pg_tables
@@ -393,7 +393,7 @@ WHERE schemaname = 'public'
 ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 
 -- Row count
-SELECT 
+SELECT
   schemaname,
   tablename,
   n_live_tup AS row_count
@@ -401,7 +401,7 @@ FROM pg_stat_user_tables
 ORDER BY n_live_tup DESC;
 
 -- Dead rows percentage
-SELECT 
+SELECT
   schemaname,
   tablename,
   n_live_tup,
@@ -419,6 +419,7 @@ ORDER BY dead_percentage DESC;
 **Symptom**: Slow queries despite reasonable data volume
 
 **Solution**:
+
 ```sql
 -- Add indexes for frequently filtered columns
 CREATE INDEX idx_shipment_driver_id ON shipment(driver_id);
@@ -437,6 +438,7 @@ CREATE INDEX idx_shipment_created_at ON shipment(created_at DESC);
 **Symptom**: Join queries timeout
 
 **Solution**:
+
 ```sql
 -- Create indexes on join keys
 CREATE INDEX idx_shipment_driver_fk ON shipment(driver_id);
@@ -476,13 +478,13 @@ while (true) {
 
 ### Expected Metrics
 
-| Query Type | Expected Duration | 95th Percentile |
-|------------|------------------|-----------------|
-| Single row lookup (with index) | <5ms | <10ms |
-| List with pagination (100 rows) | <20ms | <50ms |
-| Aggregation query | <50ms | <100ms |
-| Complex join (3+ tables) | <100ms | <200ms |
-| Export (10k rows) | <1000ms | <2000ms |
+| Query Type                      | Expected Duration | 95th Percentile |
+| ------------------------------- | ----------------- | --------------- |
+| Single row lookup (with index)  | <5ms              | <10ms           |
+| List with pagination (100 rows) | <20ms             | <50ms           |
+| Aggregation query               | <50ms             | <100ms          |
+| Complex join (3+ tables)        | <100ms            | <200ms          |
+| Export (10k rows)               | <1000ms           | <2000ms         |
 
 ### Monitoring Checklist
 

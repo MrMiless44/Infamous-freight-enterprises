@@ -9,6 +9,7 @@ The repository has been restructured to improve organization and maintainability
 ### 1. Configuration Files Organization
 
 All configuration files have been moved to the `configs/` directory:
+
 - `configs/docker/` - Docker Compose configurations
 - `configs/ci-cd/` - CI/CD platform configurations
 - `configs/linting/` - Linting and code quality tools
@@ -18,6 +19,7 @@ All configuration files have been moved to the `configs/` directory:
 ### 2. Documentation Organization
 
 Documentation has been organized into logical subdirectories:
+
 - `docs/api/` - API documentation
 - `docs/deployment/` - Deployment guides
 - `docs/development/` - Development guides
@@ -25,6 +27,7 @@ Documentation has been organized into logical subdirectories:
 - `docs/testing/` - Testing documentation
 
 New documentation has been added:
+
 - `docs/developer-guide.md` - Comprehensive setup guide
 - `docs/repository-structure.md` - Repository organization
 - `docs/validation-guide.md` - Code validation guide
@@ -33,6 +36,7 @@ New documentation has been added:
 ### 3. Temporary Files Cleanup
 
 Removed temporary and invalid files:
+
 - `Untitled-*` files
 - `.pid` files
 - Malformed filenames with special characters
@@ -46,6 +50,7 @@ Removed temporary and invalid files:
 ### 5. Naming Conventions
 
 Standardized naming conventions:
+
 - Configuration files: kebab-case or dot-prefix
 - Scripts: kebab-case with `.sh` extension
 - Documentation: UPPERCASE with underscores for important files
@@ -55,6 +60,7 @@ Standardized naming conventions:
 ### For Most Users: No Action Required
 
 If you're working with the repository normally, **no action is needed**. Symlinks ensure that:
+
 - Docker Compose commands still work
 - ESLint still finds its configuration
 - Playwright still works
@@ -65,6 +71,7 @@ If you're working with the repository normally, **no action is needed**. Symlink
 If you have scripts or documentation that reference configuration files by path, you may need to update them:
 
 **Old paths** → **New paths:**
+
 - `docker-compose.yml` → `configs/docker/docker-compose.yml` (symlink at root still works)
 - `eslint.config.js` → `configs/linting/eslint.config.js` (symlink at root still works)
 - `codecov.yml` → `configs/ci-cd/codecov.yml` (symlink at root still works)
@@ -74,6 +81,7 @@ If you have scripts or documentation that reference configuration files by path,
 ### If You Have Local Modifications
 
 If you have local modifications to configuration files:
+
 1. Your changes are safe - symlinks point to the real files
 2. Edit files in `configs/` directory, not the symlinks
 3. Your git operations will work normally
@@ -81,6 +89,7 @@ If you have local modifications to configuration files:
 ### If You Have Custom Scripts
 
 If you have custom scripts that reference moved files:
+
 1. Update paths to point to `configs/` directory if needed
 2. Or rely on symlinks (recommended)
 3. Test your scripts after pulling changes
@@ -127,6 +136,7 @@ ls docs/deployment/
 ### Issue: "Config file not found"
 
 **Solution**: Ensure symlinks are created. Run:
+
 ```bash
 ls -la *.yml *.js | grep "^l"
 ```
@@ -160,6 +170,7 @@ If you encounter issues after this restructuring:
 ## Future Changes
 
 This restructuring sets the foundation for:
+
 - Easier addition of new configuration files
 - Better documentation maintenance
 - Improved developer experience

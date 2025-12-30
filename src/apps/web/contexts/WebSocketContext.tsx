@@ -1,6 +1,6 @@
-import React, { createContext, useContext, ReactNode } from 'react';
-import { useWebSocket } from '../hooks/useWebSocket';
-import type { Socket } from 'socket.io-client';
+import React, { createContext, useContext, ReactNode } from "react";
+import { useWebSocket } from "../hooks/useWebSocket";
+import type { Socket } from "socket.io-client";
 
 interface WebSocketContextType {
   socket: Socket | null;
@@ -11,7 +11,7 @@ interface WebSocketContextType {
 }
 
 const WebSocketContext = createContext<WebSocketContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function WebSocketProvider({ children }: { children: ReactNode }) {
@@ -30,7 +30,9 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 export function useWebSocketContext() {
   const context = useContext(WebSocketContext);
   if (!context) {
-    throw new Error('useWebSocketContext must be used within WebSocketProvider');
+    throw new Error(
+      "useWebSocketContext must be used within WebSocketProvider",
+    );
   }
   return context;
 }

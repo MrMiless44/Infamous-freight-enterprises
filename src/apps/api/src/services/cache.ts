@@ -1,4 +1,4 @@
-import { logger } from '../middleware/logger';
+import { logger } from "../middleware/logger";
 
 /**
  * Cache service with Redis support (or in-memory fallback)
@@ -13,40 +13,40 @@ const memoryCache = new Map<string, { value: any; expiresAt: number }>();
 export async function initializeRedis(): Promise<boolean> {
   if (process.env.REDIS_URL) {
     try {
-      const redis = await import('redis');
+      const redis = await import("redis");
       redisClient = redis.createClient({
         url: process.env.REDIS_URL,
         socket: {
           reconnectStrategy: (retries: number) => {
             if (retries > 10) {
-              logger.error('Redis reconnection failed after 10 attempts');
-              return new Error('Redis unavailable');
+              logger.error("Redis reconnection failed after 10 attempts");
+              return new Error("Redis unavailable");
             }
             return Math.min(retries * 100, 3000);
           },
         },
       });
 
-      redisClient.on('error', (err: Error) => {
-        logger.error('Redis client error', { error: err.message });
+      redisClient.on("error", (err: Error) => {
+        logger.error("Redis client error", { error: err.message });
       });
 
-      redisClient.on('connect', () => {
-        logger.info('Redis client connected');
+      redisClient.on("connect", () => {
+        logger.info("Redis client connected");
       });
 
       await redisClient.connect();
-      logger.info('Redis cache initialized successfully');
+      logger.info("Redis cache initialized successfully");
       return true;
     } catch (error: any) {
-      logger.warn('Failed to initialize Redis, using memory cache', {
+      logger.warn("Failed to initialize Redis, using memory cache", {
         error: error.message,
       });
       redisClient = null;
       return false;
     }
   } else {
-    logger.info('No REDIS_URL provided, using in-memory cache');
+    logger.info("No REDIS_URL provided, using in-memory cache");
     return false;
   }
 }
@@ -69,7 +69,7 @@ export async function get(key: string): Promise<any | null> {
       return null;
     }
   } catch (error: any) {
-    logger.error('Cache get error', { key, error: error.message });
+    logger.error("Cache get error", { key, error: error.message });
     return null;
   }
 }
@@ -94,7 +94,7 @@ export async function set(
       return true;
     }
   } catch (error: any) {
-    logger.error('Cache set error', { key, error: error.message });
+    logger.error("Cache set error", { key, error: error.message });
     return false;
   }
 }
@@ -112,7 +112,7 @@ export async function del(key: string): Promise<boolean> {
       return true;
     }
   } catch (error: any) {
-    logger.error('Cache delete error', { key, error: error.message });
+    logger.error("Cache delete error", { key, error: error.message });
     return false;
   }
 }

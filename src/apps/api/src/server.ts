@@ -1,4 +1,4 @@
-import express, { type Server } from "express";
+import express from "express";
 import { createServer } from "http";
 import cors from "cors";
 import "./cron";
@@ -20,8 +20,8 @@ import { customer } from "./routes/customer";
 import { rateLimit } from "./middleware/rateLimit";
 import { auditTrail } from "./middleware/audit";
 import errorHandler from "./middleware/errorHandler";
-import { WebSocketService } from "./services/websocket";
-import { CacheService } from "./services/cache";
+import { websocketService } from "./services/websocket";
+import { cacheService } from "./services/cache";
 
 const app = express();
 const httpServer = createServer(app);
@@ -30,11 +30,11 @@ const httpServer = createServer(app);
 async function initializeServices() {
   try {
     // Initialize cache service (with optional Redis)
-    await CacheService.initialize();
+    await cacheService.initialize();
     console.info("Cache service initialized");
 
     // Initialize WebSocket service
-    WebSocketService.initialize(httpServer);
+    websocketService.initialize(httpServer);
     console.info("WebSocket service initialized");
   } catch (error) {
     console.error("Failed to initialize services:", error);

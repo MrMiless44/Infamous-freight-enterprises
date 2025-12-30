@@ -8,10 +8,11 @@ datasource db {
 }
 
 model Organization {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   name      String
   users     User[]
-  createdAt DateTime @default(now())
+  webhooks  Webhook[]
+  createdAt DateTime    @default(now())
 }
 
 model User {
@@ -186,4 +187,55 @@ model MaintenanceLog {
   performedAt DateTime  @default(now())
   nextDue     DateTime?
   createdAt   DateTime  @default(now())
+}
+
+model Notification {
+  id            String   @id @default(cuid())
+  userId        String
+  type          String
+  title         String
+  message       String
+  isRead        Boolean  @default(false)
+  emailTo       String?
+  phoneTo       String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isRead, createdAt])
+}
+
+model Message {
+  id            String   @id @default(cuid())
+  senderId      String
+  recipientId   String?
+  content       String
+  type          String
+  isRead        Boolean  @default(false)
+  relatedId     String?
+  relatedType   String?
+  createdAt     DateTime @default(now())
+
+  @@index([senderId])
+  @@index([recipientId])
+  @@index([isRead, createdAt])
+}
+
+model Webhook {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  event           String
+  url             String
+  secret          String
+  isActive        Boolean      @default(true)
+  maxRetries      Int          @default(3)
+  headers         Json?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  lastTriggered   DateTime?
+
+  @@index([organizationId])
+  @@index([event])
 }

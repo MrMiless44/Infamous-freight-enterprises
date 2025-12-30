@@ -78,7 +78,7 @@ async function main() {
   await prisma.invoice.create({
     data: {
       organizationId: org.id,
-      amount: 1250.50,
+      amount: 1250.5,
       vendor: "Fuel Express Inc",
       status: "pending",
     },
@@ -92,7 +92,8 @@ async function main() {
       organizationId: org.id,
       type: "route_optimization",
       confidence: 0.92,
-      rationale: "Recommended route based on traffic patterns and fuel efficiency",
+      rationale:
+        "Recommended route based on traffic patterns and fuel efficiency",
     },
   });
 
@@ -128,4 +129,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

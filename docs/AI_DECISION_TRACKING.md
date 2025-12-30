@@ -21,7 +21,7 @@ model AiDecision {
   rationale      Json     // Structured reasoning
   createdAt      DateTime @default(now())
   feedback       AiFeedback?
-  
+
   @@index([organizationId, agent])
 }
 ```
@@ -52,6 +52,7 @@ GET /api/ai-decisions
 ```
 
 **Query Parameters:**
+
 - `organizationId` (optional) - Filter by organization
 - `agent` (optional) - Filter by agent name
 - `invoiceId` (optional) - Filter by invoice
@@ -59,6 +60,7 @@ GET /api/ai-decisions
 **Required Scope:** `ai:decisions:read`
 
 **Response:**
+
 ```json
 {
   "ok": true,
@@ -90,6 +92,7 @@ GET /api/ai-decisions/:id
 **Required Scope:** `ai:decisions:read`
 
 **Response:**
+
 ```json
 {
   "ok": true,
@@ -123,6 +126,7 @@ POST /api/ai-decisions
 **Rate Limit:** 20 requests per minute
 
 **Request Body:**
+
 ```json
 {
   "organizationId": "org-123",
@@ -138,6 +142,7 @@ POST /api/ai-decisions
 ```
 
 **Validation Rules:**
+
 - `organizationId`: 1-100 characters, required
 - `invoiceId`: 1-100 characters, required
 - `agent`: 1-100 characters, required
@@ -156,6 +161,7 @@ POST /api/ai-decisions/:id/feedback
 **Required Scope:** `ai:decisions:write`
 
 **Request Body:**
+
 ```json
 {
   "outcome": "correct",
@@ -164,10 +170,12 @@ POST /api/ai-decisions/:id/feedback
 ```
 
 **Validation Rules:**
+
 - `outcome`: Must be "correct", "false_positive", or "missed", required
 - `notes`: String, optional
 
 **Error Cases:**
+
 - 404: Decision not found
 - 409: Feedback already exists for this decision
 
@@ -182,6 +190,7 @@ GET /api/ai-decisions/:id/feedback
 **Required Scope:** `ai:decisions:read`
 
 **Response:**
+
 ```json
 {
   "ok": true,
@@ -205,6 +214,7 @@ PATCH /api/ai-feedback/:id
 **Required Scope:** `ai:decisions:write`
 
 **Request Body:**
+
 ```json
 {
   "outcome": "false_positive",
@@ -217,16 +227,20 @@ PATCH /api/ai-feedback/:id
 ## Security
 
 ### Authentication
+
 All endpoints require a valid JWT token in the Authorization header:
+
 ```
 Authorization: Bearer <jwt_token>
 ```
 
 ### Scopes
+
 - `ai:decisions:read` - View decisions and feedback
 - `ai:decisions:write` - Create/update decisions and feedback
 
 ### Rate Limiting
+
 - General endpoints: 100 requests per 15 minutes
 - AI decision creation: 20 requests per minute
 
@@ -235,47 +249,50 @@ Authorization: Bearer <jwt_token>
 ### JavaScript/Node.js
 
 ```javascript
-const API_BASE_URL = 'http://localhost:4000/api';
-const token = 'your-jwt-token';
+const API_BASE_URL = "http://localhost:4000/api";
+const token = "your-jwt-token";
 
 // Create a decision
 async function createDecision() {
   const response = await fetch(`${API_BASE_URL}/ai-decisions`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      organizationId: 'org-123',
-      invoiceId: 'inv-456',
-      agent: 'billing_audit',
-      decision: 'approve',
+      organizationId: "org-123",
+      invoiceId: "inv-456",
+      agent: "billing_audit",
+      decision: "approve",
       confidence: 0.95,
       rationale: {
-        reason: 'Invoice matches purchase order'
-      }
-    })
+        reason: "Invoice matches purchase order",
+      },
+    }),
   });
-  
+
   const result = await response.json();
   return result.decision;
 }
 
 // Add feedback
 async function addFeedback(decisionId) {
-  const response = await fetch(`${API_BASE_URL}/ai-decisions/${decisionId}/feedback`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+  const response = await fetch(
+    `${API_BASE_URL}/ai-decisions/${decisionId}/feedback`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        outcome: "correct",
+        notes: "Decision was accurate",
+      }),
     },
-    body: JSON.stringify({
-      outcome: 'correct',
-      notes: 'Decision was accurate'
-    })
-  });
-  
+  );
+
   const result = await response.json();
   return result.feedback;
 }
@@ -337,6 +354,7 @@ npm test -- routes.ai.decisions.test.js
 ```
 
 The test suite includes:
+
 - Authentication and authorization tests
 - Input validation tests
 - CRUD operation tests
@@ -348,23 +366,24 @@ The test suite includes:
 The types are available in the shared package:
 
 ```typescript
-import { AiDecision, AiFeedback } from '@infamous-freight/shared';
+import { AiDecision, AiFeedback } from "@infamous-freight/shared";
 
 const decision: AiDecision = {
-  id: 'cld1x...',
-  organizationId: 'org-123',
-  invoiceId: 'inv-456',
-  agent: 'billing_audit',
-  decision: 'approve',
+  id: "cld1x...",
+  organizationId: "org-123",
+  invoiceId: "inv-456",
+  agent: "billing_audit",
+  decision: "approve",
   confidence: 0.95,
-  rationale: { reason: 'Verified' },
-  createdAt: new Date()
+  rationale: { reason: "Verified" },
+  createdAt: new Date(),
 };
 ```
 
 ## Swagger Documentation
 
 API documentation is available at:
+
 ```
 http://localhost:4000/api/docs
 ```
@@ -382,6 +401,7 @@ Look for the "AI Decisions" tag in the Swagger UI.
 ## Future Enhancements
 
 Potential additions to consider:
+
 - Bulk decision creation endpoint
 - Analytics endpoints for decision accuracy metrics
 - Decision reversal tracking

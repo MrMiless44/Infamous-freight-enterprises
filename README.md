@@ -1,326 +1,439 @@
-# 🚚 Infamous Freight Enterprise
+# Infamous Freight Enterprises
 
-AI Synthetic Intelligence ♊️–powered **AI Operations Workforce for Freight**.
+[![Test Coverage](https://img.shields.io/badge/coverage-86.2%25-brightgreen.svg)](./api/coverage)
+[![Tests](https://img.shields.io/badge/tests-197%20passing-brightgreen.svg)](./api)
+[![Node.js](https://img.shields.io/badge/node-20.18.1-brightgreen.svg)](https://nodejs.org)
+[![pnpm](https://img.shields.io/badge/pnpm-8.15.9-orange.svg)](https://pnpm.io)
+[![Quality Checks](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/quality.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/quality.yml)
+[![CodeQL](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/codeql.yml)
+[![GHCR Build](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/docker-ghcr.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/docker-ghcr.yml)
+[![Staging Deploy](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-staging.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-staging.yml)
+[![Prod Deploy](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-docker-compose.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-docker-compose.yml)
+[![Promote→Prod](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/promote-to-production.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/promote-to-production.yml)
+[![Secrets Check](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/secrets-check.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/secrets-check.yml)
+[![Compose Validate](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/compose-validate.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/compose-validate.yml)
 
-Infamous Freight Enterprise deploys the **Infamous AI Dispatch Operator™**—an AI Operations Workforce that runs dispatch autonomously, predicts issues before they surface, and coaches drivers in real time. Sub-roles include Dispatch Operator AI, Driver Coach AI, Fleet Intelligence AI, and Customer Ops AI.
+A modern full-stack freight management platform with AI-powered features, real-time voice capabilities, and integrated billing system.
 
-This is enterprise software built for autonomous operations with auditable accountability.
+## 📋 Project Overview
 
-[![CI](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci.yml)
-[![HTML Quality](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/html-quality.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/html-quality.yml)
-[![codecov](https://codecov.io/gh/MrMiless44/Infamous-freight-enterprises/branch/main/graph/badge.svg)](https://codecov.io/gh/MrMiless44/Infamous-freight-enterprises)
-[![Node](https://img.shields.io/badge/node-18.x-339933?logo=node.js)](https://nodejs.org/)
-[![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
+Infamous Freight Enterprises is a comprehensive logistics and fleet management solution built as a monorepo with:
 
-## 🏢 Enterprise Overview
+## ✨ Latest Updates (December 30, 2025)
 
-### System Architecture
+🎉 **Major System Enhancements Complete:**
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Client Layer (Web/Mobile)                     │
-│          Next.js Dashboard + React Native Mobile App             │
-└────────────────────────┬────────────────────────────────────────┘
-                         │ REST API + JWT Auth
-                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                      API Gateway Layer                           │
-│    Express.js • Rate Limiting • Scope-based Authorization        │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-        ┌────────────────┼────────────────┐
-        ↓                ↓                ↓
-┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│  AI Dispatch │  │ Fleet Intel  │  │ Customer Ops │
-│   Operator   │  │      AI      │  │      AI      │
-└──────────────┘  └──────────────┘  └──────────────┘
-        │                │                │
-        └────────────────┼────────────────┘
-                         ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                   Data & Memory Layer                            │
-│        PostgreSQL + Prisma ORM • Redis Cache                     │
-└─────────────────────────────────────────────────────────────────┘
-```
+✅ **Real-time Features**
 
-### AI Roles and Boundaries
+- WebSocket support for live shipment tracking
+- Driver location updates
+- Push notifications
 
-**AI roles are scoped, audited, and bounded:**
+✅ **Performance & Scalability**
 
-- **Dispatch Operator AI**: Route optimization, load assignments, real-time dispatching
-  - **Allowed**: Suggest assignments, flag delays, optimize routes
-  - **Forbidden**: Override human dispatch decisions without approval, access billing data
-  
-- **Driver Coach AI**: Performance analytics, safety coaching, efficiency recommendations
-  - **Allowed**: Provide coaching, analyze driving patterns, suggest improvements
-  - **Forbidden**: Disciplinary actions, access to personal driver information
-  
-- **Fleet Intelligence AI**: Predictive maintenance, fuel optimization, asset tracking
-  - **Allowed**: Monitor vehicle health, predict maintenance needs, optimize fuel usage
-  - **Forbidden**: Approve maintenance expenditures, make purchasing decisions
-  
-- **Customer Ops AI**: Query handling, shipment updates, proactive communication
-  - **Allowed**: Answer queries, provide status updates, escalate issues
-  - **Forbidden**: Make pricing decisions, issue refunds without human approval
+- Redis caching layer
+- Database indexes optimized
+- Per-user rate limiting
 
-### Non-Goals for AI System
+✅ **Developer Experience**
 
-The AI system is **NOT** designed to:
+- Comprehensive Swagger API docs at `/api/docs`
+- Export functionality (CSV, PDF, JSON)
+- Enhanced health monitoring
+- React error boundaries
+- Loading skeleton components
 
-- Replace human judgment in safety-critical decisions
-- Operate without audit trails or human oversight
-- Make financial commitments or legal agreements
-- Access or modify sensitive personal employee data without authorization
-- Override regulatory compliance requirements
+✅ **CI/CD & Deployment**
 
-### Safety & Auditability
+- Mobile CI/CD workflow
+- Automated deployment scripts
+- Integration test suite
 
-- **Decision Logging**: Every AI decision is logged with context, confidence scores, and reasoning
-- **Human-in-the-Loop**: Critical decisions require human approval before execution
-- **Confidence Thresholds**: AI actions below confidence thresholds are escalated to humans
-- **Guardrails**: Hard limits prevent AI from accessing unauthorized data or performing forbidden actions
-- **Audit Trail**: Complete audit trail for compliance and retrospective analysis
-- **Rollback Capability**: All AI decisions can be reviewed and reversed if necessary
+📚 **Documentation**:
 
-## ✨ Key Features
-
-- 🤖 **Autonomous AI Dispatch** - AI-powered dispatch operations with real-time decision making
-- 🚛 **Driver Coaching** - Real-time AI coaching for drivers
-- 📊 **Fleet Intelligence** - Predictive analytics for fleet management
-- 🎯 **Customer Operations AI** - Automated customer service and support
-- 🔒 **SOC2-Ready** - Enterprise-grade security with human oversight
-- 📱 **Multi-Platform** - Web dashboard, mobile app, and API access
-- 🔄 **Real-time Updates** - WebSocket-based real-time data synchronization
-- 📈 **Analytics & Monitoring** - Comprehensive metrics and monitoring
-
-## 🏗️ Monorepo Structure
-
-```
-infamous-freight-enterprise/
-├── src/
-│   ├── apps/
-│   │   ├── api/              # Express.js backend (CommonJS)
-│   │   ├── web/              # Next.js dashboard (TypeScript/ESM)
-│   │   └── mobile/           # React Native/Expo app
-│   └── packages/
-│       └── shared/           # Shared types, constants, and utilities
-├── tests/e2e/                # Playwright end-to-end tests
-├── configs/
-│   ├── ci-cd/                # Provider configuration (Codecov, Fly.io, Vercel)
-│   ├── docker/               # Docker Compose definitions (dev/prod/override)
-│   ├── linting/              # ESLint and formatting baselines
-│   ├── testing/              # Playwright test configuration
-│   └── validation/           # HTML/CSS validation rules
-├── docs/                     # Comprehensive documentation
-└── scripts/                  # Build and deployment scripts
-```
+- [ENHANCEMENTS_COMPLETE.md](ENHANCEMENTS_COMPLETE.md) - Full feature list & setup guide
+- [QUICK_REFERENCE_ENHANCEMENTS.md](QUICK_REFERENCE_ENHANCEMENTS.md) - Quick reference card
+- [API_REFERENCE.md](API_REFERENCE.md) - API endpoints & examples
+- [IMPROVEMENTS_COMPLETE.md](IMPROVEMENTS_COMPLETE.md) - Previous improvements
 
 ## 🚀 Quick Start
 
+# Response
+
+"timestamp": 1702756800000,
+"status": "ok",
+"database": "connected"
+}
+
+````
+
+**Full API Reference**: See [API_REFERENCE.md](API_REFERENCE.md) for all endpoints, auth, and curl examples
+
 ### Prerequisites
 
-- **Node.js** 18.x
-- **pnpm** 8.x
-- **Docker** (for PostgreSQL and services)
-- **Git**
+- Node.js 20+
+- PostgreSQL 14+ (or Docker)
+- Git
 
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/MrMiless44/Infamous-freight-enterprises.git
-cd Infamous-freight-enterprises
-
-# Install dependencies
-pnpm install
-
-# Copy environment variables
-cp .env.example .env
-
-# Start services with Docker
-docker compose -f configs/docker/docker-compose.yml -f configs/docker/docker-compose.dev.yml up -d
-
-# Start development servers
-pnpm dev
-```
-
-The application will be available at:
-- **Web Dashboard**: http://localhost:3000
-- **API**: http://localhost:4000 (or 3001 in Docker)
-- **API Documentation**: http://localhost:4000/api-docs
-
-For detailed setup instructions, see the [Developer Guide](docs/developer-guide.md).
-
-### Troubleshooting
-
-If you encounter issues with dependencies, tests, or build errors, use the automated fix script:
+### One-Command Setup
 
 ```bash
-# Download fix-repo.sh artifact from GitHub Actions (when available)
-# or run from repository root:
-chmod +x fix-repo.sh
-./fix-repo.sh
+# Run automated setup script
+./setup.sh
+````
+
+This will:
+
+- Install pnpm (if needed)
+- Install all dependencies
+- Build shared package
+- Setup environment template
+- Configure git hooks
+- Generate Prisma client
+
+### Manual Setup
+
+1. **Install pnpm**
+
+   ```bash
+   curl -fsSL https://get.pnpm.io/install.sh | sh -
+   source ~/.bashrc  # or restart terminal
+   ```
+
+2. **Install Dependencies**
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Build Shared Package**
+
+   ```bash
+   pnpm --filter @infamous-freight/shared build
+   ```
+
+4. **Configure Environment**
+
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your actual values
+   ```
+
+5. **Initialize Database**
+
+   ```bash
+   cd api
+   pnpm prisma:migrate:dev
+   pnpm prisma:seed  # Optional: seed initial data
+   ```
+
+6. **Start Development**
+
+   ```bash
+   # Start all services
+   pnpm dev
+
+   # Or start individually:
+   pnpm api:dev      # API on http://localhost:3001
+   pnpm web:dev      # Web on http://localhost:3000
+   ```
+
+## 📁 Project Structure
+
+```
+├── api/                           # Express.js backend
+│   ├── prisma/                   # Database schema and migrations
+│   ├── src/
+│   │   ├── routes/               # API endpoints
+│   │   ├── services/             # Business logic
+│   │   ├── middleware/           # Security & utilities
+│   │   └── server.js             # Express server
+│   └── scripts/                  # Database and utility scripts
+├── web/                          # Next.js frontend
+│   ├── pages/                    # API routes and pages
+│   ├── components/               # React components
+│   ├── hooks/                    # Custom React hooks
+│   └── styles/                   # Global styles
+├── mobile/                       # React Native mobile app
+│   ├── App.tsx                   # Main app component
+│   └── assets/                   # Mobile assets
+├── packages/
+│   └── shared/                   # Shared TypeScript package
+│       ├── src/
+│       │   ├── types.ts         # Common types
+│       │   ├── constants.ts     # App constants
+│       │   ├── utils.ts         # Utility functions
+│       │   └── env.ts           # Environment helpers
+│       └── package.json
+├── e2e/                          # Playwright E2E tests
+├── docs/                         # Documentation
+│   ├── deployment/               # Deployment guides
+│   └── history/                  # Project history
+├── nginx/                        # Reverse proxy configuration
+├── pnpm-workspace.yaml           # Monorepo configuration
+├── .github/workflows/            # CI/CD pipelines
+└── docker-compose*.yml           # Container orchestration
 ```
 
-The script automatically fixes common issues including dependency problems, lint errors, test failures, and build artifacts. See the [Developer Guide](docs/developer-guide.md#automated-repository-fixes) for more details.
+## 🔧 Development
 
-## 🧩 Package Manager & Lockfiles
+### Available Scripts
 
-- **pnpm only**: The repo declares `packageManager: pnpm@8.15.9` and CI installs with `pnpm install --frozen-lockfile`.
-- **Single source of truth**: `pnpm-lock.yaml` is the only lockfile used across CI and Vercel. Remove any stray `package-lock.json` or `npm-shrinkwrap.json` files that appear from npm commands to avoid dependency drift from pnpm installs.
-- **Prevention**: `.npmrc` disables npm lockfile generation (including shrinkwrap) and `.gitignore` blocks `package-lock.json`/`npm-shrinkwrap.json` across the workspace. Use pnpm for installs locally and in any deployment hooks to stay consistent.
+**From Root** (recommended):
 
-## 📚 Documentation
+```bash
+pnpm dev              # Start all services in parallel
+pnpm api:dev          # Start only API service
+pnpm web:dev          # Start only web service
+pnpm build            # Build all services
+pnpm test             # Run all tests
+pnpm test:coverage    # Run tests with coverage
+pnpm lint             # Lint all services
+pnpm lint:fix         # Fix linting issues
+pnpm e2e              # Run E2E tests
+pnpm clean            # Clean all node_modules
+```
 
-Comprehensive documentation is available in the [`docs/`](docs/) directory:
+**Individual Services:**
 
-- **[Recommendations](RECOMMENDATIONS.md)** ⭐ **NEW** - Strategic roadmap for future improvements
-- **[Developer Guide](docs/developer-guide.md)** - Complete development setup and workflow
-- **[Developer Onboarding](docs/development/developer-onboarding.md)** - Quick-start steps and required commands
-- **[API Reference](docs/api/API_REFERENCE.md)** - API endpoints and usage
-- **[Testing Guide](docs/TESTING.md)** - Testing strategy and practices
-- **[Deployment Guide](docs/deployment/)** - Deployment procedures
-- **[Architecture](docs/ARCHITECTURE.md)** - System architecture and design
-- **[Quick Reference](docs/QUICK_REFERENCE.md)** - Common commands and tips
+```bash
+# API
+pnpm --filter infamous-freight-api dev
+pnpm --filter infamous-freight-api test
+pnpm --filter infamous-freight-api prisma:migrate
 
-See the [Documentation Index](docs/README.md) for a complete list.
+# Web
+pnpm --filter infamous-freight-web dev
+pnpm --filter infamous-freight-web build
+npm run start            # Start production server
+npm run lint             # Run ESLint
+```
+
+### Database Management
+
+- **Run Migrations**: `cd api && npx prisma migrate dev`
+- **Studio (GUI)**: `cd api && npm run prisma:studio`
+- **Generate Client**: `cd api && npm run prisma:generate`
+- **Seed Database**: `cd api && npx prisma db seed`
+
+### AI Coding Assistant
+
+**Codex CLI** is available in the devcontainer:
+
+```bash
+codex                 # Start interactive Codex agent
+codex --version       # Check version
+codex exec --help     # Non-interactive mode
+```
+
+**Keyboard Shortcuts** (VS Code):
+
+- `Ctrl+Shift+C` - Start Codex interactive mode
+- `Ctrl+Shift+X` - Run Codex exec
+
+See [QUICK_REFERENCE.md](QUICK_REFERENCE.md#codex-cli) for more details.
+
+### Code Quality
+
+```bash
+# Lint web application
+cd web && npm run lint
+
+# Validate API environment
+cd api && npm run validate:env
+```
+
+## 🐳 Docker
+
+### Quick Start with Docker
+
+```bash
+# Development environment
+docker-compose up
+
+# Build and start in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+### Individual Services
+
+```bash
+# Start only database
+docker-compose up postgres
+
+# Start API + database
+docker-compose up api postgres
+
+# Rebuild after code changes
+docker-compose up --build
+```
+
+### Docker Features
+
+- **Multi-stage builds** for optimized image sizes
+- **BuildKit caching** with pnpm store mounts
+- **Healthchecks** for service dependency management
+- **Named volumes** for cache persistence:
+  - `pnpm-store` - Shared pnpm cache
+  - `node-modules-*` - Service-specific dependencies
+  - `nextjs-cache` - Next.js build cache
+- **Environment overrides** via `.env.local`
+
+### Production Deployment
+
+```bash
+docker-compose -f docker-compose.prod.yml up
+```
+
+### GHCR Images
+
+CI publishes multi-arch images to GitHub Container Registry (GHCR):
+
+- ghcr.io/<owner>/infamous-freight-enterprises-api
+- ghcr.io/<owner>/infamous-freight-enterprises-web
+
+Tags:
+
+- `latest` on `main`
+- release tags (e.g., `v1.2.3`)
+- commit `sha`
+
+Login and pull:
+
+```bash
+echo "$GHCR_TOKEN" | docker login ghcr.io -u <github-username> --password-stdin
+docker pull ghcr.io/<owner>/infamous-freight-enterprises-api:latest
+docker pull ghcr.io/<owner>/infamous-freight-enterprises-web:latest
+```
+
+`docker-compose.prod.yml` consumes GHCR images; set `GHCR_OWNER` env to override the default owner.
+
+## 🚢 Deployment
+
+Deployment guides are available for:
+
+- **Fly.io**: See [deploy/fly-env.md](deploy/fly-env.md)
+- **Render**: See [deploy/render-env.md](deploy/render-env.md)
+- **Vercel** (Frontend): See [deploy/vercel-env.md](deploy/vercel-env.md)
+
+## 🏗️ Architecture
+
+### API Routes
+
+- `/api/health` - Health check endpoint
+- `/api/billing` - Billing and payment management
+- `/api/voice` - Voice communication endpoints
+- `/api/ai/commands` - AI command processing
+- `/api/ai/sim` - AI simulation endpoints
+
+### Database Models
+
+- **User** - Application users with roles
+- **Driver** - Fleet drivers with status tracking
+- **Shipment** - Freight shipments with tracking
+- **AiEvent** - AI event logging
+
+## 🔐 Security Features
+
+- JWT authentication
+- CORS configuration
+- Helmet.js security headers
+- Rate limiting
+- Input validation
+- Secure environment variable handling
+
+## 📦 Technologies
+
+### Backend
+
+- Express.js - HTTP server
+- Prisma - ORM & migrations
+- PostgreSQL - Database
+- JWT - Authentication
+- Helmet - Security headers
+- CORS - Cross-origin requests
+- Rate Limiter Flexible - Rate limiting
+
+### Frontend
+
+- Next.js 14 - React framework
+- TypeScript - Type safety
+- SWR - Data fetching
+- Tailwind CSS - Styling (via global.css)
+
+### APIs & Services
+
+- OpenAI - LLM capabilities
+- Anthropic - AI features
+- Stripe - Payment processing
+- PayPal - Payment processing
+- Multer - File uploads
+
+## 📝 Environment Variables
+
+See [.env.example](.env.example) for all available configuration options.
+
+Key variables:
+
+- `NODE_ENV` - Environment (development/production)
+- `API_PORT` - API server port
+- `WEB_PORT` - Web server port
+- `DATABASE_URL` - PostgreSQL connection string
+- `API_KEY_*` - Third-party API keys (OpenAI, Stripe, etc.)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on:
-
-- Code of Conduct
-- Development workflow
-- Pull request process
-- Coding standards
-- Testing requirements
-
-### Development Workflow
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
-
-## 🧹 Validation & Quality Gates
-
-- **Run everything**: `pnpm validate` (HTML via `html-validate`, CSS via `stylelint`, JS/TS via ESLint)
-- **Configs** live in `configs/validation/` (HTML & CSS) and `configs/linting/` (ESLint)
-- **Playwright config**: `configs/testing/playwright.config.js`
-- **CI**: `.github/workflows/ci.yml` runs validation, linting, tests, coverage, and uploads to Codecov
-
-## 🧪 Testing
-
-```bash
-# Run all tests
-pnpm test
-
-# Run tests for specific workspace
-pnpm --filter api test
-pnpm --filter web test
-
-# Run end-to-end tests
-pnpm test:e2e
-
-# Run with coverage (uploads to Codecov in CI)
-pnpm test:coverage
-```
-
-See the [Testing Guide](docs/TESTING.md) for more details.
-
-## 🔒 Security
-
-Security is a top priority. We follow industry best practices:
-
-- JWT-based authentication with scope-based authorization
-- Rate limiting on all API endpoints
-- Input validation and sanitization
-- Secure secret management
-- Regular security audits with CodeQL
-- SOC2-ready architecture
-
-See [SECURITY.md](SECURITY.md) for our security policy and how to report vulnerabilities.
-
-## 📊 Project Status
-
-**Status**: Production-grade foundation with active development
-
-- ✅ Core API and authentication
-- ✅ Web dashboard
-- ✅ Mobile app foundation
-- ✅ CI/CD pipelines
-- ✅ Test coverage >75%
-- ✅ Deployment automation
-- 🚧 Advanced AI features (in progress)
-- 🚧 Real-time WebSocket updates (in progress)
-
-See [CHANGELOG.md](CHANGELOG.md) for version history.
-
-## 🛠️ Tech Stack
-
-### Backend
-- **Runtime**: Node.js 20+
-- **Framework**: Express.js
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: JWT with scope-based authorization
-- **Testing**: Jest
-- **Language**: JavaScript (CommonJS)
-
-### Frontend
-- **Framework**: Next.js 14
-- **Language**: TypeScript (ESM)
-- **Styling**: CSS Modules
-- **Testing**: Jest + React Testing Library
-- **Build**: Webpack (via Next.js)
-
-### Mobile
-- **Framework**: React Native with Expo
-- **Language**: TypeScript
-- **Platform**: iOS, Android, Web
-
-### DevOps
-- **CI/CD**: GitHub Actions
-- **Containerization**: Docker
-- **Hosting**: Vercel (web), Render/Fly.io (api)
-- **Monitoring**: Sentry, Codecov
-- **Package Manager**: pnpm (workspaces)
-
-## 📋 Execution Plan
-
-The full go-to-market and operational rollout is documented in [`docs/AI_DISPATCH_OPERATOR_EXECUTION_PLAN.md`](docs/AI_DISPATCH_OPERATOR_EXECUTION_PLAN.md), covering:
-
-- Autonomous dispatch mode
-- Driver trust framework
-- Dispatch Brain API
-- Pricing strategy
-- Compliance requirements
-- Enterprise sales motion
+1. Create a feature branch: `git checkout -b feature/your-feature`
+2. Commit changes: `git commit -am 'Add feature'`
+3. Push to branch: `git push origin feature/your-feature`
+4. Open a pull request
 
 ## 📄 License
 
-**Proprietary Software - All Rights Reserved**
+See [LICENSE](LICENSE) file for details.
 
-This project is proprietary software. All rights are reserved by Infæmous Freight Enterprise. 
+## 🆘 Troubleshooting
 
-**Usage Rights:**
-- This software and associated documentation files (the "Software") are protected by copyright law
-- Unauthorized copying, distribution, modification, or use is strictly prohibited
-- Access to this repository does not grant any license or rights to use, copy, modify, or distribute the Software
-- For licensing inquiries or permission requests, please contact the project maintainers
+**Database Connection Issues**
 
-See [LICENSE](LICENSE) for complete terms.
+- Verify PostgreSQL is running
+- Check `DATABASE_URL` in `.env`
+- Run migrations: `npx prisma migrate dev`
 
-## 👥 Team & Support
+**Port Already in Use**
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/MrMiless44/Infamous-freight-enterprises/issues)
-- **GitHub Discussions**: [Ask questions and discuss](https://github.com/MrMiless44/Infamous-freight-enterprises/discussions)
-- **Documentation**: [Full documentation](docs/)
+- API default: `4000`
+- Web default: `3000`
+- Change in `.env` if needed
 
-## 🙏 Acknowledgments
+**Missing Dependencies**
 
-Built with modern best practices and industry-standard tools. Special thanks to all contributors and the open-source community.
+```bash
+# Reinstall all dependencies
+rm -rf node_modules package-lock.json
+npm install
+```
 
----
+## 📞 Support
 
-**Ready to revolutionize freight operations?** Get started with the [Developer Guide](docs/developer-guide.md) or explore the [documentation](docs/)!
+For issues or questions, please open a GitHub issue or contact the development team.
+
+## 🔐 Required Secrets
+
+- `GHCR_USERNAME`, `GHCR_TOKEN`: GHCR login for deploy hosts (read:packages).
+- `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `[SSH_PORT]`: Production SSH access for compose deploys.
+- `SSH_HOST_STAGING`, `SSH_USER_STAGING`, `SSH_KEY_STAGING`, `[SSH_PORT_STAGING]`: Staging SSH access.
+- `CODECOV_TOKEN`: For code coverage uploads (if used in CI).
+- `FLY_API_TOKEN`: For Fly.io deployment workflow.
+- `VERCEL_TOKEN`: For Vercel deployment workflow.
+- `TEST_EMAIL`, `TEST_PASSWORD`: For e2e tests gated by secrets.
+- `[optional] SLACK_WEBHOOK_URL`: To receive deploy/promotion/rollback notifications in Slack.
+- `[optional] TEAMS_WEBHOOK_URL`: To receive deploy/promotion/rollback notifications in Microsoft Teams.
+
+See docs/ENVIRONMENT_PROTECTION_CHECKLIST.md for environment-scoped setup.

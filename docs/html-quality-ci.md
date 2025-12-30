@@ -52,11 +52,13 @@ Installs HTML Tidy (libtidy) version 5.6.0 for HTML validation.
 Recursively finds and validates all HTML files using the `.tidyrc` configuration.
 
 **File Discovery**:
+
 - Searches up to 4 levels deep from the repository root
 - Excludes: `node_modules/`, `dist/`, `build/`, `.git/`
 - Note: `archive/` is excluded at the workflow trigger level via `paths-ignore`
 
 **Validation**:
+
 - Uses `.tidyrc` configuration for consistent validation rules
 - Logs all validation results to `ci-logs/tidy.log`
 - Fails the workflow if any HTML file fails validation
@@ -135,6 +137,7 @@ If the workflow fails:
 ### No HTML Files Found
 
 If the workflow reports "No HTML files found":
+
 - Verify HTML files exist in the repository (not just in archive/)
 - Check file extensions are `.html` (case-sensitive)
 - Ensure files are not in excluded directories
@@ -142,6 +145,7 @@ If the workflow reports "No HTML files found":
 ### Validation Errors
 
 Common HTML Tidy errors:
+
 - Missing DOCTYPE declaration
 - Unclosed tags
 - Invalid nesting

@@ -31,6 +31,7 @@ The build process is managed by `scripts/build-pages.mjs`:
 ## Triggering Deployment
 
 The workflow runs on:
+
 - Push to `main` branch (deploys)
 - Pull requests (builds and validates only, no deployment)
 

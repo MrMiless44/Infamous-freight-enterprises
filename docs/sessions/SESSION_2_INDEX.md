@@ -26,7 +26,7 @@
 
 ### For Testing
 
-8. 🧪 **[api/**tests**/validation-edge-cases.test.js](./api/__tests__/validation-edge-cases.test.js)** - Edge case tests (10 min read)
+8. 🧪 **[api/**tests**/validation-edge-cases.test.js](./api/**tests**/validation-edge-cases.test.js)** - Edge case tests (10 min read)
 
 ### Complete Reference
 

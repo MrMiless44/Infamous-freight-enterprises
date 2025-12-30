@@ -120,7 +120,9 @@ billing.post("/paypal/order", async (req, res, next) => {
           const approveLink = links.find(
             (link: { rel: string; href?: unknown }) => link.rel === "approve",
           );
-          return typeof approveLink?.href === "string" ? approveLink.href : null;
+          return typeof approveLink?.href === "string"
+            ? approveLink.href
+            : null;
         })()
       : null;
 

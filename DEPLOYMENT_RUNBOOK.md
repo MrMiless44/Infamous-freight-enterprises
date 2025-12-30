@@ -9,12 +9,14 @@
 ## Pre-Deployment Checklist
 
 ### Code Quality
+
 - [ ] TypeScript compilation passes (`pnpm typecheck`)
 - [ ] All tests pass (`pnpm test`)
 - [ ] ESLint warnings resolved (`pnpm lint`)
 - [ ] No console errors in build output
 
 ### Security
+
 - [ ] Dependency audit passed (`pnpm audit`)
 - [ ] No high/critical vulnerabilities
 - [ ] JWT_SECRET is set (32+ characters)
@@ -23,12 +25,14 @@
 - [ ] CORS_ORIGINS is restricted to known domains
 
 ### Performance
+
 - [ ] Bundle size analyzed
 - [ ] Database indexes verified
 - [ ] Redis connection tested
 - [ ] Load test results acceptable
 
 ### Infrastructure
+
 - [ ] Staging environment prepared
 - [ ] Database migrations applied
 - [ ] Environment variables configured
@@ -294,6 +298,7 @@ Issue Detected?
 ## Post-Deployment Checklist
 
 ### First 1 Hour
+
 - [ ] All endpoints responding (< 500ms)
 - [ ] Error rate < 1%
 - [ ] WebSocket connections stable
@@ -301,6 +306,7 @@ Issue Detected?
 - [ ] No Sentry alerts
 
 ### First 24 Hours
+
 - [ ] Error rate remained < 1%
 - [ ] P95 latency stable
 - [ ] No data inconsistencies
@@ -308,6 +314,7 @@ Issue Detected?
 - [ ] Team feedback positive
 
 ### First 7 Days
+
 - [ ] All workflows functioning
 - [ ] Performance baseline established
 - [ ] User feedback incorporated
@@ -318,12 +325,12 @@ Issue Detected?
 
 ## Escalation Contacts
 
-| Severity | First Response | Escalation |
-|----------|---|---|
-| Critical | On-call engineer (5 min) | Engineering manager + CTO |
-| High | On-call engineer (15 min) | Engineering manager |
-| Medium | Daytime engineer (1 hour) | Engineering manager |
-| Low | Next business day | Product manager |
+| Severity | First Response            | Escalation                |
+| -------- | ------------------------- | ------------------------- |
+| Critical | On-call engineer (5 min)  | Engineering manager + CTO |
+| High     | On-call engineer (15 min) | Engineering manager       |
+| Medium   | Daytime engineer (1 hour) | Engineering manager       |
+| Low      | Next business day         | Product manager           |
 
 ---
 
@@ -332,7 +339,7 @@ Issue Detected?
 **On-Call Engineer**: [Name] +1-[Phone]  
 **Engineering Manager**: [Name] +1-[Phone]  
 **CTO**: [Name] +1-[Phone]  
-**Database Administrator**: [Name] +1-[Phone]  
+**Database Administrator**: [Name] +1-[Phone]
 
 **Slack Channel**: #incident-response  
 **Status Page**: https://status.yourdomain.com  
@@ -343,6 +350,7 @@ Issue Detected?
 ## Common Issues & Fixes
 
 ### Issue: WebSocket Connections Failing
+
 ```bash
 # Check Redis
 redis-cli PING  # Should return PONG
@@ -355,6 +363,7 @@ systemctl restart freight-api
 ```
 
 ### Issue: Database Connection Pool Exhausted
+
 ```bash
 # Check connections
 psql -c "SELECT count(*) FROM pg_stat_activity;"
@@ -368,6 +377,7 @@ grep -r "prisma.$disconnect" src/
 ```
 
 ### Issue: Memory Leak Suspected
+
 ```bash
 # Check memory usage
 free -h
@@ -388,6 +398,7 @@ node --trace-gc src/server.js
 ## Success Metrics
 
 **Deployment Successful if**:
+
 - ✅ All health checks passing
 - ✅ Error rate < 1%
 - ✅ P95 latency < 500ms

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useWebSocketContext } from '../contexts/WebSocketContext';
-import type { Shipment } from '@infamous-freight/shared';
+import React, { useEffect, useState } from "react";
+import { useWebSocketContext } from "../contexts/WebSocketContext";
+import type { Shipment } from "@infamous-freight/shared";
 
 interface RealtimeShipmentListProps {
   initialShipments: Shipment[];
@@ -36,8 +36,8 @@ export function RealtimeShipmentList({
                 location: data.location,
                 updatedAt: new Date(data.updatedAt),
               }
-            : s
-        )
+            : s,
+        ),
       );
 
       // Notify parent component
@@ -50,22 +50,22 @@ export function RealtimeShipmentList({
       setUnreadUpdates((prev) => prev + 1);
     };
 
-    subscribe('shipment:update', handleShipmentUpdate);
+    subscribe("shipment:update", handleShipmentUpdate);
 
     return () => {
-      unsubscribe('shipment:update');
+      unsubscribe("shipment:update");
     };
   }, [subscribe, unsubscribe, onShipmentUpdate, shipments]);
 
   // Status color mapping
   const getStatusColor = (status: string): string => {
     const colors: Record<string, string> = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      in_transit: 'bg-blue-100 text-blue-800',
-      delivered: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
+      pending: "bg-yellow-100 text-yellow-800",
+      in_transit: "bg-blue-100 text-blue-800",
+      delivered: "bg-green-100 text-green-800",
+      cancelled: "bg-red-100 text-red-800",
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || "bg-gray-100 text-gray-800";
   };
 
   return (
@@ -76,11 +76,11 @@ export function RealtimeShipmentList({
         <div className="flex items-center gap-2">
           <div
             className={`h-3 w-3 rounded-full ${
-              isConnected ? 'bg-green-500' : 'bg-red-500'
+              isConnected ? "bg-green-500" : "bg-red-500"
             }`}
           />
           <span className="text-sm text-gray-600">
-            {isConnected ? 'Connected' : 'Disconnected'}
+            {isConnected ? "Connected" : "Disconnected"}
           </span>
           {unreadUpdates > 0 && (
             <span className="ml-2 inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-800">
@@ -106,7 +106,7 @@ export function RealtimeShipmentList({
               </div>
               <span
                 className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${getStatusColor(
-                  shipment.status
+                  shipment.status,
                 )}`}
               >
                 {shipment.status}
@@ -117,7 +117,7 @@ export function RealtimeShipmentList({
               <div className="flex justify-between">
                 <span className="text-gray-600">Driver:</span>
                 <span className="font-medium">
-                  {(shipment as any).driver?.name || 'Unassigned'}
+                  {(shipment as any).driver?.name || "Unassigned"}
                 </span>
               </div>
 

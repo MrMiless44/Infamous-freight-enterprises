@@ -7,6 +7,7 @@ This document provides comprehensive documentation for all 15 system enhancement
 ## ✅ Enhancements Summary
 
 ### 1. **Real-time Tracking with WebSocket (Socket.IO)**
+
 - **File**: `src/apps/api/src/services/websocket.ts`
 - **Purpose**: Enable real-time shipment status and driver location updates
 - **Features**:
@@ -16,21 +17,23 @@ This document provides comprehensive documentation for all 15 system enhancement
   - Event broadcasting on shipment status changes
   - Automatic reconnection handling
 - **Usage**:
+
   ```typescript
-  import { WebSocketService } from '@/services/websocket';
-  
+  import { WebSocketService } from "@/services/websocket";
+
   // Server initialization (automatic in server.ts)
   WebSocketService.initialize(httpServer);
-  
+
   // Emit shipment update
   WebSocketService.emitShipmentUpdate({
-    shipmentId: 'SHIP-001',
-    status: 'in_transit',
-    location: { lat: 40.7128, lng: -74.0060 }
+    shipmentId: "SHIP-001",
+    status: "in_transit",
+    location: { lat: 40.7128, lng: -74.006 },
   });
   ```
 
 ### 2. **Distributed Caching with Redis**
+
 - **File**: `src/apps/api/src/services/cache.ts`
 - **Purpose**: Reduce database load and improve response times
 - **Features**:
@@ -40,18 +43,20 @@ This document provides comprehensive documentation for all 15 system enhancement
   - Automatic reconnection strategy
   - Error handling with graceful degradation
 - **Usage**:
+
   ```typescript
-  import { CacheService } from '@/services/cache';
-  
+  import { CacheService } from "@/services/cache";
+
   // Get or fetch from database
   const shipment = await CacheService.getOrSet(
-    'shipment:SHIP-001',
+    "shipment:SHIP-001",
     async () => fetchShipmentFromDB(),
-    3600 // TTL in seconds
+    3600, // TTL in seconds
   );
   ```
 
 ### 3. **User-Level Rate Limiting**
+
 - **File**: `src/apps/api/src/middleware/userRateLimit.ts`
 - **Purpose**: Prevent abuse and ensure fair resource allocation
 - **Features**:
@@ -63,13 +68,15 @@ This document provides comprehensive documentation for all 15 system enhancement
   - Rate limit headers in responses
   - Automatic 429 responses when limits exceeded
 - **Usage**:
+
   ```typescript
-  import { userRateLimit } from '@/middleware/userRateLimit';
-  
-  router.get('/api/expensive-operation', userRateLimit('ai'), handler);
+  import { userRateLimit } from "@/middleware/userRateLimit";
+
+  router.get("/api/expensive-operation", userRateLimit("ai"), handler);
   ```
 
 ### 4. **Enhanced Health Checks**
+
 - **File**: `src/apps/api/src/routes/health.ts`
 - **Purpose**: Monitor service health and support Kubernetes probes
 - **Endpoints**:
@@ -90,6 +97,7 @@ This document provides comprehensive documentation for all 15 system enhancement
   ```
 
 ### 5. **Data Export Functionality**
+
 - **File**: `src/apps/api/src/services/export.ts`
 - **Purpose**: Enable users to export shipment data in multiple formats
 - **Formats Supported**:
@@ -97,20 +105,22 @@ This document provides comprehensive documentation for all 15 system enhancement
   - **PDF**: Professional reports with summary statistics
   - **JSON**: Structured data with metadata
 - **Usage**:
+
   ```typescript
-  import { ExportService } from '@/services/export';
-  
+  import { ExportService } from "@/services/export";
+
   // CSV export
   const csv = await ExportService.exportToCSV(shipments);
-  
+
   // PDF export (streaming to response)
-  await ExportService.exportToPDF(res, shipments, 'shipments.pdf');
-  
+  await ExportService.exportToPDF(res, shipments, "shipments.pdf");
+
   // JSON export with metadata
   ExportService.sendJSON(res, shipments);
   ```
 
 ### 6. **Error Boundary Component (React)**
+
 - **File**: `src/apps/web/components/ErrorBoundary.tsx`
 - **Purpose**: Gracefully handle errors in React components
 - **Features**:
@@ -127,6 +137,7 @@ This document provides comprehensive documentation for all 15 system enhancement
   ```
 
 ### 7. **Loading Skeleton Components**
+
 - **File**: `src/apps/web/components/Skeleton.tsx`
 - **Purpose**: Improve perceived performance with loading states
 - **Components**:
@@ -137,17 +148,21 @@ This document provides comprehensive documentation for all 15 system enhancement
   - `SkeletonStats` - Multiple stat cards
   - `SkeletonShipmentList` - Specialized for shipment cards
 - **Usage**:
+
   ```tsx
-  import { SkeletonShipmentList } from '@/components/Skeleton';
-  
-  {isLoading ? (
-    <SkeletonShipmentList count={5} />
-  ) : (
-    <ShipmentList shipments={shipments} />
-  )}
+  import { SkeletonShipmentList } from "@/components/Skeleton";
+
+  {
+    isLoading ? (
+      <SkeletonShipmentList count={5} />
+    ) : (
+      <ShipmentList shipments={shipments} />
+    );
+  }
   ```
 
 ### 8. **API Documentation (Swagger/OpenAPI)**
+
 - **Updates**: Enhanced existing Swagger configuration
 - **Coverage**: All endpoints documented with:
   - Request/response schemas
@@ -157,6 +172,7 @@ This document provides comprehensive documentation for all 15 system enhancement
 - **Access**: `/api/docs` (Swagger UI)
 
 ### 9. **Integration Tests**
+
 - **File**: `src/apps/api/__tests__/integration/realtime-tracking.test.ts`
 - **Purpose**: Validate end-to-end functionality
 - **Test Suites**:
@@ -167,6 +183,7 @@ This document provides comprehensive documentation for all 15 system enhancement
 - **Run**: `pnpm --filter infamous-freight-api test`
 
 ### 10. **Mobile CI/CD Pipeline**
+
 - **File**: `.github/workflows/mobile.yml`
 - **Purpose**: Automate testing and deployment for React Native app
 - **Triggers**: Push and Pull Requests
@@ -177,6 +194,7 @@ This document provides comprehensive documentation for all 15 system enhancement
   - Create preview updates (PR only)
 
 ### 11. **Deployment Automation**
+
 - **File**: `scripts/deploy.sh`
 - **Purpose**: Automated deployment to production
 - **Targets**:
@@ -186,6 +204,7 @@ This document provides comprehensive documentation for all 15 system enhancement
 - **Usage**: `bash scripts/deploy.sh`
 
 ### 12. **Server WebSocket Integration**
+
 - **File**: `src/apps/api/src/server.ts` (Updated)
 - **Changes**:
   - Switched from `app.listen()` to HTTP server
@@ -194,6 +213,7 @@ This document provides comprehensive documentation for all 15 system enhancement
 - **Impact**: Enables real-time features
 
 ### 13. **Performance Monitoring Setup**
+
 - **Files**: Updated deployment configs
 - **Metrics Tracked**:
   - API response times
@@ -202,12 +222,14 @@ This document provides comprehensive documentation for all 15 system enhancement
   - Database query performance
 
 ### 14. **Security Enhancements**
+
 - **JWT WebSocket Auth**: Validated in `websocket.ts`
 - **Rate Limiting**: Per-user limits prevent abuse
 - **Health Check Security**: Database connectivity verified
 - **CORS Configuration**: Already in place
 
 ### 15. **Developer Documentation**
+
 - **Files Created**:
   - `ENHANCEMENTS_COMPLETE.md` - Feature overview
   - `QUICK_REFERENCE_ENHANCEMENTS.md` - Developer guide
@@ -242,11 +264,13 @@ src/apps/
 ### Installation
 
 1. **Ensure dependencies are installed**:
+
    ```bash
    pnpm install
    ```
 
 2. **Build shared package** (if types were updated):
+
    ```bash
    pnpm --filter @infamous-freight/shared build
    ```
@@ -295,18 +319,18 @@ Enhancements include/require these npm scripts:
 
 ```typescript
 // In a route handler
-import { WebSocketService } from '@/services/websocket';
+import { WebSocketService } from "@/services/websocket";
 
-router.patch('/api/shipments/:id/status', async (req, res) => {
+router.patch("/api/shipments/:id/status", async (req, res) => {
   const shipment = await updateShipmentStatus(req.params.id, req.body.status);
-  
+
   // Broadcast update to all connected clients
   WebSocketService.emitShipmentUpdate({
     shipmentId: shipment.id,
     status: shipment.status,
-    location: shipment.location
+    location: shipment.location,
   });
-  
+
   res.json(shipment);
 });
 ```
@@ -314,34 +338,34 @@ router.patch('/api/shipments/:id/status', async (req, res) => {
 ### Caching Database Queries
 
 ```typescript
-import { CacheService } from '@/services/cache';
+import { CacheService } from "@/services/cache";
 
 // Automatically fetches and caches
 const shipment = await CacheService.getOrSet(
   `shipment:${id}`,
   () => prisma.shipment.findUnique({ where: { id } }),
-  3600 // 1 hour TTL
+  3600, // 1 hour TTL
 );
 ```
 
 ### Exporting Data
 
 ```typescript
-import { ExportService } from '@/services/export';
+import { ExportService } from "@/services/export";
 
 // In a route handler
-router.get('/api/shipments/export', async (req, res) => {
-  const format = req.query.format as 'csv' | 'pdf' | 'json';
+router.get("/api/shipments/export", async (req, res) => {
+  const format = req.query.format as "csv" | "pdf" | "json";
   const shipments = await fetchShipments();
-  
+
   switch (format) {
-    case 'csv':
+    case "csv":
       ExportService.sendCSV(res, shipments);
       break;
-    case 'pdf':
+    case "pdf":
       await ExportService.exportToPDF(res, shipments);
       break;
-    case 'json':
+    case "json":
     default:
       ExportService.sendJSON(res, shipments);
   }
@@ -351,16 +375,18 @@ router.get('/api/shipments/export', async (req, res) => {
 ### Using Error Boundary
 
 ```tsx
-import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export default function App() {
   return (
-    <ErrorBoundary fallback={(error, reset) => (
-      <div>
-        <p>Error: {error.message}</p>
-        <button onClick={reset}>Retry</button>
-      </div>
-    )}>
+    <ErrorBoundary
+      fallback={(error, reset) => (
+        <div>
+          <p>Error: {error.message}</p>
+          <button onClick={reset}>Retry</button>
+        </div>
+      )}
+    >
       <Dashboard />
     </ErrorBoundary>
   );
@@ -371,13 +397,13 @@ export default function App() {
 
 ### Expected Improvements
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| API Response Time (avg) | 150ms | 75ms | -50% |
-| Database Load | 100% | 45% | -55% |
-| Real-time Latency | N/A | <100ms | New |
-| Bundle Size (web) | 180KB | 185KB | +3% (worth it) |
-| User Engagement | N/A | +25% est. | (Real-time updates) |
+| Metric                  | Before | After     | Improvement         |
+| ----------------------- | ------ | --------- | ------------------- |
+| API Response Time (avg) | 150ms  | 75ms      | -50%                |
+| Database Load           | 100%   | 45%       | -55%                |
+| Real-time Latency       | N/A    | <100ms    | New                 |
+| Bundle Size (web)       | 180KB  | 185KB     | +3% (worth it)      |
+| User Engagement         | N/A    | +25% est. | (Real-time updates) |
 
 ### Optimization Targets
 
@@ -418,7 +444,8 @@ pnpm --filter infamous-freight-api test -- --coverage
 ### WebSocket Connection Fails
 
 **Problem**: WebSocket connection times out
-**Solution**: 
+**Solution**:
+
 - Verify `server.ts` initializes `WebSocketService`
 - Check CORS settings match client origin
 - Ensure JWT token is valid
@@ -427,6 +454,7 @@ pnpm --filter infamous-freight-api test -- --coverage
 
 **Problem**: Cache not reducing database load
 **Solution**:
+
 - Verify `CacheService.initialize()` is called in `server.ts`
 - Check `REDIS_URL` is set if using Redis
 - Monitor cache hits in logs
@@ -435,6 +463,7 @@ pnpm --filter infamous-freight-api test -- --coverage
 
 **Problem**: Users hitting rate limits
 **Solution**:
+
 - Adjust `RATE_LIMIT_*_MAX` in environment
 - Review which endpoints need rate limiting
 - Consider whitelisting specific users
@@ -449,16 +478,19 @@ pnpm --filter infamous-freight-api test -- --coverage
 ## 🔐 Security Considerations
 
 ### WebSocket Authentication
+
 - JWT tokens validated on connection
 - Tokens refreshed before expiry
 - Closed connections on auth failure
 
 ### Rate Limiting
+
 - Prevents DDoS and resource exhaustion
 - Per-user tracking prevents single-user abuse
 - Configurable thresholds
 
 ### Data Export
+
 - Requires authentication
 - Audit logging of exports
 - Sensitive data handling

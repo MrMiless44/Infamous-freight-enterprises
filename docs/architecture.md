@@ -17,6 +17,7 @@ AI agents are first-class system actors, with the UI remaining as a thin, statel
 Client (Web / Mobile) → API Gateway → AI Orchestration → Business Logic Engine → Data + Memory Layer → Automation + Jobs
 
 ### Core Responsibilities
+
 - **API Gateway**: Authentication, rate limiting, request normalization, and routing to orchestrated skills.
 - **AI Orchestration Layer**: Prompt router, skill selection, memory injection, model routing, validation, and fallback reasoning.
 - **Business Logic Engine**: Domain services for billing, invoice intelligence, ERP/TMS integrations, compliance, and workflow state machines.
