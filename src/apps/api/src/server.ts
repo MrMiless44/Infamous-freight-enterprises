@@ -1,4 +1,5 @@
-import express from "express";
+import express, { type Server } from "express";
+import { createServer } from "http";
 import cors from "cors";
 import "./cron";
 import config from "./config";
@@ -19,8 +20,28 @@ import { customer } from "./routes/customer";
 import { rateLimit } from "./middleware/rateLimit";
 import { auditTrail } from "./middleware/audit";
 import errorHandler from "./middleware/errorHandler";
+import { WebSocketService } from "./services/websocket";
+import { CacheService } from "./services/cache";
 
 const app = express();
+const httpServer = createServer(app);
+
+// Initialize services
+async function initializeServices() {
+  try {
+    // Initialize cache service (with optional Redis)
+    await CacheService.initialize();
+    console.info("Cache service initialized");
+
+    // Initialize WebSocket service
+    WebSocketService.initialize(httpServer);
+    console.info("WebSocket service initialized");
+  } catch (error) {
+    console.error("Failed to initialize services:", error);
+    // Continue with degraded functionality
+  }
+}
+
 app.use(cors());
 app.use(express.json());
 app.use(rateLimit);
@@ -44,4 +65,10 @@ app.use(errorHandler);
 const apiConfig = config.getApiConfig();
 const port = Number(apiConfig.port);
 
-app.listen(port, () => console.info(`API running on port ${port}`));
+// Initialize services and start server
+initializeServices().then(() => {
+  httpServer.listen(port, () => {
+    console.info(`API running on port ${port}`);
+    console.info("Services ready for WebSocket and caching");
+  });
+});
