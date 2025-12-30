@@ -1,0 +1,476 @@
+# Phase 4: CDN Integration Configuration
+# CloudFlare setup for global content delivery
+
+# ============================================================================
+# CLOUDFLARE ZONE CONFIGURATION
+# ============================================================================
+
+zones:
+  - zone_name: infamous-freight.com
+    plan: business
+    type: full
+    account_id: ${CLOUDFLARE_ACCOUNT_ID}
+
+    # DNS Records
+    dns_records:
+      # API endpoints (multi-region)
+      - name: api.infamous-freight.com
+        type: A
+        content: 45.55.155.165 # US East load balancer
+        proxied: true
+        ttl: 1 # Automatic (proxied)
+
+      - name: api-eu.infamous-freight.com
+        type: A
+        content: ${EU_LOAD_BALANCER_IP}
+        proxied: true
+        ttl: 1
+
+      - name: api-asia.infamous-freight.com
+        type: A
+        content: ${ASIA_LOAD_BALANCER_IP}
+        proxied: true
+        ttl: 1
+
+      # Web application
+      - name: www.infamous-freight.com
+        type: CNAME
+        content: infamous-freight.vercel.app
+        proxied: true
+        ttl: 1
+
+      # CDN for static assets
+      - name: cdn.infamous-freight.com
+        type: CNAME
+        content: infamous-freight.cdn.cloudflare.net
+        proxied: true
+        ttl: 1
+
+    # SSL/TLS Configuration
+    ssl:
+      mode: full_strict # Enforce SSL, validate origin certificate
+      min_tls_version: "1.3"
+      tls_1_3: on
+      automatic_https_rewrites: on
+      always_use_https: on
+      opportunistic_encryption: on
+      ssl_certificate:
+        type: universal # Free SSL from CloudFlare
+        validity_days: 90
+        auto_renew: true
+
+    # Page Rules (URL-based behavior)
+    page_rules:
+      # Static Assets - Aggressive Caching
+      - targets:
+          - url: "*.infamous-freight.com/static/*"
+          - url: "*.infamous-freight.com/assets/*"
+          - url: "*.infamous-freight.com/_next/static/*"
+        actions:
+          cache_level: cache_everything
+          edge_cache_ttl: 2592000 # 30 days
+          browser_cache_ttl: 86400 # 24 hours
+          cache_on_cookie: true
+        priority: 1
+
+      # API Responses - Smart Caching
+      - targets:
+          - url: "api.infamous-freight.com/api/tracking/active-drivers*"
+          - url: "api.infamous-freight.com/api/metrics/*"
+        actions:
+          cache_level: cache_everything
+          edge_cache_ttl: 300 # 5 minutes
+          browser_cache_ttl: 60 # 1 minute
+          bypass_cache_on_cookie: "session_token"
+        priority: 2
+
+      # Prediction APIs - Short Cache
+      - targets:
+          - url: "api.infamous-freight.com/api/predictions/*"
+        actions:
+          cache_level: cache_everything
+          edge_cache_ttl: 60 # 1 minute
+          browser_cache_ttl: 30 # 30 seconds
+          cache_by_device_type: true
+        priority: 3
+
+      # No Cache for Auth
+      - targets:
+          - url: "api.infamous-freight.com/api/auth/*"
+          - url: "api.infamous-freight.com/api/billing/*"
+        actions:
+          cache_level: bypass
+          disable_performance: false
+          security_level: high
+        priority: 4
+
+    # Caching Configuration
+    caching:
+      # Cache Level
+      cache_level: aggressive
+
+      # Browser Cache TTL
+      browser_cache_ttl: 14400 # 4 hours default
+
+      # Serve Stale Content
+      serve_stale_content: on
+      serve_stale_content_ttl: 3600 # 1 hour
+
+      # Cache Reserve (Cloudflare R2)
+      cache_reserve:
+        enabled: true
+        minimum_file_size: 10485760 # 10 MB
+
+      # Tiered Cache
+      tiered_cache:
+        enabled: true
+        topology: generic_global
+
+      # Cache Key
+      cache_key:
+        query_string:
+          include: ["page", "sort", "filter"]
+          exclude: ["utm_*", "fbclid"]
+        headers:
+          include: ["Accept-Encoding"]
+        cookie:
+          check_presence: ["session_token"]
+        device_type: true
+        geo: true
+
+    # Performance Settings
+    performance:
+      # Auto Minify
+      minify:
+        javascript: on
+        css: on
+        html: on
+
+      # Brotli Compression
+      brotli: on
+
+      # Early Hints
+      early_hints: on
+
+      # HTTP/2
+      http2: on
+
+      # HTTP/3 (QUIC)
+      http3: on
+
+      # 0-RTT Connection Resumption
+      zero_rtt: on
+
+      # Rocket Loader (async JS loading)
+      rocket_loader: on
+
+      # Mirage (image optimization)
+      mirage: on
+
+      # Polish (image compression)
+      polish: lossless
+
+      # WebP conversion
+      webp: on
+
+      # Mobile Optimization
+      mobile_redirect:
+        enabled: false
+        strip_uri: false
+
+    # Security Settings
+    security:
+      # Web Application Firewall
+      waf:
+        enabled: true
+        mode: on
+        managed_rules:
+          - cloudflare_managed_ruleset
+          - cloudflare_owasp_core_ruleset
+        custom_rules:
+          - name: Rate limit API endpoints
+            expression: '(http.request.uri.path matches "/api/") and (rate(http.request.count, 1m) > 100)'
+            action: challenge
+
+          - name: Block suspicious user agents
+            expression: '(http.user_agent contains "bot" or http.user_agent contains "scraper")'
+            action: block
+
+          - name: Geo-blocking for admin
+            expression: '(http.request.uri.path matches "/admin/") and (ip.geoip.country ne "US")'
+            action: challenge
+
+      # DDoS Protection
+      ddos:
+        enabled: true
+        sensitivity: high
+
+      # Bot Management
+      bot_management:
+        enabled: true
+        fight_mode: false
+
+      # Security Level
+      security_level: medium
+
+      # Challenge Passage
+      challenge_ttl: 1800 # 30 minutes
+
+      # Browser Integrity Check
+      browser_check: on
+
+      # Email Obfuscation
+      email_obfuscation: on
+
+      # Hotlink Protection
+      hotlink_protection:
+        enabled: true
+        allowed_domains:
+          - infamous-freight.com
+          - vercel.app
+
+    # Rate Limiting Rules
+    rate_limiting:
+      - name: API General Rate Limit
+        match:
+          request:
+            url: api.infamous-freight.com/api/*
+        threshold: 100 # requests
+        period: 60 # seconds (1 minute)
+        action: challenge
+
+      - name: API Auth Rate Limit
+        match:
+          request:
+            url: api.infamous-freight.com/api/auth/*
+        threshold: 5
+        period: 900 # 15 minutes
+        action: block
+
+      - name: API AI Rate Limit
+        match:
+          request:
+            url: api.infamous-freight.com/api/ai/*
+        threshold: 20
+        period: 60
+        action: challenge
+
+    # Load Balancing (Geo-routing)
+    load_balancing:
+      pools:
+        - name: us-east-pool
+          origins:
+            - name: us-east-1
+              address: 45.55.155.165
+              enabled: true
+              weight: 1
+          monitor: /api/health
+          notification_email: ops@infamous-freight.com
+
+        - name: eu-central-pool
+          origins:
+            - name: eu-central-1
+              address: ${EU_LOAD_BALANCER_IP}
+              enabled: true
+              weight: 1
+          monitor: /api/health
+
+        - name: ap-southeast-pool
+          origins:
+            - name: ap-southeast-1
+              address: ${ASIA_LOAD_BALANCER_IP}
+              enabled: true
+              weight: 1
+          monitor: /api/health
+
+      # Geographic Steering
+      geo_steering:
+        enabled: true
+        policy: geo
+        regions:
+          NA: us-east-pool # North America
+          EU: eu-central-pool # Europe
+          AS: ap-southeast-pool # Asia
+          default: us-east-pool
+
+      # Failover
+      failover:
+        enabled: true
+        primary_pool: us-east-pool
+        fallback_pools:
+          - eu-central-pool
+          - ap-southeast-pool
+
+    # Analytics & Logging
+    analytics:
+      # Web Analytics
+      web_analytics: on
+
+      # Log Retention
+      logs:
+        enabled: true
+        fields:
+          - ClientIP
+          - ClientRequestHost
+          - ClientRequestMethod
+          - ClientRequestURI
+          - EdgeResponseStatus
+          - EdgeResponseBytes
+          - CacheResponseStatus
+        retention_days: 30
+
+      # Custom Logs (Logpush)
+      logpush:
+        enabled: true
+        destination: s3://infamous-freight-logs/cloudflare/
+        dataset: http_requests
+        frequency: 1m
+        fields: all
+
+    # Workers (Edge Computing)
+    workers:
+      - name: api-router
+        route: api.infamous-freight.com/*
+        script: |
+          addEventListener('fetch', event => {
+            event.respondWith(handleRequest(event.request))
+          })
+
+          async function handleRequest(request) {
+            const url = new URL(request.url)
+            
+            // Add security headers
+            const response = await fetch(request)
+            const newResponse = new Response(response.body, response)
+            
+            newResponse.headers.set('X-Content-Type-Options', 'nosniff')
+            newResponse.headers.set('X-Frame-Options', 'DENY')
+            newResponse.headers.set('X-XSS-Protection', '1; mode=block')
+            newResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+            
+            return newResponse
+          }
+
+      - name: cache-optimizer
+        route: cdn.infamous-freight.com/*
+        script: |
+          addEventListener('fetch', event => {
+            event.respondWith(handleRequest(event.request))
+          })
+
+          async function handleRequest(request) {
+            const cache = caches.default
+            const url = new URL(request.url)
+            
+            // Create cache key based on URL and Accept-Encoding
+            const cacheKey = new Request(url.toString(), {
+              headers: {
+                'Accept-Encoding': request.headers.get('Accept-Encoding') || ''
+              }
+            })
+            
+            // Check cache first
+            let response = await cache.match(cacheKey)
+            
+            if (!response) {
+              // Fetch from origin
+              response = await fetch(request)
+              
+              // Cache for 24 hours
+              if (response.ok) {
+                const newHeaders = new Headers(response.headers)
+                newHeaders.set('Cache-Control', 'public, max-age=86400')
+                
+                response = new Response(response.body, {
+                  status: response.status,
+                  statusText: response.statusText,
+                  headers: newHeaders
+                })
+                
+                event.waitUntil(cache.put(cacheKey, response.clone()))
+              }
+            }
+            
+            return response
+          }
+
+# ============================================================================
+# CLOUDFRONT ALTERNATIVE (AWS)
+# ============================================================================
+
+cloudfront_distribution:
+  enabled: false # Use if preferred over CloudFlare
+
+  origins:
+    - id: api-origin
+      domain_name: 45.55.155.165
+      custom_origin_config:
+        http_port: 80
+        https_port: 443
+        origin_protocol_policy: https-only
+        origin_ssl_protocols:
+          - TLSv1.3
+
+    - id: s3-static-origin
+      domain_name: infamous-freight-static.s3.amazonaws.com
+      s3_origin_config:
+        origin_access_identity: ""
+
+  default_cache_behavior:
+    target_origin_id: api-origin
+    viewer_protocol_policy: redirect-to-https
+    allowed_methods:
+      - GET
+      - HEAD
+      - OPTIONS
+      - PUT
+      - POST
+      - PATCH
+      - DELETE
+    cached_methods:
+      - GET
+      - HEAD
+    forwarded_values:
+      query_string: true
+      cookies:
+        forward: whitelist
+        whitelisted_names:
+          - session_token
+    min_ttl: 0
+    default_ttl: 300
+    max_ttl: 3600
+    compress: true
+
+  cache_behaviors:
+    - path_pattern: /static/*
+      target_origin_id: s3-static-origin
+      viewer_protocol_policy: https-only
+      min_ttl: 86400
+      default_ttl: 2592000
+      max_ttl: 31536000
+
+  price_class: PriceClass_All
+  geo_restriction:
+    restriction_type: none
+
+# ============================================================================
+# PERFORMANCE METRICS
+# ============================================================================
+
+# Expected Performance Improvements:
+# - First Byte Time (TTFB): 50-80% reduction
+# - Cache Hit Ratio: 80-95%
+# - Bandwidth Savings: 60-70%
+# - Global Latency:
+#   * North America: <50ms
+#   * Europe: <100ms
+#   * Asia: <150ms
+# - Availability: 99.99%+ with multi-CDN
+# - DDoS Protection: Unlimited mitigation
+# - Cost Savings: 40-50% vs direct origin traffic
+
+# Cache Hit Ratio Targets:
+# - Static Assets: >95%
+# - API Responses: >70%
+# - Images: >90%
+# - Overall: >85%

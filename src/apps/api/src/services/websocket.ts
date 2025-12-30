@@ -1,16 +1,17 @@
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import * as jwt from "jsonwebtoken";
 import { logger } from "../middleware/logger";
+import type { Server as HTTPServer } from "http";
 
 let io: Server | null = null;
 
 /**
  * Initialize Socket.IO server for real-time updates
  */
-export function initializeWebSocket(httpServer: any): Server | null {
+export function initializeWebSocket(httpServer: HTTPServer): Server | null {
   const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:3000")
     .split(",")
-    .map((origin) => origin.trim());
+    .map((origin: string) => origin.trim());
 
   try {
     io = new Server(httpServer, {
@@ -24,7 +25,7 @@ export function initializeWebSocket(httpServer: any): Server | null {
     });
 
     // Authentication middleware
-    io.use((socket, next) => {
+    io.use((socket: Socket, next: (err?: Error) => void) => {
       const token =
         (socket.handshake.auth as any).token ||
         (socket.handshake.query as any).token;
@@ -60,7 +61,7 @@ export function initializeWebSocket(httpServer: any): Server | null {
     });
 
     // Connection handler
-    io.on("connection", (socket) => {
+    io.on("connection", (socket: Socket) => {
       const userId =
         (socket as any).user?.sub || (socket as any).user?.id || "anonymous";
       logger.info("Client connected to WebSocket", {

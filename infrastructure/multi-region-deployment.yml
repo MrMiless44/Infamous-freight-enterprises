@@ -1,0 +1,380 @@
+# Phase 4: Multi-Region Deployment Configuration
+# Global infrastructure for US, EU, and Asia regions
+
+version: "3.9"
+
+# Global Load Balancer Configuration
+global:
+  load_balancer:
+    provider: cloudflare
+    ssl: true
+    health_check_interval: 30s
+    failover_threshold: 3
+    geo_routing:
+      enabled: true
+      policy: latency-based
+    ddos_protection: true
+    rate_limiting:
+      requests_per_minute: 10000
+      burst: 1000
+
+# Regional Deployments
+regions:
+  # US East (Primary)
+  us-east-1:
+    location: Virginia, USA
+    provider: digitalocean
+    datacenter: nyc3
+    status: primary
+    services:
+      api:
+        instances: 5
+        cpu: 4
+        memory: 8GB
+        autoscaling:
+          min: 3
+          max: 20
+          cpu_threshold: 70
+          memory_threshold: 80
+      database:
+        type: postgresql-14
+        size: db-s-4vcpu-8gb
+        replicas: 2
+        backup_retention: 30
+        point_in_time_recovery: true
+      cache:
+        type: redis
+        size: db-s-2vcpu-4gb
+        replicas: 1
+        eviction_policy: allkeys-lru
+      monitoring:
+        prometheus: true
+        grafana: true
+        jaeger: true
+        log_retention: 90
+
+  # Europe (Frankfurt)
+  eu-central-1:
+    location: Frankfurt, Germany
+    provider: digitalocean
+    datacenter: fra1
+    status: active
+    services:
+      api:
+        instances: 3
+        cpu: 4
+        memory: 8GB
+        autoscaling:
+          min: 2
+          max: 15
+          cpu_threshold: 70
+          memory_threshold: 80
+      database:
+        type: postgresql-14-replica
+        size: db-s-4vcpu-8gb
+        source: us-east-1
+        read_only: false
+        promotion_priority: 1
+      cache:
+        type: redis
+        size: db-s-2vcpu-4gb
+        replicas: 1
+        eviction_policy: allkeys-lru
+      monitoring:
+        prometheus: true
+        grafana: false # Use central Grafana
+        jaeger: true
+        log_retention: 90
+
+  # Asia Pacific (Singapore)
+  ap-southeast-1:
+    location: Singapore
+    provider: digitalocean
+    datacenter: sgp1
+    status: active
+    services:
+      api:
+        instances: 3
+        cpu: 4
+        memory: 8GB
+        autoscaling:
+          min: 2
+          max: 15
+          cpu_threshold: 70
+          memory_threshold: 80
+      database:
+        type: postgresql-14-replica
+        size: db-s-4vcpu-8gb
+        source: us-east-1
+        read_only: false
+        promotion_priority: 2
+      cache:
+        type: redis
+        size: db-s-2vcpu-4gb
+        replicas: 1
+        eviction_policy: allkeys-lru
+      monitoring:
+        prometheus: true
+        grafana: false # Use central Grafana
+        jaeger: true
+        log_retention: 90
+
+# Database Replication Configuration
+database_replication:
+  topology: master-slave-async
+  primary: us-east-1
+  replicas:
+    - region: eu-central-1
+      lag_threshold: 100ms
+      read_queries: true
+      write_queries: false
+    - region: ap-southeast-1
+      lag_threshold: 150ms
+      read_queries: true
+      write_queries: false
+  conflict_resolution: last-write-wins
+  backup_strategy:
+    full_backup: daily
+    incremental: hourly
+    retention: 30_days
+    cross_region_backup: true
+    backup_regions:
+      - eu-central-1
+      - ap-southeast-1
+
+# CDN Configuration
+cdn:
+  provider: cloudflare
+  zones:
+    - infamous-freight.com
+    - api.infamous-freight.com
+  caching:
+    static_assets:
+      enabled: true
+      ttl: 86400 # 24 hours
+      paths:
+        - /static/*
+        - /assets/*
+        - /images/*
+        - /*.js
+        - /*.css
+    api_responses:
+      enabled: true
+      ttl: 300 # 5 minutes
+      paths:
+        - /api/tracking/active-drivers
+        - /api/metrics/*
+      cache_rules:
+        - path: /api/predictions/*
+          ttl: 60
+          cache_by_query: true
+  compression:
+    gzip: true
+    brotli: true
+    min_size: 1024
+  security:
+    waf: true
+    bot_protection: true
+    ssl_mode: full_strict
+    hsts: true
+    tls_version: "1.3"
+
+# Auto-Scaling Configuration
+autoscaling:
+  kubernetes:
+    provider: digitalocean-kubernetes
+    version: "1.28"
+    cluster_name: infamous-freight-global
+    node_pools:
+      - name: api-pool
+        size: s-4vcpu-8gb
+        min_nodes: 3
+        max_nodes: 20
+        autoscale: true
+        labels:
+          workload: api
+      - name: worker-pool
+        size: s-2vcpu-4gb
+        min_nodes: 2
+        max_nodes: 10
+        autoscale: true
+        labels:
+          workload: background-jobs
+
+  horizontal_pod_autoscaler:
+    api:
+      min_replicas: 3
+      max_replicas: 20
+      metrics:
+        - type: cpu
+          target: 70
+        - type: memory
+          target: 80
+        - type: custom
+          name: requests_per_second
+          target: 100
+
+    workers:
+      min_replicas: 2
+      max_replicas: 10
+      metrics:
+        - type: cpu
+          target: 75
+        - type: memory
+          target: 85
+
+# Monitoring & Observability
+observability:
+  distributed_tracing:
+    jaeger:
+      enabled: true
+      sampling_rate: 0.1 # 10% sampling
+      storage: elasticsearch
+      retention: 7_days
+
+  metrics:
+    prometheus:
+      enabled: true
+      scrape_interval: 15s
+      retention: 30_days
+      remote_write:
+        - url: https://metrics.infamous-freight.com/write
+          basic_auth:
+            username: prometheus
+
+  logging:
+    provider: loki
+    aggregation: true
+    retention: 90_days
+    log_levels:
+      production: info
+      staging: debug
+
+  alerts:
+    channels:
+      - type: pagerduty
+        severity: critical
+      - type: slack
+        severity: warning
+      - type: email
+        severity: info
+
+    rules:
+      - name: high_error_rate
+        condition: error_rate > 5%
+        duration: 5m
+        severity: critical
+
+      - name: high_latency
+        condition: p95_latency > 2000ms
+        duration: 5m
+        severity: warning
+
+      - name: database_replication_lag
+        condition: replication_lag > 1s
+        duration: 2m
+        severity: critical
+
+      - name: api_availability
+        condition: uptime < 99.9%
+        duration: 5m
+        severity: critical
+
+# Disaster Recovery
+disaster_recovery:
+  rpo: 15m # Recovery Point Objective
+  rto: 30m # Recovery Time Objective
+
+  failover:
+    automatic: true
+    health_check_failures: 3
+    cooldown: 5m
+    primary_region: us-east-1
+    failover_order:
+      - eu-central-1
+      - ap-southeast-1
+
+  backups:
+    database:
+      frequency: hourly
+      retention: 30_days
+      encryption: aes-256
+      cross_region: true
+
+    configuration:
+      frequency: on_change
+      retention: 90_days
+      versioning: true
+
+    media:
+      frequency: daily
+      retention: 90_days
+      storage: s3-compatible
+
+# Cost Optimization
+cost_optimization:
+  reserved_instances:
+    enabled: true
+    commitment: 1_year
+    coverage: 70%
+
+  spot_instances:
+    enabled: true
+    workloads:
+      - background-jobs
+      - batch-processing
+    max_spot_percentage: 50
+
+  resource_cleanup:
+    unused_volumes: 7_days
+    old_snapshots: 30_days
+    orphaned_resources: daily_scan
+
+# Security
+security:
+  network:
+    vpc:
+      enabled: true
+      cidr: 10.0.0.0/16
+      private_subnets: true
+
+    firewall:
+      default_deny: true
+      allowed_ports:
+        - 443 # HTTPS
+        - 80 # HTTP (redirect to HTTPS)
+
+      ip_whitelist:
+        admin_access:
+          - 0.0.0.0/0 # Update with actual IPs
+
+  secrets_management:
+    provider: vault
+    auto_rotation: true
+    rotation_period: 90_days
+    encryption: aes-256-gcm
+
+  compliance:
+    - soc2
+    - gdpr
+    - hipaa_ready
+    - pci_dss_ready
+
+# Expected Performance
+performance_targets:
+  global_latency:
+    us: <100ms
+    eu: <150ms
+    asia: <200ms
+
+  throughput:
+    api_requests: 50000/sec
+    concurrent_users: 100000
+
+  availability:
+    uptime: 99.99%
+    error_rate: <0.01%
+
+  scalability:
+    horizontal: 20x
+    vertical: 4x

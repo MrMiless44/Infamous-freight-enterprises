@@ -1,0 +1,52 @@
+# GitHub OWNERS file for Infamous Freight Enterprises LLC
+# Defines code ownership and approval requirements
+
+# Global owners
+* @MrMiless44
+
+# API ownership
+/api/ @MrMiless44
+/src/apps/api/ @MrMiless44
+
+# Web frontend ownership
+/web/ @MrMiless44
+/src/apps/web/ @MrMiless44
+
+# Mobile app ownership
+/mobile/ @MrMiless44
+
+# Infrastructure ownership
+/infrastructure/ @MrMiless44
+/docker-compose*.yml @MrMiless44
+
+# Database and migrations
+/prisma/ @MrMiless44
+/migrations/ @MrMiless44
+
+# Configuration files
+/.*rc* @MrMiless44
+/*.json @MrMiless44
+/*.yml @MrMiless44
+/*.yaml @MrMiless44
+
+# Documentation
+/*.md @MrMiless44
+/docs/ @MrMiless44
+/README* @MrMiless44
+/CHANGELOG* @MrMiless44
+
+# GitHub configuration
+/.github/ @MrMiless44
+
+# Shared packages
+/packages/ @MrMiless44
+
+# Tests
+/e2e/ @MrMiless44
+/**/*.test.* @MrMiless44
+/**/*.spec.* @MrMiless44
+
+# Security and legal
+/LICENSE @MrMiless44
+/COPYRIGHT @MrMiless44
+/SECURITY* @MrMiless44

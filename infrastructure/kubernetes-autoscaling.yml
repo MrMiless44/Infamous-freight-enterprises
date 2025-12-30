@@ -1,0 +1,530 @@
+# Phase 4: Kubernetes Auto-Scaling Configuration
+# Horizontal Pod Autoscaler (HPA) and Cluster Autoscaler
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: infamous-freight
+  labels:
+    app: infamous-freight
+    environment: production
+
+---
+# API Deployment with Resource Limits
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: infamous-freight
+  labels:
+    app: api
+    tier: backend
+spec:
+  replicas: 3 # Initial replicas (will be managed by HPA)
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+        tier: backend
+    spec:
+      containers:
+        - name: api
+          image: infamous-freight/api:latest
+          ports:
+            - containerPort: 4000
+              name: http
+          resources:
+            requests:
+              cpu: 500m # 0.5 CPU cores
+              memory: 1Gi # 1 GB RAM
+            limits:
+              cpu: 2000m # 2 CPU cores max
+              memory: 4Gi # 4 GB RAM max
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: url
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: secret
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+
+---
+# Horizontal Pod Autoscaler for API
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: api-hpa
+  namespace: infamous-freight
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+    # CPU-based scaling
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70 # Scale when avg CPU > 70%
+    # Memory-based scaling
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80 # Scale when avg memory > 80%
+    # Custom metric: Requests per second
+    - type: Pods
+      pods:
+        metric:
+          name: http_requests_per_second
+        target:
+          type: AverageValue
+          averageValue: "100" # Scale when RPS > 100 per pod
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60 # Wait 60s before scaling up
+      policies:
+        - type: Percent
+          value: 50 # Scale up by 50% of current pods
+          periodSeconds: 60
+        - type: Pods
+          value: 2 # Or add 2 pods, whichever is larger
+          periodSeconds: 60
+      selectPolicy: Max # Use the policy that scales fastest
+    scaleDown:
+      stabilizationWindowSeconds: 300 # Wait 5 min before scaling down
+      policies:
+        - type: Percent
+          value: 25 # Scale down by 25% of current pods
+          periodSeconds: 60
+        - type: Pods
+          value: 1 # Or remove 1 pod, whichever is smaller
+          periodSeconds: 60
+      selectPolicy: Min # Use the policy that scales slowest
+
+---
+# Web Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: infamous-freight
+  labels:
+    app: web
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+        tier: frontend
+    spec:
+      containers:
+        - name: web
+          image: infamous-freight/web:latest
+          ports:
+            - containerPort: 3000
+              name: http
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+          env:
+            - name: NEXT_PUBLIC_API_URL
+              value: "http://api-service:4000"
+
+---
+# HPA for Web
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: web-hpa
+  namespace: infamous-freight
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: web
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 85
+
+---
+# Background Worker Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: infamous-freight
+  labels:
+    app: worker
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+        tier: backend
+    spec:
+      containers:
+        - name: worker
+          image: infamous-freight/worker:latest
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 4Gi
+          env:
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: url
+
+---
+# HPA for Workers
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: worker-hpa
+  namespace: infamous-freight
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: worker
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75
+    # Custom metric: Queue depth
+    - type: Pods
+      pods:
+        metric:
+          name: queue_depth
+        target:
+          type: AverageValue
+          averageValue: "50" # Scale when queue > 50 jobs per worker
+
+---
+# Service for API
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+  namespace: infamous-freight
+  labels:
+    app: api
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 4000
+      protocol: TCP
+      name: http
+  selector:
+    app: api
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 3600
+
+---
+# Service for Web
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  namespace: infamous-freight
+  labels:
+    app: web
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: web
+
+---
+# Cluster Autoscaler Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-autoscaler-config
+  namespace: kube-system
+data:
+  # Cluster Autoscaler settings
+  cluster-name: "infamous-freight-global"
+  cloud-provider: "digitalocean"
+  skip-nodes-with-local-storage: "false"
+  skip-nodes-with-system-pods: "false"
+  balance-similar-node-groups: "true"
+  expander: "least-waste" # Choose node pool with least wasted resources
+  scale-down-enabled: "true"
+  scale-down-delay-after-add: "10m"
+  scale-down-unneeded-time: "10m"
+  scale-down-utilization-threshold: "0.5"
+  max-node-provision-time: "15m"
+  max-graceful-termination-sec: "600"
+
+---
+# PodDisruptionBudget for API (High Availability)
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: api-pdb
+  namespace: infamous-freight
+spec:
+  minAvailable: 2 # Always keep at least 2 API pods running
+  selector:
+    matchLabels:
+      app: api
+
+---
+# PodDisruptionBudget for Web
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: web-pdb
+  namespace: infamous-freight
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: web
+
+---
+# Vertical Pod Autoscaler (VPA) for API
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: api-vpa
+  namespace: infamous-freight
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api
+  updatePolicy:
+    updateMode: "Auto" # Automatically apply recommendations
+  resourcePolicy:
+    containerPolicies:
+      - containerName: api
+        minAllowed:
+          cpu: 250m
+          memory: 512Mi
+        maxAllowed:
+          cpu: 4000m
+          memory: 8Gi
+        controlledResources:
+          - cpu
+          - memory
+
+---
+# Ingress with SSL and Rate Limiting
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: infamous-freight-ingress
+  namespace: infamous-freight
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  tls:
+    - hosts:
+        - api.infamous-freight.com
+        - www.infamous-freight.com
+      secretName: infamous-freight-tls
+  rules:
+    - host: api.infamous-freight.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80
+    - host: www.infamous-freight.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 80
+
+---
+# NetworkPolicy for Security
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: api-network-policy
+  namespace: infamous-freight
+spec:
+  podSelector:
+    matchLabels:
+      app: api
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow traffic from web pods
+    - from:
+        - podSelector:
+            matchLabels:
+              app: web
+      ports:
+        - protocol: TCP
+          port: 4000
+    # Allow traffic from ingress
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 4000
+  egress:
+    # Allow DNS
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow database access
+    - to:
+        - podSelector:
+            matchLabels:
+              app: postgresql
+      ports:
+        - protocol: TCP
+          port: 5432
+    # Allow Redis access
+    - to:
+        - podSelector:
+            matchLabels:
+              app: redis
+      ports:
+        - protocol: TCP
+          port: 6379
+
+---
+# ServiceMonitor for Prometheus (Metrics Collection)
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: api-metrics
+  namespace: infamous-freight
+  labels:
+    app: api
+spec:
+  selector:
+    matchLabels:
+      app: api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+
+---
+# Expected Performance Targets
+#
+# Auto-Scaling Behavior:
+# - Scale up: Within 60 seconds when metrics exceed thresholds
+# - Scale down: After 5 minutes of low utilization (prevents flapping)
+# - Cluster autoscaler: Add nodes within 5 minutes when pods pending
+#
+# Resource Efficiency:
+# - CPU utilization: Target 60-80% average
+# - Memory utilization: Target 70-85% average
+# - Cost savings: 30-40% vs static provisioning
+#
+# Availability:
+# - 99.99% uptime (4 nines)
+# - Zero-downtime deployments
+# - Automatic failover within 30 seconds
+#
+# Scalability:
+# - Handle 10x traffic spikes automatically
+# - Scale from 3 to 20 pods for API
+# - Scale from 2 to 10 pods for Web
+# - Scale from 2 to 10 pods for Workers
+#
+# Performance:
+# - P95 latency: <500ms under load
+# - Throughput: 50,000+ requests/sec
+# - Concurrent users: 100,000+

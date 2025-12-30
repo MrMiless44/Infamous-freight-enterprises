@@ -27,6 +27,7 @@ model User {
   organization   Organization   @relation(fields: [organizationId], references: [id])
   customer       Customer?      @relation("CustomerUser")
   driver         Driver?        @relation("DriverUser")
+  twoFactorAuth  TwoFactorAuth?
   createdAt      DateTime       @default(now())
 }
 
@@ -105,8 +106,16 @@ model Driver {
   currentLocation      Json?
   loads                Load[]
   aiCoachingSessions   AICoachingSession[]
+  predictions          DriverPrediction[]
+  locationHistory      LocationHistory[]
+  points               GamificationPoints[]
+  badges               Badge[]
+  leaderboard          Leaderboard[]
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt
+
+  // Phase 2 Performance Optimization - Driver availability index
+  @@index([isAvailable])               // idx_drivers_available: Availability filtering
 }
 
 model Vehicle {
@@ -153,6 +162,12 @@ model Load {
   aiDecisions     AIDecision[]
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+
+  // Phase 2 Performance Optimization - 6 Critical Indexes
+  @@index([status])                    // idx_loads_status: Status filtering
+  @@index([driverId])                  // idx_loads_driver_id: Driver lookups
+  @@index([createdAt(sort: Desc)])     // idx_loads_created_at: Time-based queries
+  @@index([driverId, status])          // idx_loads_driver_status: Composite queries
 }
 
 model AIDecision {
@@ -238,4 +253,149 @@ model Webhook {
 
   @@index([organizationId])
   @@index([event])
+}
+
+// Phase 3 Feature 1: Predictive Driver Availability
+model DriverPrediction {
+  id              String   @id @default(cuid())
+  driverId        String
+  driver          Driver   @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  availabilityScore Float  // 0.0 to 1.0
+  confidence      Float    // Model confidence in prediction
+  factors         Json     // {timeOfDay, dayOfWeek, weather, traffic, recentActivity, historical}
+  recommendation  String   // HIGH, MEDIUM, LOW
+  metadata        Json?    // Additional context
+  createdAt       DateTime @default(now())
+
+  @@index([driverId])
+  @@index([createdAt(sort: Desc)])
+  @@index([recommendation])
+}
+
+// Phase 3 Feature 2: Route Optimization
+model RouteOptimization {
+  id              String   @id @default(cuid())
+  waypoints       Json     // Original waypoints
+  optimizedPath   Json     // Optimized sequence
+  totalDistance   Float    // km
+  estimatedTime   Int      // minutes
+  efficiency      Float    // percentage improvement
+  fuelEstimate    Float    // liters
+  costEstimate    Float    // currency
+  metadata        Json?    // {loadIds, timestamp}
+  createdAt       DateTime @default(now())
+
+  @@index([createdAt(sort: Desc)])
+}
+
+// Phase 3 Feature 3: Real-time GPS Tracking
+model LocationHistory {
+  id              String   @id @default(cuid())
+  driverId        String
+  driver          Driver   @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  latitude        Float
+  longitude       Float
+  speed           Float    // km/h
+  heading         Float    // 0-360 degrees
+  accuracy        Float    // meters
+  timestamp       DateTime
+  createdAt       DateTime @default(now())
+
+  @@index([driverId])
+  @@index([timestamp(sort: Desc)])
+  @@index([driverId, timestamp])
+}
+
+// Phase 3 Feature 3: Geofencing
+model Geofence {
+  id              String   @id @default(cuid())
+  organizationId  String
+  name            String
+  type            String   // pickup, delivery, warehouse, restricted
+  latitude        Float
+  longitude       Float
+  radiusMeters    Float
+  alertOnEntry    Boolean  @default(true)
+  alertOnExit     Boolean  @default(true)
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([type])
+}
+
+// Phase 3 Feature 4: Gamification System
+model GamificationPoints {
+  id              String   @id @default(cuid())
+  driverId        String
+  driver          Driver   @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  points          Int
+  category        String   // on-time, safety, efficiency, customer-rating
+  metadata        Json?    // Reference to related load/event
+  createdAt       DateTime @default(now())
+
+  @@index([driverId])
+  @@index([category])
+}
+
+model Badge {
+  id              String   @id @default(cuid())
+  driverId        String
+  driver          Driver   @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  badgeType       String   // GOLD_STAR, PERFECT_RECORD, SPEED_DEMON, SAFETY_FIRST, etc
+  earnedAt        DateTime @default(now())
+  metadata        Json?
+
+  @@index([driverId])
+  @@index([badgeType])
+}
+
+model Leaderboard {
+  id              String   @id @default(cuid())
+  driverId        String
+  driver          Driver   @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  totalPoints     Int      @default(0)
+  rank            Int
+  period          String   // daily, weekly, monthly, all-time
+  lastUpdated     DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@index([driverId])
+  @@index([rank])
+  @@index([period])
+}
+
+// Phase 3 Feature 6: Business Metrics Dashboard
+model BusinessMetric {
+  id              String   @id @default(cuid())
+  organizationId  String
+  metricType      String   // revenue, efficiency, customer-satisfaction, driver-retention
+  value           Float
+  previousValue   Float?
+  changePercent   Float?
+  period          String   // daily, weekly, monthly
+  metadata        Json?
+  createdAt       DateTime @default(now())
+
+  @@index([organizationId])
+  @@index([metricType])
+  @@index([period])
+}
+
+// Phase 3 Feature 7: Enhanced Security - 2FA
+model TwoFactorAuth {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secret          String   // Encrypted TOTP secret
+  backupCodes     Json     // Hashed backup codes array
+  enabled         Boolean  @default(false)
+  smsPhone        String?  // Optional SMS verification number
+  lastVerified    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([enabled])
 }
