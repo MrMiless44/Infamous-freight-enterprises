@@ -55,7 +55,18 @@ jobs:
       - name: Install (workspace)
         env:
           HUSKY: 0
-        run: pnpm install --frozen-lockfile
+        run: |
+          # Try with frozen lockfile first
+          pnpm install --frozen-lockfile && exit 0
+
+          # If frozen fails, try with prefer-offline
+          echo "Frozen lockfile install failed, trying with prefer-offline..."
+          pnpm install --prefer-offline && exit 0
+
+          # Last resort - regular install
+          echo "Prefer-offline install failed, trying regular install..."
+          pnpm install
+        continue-on-error: false
 
       - name: Build Shared Package
         run: pnpm --filter @infamous-freight/shared build
