@@ -1,0 +1,17 @@
+name: "CodeQL Configuration"
+
+paths:
+  - src
+
+paths-ignore:
+  - archive
+  - node_modules
+  - .next
+  - dist
+  - coverage
+  - .git
+
+queries:
+  - uses: security-and-quality
+
+disable-default-queries: false
