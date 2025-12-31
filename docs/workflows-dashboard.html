@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub Actions Analytics - Infamous Freight Enterprises</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        color: white;
+        padding: 40px 20px;
+        margin-bottom: 30px;
+      }
+
+      header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      header p {
+        font-size: 1.1em;
+        opacity: 0.95;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .stat-card h3 {
+        font-size: 0.9em;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+      }
+
+      .stat-value {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.85em;
+        color: #888;
+      }
+
+      .stat-trend {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: 600;
+      }
+
+      .trend-up {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .trend-down {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .trend-neutral {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .chart-card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .chart-card h2 {
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 1.4em;
+      }
+
+      .workflows-table {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+
+      th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #555;
+        text-transform: uppercase;
+        font-size: 0.85em;
+        letter-spacing: 0.5px;
+      }
+
+      tr:hover {
+        background: #f8f9fa;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: 600;
+      }
+
+      .status-success {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-failure {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .loading-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      .refresh-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s;
+      }
+
+      .refresh-btn:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      .last-updated {
+        text-align: center;
+        color: white;
+        margin-top: 30px;
+        font-size: 0.9em;
+        opacity: 0.9;
+      }
+
+      @media (max-width: 768px) {
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+
+        header h1 {
+          font-size: 1.8em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🚀 GitHub Actions Analytics</h1>
+        <p>
+          Real-time CI/CD performance metrics for Infamous Freight Enterprises
+        </p>
+      </header>
+
+      <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading workflow data...</p>
+      </div>
+
+      <div id="dashboard" style="display: none">
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Runs</h3>
+            <div class="stat-value" id="totalRuns">0</div>
+            <div class="stat-label">Last 30 days</div>
+            <span class="stat-trend trend-up" id="runsTrend"
+              >+12% vs prev month</span
+            >
+          </div>
+
+          <div class="stat-card">
+            <h3>Success Rate</h3>
+            <div class="stat-value" id="successRate">0%</div>
+            <div class="stat-label">All workflows</div>
+            <span class="stat-trend trend-up" id="successTrend"
+              >+3.2% vs prev month</span
+            >
+          </div>
+
+          <div class="stat-card">
+            <h3>Total Minutes</h3>
+            <div class="stat-value" id="totalMinutes">0</div>
+            <div class="stat-label">Compute time used</div>
+            <span class="stat-trend trend-down" id="minutesTrend"
+              >-8% vs prev month</span
+            >
+          </div>
+
+          <div class="stat-card">
+            <h3>Cost Estimate</h3>
+            <div class="stat-value" id="costEstimate">$0</div>
+            <div class="stat-label">Monthly projection</div>
+            <span class="stat-trend trend-neutral" id="costTrend"
+              >Within budget</span
+            >
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h2>Success Rate Trend</h2>
+            <canvas id="successChart"></canvas>
+          </div>
+
+          <div class="chart-card">
+            <h2>Workflow Duration</h2>
+            <canvas id="durationChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom: 30px">
+          <h2>Runs by Workflow</h2>
+          <canvas id="workflowChart"></canvas>
+        </div>
+
+        <!-- Workflows Table -->
+        <div class="workflows-table">
+          <h2>Workflow Performance</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Workflow</th>
+                <th>Total Runs</th>
+                <th>Success Rate</th>
+                <th>Avg Duration</th>
+                <th>Total Minutes</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="workflowsTableBody">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <p class="last-updated" id="lastUpdated">Last updated: Loading...</p>
+      </div>
+    </div>
+
+    <button class="refresh-btn" onclick="loadData()">🔄 Refresh</button>
+
+    <script>
+      // Simulated data - In production, this would fetch from GitHub API
+      const mockData = {
+        totalRuns: 342,
+        successRate: 87.4,
+        totalMinutes: 1847,
+        costEstimate: 15.2,
+        trends: {
+          runs: "+12%",
+          success: "+3.2%",
+          minutes: "-8%",
+          cost: "Within budget",
+        },
+        successTrend: [78, 82, 85, 83, 87, 89, 87],
+        durationData: {
+          labels: [
+            "CI/CD",
+            "E2E Tests",
+            "Deploy API",
+            "Deploy Web",
+            "Docker Build",
+          ],
+          data: [8.5, 12.3, 5.2, 7.8, 6.4],
+        },
+        workflowRuns: {
+          labels: [
+            "CI/CD",
+            "E2E Tests",
+            "Deploy API",
+            "Deploy Web",
+            "Docker",
+            "Pages",
+            "CodeQL",
+          ],
+          data: [89, 45, 38, 42, 35, 28, 65],
+        },
+        workflows: [
+          {
+            name: "CI/CD Pipeline",
+            runs: 89,
+            success: 91.0,
+            avgDuration: "8m 30s",
+            minutes: 756,
+            status: "success",
+          },
+          {
+            name: "E2E Tests",
+            runs: 45,
+            success: 82.2,
+            avgDuration: "12m 20s",
+            minutes: 555,
+            status: "success",
+          },
+          {
+            name: "Deploy API (Render)",
+            runs: 38,
+            success: 94.7,
+            avgDuration: "5m 10s",
+            minutes: 196,
+            status: "success",
+          },
+          {
+            name: "Deploy Web (Vercel)",
+            runs: 42,
+            success: 97.6,
+            avgDuration: "7m 50s",
+            minutes: 329,
+            status: "success",
+          },
+          {
+            name: "Docker Build",
+            runs: 35,
+            success: 85.7,
+            avgDuration: "6m 25s",
+            minutes: 225,
+            status: "success",
+          },
+          {
+            name: "GitHub Pages",
+            runs: 28,
+            success: 96.4,
+            avgDuration: "4m 15s",
+            minutes: 119,
+            status: "success",
+          },
+          {
+            name: "CodeQL Analysis",
+            runs: 65,
+            success: 100,
+            avgDuration: "11m 30s",
+            minutes: 748,
+            status: "success",
+          },
+        ],
+      };
+
+      let charts = {};
+
+      function loadData() {
+        // Show loading
+        document.getElementById("loading").style.display = "block";
+        document.getElementById("dashboard").style.display = "none";
+
+        // Simulate API call
+        setTimeout(() => {
+          renderDashboard(mockData);
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("dashboard").style.display = "block";
+        }, 800);
+      }
+
+      function renderDashboard(data) {
+        // Update stats
+        document.getElementById("totalRuns").textContent = data.totalRuns;
+        document.getElementById("successRate").textContent =
+          data.successRate.toFixed(1) + "%";
+        document.getElementById("totalMinutes").textContent =
+          data.totalMinutes.toLocaleString();
+        document.getElementById("costEstimate").textContent =
+          "$" + data.costEstimate.toFixed(2);
+        document.getElementById("lastUpdated").textContent =
+          "Last updated: " + new Date().toLocaleString();
+
+        // Render charts
+        renderSuccessChart(data.successTrend);
+        renderDurationChart(data.durationData);
+        renderWorkflowChart(data.workflowRuns);
+
+        // Render table
+        renderWorkflowsTable(data.workflows);
+      }
+
+      function renderSuccessChart(data) {
+        const ctx = document.getElementById("successChart");
+
+        if (charts.success) {
+          charts.success.destroy();
+        }
+
+        charts.success = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [
+              "Week 1",
+              "Week 2",
+              "Week 3",
+              "Week 4",
+              "Week 5",
+              "Week 6",
+              "Week 7",
+            ],
+            datasets: [
+              {
+                label: "Success Rate (%)",
+                data: data,
+                borderColor: "#667eea",
+                backgroundColor: "rgba(102, 126, 234, 0.1)",
+                tension: 0.4,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: false,
+                min: 70,
+                max: 100,
+              },
+            },
+          },
+        });
+      }
+
+      function renderDurationChart(data) {
+        const ctx = document.getElementById("durationChart");
+
+        if (charts.duration) {
+          charts.duration.destroy();
+        }
+
+        charts.duration = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: "Avg Duration (minutes)",
+                data: data.data,
+                backgroundColor: [
+                  "#667eea",
+                  "#764ba2",
+                  "#f093fb",
+                  "#4facfe",
+                  "#00f2fe",
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+          },
+        });
+      }
+
+      function renderWorkflowChart(data) {
+        const ctx = document.getElementById("workflowChart");
+
+        if (charts.workflow) {
+          charts.workflow.destroy();
+        }
+
+        charts.workflow = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                data: data.data,
+                backgroundColor: [
+                  "#667eea",
+                  "#764ba2",
+                  "#f093fb",
+                  "#4facfe",
+                  "#00f2fe",
+                  "#43e97b",
+                  "#fa709a",
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: "right",
+              },
+            },
+          },
+        });
+      }
+
+      function renderWorkflowsTable(workflows) {
+        const tbody = document.getElementById("workflowsTableBody");
+        tbody.innerHTML = "";
+
+        workflows.forEach((workflow) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td><strong>${workflow.name}</strong></td>
+                    <td>${workflow.runs}</td>
+                    <td>${workflow.success.toFixed(1)}%</td>
+                    <td>${workflow.avgDuration}</td>
+                    <td>${workflow.minutes}</td>
+                    <td><span class="status-badge status-${workflow.status}">${workflow.status === "success" ? "✓ Passing" : "✗ Failing"}</span></td>
+                `;
+          tbody.appendChild(row);
+        });
+      }
+
+      // Load data on page load
+      loadData();
+
+      // Auto-refresh every 5 minutes
+      setInterval(loadData, 5 * 60 * 1000);
+    </script>
+  </body>
+</html>

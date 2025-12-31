@@ -1,0 +1,12 @@
+{
+  "web-bundle-size": 450000,
+  "api-response-time-ms": 120,
+  "web-lighthouse-performance": 85,
+  "web-lighthouse-accessibility": 92,
+  "web-first-contentful-paint-ms": 1200,
+  "web-largest-contentful-paint-ms": 2400,
+  "api-health-check-ms": 50,
+  "e2e-test-duration-seconds": 180,
+  "build-time-api-seconds": 45,
+  "build-time-web-seconds": 120
+}

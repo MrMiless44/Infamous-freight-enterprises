@@ -1,0 +1,147 @@
+name: "Health Check with Retries"
+description: "Performs health check with configurable retries and timeout"
+author: "Infamous Freight Enterprises"
+
+branding:
+  icon: "activity"
+  color: "green"
+
+inputs:
+  url:
+    description: "URL to health check endpoint"
+    required: true
+  max-retries:
+    description: "Maximum number of retry attempts"
+    required: false
+    default: "10"
+  retry-delay:
+    description: "Delay between retries in seconds"
+    required: false
+    default: "5"
+  timeout:
+    description: "Timeout for each request in seconds"
+    required: false
+    default: "10"
+  expected-status:
+    description: "Expected HTTP status code"
+    required: false
+    default: "200"
+  validate-json:
+    description: "Validate response is valid JSON"
+    required: false
+    default: "false"
+  json-path:
+    description: 'JSON path to check (e.g., "status" to verify response.status exists)'
+    required: false
+    default: ""
+
+outputs:
+  success:
+    description: "Whether health check succeeded"
+  attempts:
+    description: "Number of attempts made"
+  response-time:
+    description: "Response time in milliseconds"
+  response-body:
+    description: "Response body from successful check"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Health Check with Retries
+      shell: bash
+      run: |
+        URL="${{ inputs.url }}"
+        MAX_RETRIES="${{ inputs.max-retries }}"
+        RETRY_DELAY="${{ inputs.retry-delay }}"
+        TIMEOUT="${{ inputs.timeout }}"
+        EXPECTED_STATUS="${{ inputs.expected-status }}"
+        VALIDATE_JSON="${{ inputs.validate-json }}"
+        JSON_PATH="${{ inputs.json-path }}"
+
+        echo "🔍 Starting health check for: $URL"
+        echo "⚙️ Configuration:"
+        echo "  - Max retries: $MAX_RETRIES"
+        echo "  - Retry delay: ${RETRY_DELAY}s"
+        echo "  - Timeout: ${TIMEOUT}s"
+        echo "  - Expected status: $EXPECTED_STATUS"
+        echo ""
+
+        attempt=0
+        success=false
+
+        while [ $attempt -lt $MAX_RETRIES ]; do
+          attempt=$((attempt + 1))
+          echo "🔄 Attempt $attempt/$MAX_RETRIES..."
+          
+          # Perform health check with timing
+          start_time=$(date +%s%3N)
+          response=$(curl -s -w "\n%{http_code}" --max-time $TIMEOUT "$URL" 2>&1) || true
+          end_time=$(date +%s%3N)
+          response_time=$((end_time - start_time))
+          
+          # Extract status code (last line) and body (everything else)
+          status_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          
+          # Check status code
+          if [ "$status_code" = "$EXPECTED_STATUS" ]; then
+            echo "✅ Health check successful! (${response_time}ms)"
+            echo "   Status: $status_code"
+            
+            # Validate JSON if requested
+            if [ "$VALIDATE_JSON" = "true" ]; then
+              if echo "$body" | jq . > /dev/null 2>&1; then
+                echo "✅ Response is valid JSON"
+                
+                # Check JSON path if provided
+                if [ -n "$JSON_PATH" ]; then
+                  value=$(echo "$body" | jq -r ".$JSON_PATH" 2>/dev/null)
+                  if [ "$value" != "null" ] && [ -n "$value" ]; then
+                    echo "✅ JSON path '$JSON_PATH' exists: $value"
+                  else
+                    echo "❌ JSON path '$JSON_PATH' not found or null"
+                    if [ $attempt -lt $MAX_RETRIES ]; then
+                      echo "⏳ Retrying in ${RETRY_DELAY}s..."
+                      sleep $RETRY_DELAY
+                      continue
+                    fi
+                  fi
+                fi
+              else
+                echo "❌ Response is not valid JSON"
+                if [ $attempt -lt $MAX_RETRIES ]; then
+                  echo "⏳ Retrying in ${RETRY_DELAY}s..."
+                  sleep $RETRY_DELAY
+                  continue
+                fi
+              fi
+            fi
+            
+            # Output results
+            echo "success=true" >> $GITHUB_OUTPUT
+            echo "attempts=$attempt" >> $GITHUB_OUTPUT
+            echo "response-time=$response_time" >> $GITHUB_OUTPUT
+            echo "response-body<<EOF" >> $GITHUB_OUTPUT
+            echo "$body" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            
+            success=true
+            break
+          else
+            echo "❌ Health check failed"
+            echo "   Expected: $EXPECTED_STATUS"
+            echo "   Received: $status_code"
+            
+            if [ $attempt -lt $MAX_RETRIES ]; then
+              echo "⏳ Retrying in ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+            fi
+          fi
+        done
+
+        if [ "$success" = false ]; then
+          echo ""
+          echo "💥 Health check failed after $attempt attempts"
+          exit 1
+        fi

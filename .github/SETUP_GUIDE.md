@@ -20,6 +20,7 @@ This guide provides step-by-step instructions for configuring branch protection 
 #### ✅ Enable These Settings:
 
 **Protect matching branches:**
+
 - [x] **Require a pull request before merging**
   - [x] Require approvals: **1**
   - [x] Dismiss stale pull request approvals when new commits are pushed
@@ -61,12 +62,14 @@ Click **Create** or **Save changes** at the bottom.
 ### Environment 1: `production-render` (API Deployment)
 
 #### Step 1: Create Environment
+
 1. Go to Settings → Environments
 2. Click **New environment**
 3. Name: `production-render`
 4. Click **Configure environment**
 
 #### Step 2: Configure Environment Protection Rules
+
 - [x] **Required reviewers**
   - Add: `@MrMiless44` (or DevOps team members)
   - Number of reviewers: **1**
@@ -78,9 +81,11 @@ Click **Create** or **Save changes** at the bottom.
   - Add rule: `main`
 
 #### Step 3: Add Environment Secrets (if different from repo secrets)
+
 - `RENDER_DEPLOY_HOOK_URL` (if environment-specific)
 
 #### Step 4: Set Environment URL
+
 - Deployment URL: `https://infamous-freight-api.render.com`
 
 Click **Save protection rules**
@@ -90,12 +95,14 @@ Click **Save protection rules**
 ### Environment 2: `production-vercel` (Web Deployment)
 
 #### Step 1: Create Environment
+
 1. Go to Settings → Environments
 2. Click **New environment**
 3. Name: `production-vercel`
 4. Click **Configure environment**
 
 #### Step 2: Configure Environment Protection Rules
+
 - [x] **Required reviewers**
   - Add: `@MrMiless44` (or Web team members)
   - Number of reviewers: **1**
@@ -107,12 +114,14 @@ Click **Save protection rules**
   - Add rule: `main`
 
 #### Step 3: Add Environment Secrets
+
 - `VERCEL_TOKEN` (if environment-specific)
 - `VERCEL_ORG_ID`
 - `VERCEL_PROJECT_ID`
 - `NEXT_PUBLIC_API_URL`
 
 #### Step 4: Set Environment URL
+
 - Deployment URL: `https://infamous-freight-enterprises.vercel.app`
 
 Click **Save protection rules**
@@ -122,6 +131,7 @@ Click **Save protection rules**
 ### Environment 3: `staging` (Optional - For Pre-Production)
 
 Follow same steps as production environments but:
+
 - Name: `staging`
 - Required reviewers: **0** (or 1 if you want review)
 - Deployment branches: `develop` or `staging`
@@ -134,13 +144,16 @@ Follow same steps as production environments but:
 ### Slack Integration
 
 #### Step 1: Install GitHub App for Slack
+
 1. Go to: https://github.com/marketplace/slack-github
 2. Click **Set up a plan** (Free)
 3. Install on `Infamous-freight-enterprises` repository
 4. Follow Slack authorization
 
 #### Step 2: Subscribe to Events in Slack Channel
+
 In your Slack channel:
+
 ```
 /github subscribe MrMiless44/Infamous-freight-enterprises
 /github subscribe MrMiless44/Infamous-freight-enterprises deployments
@@ -148,6 +161,7 @@ In your Slack channel:
 ```
 
 #### Step 3: Customize Notifications
+
 ```
 /github subscribe MrMiless44/Infamous-freight-enterprises workflows
 /github unsubscribe MrMiless44/Infamous-freight-enterprises commits
@@ -174,18 +188,21 @@ In your Slack channel:
 After setup, verify:
 
 **Branch Protection:**
+
 - [ ] Try to push directly to `main` - should be blocked
 - [ ] Try to merge PR without approval - should be blocked
 - [ ] Try to merge PR with failing checks - should be blocked
 - [ ] Force push to `main` - should be blocked
 
 **Environments:**
+
 - [ ] Trigger deployment to `production-render` - should require approval
 - [ ] Trigger deployment to `production-vercel` - should require approval
 - [ ] Check environment URL is shown in deployment
 - [ ] Verify secrets are available in environment
 
 **Notifications:**
+
 - [ ] Slack receives deployment notifications
 - [ ] Email receives failure notifications
 - [ ] Notifications are not too noisy
@@ -195,16 +212,19 @@ After setup, verify:
 ## 🔧 Troubleshooting
 
 ### Branch Protection Not Working
+
 - Check that rule pattern matches exactly: `main`
 - Verify you're not an excluded admin (if "Include administrators" unchecked)
 - Wait 5-10 minutes for rules to propagate
 
 ### Environment Not Requiring Approval
+
 - Verify "Required reviewers" is set
 - Check that workflow uses `environment:` key correctly
 - Ensure deployment is from correct branch
 
 ### Notifications Not Received
+
 - Check spam/junk folder
 - Verify notification settings in GitHub profile
 - For Slack, verify app is installed and subscribed

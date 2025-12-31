@@ -1,0 +1,150 @@
+name: "Performance Regression Detection"
+description: "Detects performance regressions by comparing against baseline"
+author: "Infamous Freight Enterprises"
+
+branding:
+  icon: "trending-down"
+  color: "orange"
+
+inputs:
+  metric-name:
+    description: 'Name of the metric to track (e.g., "bundle-size", "response-time")'
+    required: true
+  current-value:
+    description: "Current measured value"
+    required: true
+  baseline-file:
+    description: "Path to baseline JSON file"
+    required: false
+    default: ".github/performance-baselines.json"
+  threshold-percent:
+    description: "Percentage threshold for regression (e.g., 10 for 10% regression)"
+    required: false
+    default: "10"
+  fail-on-regression:
+    description: "Whether to fail the workflow on regression"
+    required: false
+    default: "true"
+  update-baseline:
+    description: "Update baseline with current value if better"
+    required: false
+    default: "false"
+
+outputs:
+  regression:
+    description: "Whether a regression was detected (true/false)"
+  baseline-value:
+    description: "Baseline value for comparison"
+  difference:
+    description: "Difference between current and baseline"
+  difference-percent:
+    description: "Percentage difference"
+  status:
+    description: "Status: improved, regressed, or stable"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Detect Performance Regression
+      shell: bash
+      run: |
+        METRIC_NAME="${{ inputs.metric-name }}"
+        CURRENT_VALUE="${{ inputs.current-value }}"
+        BASELINE_FILE="${{ inputs.baseline-file }}"
+        THRESHOLD="${{ inputs.threshold-percent }}"
+        FAIL_ON_REGRESSION="${{ inputs.fail-on-regression }}"
+        UPDATE_BASELINE="${{ inputs.update-baseline }}"
+
+        echo "📊 Performance Regression Detection"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Metric: $METRIC_NAME"
+        echo "Current Value: $CURRENT_VALUE"
+        echo "Threshold: ${THRESHOLD}%"
+        echo ""
+
+        # Create baseline file if it doesn't exist
+        if [ ! -f "$BASELINE_FILE" ]; then
+          echo "{}" > "$BASELINE_FILE"
+          echo "📝 Created new baseline file"
+        fi
+
+        # Read baseline value
+        BASELINE_VALUE=$(jq -r ".[\"$METRIC_NAME\"] // \"null\"" "$BASELINE_FILE")
+
+        if [ "$BASELINE_VALUE" = "null" ]; then
+          echo "ℹ️  No baseline found for $METRIC_NAME"
+          echo "📝 Setting initial baseline: $CURRENT_VALUE"
+          
+          # Set initial baseline
+          jq ". + {\"$METRIC_NAME\": $CURRENT_VALUE}" "$BASELINE_FILE" > "${BASELINE_FILE}.tmp"
+          mv "${BASELINE_FILE}.tmp" "$BASELINE_FILE"
+          
+          echo "baseline-value=$CURRENT_VALUE" >> $GITHUB_OUTPUT
+          echo "regression=false" >> $GITHUB_OUTPUT
+          echo "difference=0" >> $GITHUB_OUTPUT
+          echo "difference-percent=0" >> $GITHUB_OUTPUT
+          echo "status=initial" >> $GITHUB_OUTPUT
+          
+          exit 0
+        fi
+
+        echo "📏 Baseline: $BASELINE_VALUE"
+
+        # Calculate difference
+        DIFFERENCE=$(echo "$CURRENT_VALUE - $BASELINE_VALUE" | bc)
+        DIFF_PERCENT=$(echo "scale=2; ($DIFFERENCE / $BASELINE_VALUE) * 100" | bc)
+
+        echo "📈 Difference: $DIFFERENCE (${DIFF_PERCENT}%)"
+        echo ""
+
+        # Determine status
+        REGRESSION=false
+        STATUS="stable"
+
+        if (( $(echo "$DIFF_PERCENT > $THRESHOLD" | bc -l) )); then
+          REGRESSION=true
+          STATUS="regressed"
+          echo "❌ REGRESSION DETECTED: ${DIFF_PERCENT}% increase (threshold: ${THRESHOLD}%)"
+        elif (( $(echo "$DIFF_PERCENT < -$THRESHOLD" | bc -l) )); then
+          STATUS="improved"
+          echo "✅ IMPROVEMENT: ${DIFF_PERCENT}% decrease"
+          
+          # Update baseline if requested
+          if [ "$UPDATE_BASELINE" = "true" ]; then
+            echo "📝 Updating baseline to $CURRENT_VALUE"
+            jq ". + {\"$METRIC_NAME\": $CURRENT_VALUE}" "$BASELINE_FILE" > "${BASELINE_FILE}.tmp"
+            mv "${BASELINE_FILE}.tmp" "$BASELINE_FILE"
+          fi
+        else
+          echo "✓ Performance is stable (within threshold)"
+        fi
+
+        # Output results
+        echo "baseline-value=$BASELINE_VALUE" >> $GITHUB_OUTPUT
+        echo "regression=$REGRESSION" >> $GITHUB_OUTPUT
+        echo "difference=$DIFFERENCE" >> $GITHUB_OUTPUT
+        echo "difference-percent=$DIFF_PERCENT" >> $GITHUB_OUTPUT
+        echo "status=$STATUS" >> $GITHUB_OUTPUT
+
+        # Create summary
+        echo "### 📊 Performance Check: $METRIC_NAME" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Current | $CURRENT_VALUE |" >> $GITHUB_STEP_SUMMARY
+        echo "| Baseline | $BASELINE_VALUE |" >> $GITHUB_STEP_SUMMARY
+        echo "| Difference | $DIFFERENCE (${DIFF_PERCENT}%) |" >> $GITHUB_STEP_SUMMARY
+        echo "| Status | ${STATUS^^} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [ "$REGRESSION" = "true" ]; then
+          echo "⚠️ **Regression detected!** Performance degraded by ${DIFF_PERCENT}%" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "$FAIL_ON_REGRESSION" = "true" ]; then
+            exit 1
+          fi
+        elif [ "$STATUS" = "improved" ]; then
+          echo "✅ Performance improved by ${DIFF_PERCENT}%" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✓ Performance is stable" >> $GITHUB_STEP_SUMMARY
+        fi

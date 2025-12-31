@@ -60,10 +60,25 @@ jobs:
         continue-on-error: true
 
       # 6️⃣ Lighthouse CI (SEO + Performance)
-      - name: Lighthouse CI
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli
+
+      - name: Run Lighthouse CI with Budget
         run: |
-          npm install -g @lhci/cli || echo "LHCI install skipped"
-          lhci autorun || echo "Lighthouse CI skipped"
+          if [ -d "dist" ]; then
+            lhci autorun --config=lighthouserc.json || echo "⚠️ Performance budget exceeded - check report"
+          else
+            echo "No dist directory found, skipping Lighthouse CI"
+          fi
+        continue-on-error: true
+
+      - name: Upload Lighthouse Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: .lighthouseci/
+          retention-days: 30
         continue-on-error: true
 
       # 7️⃣ Upload Pages artifact
