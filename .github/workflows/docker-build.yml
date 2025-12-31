@@ -37,9 +37,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: |
-          cd src/apps/api
-          pnpm exec prisma generate || echo "Prisma generation skipped"
+        run: pnpm --filter infamous-freight-api exec prisma generate || echo "Prisma generation skipped"
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
         continue-on-error: true
