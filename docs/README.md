@@ -2,12 +2,23 @@
 
 Welcome to the Infamous Freight Enterprise documentation! This index will help you find the information you need.
 
-## Getting Started
+## 🚀 Getting Started (IMPORTANT!)
+
+### ⭐ For Deployment RIGHT NOW
+
+- **[QUICK_START_RAILWAY.md](deployment/QUICK_START_RAILWAY.md)** - 5-minute Railway deployment (iPhone-friendly)
+- **[RAILWAY_DEPLOYMENT_CHECKLIST.md](deployment/RAILWAY_DEPLOYMENT_CHECKLIST.md)** - Complete deployment with verification steps
+
+### For Development
 
 - **[Developer Guide](developer-guide.md)** - Complete setup and development workflow guide
 - **[Repository Structure](repository-structure.md)** - Repository organization and file structure
 - **[Quick Reference](QUICK_REFERENCE.md)** - Common commands and quick tips
 - **[Contributing Guidelines](../CONTRIBUTING.md)** - How to contribute to the project
+
+## 📋 Session Summary
+
+- **[ALL_TASKS_COMPLETE.md](status/ALL_TASKS_COMPLETE.md)** - Dec 31, 2025 session: 79 tests, 92.81% coverage, ready to deploy
 
 ## Architecture & Design
 
