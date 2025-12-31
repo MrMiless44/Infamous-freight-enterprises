@@ -46,6 +46,12 @@ jobs:
             exit 1
           fi
 
+      - name: Verify pnpm and lockfile
+        run: |
+          echo "pnpm version: $(pnpm --version)"
+          echo "lockfile size: $(wc -c < pnpm-lock.yaml) bytes"
+          echo "lockfile format version: $(head -1 pnpm-lock.yaml)"
+
       - name: Install (workspace)
         env:
           HUSKY: 0
