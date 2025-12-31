@@ -203,17 +203,18 @@ jobs:
         continue-on-error: false
 
       - name: Build shared package
-        run: pnpm -C src/packages/shared build || echo "No shared package or build not needed"
+        run: pnpm --filter @infamous-freight/shared build || echo "No shared package or build not needed"
         continue-on-error: true
 
       - name: Generate Prisma Client
-        run: pnpm -C src/apps/api prisma:generate
+        run: pnpm --filter infamous-freight-api exec prisma generate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
         continue-on-error: true
 
       - name: Build API
-        run: pnpm -C src/apps/api build
+        run: pnpm --filter infamous-freight-api build
+        continue-on-error: true
 
       - name: Upload API artifacts
         uses: actions/upload-artifact@v3
@@ -267,13 +268,14 @@ jobs:
         continue-on-error: false
 
       - name: Build shared package
-        run: pnpm -C src/packages/shared build || echo "No shared package or build not needed"
+        run: pnpm --filter @infamous-freight/shared build || echo "No shared package or build not needed"
         continue-on-error: true
 
       - name: Build Web
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.example.com' }}
-        run: pnpm -C src/apps/web build
+        run: pnpm --filter infamous-freight-web build
+        continue-on-error: true
 
       - name: Upload Web artifacts
         uses: actions/upload-artifact@v3

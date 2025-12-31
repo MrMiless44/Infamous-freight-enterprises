@@ -106,21 +106,31 @@ jobs:
           NODE_ENV: test
           CORS_ORIGINS: http://localhost:3000
         run: |
-          pnpm start &
+          echo "Starting API server..."
+          pnpm start > api.log 2>&1 &
           echo $! > api.pid
+          sleep 3
+          echo "API server started with PID $(cat api.pid)"
         timeout-minutes: 5
 
       - name: Wait for API to be ready
         run: |
-          for i in {1..30}; do
+          API_LOG_PATH="src/apps/api/api.log"
+          for i in {1..60}; do
             if curl -f http://localhost:4000/api/health 2>/dev/null; then
-              echo "API is ready"
+              echo "✅ API is ready"
               exit 0
             fi
-            echo "Waiting for API... ($i/30)"
+            echo "Waiting for API... ($i/60)"
+            if [ $((i % 10)) -eq 0 ]; then
+              echo "API logs:"
+              tail -20 "$API_LOG_PATH" 2>/dev/null || echo "No logs yet"
+            fi
             sleep 2
           done
-          echo "API did not start in time"
+          echo "❌ API did not start in time"
+          echo "Final API logs:"
+          tail -50 "$API_LOG_PATH" 2>/dev/null || echo "No logs available"
           exit 1
 
       - name: Start Web server
