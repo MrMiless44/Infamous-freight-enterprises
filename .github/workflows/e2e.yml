@@ -97,6 +97,7 @@ jobs:
         continue-on-error: true
 
       - name: Start API server
+        working-directory: src/apps/api
         env:
           HUSKY: 0
           API_PORT: 4000
@@ -106,16 +107,21 @@ jobs:
           CORS_ORIGINS: http://localhost:3000
         run: |
           echo "Starting API server..."
-          pnpm --filter infamous-freight-api start > api.log 2>&1 &
-          echo $! > api.pid
-          sleep 3
-          echo "API server started with PID $(cat api.pid)"
-          echo "Checking if process is still running..."
-          if kill -0 $(cat api.pid) 2>/dev/null; then
+          echo "Current directory: $(pwd)"
+          echo "Checking for dist/server.js:"
+          ls -lah dist/server.js 2>/dev/null || echo "⚠️ dist/server.js NOT FOUND - build may have failed"
+          echo ""
+          echo "Starting Node.js server directly..."
+          node dist/server.js > ../../api.log 2>&1 &
+          API_PID=$!
+          echo $API_PID > ../../api.pid
+          sleep 2
+          echo "API process started with PID $API_PID"
+          if kill -0 $API_PID 2>/dev/null; then
             echo "✅ API process is running"
           else
-            echo "❌ API process died immediately, checking logs:"
-            cat api.log
+            echo "❌ API process died immediately, showing logs:"
+            cat ../../api.log 2>/dev/null || echo "No logs available"
           fi
         timeout-minutes: 5
 
@@ -127,19 +133,24 @@ jobs:
               echo "✅ API is ready"
               exit 0
             fi
-            echo "Waiting for API... ($i/60)"
+            echo "Attempt $i/60: Waiting for API..."
             if [ $((i % 10)) -eq 0 ]; then
-              echo "API logs:"
+              echo "API logs (last 20 lines):"
               tail -20 "$API_LOG_PATH" 2>/dev/null || echo "No logs yet"
+              echo ""
             fi
             sleep 2
           done
-          echo "❌ API did not start in time"
-          echo "Final API logs:"
+          echo "❌ API did not start in time after 120 seconds"
+          echo ""
+          echo "API logs (all):"
           cat "$API_LOG_PATH" 2>/dev/null || echo "No logs available"
           echo ""
-          echo "Process status:"
-          ps aux | grep -E "(node|pnpm)" | grep -v grep || echo "No process found"
+          echo "Running processes:"
+          ps aux | grep -E "(node|pnpm|api)" | grep -v grep || echo "No process found"
+          echo ""
+          echo "Network status:"
+          netstat -tulpn 2>/dev/null | grep -E "(4000|3000|LISTEN)" || echo "No netstat available"
           exit 1
 
       - name: Start Web server

@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         env:
           HUSKY: 0
-        run: pnpm -w install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
         run: pnpm --filter infamous-freight-api exec prisma generate
