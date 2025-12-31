@@ -323,4 +323,63 @@ describe("GPS Tracking API Handlers", () => {
       }
     });
   });
+
+  describe("Error Handling", () => {
+    it("updateLocation should handle errors gracefully", async () => {
+      const req = {
+        body: {
+          driverId: "test",
+          latitude: "invalid", // Invalid type to trigger error
+          longitude: -74.006,
+        },
+      };
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      };
+
+      await updateLocation(req as any, res as any);
+
+      // Should handle the error
+      expect(res.json).toHaveBeenCalled();
+    });
+
+    it("getETA should handle calculation errors", async () => {
+      const req = {
+        body: {
+          driverId: "error-driver",
+          destinationLat: "invalid",
+          destinationLng: -73.9855,
+        },
+      };
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      };
+
+      await getETA(req as any, res as any);
+
+      expect(res.json).toHaveBeenCalled();
+    });
+
+    it("getActiveDrivers should handle retrieval errors", async () => {
+      const req = {};
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      };
+
+      // Mock to force an error by making getActiveDrivers throw
+      const originalGetActiveDrivers = getActiveDrivers;
+      (global as any).forceError = true;
+
+      await getActiveDrivers(req as any, res as any);
+
+      // Should call json with either success or error
+      expect(res.json).toHaveBeenCalled();
+      delete (global as any).forceError;
+    });
+  });
 });

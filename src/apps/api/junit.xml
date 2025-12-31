@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="19" failures="1" errors="0" time="5.153">
-  <testsuite name="RouteOptimizer" errors="0" failures="1" skipped="1" timestamp="2025-12-30T21:43:04" time="4.839" tests="19">
-    <testcase classname="RouteOptimizer › optimizeRoute()" name="should optimize simple two-point route" time="0.014">
+<testsuites name="jest tests" tests="79" failures="0" errors="0" time="5.429">
+  <testsuite name="RouteOptimizer" errors="0" failures="0" skipped="1" timestamp="2025-12-30T21:43:30" time="4.402" tests="19">
+    <testcase classname="RouteOptimizer › optimizeRoute()" name="should optimize simple two-point route" time="0.013">
     </testcase>
     <testcase classname="RouteOptimizer › optimizeRoute()" name="should calculate fuel and cost estimates" time="0">
     </testcase>
@@ -14,13 +14,13 @@
     </testcase>
     <testcase classname="RouteOptimizer › optimizeMultiStop()" name="should handle large number of stops" time="0.001">
     </testcase>
-    <testcase classname="RouteOptimizer › compareRoutes()" name="should compare multiple route options" time="0.001">
+    <testcase classname="RouteOptimizer › compareRoutes()" name="should compare multiple route options" time="0">
     </testcase>
     <testcase classname="RouteOptimizer › distance calculations" name="should calculate distance accurately in routes" time="0">
     </testcase>
     <testcase classname="RouteOptimizer › performance" name="should optimize route in under 500ms" time="0.001">
     </testcase>
-    <testcase classname="RouteOptimizer › edge cases and validation" name="should handle routes with same start and end" time="0">
+    <testcase classname="RouteOptimizer › edge cases and validation" name="should handle routes with same start and end" time="0.001">
     </testcase>
     <testcase classname="RouteOptimizer › edge cases and validation" name="should handle routes with very close waypoints" time="0">
     </testcase>
@@ -32,31 +32,143 @@
     </testcase>
     <testcase classname="RouteOptimizer › edge cases and validation" name="should sort alternatives by estimated time" time="0.001">
     </testcase>
-    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should handle single stop" time="0">
+    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should handle single stop" time="0.007">
     </testcase>
-    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should optimize with many stops" time="0.002">
+    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should optimize with many stops" time="0.001">
     </testcase>
-    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should calculate efficiency improvement" time="0.006">
-      <failure>Error: expect(received).toBe(expected) // Object.is equality
-
-Expected: true
-Received: false
-    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/routeOptimizer.test.ts:258:49)
-    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
-    at _callCircusTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
-    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
-    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
-    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
-    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
-    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
-    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
-    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
-    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
-    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should calculate efficiency improvement" time="0.001">
     </testcase>
     <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should handle stops with duplicate locations" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="GPS Tracking API Handlers" errors="0" failures="0" skipped="0" timestamp="2025-12-30T21:43:35" time="0.135" tests="12">
+    <testcase classname="GPS Tracking API Handlers › updateLocation" name="should update driver location successfully" time="0.004">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › updateLocation" name="should return 400 if driverId is missing" time="0.001">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › updateLocation" name="should return 400 if latitude is missing" time="0.001">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › updateLocation" name="should return 400 if longitude is missing" time="0">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › updateLocation" name="should use default values for optional fields" time="0.001">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › updateLocation" name="should report speed alerts" time="0">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › getETA" name="should calculate ETA for driver" time="0.001">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › getETA" name="should return 400 if driverId is missing" time="0">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › getETA" name="should return 400 if destination is missing" time="0">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › getETA" name="should return 404 if driver not found" time="0">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › getActiveDrivers" name="should return list of active drivers" time="0.002">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › getActiveDrivers" name="should format driver data correctly" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Route Optimizer API Handlers" errors="0" failures="0" skipped="0" timestamp="2025-12-30T21:43:35" time="0.123" tests="15">
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should optimize a simple route successfully" time="0.005">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should optimize route with waypoints" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should return 400 if start is missing" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should return 400 if end is missing" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should format time estimate correctly" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should handle errors gracefully" time="0">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should optimize multi-stop route successfully" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if start is missing" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if stops is missing" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if stops is not an array" time="0">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if stops array is empty" time="0">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle single stop" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle many stops" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle errors gracefully" time="0">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should calculate efficiency percentage" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Rate Limiting Load Tests" errors="0" failures="0" skipped="0" timestamp="2025-12-30T21:43:35" time="0.197" tests="5">
+    <testcase classname="Rate Limiting Load Tests" name="should export runLoadTest function" time="0.002">
+    </testcase>
+    <testcase classname="Rate Limiting Load Tests" name="should export runLoadTestSuite function" time="0">
+    </testcase>
+    <testcase classname="Rate Limiting Load Tests" name="should export analyzeRateLimitCompliance function" time="0.001">
+    </testcase>
+    <testcase classname="Rate Limiting Load Tests" name="should export exampleRateLimitingTests function" time="0">
+    </testcase>
+    <testcase classname="Rate Limiting Load Tests" name="analyzeRateLimitCompliance should identify compliant tests" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="GPSTrackingManager" errors="0" failures="0" skipped="0" timestamp="2025-12-30T21:43:35" time="0.136" tests="19">
+    <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should store driver location" time="0.003">
+    </testcase>
+    <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should track multiple location updates" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should trigger speed alerts for excessive speed" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › calculateETA()" name="should calculate ETA based on current location" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › calculateETA()" name="should handle stationary drivers with lower confidence" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › calculateETA()" name="should return null for unknown driver" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › getLocationHistory()" name="should retrieve location history for a load" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › getActiveDrivers()" name="should return all active drivers" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › geofencing" name="should register geofences" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › geofencing" name="should detect geofence entry" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › storeLocationHistory()" name="should store location history" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › storeLocationHistory()" name="should store multiple histories for same driver" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › storeLocationHistory()" name="should return undefined for non-existent history" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › geofence exit detection" name="should detect geofence exit" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › geofence exit detection" name="should handle driver with no previous location" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › calculateETA() traffic factors" name="should apply peak hour traffic factor" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › calculateETA() traffic factors" name="should use minimum speed for stationary vehicles" time="0">
+    </testcase>
+    <testcase classname="GPSTrackingManager › performance" name="should handle high-frequency updates" time="0.001">
+    </testcase>
+    <testcase classname="GPSTrackingManager › edge cases" name="should handle invalid coordinates gracefully" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="DriverAvailabilityPredictor" errors="0" failures="0" skipped="0" timestamp="2025-12-30T21:43:35" time="0.12" tests="9">
+    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should have proper type definitions" time="0.002">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should have proper prediction input type" time="0.001">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should validate prediction result structure" time="0.001">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate weather conditions" time="0">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate traffic levels" time="0.001">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate time of day ranges" time="0.004">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support HIGH recommendation" time="0">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support MEDIUM recommendation" time="0.001">
+    </testcase>
+    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support LOW recommendation" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>

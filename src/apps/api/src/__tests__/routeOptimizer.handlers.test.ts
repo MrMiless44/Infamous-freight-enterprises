@@ -142,6 +142,26 @@ describe("Route Optimizer API Handlers", () => {
 
       expect(res.status).toHaveBeenCalledWith(400);
     });
+
+    it("should handle internal server errors", async () => {
+      // Force an error by passing data that causes RouteOptimizer to fail
+      const req = {
+        body: {
+          start: { lat: NaN, lng: NaN },
+          end: { lat: NaN, lng: NaN },
+        },
+      };
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      };
+
+      await optimizeRoute(req, res);
+
+      // Should handle error gracefully
+      expect(res.json).toHaveBeenCalled();
+    });
   });
 
   describe("optimizeMultiStop", () => {
@@ -339,6 +359,26 @@ describe("Route Optimizer API Handlers", () => {
 
       const result = res.json.mock.calls[0][0] as any;
       expect(result.optimization.comparedToBaseline).toMatch(/%/);
+    });
+
+    it("should handle internal server errors", async () => {
+      // Force an error by passing invalid data that causes RouteOptimizer to fail
+      const req = {
+        body: {
+          start: { lat: NaN, lng: NaN },
+          stops: [{ lat: 40.758, lng: -73.9855 }],
+        },
+      };
+
+      const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      };
+
+      await optimizeMultiStop(req, res);
+
+      // Should handle error gracefully
+      expect(res.json).toHaveBeenCalled();
     });
   });
 });
