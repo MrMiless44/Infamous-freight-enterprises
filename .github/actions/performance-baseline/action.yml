@@ -1,6 +1,6 @@
 name: "Performance Regression Detection"
-description: "Detects performance regressions by comparing against baseline"
-author: "Infamous Freight Enterprises"
+description: "Detects performance regressions by comparing current metrics against baseline values. Automatically tracks improvements and fails on threshold violations."
+author: "MrMiless44"
 
 branding:
   icon: "trending-down"

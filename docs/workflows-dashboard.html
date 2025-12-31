@@ -358,7 +358,11 @@
     <button class="refresh-btn" onclick="loadData()">🔄 Refresh</button>
 
     <script>
-      // Simulated data - In production, this would fetch from GitHub API
+      // Configuration
+      const METRICS_FILE = "metrics/workflow-data.json";
+      const USE_REAL_DATA = true; // Set to false to use mock data
+
+      // Mock data fallback (used when metrics file doesn't exist yet)
       const mockData = {
         totalRuns: 342,
         successRate: 87.4,

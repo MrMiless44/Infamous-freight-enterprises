@@ -1,0 +1,162 @@
+name: Collect Workflow Metrics
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  collect-metrics:
+    name: Collect and Store Metrics
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Collect workflow metrics
+        id: metrics
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "📊 Collecting workflow metrics..."
+          
+          # Create metrics directory if it doesn't exist
+          mkdir -p docs/metrics
+          
+          # Get workflow runs from last 30 days
+          SINCE_DATE=$(date -u -d '30 days ago' '+%Y-%m-%dT%H:%M:%SZ')
+          
+          # Initialize metrics
+          TOTAL_RUNS=0
+          SUCCESSFUL_RUNS=0
+          FAILED_RUNS=0
+          
+          # Get all workflow files
+          WORKFLOWS=$(find .github/workflows -name '*.yml' -o -name '*.yaml' | sort)
+          
+          # Create JSON output
+          echo "{" > docs/metrics/workflow-data.json
+          echo '  "lastUpdated": "'$(date -u '+%Y-%m-%dT%H:%M:%SZ')'",' >> docs/metrics/workflow-data.json
+          echo '  "period": "last30Days",' >> docs/metrics/workflow-data.json
+          echo '  "workflows": [' >> docs/metrics/workflow-data.json
+          
+          FIRST=true
+          
+          for workflow in $WORKFLOWS; do
+            WORKFLOW_NAME=$(basename "$workflow" .yml | sed 's/.yaml$//')
+            echo "  Processing: $WORKFLOW_NAME"
+            
+            # Get workflow runs (limited to avoid rate limiting)
+            RUNS=$(gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/repos/${{ github.repository }}/actions/workflows/$(basename $workflow)/runs?per_page=100&created=>=$SINCE_DATE" \
+              --jq '.workflow_runs | length' 2>/dev/null || echo "0")
+            
+            SUCCESS=$(gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/repos/${{ github.repository }}/actions/workflows/$(basename $workflow)/runs?per_page=100&status=success&created=>=$SINCE_DATE" \
+              --jq '.workflow_runs | length' 2>/dev/null || echo "0")
+            
+            FAILURE=$(gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/repos/${{ github.repository }}/actions/workflows/$(basename $workflow)/runs?per_page=100&status=failure&created=>=$SINCE_DATE" \
+              --jq '.workflow_runs | length' 2>/dev/null || echo "0")
+            
+            TOTAL_RUNS=$((TOTAL_RUNS + RUNS))
+            SUCCESSFUL_RUNS=$((SUCCESSFUL_RUNS + SUCCESS))
+            FAILED_RUNS=$((FAILED_RUNS + FAILURE))
+            
+            # Calculate success rate
+            if [ "$RUNS" -gt 0 ]; then
+              SUCCESS_RATE=$(echo "scale=2; ($SUCCESS / $RUNS) * 100" | bc)
+            else
+              SUCCESS_RATE="0"
+            fi
+            
+            # Add comma for subsequent entries
+            if [ "$FIRST" = false ]; then
+              echo "    ," >> docs/metrics/workflow-data.json
+            fi
+            FIRST=false
+            
+            # Add workflow data
+            cat >> docs/metrics/workflow-data.json << EOF
+    {
+      "name": "$WORKFLOW_NAME",
+      "totalRuns": $RUNS,
+      "successfulRuns": $SUCCESS,
+      "failedRuns": $FAILURE,
+      "successRate": $SUCCESS_RATE,
+              "lastRun": $(gh api \
+              -H "Accept: application/vnd.github+json" \
+              "/repos/${{ github.repository }}/actions/workflows/$(basename $workflow)/runs?per_page=1" \
+              --jq '.workflow_runs[0].created_at' 2>/dev/null || echo '""')
+    }
+EOF
+          done
+          
+          echo "" >> docs/metrics/workflow-data.json
+          echo "  ]," >> docs/metrics/workflow-data.json
+          
+          # Add summary
+          OVERALL_SUCCESS_RATE=$(echo "scale=2; ($SUCCESSFUL_RUNS / $TOTAL_RUNS) * 100" | bc)
+          
+          cat >> docs/metrics/workflow-data.json << EOF
+  "summary": {
+    "totalRuns": $TOTAL_RUNS,
+    "successfulRuns": $SUCCESSFUL_RUNS,
+    "failedRuns": $FAILED_RUNS,
+    "successRate": $OVERALL_SUCCESS_RATE
+  }
+}
+EOF
+          
+          echo "✅ Metrics collected:"
+          echo "   Total runs: $TOTAL_RUNS"
+          echo "   Successful: $SUCCESSFUL_RUNS"
+          echo "   Failed: $FAILED_RUNS"
+          echo "   Success rate: ${OVERALL_SUCCESS_RATE}%"
+          
+          # Set output for commit message
+          echo "total_runs=$TOTAL_RUNS" >> $GITHUB_OUTPUT
+          echo "success_rate=$OVERALL_SUCCESS_RATE" >> $GITHUB_OUTPUT
+      
+      - name: Commit metrics data
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          if [ -n "$(git status --porcelain docs/metrics/)" ]; then
+            git add docs/metrics/workflow-data.json
+            git commit -m "chore: Update workflow metrics data
+
+Total runs: ${{ steps.metrics.outputs.total_runs }}
+Success rate: ${{ steps.metrics.outputs.success_rate }}%
+Updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            
+            git push
+            echo "✅ Metrics data committed and pushed"
+          else
+            echo "ℹ️  No changes to commit"
+          fi
+      
+      - name: Create metrics summary
+        run: |
+          echo "### 📊 Workflow Metrics Updated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Period:** Last 30 days" >> $GITHUB_STEP_SUMMARY
+          echo "**Total Runs:** ${{ steps.metrics.outputs.total_runs }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Success Rate:** ${{ steps.metrics.outputs.success_rate }}%" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Metrics saved to: \`docs/metrics/workflow-data.json\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "View dashboard: [workflows-dashboard.html](../docs/workflows-dashboard.html)" >> $GITHUB_STEP_SUMMARY
