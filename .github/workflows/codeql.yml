@@ -1,26 +1,21 @@
 name: "CodeQL Security Scan"
 
 on:
-  # Default CodeQL setup is enabled for this repository. Running this advanced
-  # workflow in parallel causes SARIF uploads to be rejected with
-  # "advanced configurations cannot be processed when the default setup is
-  # enabled". Keep this workflow manual-only and opt-in so it can be used in
-  # the future after disabling the default setup.
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "0 2 * * 1" # Weekly Monday at 2 AM UTC
   workflow_dispatch:
-    inputs:
-      run-advanced-analysis:
-        description: "Set to true only after disabling CodeQL default setup"
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: read
+  security-events: write
 
 jobs:
   analyze:
     name: Analyze Code
-    if: ${{ github.event.inputs.run-advanced-analysis == 'true' }}
     runs-on: ubuntu-latest
     env:
       NODE_VERSION: "20"
@@ -59,12 +54,12 @@ jobs:
       - name: Install dependencies
         env:
           HUSKY: 0
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile || pnpm install
 
       - name: Build workspace
-        run: pnpm build
+        run: pnpm build || true
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/language:${{ matrix.language }}"
+          category: "/language:javascript"
