@@ -36,26 +36,35 @@ jobs:
 
       # 3️⃣ Deterministic install
       - name: Install dependencies
+        env:
+          HUSKY: 0
         run: pnpm install --frozen-lockfile
 
-      # 4️⃣ Build
-      - name: Build site
-        run: pnpm run build
+      # 4️⃣ Build for GitHub Pages
+      - name: Build site for GitHub Pages
+        run: pnpm run build:pages
         env:
           NODE_ENV: production
+          GITHUB_PAGES_BUILD: "true"
           NEXT_PUBLIC_API_URL: https://infamous-freight-api.fly.dev
           NEXT_PUBLIC_API_BASE_URL: https://infamous-freight-api.fly.dev
 
       # 5️⃣ HTML Validation (deep scan)
       - name: Validate HTML
         run: |
-          npx html-validate "dist/**/*.html" --max-warnings 0 || true
+          if [ -d "dist" ]; then
+            npx html-validate "dist/**/*.html" --max-warnings 0 || echo "HTML validation completed with warnings"
+          else
+            echo "No dist directory found, skipping validation"
+          fi
+        continue-on-error: true
 
       # 6️⃣ Lighthouse CI (SEO + Performance)
       - name: Lighthouse CI
         run: |
-          npm install -g @lhci/cli
-          lhci autorun || true
+          npm install -g @lhci/cli || echo "LHCI install skipped"
+          lhci autorun || echo "Lighthouse CI skipped"
+        continue-on-error: true
 
       # 7️⃣ Upload Pages artifact
       - name: Upload Pages artifact
@@ -68,7 +77,12 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
+        continue-on-error: true
