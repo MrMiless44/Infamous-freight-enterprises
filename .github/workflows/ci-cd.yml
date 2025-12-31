@@ -63,8 +63,12 @@ jobs:
           echo "| Type Check | ✅ |" >> $GITHUB_STEP_SUMMARY
   # Run tests
   test:
-    name: Test
+    name: Test (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20]
+      fail-fast: false
     services:
       postgres:
         image: postgres:15-alpine
@@ -96,7 +100,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ matrix.node-version }}
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2

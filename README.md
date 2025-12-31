@@ -8,8 +8,18 @@
 [![pnpm](https://img.shields.io/badge/pnpm-8.15.9-orange.svg)](https://pnpm.io)
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)]()
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](./LICENSE)
-[![Quality Checks](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/quality.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/quality.yml)
+
+## 📊 Workflow Status
+
+[![CI/CD Pipeline](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci-cd.yml)
+[![CI](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci.yml)
+[![E2E Tests](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/e2e.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/e2e.yml)
+[![Deploy API (Render)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/render-deploy.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/render-deploy.yml)
+[![Deploy Web (Vercel)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/vercel-deploy.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/vercel-deploy.yml)
+[![Docker Build](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/docker-build.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/docker-build.yml)
+[![GitHub Pages](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-pages.yml)
 [![CodeQL](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/codeql.yml)
+[![Quality Checks](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/quality.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/quality.yml)
 [![GHCR Build](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/docker-ghcr.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/docker-ghcr.yml)
 [![Prod Deploy](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-docker-compose.yml/badge.svg?branch=main)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/deploy-docker-compose.yml)
 
@@ -26,12 +36,14 @@ Infamous Freight Enterprises is a comprehensive logistics and fleet management s
 🎉 **MAJOR RELEASE - Complete Rebranding & IP Protection:**
 
 ✅ **Company Rebranding**
+
 - Rebranded from "Infamous Freight Enterprises LLC" to "**Infæmous Freight**"
 - Updated all documentation with new branding (æ ligature)
 - Updated package metadata across all packages
 - Version bumped to **v2.0.0**
 
 ✅ **Intellectual Property Protection**
+
 - Added proprietary LICENSE file with comprehensive protections
 - Added COPYRIGHT notice with owner information
 - Added AUTHORS file crediting Santorio Djuan Miles as founder
@@ -41,6 +53,7 @@ Infamous Freight Enterprises is a comprehensive logistics and fleet management s
 - Set license to "Proprietary" across all package.json files
 
 ✅ **Code Quality & Perfection**
+
 - Fixed all TypeScript errors (0 errors, 0 warnings)
 - Cleaned and optimized repository caches
 - Repository size optimized to 71MB
@@ -48,6 +61,7 @@ Infamous Freight Enterprises is a comprehensive logistics and fleet management s
 - All tests passing and type-safe
 
 ✅ **Deployment & Production**
+
 - Deployed to Vercel production
 - Code pushed to GitHub repository
 - Automatic CI/CD triggered
@@ -61,7 +75,20 @@ Infamous Freight Enterprises is a comprehensive logistics and fleet management s
 - [LEGAL_NOTICE.md](./LEGAL_NOTICE.md) - Legal terms and enforcement
 - [API_REFERENCE.md](./API_REFERENCE.md) - API endpoints & examples
 
-## 🚀 Quick Start
+## � GitHub Actions Documentation
+
+Comprehensive workflow documentation and guides:
+
+- **[Workflow Index](./.github/INDEX.md)** - Complete navigation guide
+- **[Workflow Guide](./.github/WORKFLOW_GUIDE.md)** - All 13 workflows explained in detail
+- **[Decision Tree](./.github/WORKFLOW_DECISION_TREE.md)** - When and why workflows trigger
+- **[Security Guide](./.github/SECURITY.md)** - Secrets rotation & compliance
+- **[Performance](./.github/PERFORMANCE.md)** - Performance budgets & monitoring
+- **[Metrics](./.github/METRICS.md)** - Cost tracking & monthly reviews
+
+See [.github/INDEX.md](./.github/INDEX.md) for quick navigation to all workflow documentation.
+
+## �🚀 Quick Start
 
 # Response
 

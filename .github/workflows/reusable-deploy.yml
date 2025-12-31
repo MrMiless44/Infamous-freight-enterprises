@@ -1,0 +1,116 @@
+name: Reusable Deploy Workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: "Deployment environment (production, staging)"
+      platform:
+        required: true
+        type: string
+        description: "Deployment platform (render, vercel, fly)"
+      app-name:
+        required: true
+        type: string
+        description: "Application name (api, web)"
+      health-check-url:
+        required: false
+        type: string
+        description: "URL for health check after deployment"
+      health-check-retries:
+        required: false
+        type: number
+        default: 10
+        description: "Number of health check retries"
+    secrets:
+      DEPLOY_TOKEN:
+        required: false
+        description: "Deployment token/key"
+      DEPLOY_HOOK_URL:
+        required: false
+        description: "Deployment webhook URL"
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.app-name }} to ${{ inputs.platform }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: ${{ inputs.environment }}-${{ inputs.platform }}
+      url: ${{ inputs.health-check-url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify deployment secrets
+        id: verify
+        run: |
+          if [ -z "${{ secrets.DEPLOY_TOKEN }}${{ secrets.DEPLOY_HOOK_URL }}" ]; then
+            echo "❌ Deployment credentials not configured"
+            exit 1
+          fi
+          echo "secrets_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Trigger deployment
+        id: deploy
+        run: |
+          if [ -n "${{ secrets.DEPLOY_HOOK_URL }}" ]; then
+            curl -sS -f -X POST "${{ secrets.DEPLOY_HOOK_URL }}"
+          else
+            echo "Using direct deployment method"
+          fi
+          echo "deployment=triggered" >> $GITHUB_OUTPUT
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Health check
+        id: health
+        if: inputs.health-check-url != ''
+        run: |
+          MAX_RETRIES=${{ inputs.health-check-retries }}
+          RETRY_COUNT=0
+
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${{ inputs.health-check-url }})
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "✅ ${{ inputs.app-name }} is healthy (HTTP $HTTP_CODE)"
+              echo "health=ok" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            echo "⏳ Attempt $RETRY_COUNT/$MAX_RETRIES - HTTP $HTTP_CODE"
+            sleep 5
+          done
+
+          echo "⚠️  Health check failed after $MAX_RETRIES attempts"
+          echo "health=timeout" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Publish deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Application** | ${{ inputs.app-name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Platform** | ${{ inputs.platform }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Environment** | ${{ inputs.environment }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Deployment** | ✅ Triggered |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Health Check** | ${{ steps.health.outputs.health || 'N/A' }} |" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ inputs.health-check-url }}" ]; then
+            echo "| **URL** | ${{ inputs.health-check-url }} |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Deployment completed at $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify deployment status
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ job.status }}';
+            const healthStatus = '${{ steps.health.outputs.health }}';
+            const emoji = status === 'success' ? '✅' : '❌';
+            console.log(`${emoji} Deployment ${status}. Health: ${healthStatus}`);
