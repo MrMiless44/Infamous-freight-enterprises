@@ -97,7 +97,6 @@ jobs:
         continue-on-error: true
 
       - name: Start API server
-        working-directory: src/apps/api
         env:
           HUSKY: 0
           API_PORT: 4000
@@ -107,15 +106,22 @@ jobs:
           CORS_ORIGINS: http://localhost:3000
         run: |
           echo "Starting API server..."
-          pnpm start > api.log 2>&1 &
+          pnpm --filter infamous-freight-api start > api.log 2>&1 &
           echo $! > api.pid
           sleep 3
           echo "API server started with PID $(cat api.pid)"
+          echo "Checking if process is still running..."
+          if kill -0 $(cat api.pid) 2>/dev/null; then
+            echo "✅ API process is running"
+          else
+            echo "❌ API process died immediately, checking logs:"
+            cat api.log
+          fi
         timeout-minutes: 5
 
       - name: Wait for API to be ready
         run: |
-          API_LOG_PATH="src/apps/api/api.log"
+          API_LOG_PATH="api.log"
           for i in {1..60}; do
             if curl -f http://localhost:4000/api/health 2>/dev/null; then
               echo "✅ API is ready"
@@ -130,7 +136,10 @@ jobs:
           done
           echo "❌ API did not start in time"
           echo "Final API logs:"
-          tail -50 "$API_LOG_PATH" 2>/dev/null || echo "No logs available"
+          cat "$API_LOG_PATH" 2>/dev/null || echo "No logs available"
+          echo ""
+          echo "Process status:"
+          ps aux | grep -E "(node|pnpm)" | grep -v grep || echo "No process found"
           exit 1
 
       - name: Start Web server
