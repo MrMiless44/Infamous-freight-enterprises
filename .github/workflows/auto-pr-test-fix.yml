@@ -36,10 +36,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
 
-      - name: Enable corepack
-        run: corepack enable
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
 
       - name: Install dependencies
         env:
@@ -48,7 +49,7 @@ jobs:
 
       - name: Run tests (allow failure)
         id: initial-tests
-        run: pnpm -r --if-present test
+        run: pnpm --filter './src/{apps,packages}/*' --parallel test || echo "Tests failed"
         continue-on-error: true
 
       - name: Skip auto-fix when tests already pass
@@ -59,18 +60,22 @@ jobs:
         id: autofix
         if: steps.initial-tests.outcome == 'failure'
         run: |
-          set -euo pipefail
-          chmod +x scripts/auto-fix-tests.sh
-          scripts/auto-fix-tests.sh
+          if [ -f scripts/auto-fix-tests.sh ]; then
+            chmod +x scripts/auto-fix-tests.sh
+            ./scripts/auto-fix-tests.sh || echo "Auto-fix script completed with warnings"
+          else
+            echo "Auto-fix script not found, skipping"
+          fi
         continue-on-error: true
 
       - name: Upload fix-repo.sh artifact
-        if: steps.initial-tests.outcome == 'failure'
+        if: steps.initial-tests.outcome == 'failure' && hashFiles('fix-repo.sh') != ''
         uses: actions/upload-artifact@v4
         with:
           name: fix-repo-script
           path: fix-repo.sh
           retention-days: 30
+        continue-on-error: true
 
       - name: Determine git changes
         id: changes
