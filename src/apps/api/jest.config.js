@@ -55,7 +55,7 @@ export default {
   coverageDirectory: "./coverage",
 
   // Coverage reporters
-  coverageReporters: ["text", "lcov", "html", "json-summary"],
+  coverageReporters: ["text", "lcov", "html", "json"],
 
   // Reporters
   reporters: [

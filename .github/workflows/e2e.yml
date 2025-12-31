@@ -24,7 +24,6 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
-    if: ${{ secrets.TEST_EMAIL != '' && secrets.TEST_PASSWORD != '' }}
     timeout-minutes: 30
 
     strategy:
