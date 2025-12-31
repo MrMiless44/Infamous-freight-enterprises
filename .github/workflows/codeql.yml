@@ -23,7 +23,7 @@ jobs:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    
+
     strategy:
       fail-fast: false
       matrix:
@@ -54,6 +54,8 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
+        env:
+          HUSKY: 0
         run: |
           echo "Installing dependencies..."
           pnpm install --frozen-lockfile --prefer-offline --no-audit || {

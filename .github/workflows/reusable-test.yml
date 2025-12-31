@@ -80,7 +80,15 @@ jobs:
         with:
           version: 8.15.9
 
+      - name: Setup pnpm cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: pnpm
+
       - name: Install dependencies
+        env:
+          HUSKY: 0
         run: pnpm install --frozen-lockfile
 
       - name: Build shared package (if needed)
