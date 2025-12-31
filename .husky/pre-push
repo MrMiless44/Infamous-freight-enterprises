@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 set -euo pipefail
 
-# Pre-push hook - Run tests before pushing
-echo "🧪 Running tests before push..."
+# Pre-push hook - Run tests and type checks before pushing
+echo "🧪 Running pre-push checks..."
 
 # Resolve repo root relative to this script so it works from any CWD
 REPO_ROOT="$(cd -- "$(dirname "$0")/.." && pwd -P)"
@@ -22,6 +22,18 @@ ensure_pnpm() {
   pnpm --version >/dev/null 2>&1
 }
 
+run_type_check() {
+  echo "✍️  Type checking..."
+  if ensure_pnpm; then
+    (cd "$REPO_ROOT" && pnpm typecheck) || {
+      echo "❌ Type check failed. Fix TypeScript errors before pushing."
+      return 1
+    }
+  else
+    echo "⚠️  pnpm unavailable; skipping type check"
+  fi
+}
+
 RUN_API_TESTS() {
   echo "📦 Running API tests..."
   if ensure_pnpm; then
@@ -33,9 +45,9 @@ RUN_API_TESTS() {
   fi
 }
 
-if RUN_API_TESTS; then
-  echo "✅ All tests passed. Pushing..."
+if run_type_check && RUN_API_TESTS; then
+  echo "✅ All pre-push checks passed. Pushing..."
 else
-  echo "❌ API tests failed. Fix tests before pushing."
+  echo "❌ Pre-push checks failed. Fix issues before pushing."
   exit 1
 fi

@@ -18,6 +18,18 @@ ensure_pnpm() {
   pnpm --version >/dev/null 2>&1
 }
 
+validate_workflows() {
+  echo "🔍 Validating GitHub Actions workflows..."
+  if command -v actionlint >/dev/null 2>&1; then
+    actionlint "$REPO_ROOT/.github/workflows/" || {
+      echo "⚠️  actionlint issues found. Install: brew install actionlint (macOS) or see github.com/rhysd/actionlint"
+      return 1
+    }
+  else
+    echo "⚠️  actionlint not installed, skipping workflow validation"
+  fi
+}
+
 run_lint_staged() {
   echo "🔍 Running lint-staged..."
   if ensure_pnpm; then
@@ -28,9 +40,9 @@ run_lint_staged() {
   fi
 }
 
-if run_lint_staged; then
+if validate_workflows && run_lint_staged; then
   echo "✅ Pre-commit checks passed!"
 else
-  echo "❌ Lint-staged checks failed. Commit aborted."
+  echo "❌ Pre-commit checks failed. Commit aborted."
   exit 1
 fi
