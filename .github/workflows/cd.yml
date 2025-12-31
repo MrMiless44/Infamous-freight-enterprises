@@ -14,13 +14,39 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-secrets:
+    name: Check deployment secrets
+    runs-on: ubuntu-latest
+    outputs:
+      has-fly-token: ${{ steps.check.outputs.has-fly-token }}
+      has-vercel-token: ${{ steps.check.outputs.has-vercel-token }}
+    steps:
+      - name: Check secrets
+        id: check
+        run: |
+          if [ -n "${{ secrets.FLY_API_TOKEN }}" ]; then
+            echo "has-fly-token=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-fly-token=false" >> $GITHUB_OUTPUT
+            echo "⚠️ FLY_API_TOKEN not configured, skipping Fly.io deployment"
+          fi
+          if [ -n "${{ secrets.VERCEL_TOKEN }}" ]; then
+            echo "has-vercel-token=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-vercel-token=false" >> $GITHUB_OUTPUT
+            echo "⚠️ VERCEL_TOKEN not configured, skipping Vercel deployment"
+          fi
+
   deploy-api:
     name: Deploy API to Fly.io
+    needs: check-secrets
+    if: needs.check-secrets.outputs.has-fly-token == 'true'
     uses: ./.github/workflows/fly-deploy.yml
     secrets: inherit
 
   deploy-web:
     name: Deploy Web to Vercel
-    needs: deploy-api
+    needs: [check-secrets, deploy-api]
+    if: always() && needs.check-secrets.outputs.has-vercel-token == 'true'
     uses: ./.github/workflows/vercel-deploy.yml
     secrets: inherit

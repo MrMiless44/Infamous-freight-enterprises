@@ -10,8 +10,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-secrets:
+    name: Check Render configuration
+    runs-on: ubuntu-latest
+    outputs:
+      has-deploy-hook: ${{ steps.check.outputs.has-deploy-hook }}
+    steps:
+      - name: Check secrets
+        id: check
+        run: |
+          if [ -n "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "has-deploy-hook=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-deploy-hook=false" >> $GITHUB_OUTPUT
+            echo "⚠️ RENDER_DEPLOY_HOOK_URL not configured, skipping deployment"
+          fi
+
   deploy:
     name: Deploy API to Render
+    needs: check-secrets
+    if: needs.check-secrets.outputs.has-deploy-hook == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:
