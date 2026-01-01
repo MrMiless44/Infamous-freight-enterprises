@@ -5,6 +5,8 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // Connection pooling via PgBouncer (recommended for production)
+  // Set DATABASE_URL with ?pgbouncer=true&connection_limit=50
 }
 
 model Organization {

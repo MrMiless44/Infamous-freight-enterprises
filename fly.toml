@@ -18,6 +18,7 @@ kill_timeout = "5s"
   auto_stop_machines = true
   auto_start_machines = true
   min_machines_running = 1
+  max_machines_running = 10
   processes = ["app"]
 
   [[http_service.checks]]
@@ -28,9 +29,9 @@ kill_timeout = "5s"
     path = "/api/health"
 
   [http_service.concurrency]
-    type = "connections"
-    hard_limit = 50
-    soft_limit = 35
+    type = "requests"
+    hard_limit = 250
+    soft_limit = 200
 
 [[vm]]
   memory = '1gb'
