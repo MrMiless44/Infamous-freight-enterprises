@@ -1,0 +1,141 @@
+# Fly.io Multi-Region Configuration
+# Deploy to multiple regions for global latency < 100ms
+
+[app]
+kill_signal = "SIGINT"
+kill_timeout = 5
+
+# Primary region (default)
+[env]
+NODE_ENV = "production"
+
+# Regions: iad (primary), dfw (Dallas), sea (Seattle), lax (LA), cdg (Paris), ord (Chicago)
+# Deploy command:
+# flyctl launch --copy-config --regions iad,dfw,sea,lax,cdg,ord
+
+[[services]]
+internal_port = 4000
+processes = ["app"]
+
+[services.http_options]
+h2c = true
+
+[[services.ports]]
+handlers = ["http"]
+port = 80
+
+[[services.ports]]
+handlers = ["tls", "http"]
+port = 443
+
+[services.tcp_checks]
+enabled = true
+grace_period = "10s"
+interval = "15s"
+min_timeout = "10s"
+timeout = "2s"
+
+# Autoscaling per region
+[[mounts]]
+source = "data"
+destination = "/data"
+
+[build]
+builtin = "dockerfile"
+
+# Docker image to use
+[build.args]
+NODE_VERSION = "20"
+REGISTRY = "node"
+
+# Performance settings for multi-region
+[env]
+# Connection pooling for databases
+DATABASE_POOL_SIZE = "50"
+DATABASE_STATEMENT_CACHE_SIZE = "100"
+
+# Redis connection pooling
+REDIS_MAX_CONNECTIONS = "100"
+REDIS_POOL_SIZE = "50"
+
+# WebSocket settings
+WEBSOCKET_HEARTBEAT_INTERVAL = "30000"
+
+# Enable compression for all responses
+ENABLE_BROTLI = "true"
+
+# Request timeout
+REQUEST_TIMEOUT_MS = "30000"
+
+# Per-region performance tuning
+# Can override at deployment time with:
+# flyctl secrets set REGION_CONFIG=$(cat region-config.json)
+
+[[vm]]
+memory = "1024mb"
+cpu_kind = "performance"
+cpus = 1
+
+[metrics]
+port = 9090
+handlers = ["http"]
+path = "/metrics"
+
+# Health checks per region
+[[services.http_checks]]
+grace_period = "30s"
+interval = "10s"
+method = "GET"
+path = "/api/health"
+protocol = "http"
+timeout = "5s"
+tls_skip_verify = false
+
+# Deployment options
+[env]
+# Faster deployments
+DOCKER_BUILDKIT = "1"
+
+# Multi-region specific
+# Use fly-replay header to route requests
+USE_FLY_REPLAY = "true"
+
+# Database replica handling
+DATABASE_REPLICAS = "dfw,sea,lax,cdg,ord"
+DATABASE_PRIMARY = "iad"
+
+# Cache consistency
+CACHE_INVALIDATION_STRATEGY = "event-based"
+
+# Logging
+LOG_LEVEL = "info"
+STRUCTURED_LOGS = "true"
+
+# Sentry configuration
+SENTRY_ENABLED = "true"
+SENTRY_ENVIRONMENT = "production"
+SENTRY_TRACES_SAMPLE_RATE = "0.1"
+
+# OpenTelemetry
+OTEL_ENABLED = "true"
+OTEL_EXPORTER_OTLP_ENDPOINT = "https://otel.infamous-freight.com:4317"
+
+# Rate limiting
+RATE_LIMIT_ENABLED = "true"
+RATE_LIMIT_GLOBAL_WINDOW = "60000"
+
+# Rollout strategy
+[deploy]
+strategy = "canary"
+max_unavailable = 0.5
+
+# Swap strategy for zero-downtime deploys
+[deploy]
+strategy = "immediate"
+wait_timeout = "300s"
+
+# Monitoring and alerting
+[env]
+HEALTH_CHECK_INTERVAL = "10s"
+HEALTH_CHECK_TIMEOUT = "5s"
+HEALTH_CHECK_PATH = "/api/health"
