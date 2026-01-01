@@ -11,6 +11,7 @@
 ### **Infrastructure & Deployment**
 
 #### 1. **Multi-Region Configuration** ✅
+
 - **File:** `fly-multiregion.toml`
 - **Description:** Configure Fly.io for global deployment across 6 regions
 - **Deploy:**
@@ -21,6 +22,7 @@
 - **Expected Impact:** <100ms latency globally, 5x redundancy
 
 #### 2. **Terraform Infrastructure-as-Code** ✅
+
 - **File:** `terraform/main.tf`
 - **Description:** Define all infrastructure as code for reproducible deployments
 - **Setup:**
@@ -35,20 +37,26 @@
 ### **Security Enhancements**
 
 #### 3. **End-to-End Encryption** ✅
+
 - **File:** `src/apps/api/src/lib/encryption.ts`
 - **Features:**
   - AES-256-GCM encryption
   - Field-level encryption for PII
   - Searchable encrypted fields via hashing
 - **Usage:**
+
   ```typescript
-  import { getEncryption } from './lib/encryption';
-  
-  const encrypted = getEncryption().encryptFields(shipment, ['origin', 'destination']);
+  import { getEncryption } from "./lib/encryption";
+
+  const encrypted = getEncryption().encryptFields(shipment, [
+    "origin",
+    "destination",
+  ]);
   await prisma.shipment.create({ data: encrypted });
   ```
 
 #### 4. **mTLS Service Authentication** ✅
+
 - **File:** `src/apps/api/src/middleware/mtls.ts`
 - **Features:**
   - Mutual TLS for service-to-service calls
@@ -56,12 +64,13 @@
   - Secure internal communication
 - **Setup:**
   ```typescript
-  generateSelfSignedCerts('./certs');
+  generateSelfSignedCerts("./certs");
   const server = createMTLSServer(app);
   const client = createMTLSClient();
   ```
 
 #### 5. **Security Event Logging & SIEM** ✅
+
 - **File:** `src/apps/api/src/middleware/securityEventLog.ts`
 - **Events Tracked:**
   - Authentication (success/failure/timeout)
@@ -70,14 +79,16 @@
   - Anomalies (brute force, account lockout)
   - Admin actions and config changes
 - **Integration:**
+
   ```typescript
   app.use(securityEventMiddleware);
   app.use(suspiciousActivityDetection);
-  
+
   logSecurityEvent(SecurityEventType.AUTH_SUCCESS, { userId });
   ```
 
 #### 6. **Tiered Rate Limiting** ✅
+
 - **File:** `src/apps/api/src/middleware/tieredRateLimit.ts`
 - **Tiers:**
   - Free: 100 req/hour
@@ -86,12 +97,13 @@
 - **Usage:**
   ```typescript
   app.use(tieredRateLimit);
-  app.get('/api/analytics', endpointLimiters.analytics, getAnalytics);
+  app.get("/api/analytics", endpointLimiters.analytics, getAnalytics);
   ```
 
 ### **Performance Optimizations**
 
 #### 7. **Response Compression (Brotli)** ✅
+
 - **File:** `src/apps/api/src/middleware/compression.ts`
 - **Compression:**
   - Brotli (30% smaller than gzip)
@@ -105,6 +117,7 @@
   ```
 
 #### 8. **Database Query Profiling** ✅
+
 - **File:** `src/apps/api/src/lib/queryProfiler.ts`
 - **Features:**
   - Identify slow queries (>1s)
@@ -113,7 +126,7 @@
 - **Setup:**
   ```typescript
   enableQueryProfiling(prisma);
-  app.get('/api/admin/query-stats', handleQueryStats);
+  app.get("/api/admin/query-stats", handleQueryStats);
   ```
 - **Best Practices Include:**
   - Using `.include()` for related data
@@ -122,6 +135,7 @@
   - Proper indexing
 
 #### 9. **Server-Sent Events (SSE)** ✅
+
 - **File:** `src/apps/api/src/routes/sse.ts`
 - **Endpoints:**
   - `/api/shipments/stream/:trackingNumber` - Real-time tracking
@@ -134,7 +148,7 @@
   - Native browser support
 - **Usage (Client):**
   ```javascript
-  const eventSource = new EventSource('/api/shipments/stream/IFE-12345');
+  const eventSource = new EventSource("/api/shipments/stream/IFE-12345");
   eventSource.onmessage = (event) => {
     const update = JSON.parse(event.data);
     updateUI(update);
@@ -144,6 +158,7 @@
 ### **Data Storage & Integration**
 
 #### 10. **AWS S3 Object Storage** ✅
+
 - **File:** `src/apps/api/src/routes/s3-storage.ts`
 - **Endpoints:**
   - `POST /shipments/:shipmentId/photo` - Upload photo
@@ -161,6 +176,7 @@
   ```
 
 #### 11. **Change Data Capture (CDC)** ✅
+
 - **File:** `src/apps/api/src/lib/changeDataCapture.ts`
 - **Features:**
   - Capture all data changes
@@ -168,16 +184,18 @@
   - Audit trail
   - Integration with external systems
 - **Setup:**
+
   ```typescript
   enableCDC(prisma);
   setupCDCSubscribers();
-  
+
   cdc.onChange(CDCEventType.SHIPMENT_CREATED, (event) => {
     // React to changes
   });
   ```
 
 #### 12. **API Webhooks System** ✅
+
 - **File:** `src/apps/api/src/routes/webhooks.ts`
 - **Features:**
   - Create webhooks for external systems
@@ -199,6 +217,7 @@
 ### **API Documentation**
 
 #### 13. **Swagger/OpenAPI Documentation** ✅
+
 - **File:** `src/apps/api/src/routes/swagger-docs.ts`
 - **Features:**
   - Auto-generated API docs
@@ -210,7 +229,7 @@
   - Raw spec: `GET /api-docs/openapi.json`
 - **Setup:**
   ```typescript
-  app.use('/api-docs', swaggerRouter);
+  app.use("/api-docs", swaggerRouter);
   ```
 
 ---
@@ -220,6 +239,7 @@
 ### **Phase 1: Core Infrastructure (Week 1)**
 
 1. **Deploy Terraform config:**
+
    ```bash
    cd terraform
    terraform init
@@ -227,6 +247,7 @@
    ```
 
 2. **Enable multi-region:**
+
    ```bash
    flyctl regions add dfw sea lax cdg ord
    ```
@@ -240,12 +261,14 @@
 ### **Phase 2: Security (Week 1-2)**
 
 1. **Enable encryption:**
+
    ```typescript
    // In main.ts
    enableQueryProfiling(prisma);
    ```
 
 2. **Set up mTLS:**
+
    ```bash
    node scripts/generate-certs.js
    ```
@@ -260,11 +283,13 @@
 ### **Phase 3: Performance (Week 2)**
 
 1. **Enable compression:**
+
    ```typescript
    app.use(compressionMiddleware);
    ```
 
 2. **Set up S3 storage:**
+
    ```bash
    aws configure
    aws s3 mb s3://infamous-freight-media
@@ -272,39 +297,41 @@
 
 3. **Enable SSE:**
    ```typescript
-   app.use('/api', sseRouter);
+   app.use("/api", sseRouter);
    ```
 
 ### **Phase 4: Integration (Week 3)**
 
 1. **Enable CDC:**
+
    ```typescript
    enableCDC(prisma);
    setupCDCSubscribers();
    ```
 
 2. **Enable webhooks:**
+
    ```typescript
    setupWebhookDelivery();
    ```
 
 3. **Generate API docs:**
    ```typescript
-   app.use('/api-docs', swaggerRouter);
+   app.use("/api-docs", swaggerRouter);
    ```
 
 ---
 
 ## 📊 Performance Improvements
 
-| Feature | Before | After | Improvement |
-|---------|--------|-------|-------------|
-| Response Size | 500KB | 150KB | **70% smaller** |
-| Query Time | 1000ms | 100ms | **10x faster** |
-| Concurrent Users | 50 | 500+ | **10x capacity** |
-| Storage Cost | $500/100GB | $23/100GB | **22x cheaper** |
-| Global Latency | >200ms | <50ms | **4x faster** |
-| Data Breach Risk | High | Minimal | **Encrypted** |
+| Feature          | Before     | After     | Improvement      |
+| ---------------- | ---------- | --------- | ---------------- |
+| Response Size    | 500KB      | 150KB     | **70% smaller**  |
+| Query Time       | 1000ms     | 100ms     | **10x faster**   |
+| Concurrent Users | 50         | 500+      | **10x capacity** |
+| Storage Cost     | $500/100GB | $23/100GB | **22x cheaper**  |
+| Global Latency   | >200ms     | <50ms     | **4x faster**    |
+| Data Breach Risk | High       | Minimal   | **Encrypted**    |
 
 ---
 
