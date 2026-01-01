@@ -1,6 +1,6 @@
 # Infæmous Freight
 
-**Version: v2.0.0** | **Proprietary Software** | **© 2025 Infæmous Freight. All Rights Reserved.**
+**Version: v2.0.0** | **Proprietary Software** | **© 2026 Infæmous Freight. All Rights Reserved.**
 
 [![Test Coverage](https://img.shields.io/badge/coverage-86.2%25-brightgreen.svg)](./api/coverage)
 [![Tests](https://img.shields.io/badge/tests-197%20passing-brightgreen.svg)](./api)
@@ -8,6 +8,8 @@
 [![pnpm](https://img.shields.io/badge/pnpm-8.15.9-orange.svg)](https://pnpm.io)
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)]()
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](./LICENSE)
+[![Platform](https://img.shields.io/badge/platform-64%2F64%20complete-brightgreen.svg)]()
+[![Business](https://img.shields.io/badge/business-ready%20for%20revenue-success.svg)]()
 
 ## � Deployment Status
 
