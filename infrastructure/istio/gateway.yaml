@@ -1,0 +1,149 @@
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: infamous-freight-gateway
+  namespace: infamous-freight
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: infamous-freight-tls
+      hosts:
+        - "*.infamousfreight.com"
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*.infamousfreight.com"
+      tls:
+        httpsRedirect: true
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: api-virtualservice
+  namespace: infamous-freight
+spec:
+  hosts:
+    - "api.infamousfreight.com"
+  gateways:
+    - infamous-freight-gateway
+  http:
+    - match:
+        - uri:
+            prefix: "/api"
+      route:
+        - destination:
+            host: api
+            port:
+              number: 4000
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+      timeout: 10s
+      corsPolicy:
+        allowOrigins:
+          - exact: "https://infamousfreight.com"
+          - exact: "https://app.infamousfreight.com"
+        allowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowHeaders:
+          - authorization
+          - content-type
+        allowCredentials: true
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: graphql-virtualservice
+  namespace: infamous-freight
+spec:
+  hosts:
+    - "graphql.infamousfreight.com"
+  gateways:
+    - infamous-freight-gateway
+  http:
+    - match:
+        - uri:
+            prefix: "/graphql"
+      route:
+        - destination:
+            host: api
+            port:
+              number: 4001
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+      timeout: 30s
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: api-destination
+  namespace: infamous-freight
+spec:
+  host: api
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        http1MaxPendingRequests: 50
+        http2MaxRequests: 100
+        maxRequestsPerConnection: 2
+    loadBalancer:
+      simple: LEAST_REQUEST
+    outlierDetection:
+      consecutiveErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+      minHealthPercent: 50
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: infamous-freight
+spec:
+  mtls:
+    mode: STRICT
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: api-authz
+  namespace: infamous-freight
+spec:
+  selector:
+    matchLabels:
+      app: api
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              [
+                "cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account",
+              ]
+    - to:
+        - operation:
+            methods: ["GET"]
+            paths: ["/api/health"]
