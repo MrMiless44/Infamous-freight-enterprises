@@ -9,7 +9,75 @@
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)]()
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](./LICENSE)
 
-## 📊 Workflow Status
+## � Deployment Status
+
+[![Auto Deploy](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/auto-deploy.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/auto-deploy.yml)
+[![Deploy API (Fly.io)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/fly-deploy.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/fly-deploy.yml)
+[![Deploy Web (Vercel)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/vercel-deploy.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/vercel-deploy.yml)
+[![Deploy Mobile (Expo)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/mobile-deploy.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/mobile-deploy.yml)
+
+**Live Deployments:**
+
+- 🌐 **Web**: [infamous-freight-enterprises.vercel.app](https://infamous-freight-enterprises.vercel.app)
+- 🔌 **API**: [infamous-freight-api.fly.dev](https://infamous-freight-api.fly.dev/api/health)
+- 📱 **Mobile**: [Expo EAS](https://expo.dev/@infamous-freight/mobile)
+
+> **🎉 100% AUTO-DEPLOYMENT READY!** All platforms configured with smart change detection. Push to `main` to deploy automatically!
+
+**Quick Start:**
+
+```bash
+# Verify configuration
+./scripts/verify-auto-deploy.sh
+
+# Check live services
+./scripts/check-deployments.sh
+
+# One-command setup (first time)
+./scripts/setup-auto-deploy.sh
+```
+
+**Documentation:**
+
+- 📝 [Quick Start Guide](AUTO_DEPLOY_READY.md) - 3 steps to deploy
+- 🔍 [Deployment Dashboard](DEPLOYMENT_STATUS.md) - Live status & monitoring
+- 📚 [Complete Guide](deploy/100_PERCENT_AUTO_DEPLOY.md) - Full documentation
+- 🐛 [Troubleshooting](deploy/FLY_TROUBLESHOOTING.md) - Debug issues
+
+## 🐳 Docker - 100% Production-Ready
+
+[![Docker Build](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/docker-build.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/docker-build.yml)
+
+> **✅ OPTIMIZED!** All Dockerfiles hardened with multi-stage builds, security best practices, and monorepo support.
+
+**Quick Commands:**
+
+```bash
+# Start all services
+./scripts/docker-manager.sh up
+
+# Check health
+./scripts/docker-manager.sh health
+
+# View logs
+./scripts/docker-manager.sh logs
+
+# Production build
+./scripts/docker-manager.sh prod-build
+```
+
+**Features:**
+
+- ✅ Multi-stage builds (base → deps → builder → runner)
+- ✅ Security hardened (non-root users, minimal attack surface)
+- ✅ Health checks for all services (30s interval)
+- ✅ Monorepo-aware (shared package support)
+- ✅ Optimized caching (pnpm store mounts)
+- ✅ Production-ready (PostgreSQL 16, Redis 7, Alpine Linux)
+
+**Documentation:** [DOCKER_COMPLETE.md](DOCKER_COMPLETE.md) - Complete Docker guide
+
+## �📊 Workflow Status
 
 [![CI/CD Pipeline](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci-cd.yml)
 [![CI](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci.yml/badge.svg)](https://github.com/MrMiless44/Infamous-freight-enterprises/actions/workflows/ci.yml)

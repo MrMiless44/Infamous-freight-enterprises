@@ -50,18 +50,19 @@ jobs:
           echo "secrets_ok=true" >> $GITHUB_OUTPUT
 
       - name: Build shared package
-        run: pnpm --filter @infamous-freight/shared build || echo "No shared package build needed"
-        continue-on-error: true
+        run: pnpm --filter @infamous-freight/shared build
+        continue-on-error: false
 
       - name: Pull Vercel Environment Information
         id: vercel-env
         run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         continue-on-error: true
 
-      - name: Build Project
+      - name: Build Project Artifacts
         id: build
         env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.example.com' }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://infamous-freight-api.fly.dev' }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://infamous-freight-api.fly.dev' }}
         run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy to Vercel
@@ -146,6 +147,8 @@ jobs:
 - **Timestamp:** ${new Date().toISOString()}
 
 ${status === '✅' ? '✨ **Web deployment successful!**' : '⚠️ **Web deployment failed. Check logs above.**'}`;
+
+            const { data: pullRequests } = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'closed',

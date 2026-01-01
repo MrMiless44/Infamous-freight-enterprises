@@ -3,6 +3,11 @@ name: CD
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - "archive/**"
+      - "docs/**"
+      - "**.md"
+      - ".vscode/**"
   workflow_dispatch:
 
 permissions:
@@ -11,9 +16,14 @@ permissions:
 
 concurrency:
   group: cd-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
+  # Run CI checks first before deploying
+  ci:
+    name: CI Checks
+    uses: ./.github/workflows/ci.yml
+
   check-secrets:
     name: Check deployment secrets
     runs-on: ubuntu-latest
@@ -39,14 +49,34 @@ jobs:
 
   deploy-api:
     name: Deploy API to Fly.io
-    needs: check-secrets
+    needs: [ci, check-secrets]
     if: needs.check-secrets.outputs.has-fly-token == 'true'
     uses: ./.github/workflows/fly-deploy.yml
     secrets: inherit
 
   deploy-web:
     name: Deploy Web to Vercel
-    needs: [check-secrets, deploy-api]
-    if: always() && needs.check-secrets.outputs.has-vercel-token == 'true'
+    needs: [ci, check-secrets]
+    if: needs.check-secrets.outputs.has-vercel-token == 'true'
     uses: ./.github/workflows/vercel-deploy.yml
     secrets: inherit
+
+  notify-success:
+    name: Deployment Success
+    needs: [deploy-api, deploy-web]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report status
+        run: |
+          echo "## 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- API Status: ${{ needs.deploy-api.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Web Status: ${{ needs.deploy-web.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.deploy-api.result }}" = "success" ]; then
+            echo "✅ API deployed to Fly.io" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ needs.deploy-web.result }}" = "success" ]; then
+            echo "✅ Web deployed to Vercel" >> $GITHUB_STEP_SUMMARY
+          fi

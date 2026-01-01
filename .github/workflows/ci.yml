@@ -4,10 +4,15 @@ on:
   pull_request:
     paths-ignore:
       - "archive/**"
+      - "docs/**"
+      - "**.md"
   push:
     branches: ["main"]
     paths-ignore:
       - "archive/**"
+      - "docs/**"
+      - "**.md"
+  workflow_call:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -29,10 +34,10 @@ jobs:
         with:
           version: 8.15.9
 
-      - name: Setup Node 18 + pnpm cache
+      - name: Setup Node 20 + pnpm cache
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: pnpm
 
       - name: "Guard: no package-lock.json anywhere"
@@ -70,7 +75,7 @@ jobs:
 
       - name: Build Shared Package
         run: pnpm --filter @infamous-freight/shared build
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Generate Prisma Client
         run: pnpm --filter infamous-freight-api exec prisma generate
@@ -78,11 +83,11 @@ jobs:
 
       - name: Build API
         run: pnpm --filter infamous-freight-api build
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Build Web
         run: pnpm --filter infamous-freight-web build
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Build Mobile
         run: pnpm --filter infamous-freight-mobile build

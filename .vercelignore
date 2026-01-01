@@ -1,32 +1,72 @@
 # Dependencies
+
 node_modules
+\*\*/node_modules
+.pnpm-store
 pnpm-lock.yaml.orig
 
-# Build outputs
-.next
-dist
-build
-coverage
+# API & Mobile (not needed for web deployment)
 
-# Development
+src/apps/api
+src/apps/mobile
+api
+mobile
+
+# Build outputs (keep web .next)
+
+dist
+coverage
+playwright-report
+
+# Development & Environment
+
 .env.local
-.env.*.local
+.env.\*.local
+.env.development
+.env.test
 .git
 .gitignore
 
 # Logs and temporary
-*.log
+
+_.log
 .DS_Store
+_.pem
 
 # IDE
+
 .vscode
 .idea
+_.swp
+_.swo
 
 # Test files
-__tests__
-*.test.ts
-*.test.js
-junit.xml
 
-# Archives
+**tests** \*_/**tests**
+_.test.ts
+_.test.js
+_.spec.ts
+\*.spec.js
+junit.xml
+tests/e2e
+
+# Archives & Docs
+
 archive
+docs
+
+# CI/CD
+
+.github
+.husky
+
+# Docker
+
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Database
+
+prisma/_.db
+prisma/_.db-journal

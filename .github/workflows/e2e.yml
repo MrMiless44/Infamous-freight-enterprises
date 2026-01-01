@@ -74,7 +74,7 @@ jobs:
 
       - name: Build Shared Package
         run: pnpm --filter @infamous-freight/shared build
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Generate Prisma client
         run: pnpm --filter infamous-freight-api exec prisma generate
@@ -94,34 +94,57 @@ jobs:
 
       - name: Build API
         run: pnpm --filter infamous-freight-api build
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Start API server
         working-directory: src/apps/api
         env:
           HUSKY: 0
           API_PORT: 4000
+          API_HOST: 0.0.0.0
+          API_BASE_PATH: /api
+          API_URL: http://localhost:4000
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           JWT_SECRET: test-secret-for-e2e
           NODE_ENV: test
           CORS_ORIGINS: http://localhost:3000
+          # Provide fallback values for optional env vars to prevent requireEnv errors
+          OPENAI_API_KEY: test-openai-key
+          ANTHROPIC_API_KEY: test-anthropic-key
+          STRIPE_API_KEY: test-stripe-key
+          STRIPE_SECRET_KEY: test-stripe-secret
+          STRIPE_PUBLISHABLE_KEY: test-stripe-publishable
+          STRIPE_WEBHOOK_SECRET: test-stripe-webhook
+          STRIPE_SUCCESS_URL: http://localhost:3000/success
+          STRIPE_CANCEL_URL: http://localhost:3000/cancel
+          PAYPAL_CLIENT_ID: test-paypal-client
+          PAYPAL_SECRET: test-paypal-secret
+          PAYPAL_CLIENT_SECRET: test-paypal-secret
+          AI_SYNTHETIC_ENGINE_URL: http://localhost:3001
+          AI_SYNTHETIC_API_KEY: test-synthetic-key
         run: |
           echo "Starting API server..."
           echo "Current directory: $(pwd)"
           echo "Checking for dist/server.js:"
           ls -lah dist/server.js 2>/dev/null || echo "⚠️ dist/server.js NOT FOUND - build may have failed"
           echo ""
-          echo "Starting Node.js server directly..."
-          node dist/server.js > ../../api.log 2>&1 &
+          echo "Environment variables set:"
+          echo "  API_PORT=$API_PORT"
+          echo "  NODE_ENV=$NODE_ENV"
+          echo "  DATABASE_URL is set"
+          echo ""
+          echo "Starting Node.js server with: node dist/server.js"
+          timeout 10 node dist/server.js > ../../api.log 2>&1 &
           API_PID=$!
           echo $API_PID > ../../api.pid
-          sleep 2
+          sleep 3
           echo "API process started with PID $API_PID"
           if kill -0 $API_PID 2>/dev/null; then
             echo "✅ API process is running"
           else
             echo "❌ API process died immediately, showing logs:"
             cat ../../api.log 2>/dev/null || echo "No logs available"
+            exit 1
           fi
         timeout-minutes: 5
 
@@ -159,7 +182,7 @@ jobs:
           NEXT_PUBLIC_API_URL: http://localhost:4000
           PORT: 3000
         run: |
-          pnpm build || echo "Build completed with warnings"
+          pnpm build
           pnpm start &
           echo $! > web.pid
         timeout-minutes: 5

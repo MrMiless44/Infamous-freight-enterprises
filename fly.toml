@@ -1,0 +1,49 @@
+# fly.toml - Main configuration for Fly.io deployment
+app = "infamous-freight-api"
+primary_region = "iad"
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+[build]
+  # Use the Fly.io optimized Dockerfile
+  dockerfile = "Dockerfile.fly"
+
+[env]
+  PORT = "4000"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 4000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/api/health"
+
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 50
+    soft_limit = 35
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+# Metrics and monitoring
+[metrics]
+  port = 9091
+  path = "/metrics"
+
+# Optional: Persistent storage for logs/temp files
+# Uncomment and run: flyctl volumes create data --region iad --size 1
+# [mounts]
+#   source = "data"
+#   destination = "/app/data"

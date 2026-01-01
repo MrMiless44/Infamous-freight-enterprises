@@ -1,5 +1,6 @@
-# Production-optimized Dockerfile for API
-# Multi-stage build with security hardening
+# Fly.io optimized Dockerfile for API
+# Build from project root with monorepo structure
+# Production-ready with security hardening and multi-stage optimization
 
 FROM node:20-alpine AS base
 
@@ -20,15 +21,15 @@ ENV PNPM_HOME=/usr/local/bin
 FROM base AS deps
 WORKDIR /app
 
-# Copy workspace configuration
+# Copy workspace files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY src/apps/api/package.json ./src/apps/api/package.json
 COPY src/packages/shared/package.json ./src/packages/shared/package.json
 
-# Install all dependencies with cache mount
+# Install dependencies with frozen lockfile and cache mount
 ENV HUSKY=0
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --filter infamous-freight-api... --frozen-lockfile
+    pnpm install --filter infamous-freight-api... --frozen-lockfile --prod=false
 
 # Stage 2: Build shared packages
 FROM base AS shared-builder
@@ -42,11 +43,11 @@ COPY src/packages/shared ./src/packages/shared
 WORKDIR /app/src/packages/shared
 RUN pnpm run build
 
-# Stage 3: Build API application
+# Stage 3: Build application
 FROM base AS builder
 WORKDIR /app
 
-# Copy dependencies
+# Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/src/apps/api/node_modules ./src/apps/api/node_modules
 
@@ -54,17 +55,9 @@ COPY --from=deps /app/src/apps/api/node_modules ./src/apps/api/node_modules
 COPY --from=shared-builder /app/src/packages/shared/dist ./src/packages/shared/dist
 COPY --from=shared-builder /app/src/packages/shared/package.json ./src/packages/shared/package.json
 
-# Copy workspace configuration
+# Copy source files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
-# Copy Prisma schema for the API
-COPY src/apps/api/prisma ./src/apps/api/prisma
-
-# Copy API source and configuration
-COPY src/apps/api/tsconfig.json ./src/apps/api/tsconfig.json
-COPY src/apps/api/scripts ./src/apps/api/scripts
-COPY src/apps/api/src ./src/apps/api/src
-COPY src/apps/api/package.json ./src/apps/api/package.json
+COPY src/apps/api ./src/apps/api
 
 # Generate Prisma client and build
 WORKDIR /app/src/apps/api
@@ -97,15 +90,17 @@ RUN addgroup -g 1001 -S nodejs && \
     mkdir -p /app/logs /app/tmp && \
     chown -R nodejs:nodejs /app
 
-# Copy only production dependencies and built artifacts
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+# Copy only necessary files for production
 COPY --from=builder --chown=nodejs:nodejs /app/src/apps/api/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/src/apps/api/prisma ./prisma
 COPY --from=builder --chown=nodejs:nodejs /app/src/apps/api/package.json ./package.json
 
 # Copy built shared package
-COPY --from=shared-builder --chown=nodejs:nodejs /app/src/packages/shared/dist ./node_modules/@infamous-freight/shared/dist
-COPY --from=shared-builder --chown=nodejs:nodejs /app/src/packages/shared/package.json ./node_modules/@infamous-freight/shared/package.json
+COPY --from=shared-builder --chown=nodejs:nodejs /app/src/packages/shared/dist /app/node_modules/@infamous-freight/shared/dist
+COPY --from=shared-builder --chown=nodejs:nodejs /app/src/packages/shared/package.json /app/node_modules/@infamous-freight/shared/package.json
+
+# Copy production node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 
 # Switch to non-root user
 USER nodejs
@@ -113,10 +108,10 @@ USER nodejs
 # Expose port
 EXPOSE 4000
 
-# Health check
+# Health check (using wget for ESM compatibility)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:4000/api/health || exit 1
 
-# Use dumb-init for proper signal handling
+# Use dumb-init to handle signals properly
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["node", "dist/server.js"]
