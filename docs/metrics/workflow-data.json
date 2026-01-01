@@ -1,0 +1,11 @@
+{
+  "lastUpdated": "2026-01-01T12:22:49.797725Z",
+  "period": "last30Days",
+  "workflows": [],
+  "summary": {
+    "totalRuns": 30,
+    "successfulRuns": 0,
+    "failedRuns": 0,
+    "successRate": 0.0
+  }
+}
