@@ -79,7 +79,7 @@ jobs:
           echo "analysis<<EOF" >> $GITHUB_OUTPUT
           echo "$ANALYSIS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Prepare fallback analysis
         id: fallback_analysis
@@ -123,7 +123,7 @@ $ANALYSIS
             --body "$ISSUE_BODY" \
             --label "ci-failure,ai-analysis" \
             2>/dev/null || echo "Issue creation skipped"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Generate optimization suggestions
         id: optimization
@@ -170,7 +170,7 @@ $ANALYSIS
           echo "suggestions<<EOF" >> $GITHUB_OUTPUT
           echo "$SUGGESTIONS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Log analysis summary
         run: |
@@ -204,7 +204,7 @@ $ANALYSIS
           gh run list \
             --json "databaseId,name,updatedAt,status" \
             --limit 10 > /tmp/runs.json 2>/dev/null || echo "[]" > /tmp/runs.json
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Analyze performance trends (if data available)
         if: env.OPENAI_API_KEY != '' && env.OPENAI_API_KEY != 'null'
@@ -212,7 +212,7 @@ $ANALYSIS
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           echo "Performance analysis skipped (optional feature)"
-        continue-on-error: true
+        continue-on-error: false
 
 ---
 

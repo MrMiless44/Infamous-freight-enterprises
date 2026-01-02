@@ -205,26 +205,31 @@ CUSTOM REPORTING
 ## 💰 Quick Pricing Examples
 
 ### Example 1: Same-Day Local
+
 - Distance: 20 miles
 - Service: Local Delivery
 - **Total**: $45 + (20 × $0.50) = **$55.00**
 
 ### Example 2: Multi-State Regional
+
 - Distance: 300 miles
 - Service: Regional
 - **Total**: $75 + (300 × $0.35) = **$180.00**
 
 ### Example 3: Cross-Country FTL
+
 - Distance: 1,500 miles
 - Service: FTL
 - **Total**: $2,500 + (1,500 × $1.50) = **$4,750.00**
 
 ### Example 4: Temperature-Controlled LTL
+
 - Weight: 5,000 lbs
 - Service: LTL + Temp Control
 - **Total**: $50 + (5000 × $0.02) + $50 = **$150.00**
 
 ### Example 5: Bulk Regional (100 shipments)
+
 - Service: Regional ($75 base)
 - Volume: 100 (10% discount)
 - **Unit Price**: $75 × 0.90 = $67.50
@@ -235,18 +240,21 @@ CUSTOM REPORTING
 ## 🔌 API Endpoints
 
 ### Get All Products
+
 ```bash
 GET /billing/products
 GET /billing/products?category=shipping
 ```
 
 ### Get Product Details
+
 ```bash
 GET /billing/products/{productId}
 GET /billing/products/category/{category}
 ```
 
 ### Get Quote
+
 ```bash
 POST /billing/quote
 {
@@ -258,6 +266,7 @@ POST /billing/quote
 ```
 
 ### Get Bulk Pricing
+
 ```bash
 POST /billing/bulk-pricing
 {
@@ -267,6 +276,7 @@ POST /billing/bulk-pricing
 ```
 
 ### Create Checkout
+
 ```bash
 POST /billing/stripe/checkout
 {
@@ -278,6 +288,7 @@ POST /billing/stripe/checkout
 ```
 
 ### Get Pricing Summary
+
 ```bash
 GET /billing/stripe/pricing-summary
 ```
@@ -287,7 +298,9 @@ GET /billing/stripe/pricing-summary
 ## 🎯 Common Use Cases
 
 ### Startup (Low Volume)
+
 **Recommended**: Pay-Per-Use + Basic Analytics
+
 ```
 Usage: 50 shipments/month @ $25 avg = $1,250/month
 Analytics: $9.99/month
@@ -295,7 +308,9 @@ Total: ~$1,260/month
 ```
 
 ### Growing Business (Medium Volume)
+
 **Recommended**: Professional Plan + Fleet Tracking (5 vehicles)
+
 ```
 Subscription: $299.99/month
 Fleet Tracking: 5 × $9.99 = $49.95/month
@@ -303,7 +318,9 @@ Total: $349.94/month (~$4,200/year)
 ```
 
 ### Enterprise (High Volume)
+
 **Recommended**: Enterprise Plan + All Add-ons
+
 ```
 Subscription: $999.99/month
 Driver App: 50 drivers × $4.99 = $249.50/month
@@ -317,28 +334,33 @@ Total: $1,949.28/month (~$23,400/year)
 ## 🚀 Getting Started
 
 ### Step 1: Choose Service Type
+
 - Select shipping service (local, regional, cross-country, etc.)
 - Identify any specialty requirements (hazmat, temp, etc.)
 
 ### Step 2: Get Quote
+
 ```bash
 POST /billing/quote
 # Returns itemized pricing
 ```
 
 ### Step 3: Verify in Stripe
+
 ```bash
 GET /billing/stripe/pricing-summary
 # Confirms product sync
 ```
 
 ### Step 4: Create Checkout
+
 ```bash
 POST /billing/stripe/checkout
 # Gets Stripe session URL
 ```
 
 ### Step 5: Payment
+
 - Redirect to Stripe checkout
 - Customer completes payment
 - Webhook confirms order
@@ -347,27 +369,27 @@ POST /billing/stripe/checkout
 
 ## 📞 Support Resources
 
-| Resource | Purpose | Link |
-|----------|---------|------|
-| **API Docs** | Technical integration | `/api/docs/billing` |
-| **Catalog** | Full product list | `/billing/products` |
-| **Pricing** | Current rates | `/billing/stripe/pricing-summary` |
-| **Stripe Dashboard** | Payment admin | dashboard.stripe.com |
+| Resource             | Purpose               | Link                              |
+| -------------------- | --------------------- | --------------------------------- |
+| **API Docs**         | Technical integration | `/api/docs/billing`               |
+| **Catalog**          | Full product list     | `/billing/products`               |
+| **Pricing**          | Current rates         | `/billing/stripe/pricing-summary` |
+| **Stripe Dashboard** | Payment admin         | dashboard.stripe.com              |
 
 ---
 
 ## ✅ Implementation Status
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Products Defined | ✅ | 45+ products in catalog |
-| Stripe Sync | ✅ | All products synced |
-| API Endpoints | ✅ | All routes implemented |
-| Pricing Logic | ✅ | Distance + weight based |
-| Discounts | ✅ | Volume-based tiers |
-| Subscriptions | ✅ | Monthly/annual options |
-| Checkout | ✅ | Stripe integration active |
-| Documentation | ✅ | Complete with examples |
+| Component        | Status | Notes                     |
+| ---------------- | ------ | ------------------------- |
+| Products Defined | ✅     | 45+ products in catalog   |
+| Stripe Sync      | ✅     | All products synced       |
+| API Endpoints    | ✅     | All routes implemented    |
+| Pricing Logic    | ✅     | Distance + weight based   |
+| Discounts        | ✅     | Volume-based tiers        |
+| Subscriptions    | ✅     | Monthly/annual options    |
+| Checkout         | ✅     | Stripe integration active |
+| Documentation    | ✅     | Complete with examples    |
 
 ---
 

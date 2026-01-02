@@ -34,7 +34,7 @@ jobs:
 
       - name: Generate Prisma client
         run: pnpm --filter infamous-freight-api exec prisma generate
-        continue-on-error: true
+        continue-on-error: false
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 

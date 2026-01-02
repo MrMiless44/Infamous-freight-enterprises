@@ -1,5 +1,6 @@
 {
-  "name": "infamous-freight-api",
+  "name": "infamous-freight-api-legacy",
+  "private": true,
   "version": "2.0.0",
   "description": "REST API for freight management platform with authentication, billing, AI integration, and voice features",
   "main": "src/server.js",
@@ -21,7 +22,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.0",
-    "@infamous-freight/shared": "file:../packages/shared",
+    "@infamous-freight/shared": "workspace:*",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@prisma/client": "^5.11.0",
     "@sentry/node": "^7.100.0",

@@ -31,6 +31,11 @@ jobs:
           node-version: 18
           cache: "pnpm"
 
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
+
       - name: Install dependencies
         env:
           HUSKY: 0
@@ -46,11 +51,11 @@ jobs:
         run: pnpm --filter infamous-freight-api exec prisma generate || echo "Prisma generation skipped"
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Build shared package (if exists)
         run: pnpm --filter @infamous-freight/shared build || echo "No shared package"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -65,7 +70,7 @@ jobs:
           file: ./src/apps/api/Dockerfile
           push: false
           tags: ghcr.io/${{ env.REGISTRY_OWNER }}/infamous-freight-api:test
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Build WEB image
         uses: docker/build-push-action@v5
@@ -76,4 +81,4 @@ jobs:
           tags: ghcr.io/${{ env.REGISTRY_OWNER }}/infamous-freight-web:test
           build-args: |
             DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
-        continue-on-error: true
+        continue-on-error: false

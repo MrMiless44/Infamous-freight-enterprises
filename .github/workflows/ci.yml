@@ -79,7 +79,7 @@ jobs:
 
       - name: Generate Prisma Client
         run: pnpm --filter infamous-freight-api exec prisma generate
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Build API
         run: pnpm --filter infamous-freight-api build
@@ -91,12 +91,12 @@ jobs:
 
       - name: Build Mobile
         run: pnpm --filter infamous-freight-mobile build
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Lint
         run: pnpm lint || echo "Linting completed with warnings"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Type Check
         run: pnpm typecheck || echo "Type checking completed with warnings"
-        continue-on-error: true
+        continue-on-error: false

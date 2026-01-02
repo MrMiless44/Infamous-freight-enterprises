@@ -73,7 +73,7 @@ jobs:
 
           print(f"✅ Metrics initialized with {total_runs} total runs")
           PYTHON_SCRIPT
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Commit metrics data
         run: |
@@ -93,7 +93,7 @@ jobs:
           else
             echo "⚠️ Metrics file not created"
           fi
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Create metrics summary
         run: |

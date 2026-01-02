@@ -43,6 +43,11 @@ jobs:
         with:
           node-version: 20
 
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
+
       - name: Install k6
         run: |
           sudo gpg -k
@@ -186,7 +191,7 @@ jobs:
             --env VUS=${{ inputs.vus }} \
             --out json=load-test-results.json \
             load-test.js
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Parse results
         if: always()

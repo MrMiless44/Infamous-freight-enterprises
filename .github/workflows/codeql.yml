@@ -53,6 +53,11 @@ jobs:
           node-version: "20"
           cache: "pnpm"
 
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
+
       - name: Install dependencies
         env:
           HUSKY: 0
@@ -67,19 +72,19 @@ jobs:
         run: |
           echo "Building API..."
           cd src/apps/api && pnpm build || echo "API build completed with warnings"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Build Shared Package
         run: |
           echo "Building shared package..."
           pnpm --filter @infamous-freight/shared build || echo "Shared build completed with warnings"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Build Web
         run: |
           echo "Building web app..."
           cd src/apps/web && pnpm build || echo "Web build completed with warnings"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

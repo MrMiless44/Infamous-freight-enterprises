@@ -35,6 +35,10 @@ jobs:
           node-version: 18
           cache: "pnpm"
 
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
       - name: Install dependencies
         env:
           HUSKY: 0
@@ -56,7 +60,7 @@ jobs:
       - name: Pull Vercel Environment Information
         id: vercel-env
         run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Build Project Artifacts
         id: build
@@ -93,7 +97,7 @@ jobs:
           done
           echo "⚠️  Health check failed"
           echo "health=timeout" >> $GITHUB_OUTPUT
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Publish deployment summary
         run: |

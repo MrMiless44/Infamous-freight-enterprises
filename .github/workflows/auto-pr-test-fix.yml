@@ -37,6 +37,11 @@ jobs:
         with:
           node-version: 20
 
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
+
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
@@ -56,7 +61,7 @@ jobs:
       - name: Run tests (allow failure)
         id: initial-tests
         run: pnpm --filter './src/{apps,packages}/*' --parallel test || echo "Tests failed"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Skip auto-fix when tests already pass
         if: steps.initial-tests.outcome == 'success'
@@ -72,7 +77,7 @@ jobs:
           else
             echo "Auto-fix script not found, skipping"
           fi
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Upload fix-repo.sh artifact
         if: steps.initial-tests.outcome == 'failure' && hashFiles('fix-repo.sh') != ''
@@ -81,7 +86,7 @@ jobs:
           name: fix-repo-script
           path: fix-repo.sh
           retention-days: 30
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Determine git changes
         id: changes

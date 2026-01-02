@@ -2,13 +2,17 @@
   "name": "@infamous-freight/shared",
   "version": "1.0.0",
   "description": "Shared TypeScript utilities, types, and constants for Infamous Freight monorepo",
-  "type": "module",
+  "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "scripts": {

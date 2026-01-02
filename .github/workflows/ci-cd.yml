@@ -36,17 +36,21 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@${{ env.PNPM_VERSION }} --activate
       - name: Install dependencies (optimized)
         run: pnpm install --frozen-lockfile
         continue-on-error: false
 
       - name: Lint (fail-safe)
         run: pnpm lint
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Type check (fail-safe)
         run: pnpm check:types || pnpm typecheck
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Publish results
         if: always()
@@ -113,7 +117,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:test_password@localhost:5432/test_db
         run: |
-          pnpm --filter infamous-freight-api exec prisma generate || true
+          pnpm --filter infamous-freight-api exec prisma generate
           pnpm --filter infamous-freight-api exec prisma migrate deploy || true
 
       - name: Run tests (parallel)
@@ -126,14 +130,14 @@ jobs:
           CORS_ORIGINS: http://localhost:3000
           AI_PROVIDER: synthetic
         run: pnpm --filter infamous-freight-api test:coverage
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           files: ./src/apps/api/coverage/coverage-final.json
           flags: api-node-${{ matrix.node-version }}
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Report
         if: always()
@@ -168,7 +172,7 @@ jobs:
 
       - name: Generate Prisma Client
         run: pnpm --filter infamous-freight-api exec prisma generate
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Build API (parallel)
         run: pnpm --filter infamous-freight-api build --prod
@@ -180,7 +184,7 @@ jobs:
           name: api-build-${{ github.run_id }}
           path: src/apps/api/dist
           retention-days: 5
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Report
         if: always()
@@ -226,7 +230,7 @@ jobs:
           name: web-build-${{ github.run_id }}
           path: src/apps/web/.next
           retention-days: 5
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Report
         if: always()
@@ -263,7 +267,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: "trivy-results.sarif"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Report
         if: always()
@@ -284,13 +288,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Deploy to staging
         env:
           DEPLOY_KEY: ${{ secrets.STAGING_DEPLOY_KEY }}
         run: echo "✅ Staging deployment complete"
-        continue-on-error: true
+        continue-on-error: false
 
   # Deploy to production
   deploy-production:
@@ -308,13 +312,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Deploy to production
         env:
           DEPLOY_KEY: ${{ secrets.PRODUCTION_DEPLOY_KEY }}
         run: echo "✅ Production deployment complete"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Notify deployment
         uses: 8398a7/action-slack@v3
@@ -323,7 +327,7 @@ jobs:
           text: "Production deployment ${{ job.status }}"
           webhook_url: ${{ secrets.SLACK_WEBHOOK }}
         if: always() && secrets.SLACK_WEBHOOK
-        continue-on-error: true
+        continue-on-error: false
 
   # Load testing (parallel with production)
   load-test:
@@ -353,7 +357,7 @@ jobs:
         env:
           API_BASE_URL: https://api.infamousfreight.com
         run: pnpm run load-test || echo "Load test complete"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Upload results
         uses: actions/upload-artifact@v4
@@ -361,7 +365,7 @@ jobs:
           name: load-test-results-${{ github.run_id }}
           path: load-test-results.json
           retention-days: 7
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Report
         if: always()

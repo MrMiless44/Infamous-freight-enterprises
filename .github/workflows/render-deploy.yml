@@ -70,7 +70,7 @@ jobs:
           done
           echo "⚠️  Health check failed after $MAX_RETRIES attempts"
           echo "health=timeout" >> $GITHUB_OUTPUT
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Publish deployment summary
         run: |

@@ -33,6 +33,11 @@ jobs:
           node-version: 20
           cache: pnpm
 
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
+
       - name: Setup Expo
         uses: expo/expo-github-action@v8
         with:
@@ -60,7 +65,7 @@ jobs:
           if [ -n "${{ secrets.EXPO_TOKEN }}" ]; then
             eas build --platform ios --profile production --non-interactive --no-wait
           fi
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Build and Deploy Android
         working-directory: src/apps/mobile
@@ -68,7 +73,7 @@ jobs:
           if [ -n "${{ secrets.EXPO_TOKEN }}" ]; then
             eas build --platform android --profile production --non-interactive --no-wait
           fi
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Publish Update
         working-directory: src/apps/mobile
@@ -76,7 +81,7 @@ jobs:
           if [ -n "${{ secrets.EXPO_TOKEN }}" ]; then
             eas update --auto
           fi
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Deployment Summary
         run: |

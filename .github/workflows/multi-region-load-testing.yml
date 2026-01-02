@@ -149,7 +149,7 @@ jobs:
           cat /tmp/regional-load-test.js
 
       - name: Run regional load test
-        continue-on-error: true
+        continue-on-error: false
         env:
           K6_CLOUD: 'false'
         run: |
@@ -309,7 +309,7 @@ jobs:
           SCRIPT
 
       - name: Run failover test
-        continue-on-error: true
+        continue-on-error: false
         env:
           K6_CLOUD: 'false'
         run: |

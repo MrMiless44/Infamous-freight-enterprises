@@ -61,6 +61,11 @@ jobs:
           node-version: 18
           cache: pnpm
 
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
+
       - name: Install dependencies
         env:
           HUSKY: 0
@@ -80,14 +85,14 @@ jobs:
         run: pnpm --filter infamous-freight-api exec prisma generate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Run database migrations
         working-directory: src/apps/api
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
         run: pnpm exec prisma migrate deploy || echo "Migrations completed"
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps ${{ matrix.browser }}
@@ -207,7 +212,7 @@ jobs:
           NEXT_PUBLIC_API_URL: http://localhost:4000
           TEST_EMAIL: ${{ secrets.TEST_EMAIL || 'test@example.com' }}
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD || 'testpassword123' }}
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Cleanup servers
         if: always()
@@ -245,7 +250,7 @@ jobs:
           path: test-results/junit.xml
           reporter: java-junit
           fail-on-error: false
-        continue-on-error: true
+        continue-on-error: false
 
   e2e-summary:
     name: E2E Tests Summary

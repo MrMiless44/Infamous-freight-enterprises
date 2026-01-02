@@ -42,6 +42,12 @@ jobs:
           node-version: "20"
           cache: "pnpm"
 
+      - name: Enable Corepack & pnpm
+        if: ${{ !inputs.skip_build }}
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
+
       - name: Install and build (optional)
         if: ${{ !inputs.skip_build }}
         env:
@@ -49,7 +55,7 @@ jobs:
         run: |
           pnpm install || true
           pnpm build || true
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Autobuild (let CodeQL handle it)
         if: ${{ inputs.skip_build }}
