@@ -25,6 +25,7 @@
     "clean": "rm -rf dist coverage"
   },
   "dependencies": {
+    "@infamous-freight/shared": "workspace:*",
     "@paypal/paypal-server-sdk": "^1.0.4",
     "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.1",
