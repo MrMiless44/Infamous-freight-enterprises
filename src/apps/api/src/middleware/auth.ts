@@ -47,13 +47,13 @@ function decodeToken(token: string): AuthUser | null {
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
-    return res.sendStatus(401);
+    return res.status(401).json({ error: "Authorization header required" });
   }
 
   const token = authHeader.split(" ")[1];
   const user = decodeToken(token);
   if (!user) {
-    return res.sendStatus(401);
+    return res.status(401).json({ error: "Invalid or expired token" });
   }
 
   req.user = user;
@@ -63,23 +63,12 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 export function requireScope(scope: string) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      const authHeader = req.headers.authorization;
-      if (!authHeader?.startsWith("Bearer ")) {
-        return res.sendStatus(401);
-      }
-
-      const token = authHeader.split(" ")[1];
-      const user = decodeToken(token);
-      if (!user) {
-        return res.sendStatus(401);
-      }
-
-      req.user = user;
+      return res.status(403).json({ error: "User context required" });
     }
 
     const scopes = req.user.scopes ?? [];
     if (!scopes.includes(scope)) {
-      return res.sendStatus(403);
+      return res.status(403).json({ error: "Insufficient scope" });
     }
 
     return next();

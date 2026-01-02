@@ -1,15 +1,15 @@
 /**
  * Phase 3 Feature 1: Predictive Driver Availability
- * 
+ *
  * ML model that predicts driver availability (probability they will be online)
  * Uses historical patterns, time of day, weather, traffic, and behavioral signals
- * 
+ *
  * Deployment: Days 1-2 of Phase 3
  * Expected Accuracy: 85%+
  * Business Impact: 30% faster dispatch times
  */
 
-import type { Request, Response } from 'express';
+import type { Request, Response } from "express";
 
 /**
  * Driver availability prediction model training
@@ -21,7 +21,7 @@ export interface DriverAvailabilityData {
   hoursWorked: number;
   dayOfWeek: number;
   timeOfDay: number; // 0-23
-  weatherCondition: 'clear' | 'rain' | 'snow' | 'fog';
+  weatherCondition: "clear" | "rain" | "snow" | "fog";
   trafficLevel: number; // 0-100
   recentLoadCount: number;
   averageRating: number;
@@ -31,7 +31,7 @@ export interface DriverAvailabilityData {
 export interface PredictionInput {
   driverId: string;
   currentTime: Date;
-  weatherCondition: 'clear' | 'rain' | 'snow' | 'fog';
+  weatherCondition: "clear" | "rain" | "snow" | "fog";
   trafficLevel: number;
   recentLoadCount: number;
 }
@@ -48,14 +48,14 @@ export interface PredictionResult {
     recentActivity: number;
     historicalPattern: number;
   };
-  recommendation: 'HIGH' | 'MEDIUM' | 'LOW';
+  recommendation: "HIGH" | "MEDIUM" | "LOW";
   estimatedTimeOnline: number; // minutes
 }
 
 /**
  * Predictive model using behavioral patterns
  */
-class DriverAvailabilityPredictor {
+export class DriverAvailabilityPredictor {
   private driverHistories: Map<string, DriverAvailabilityData[]> = new Map();
   private modelWeights = {
     timeOfDay: 0.25,
@@ -109,8 +109,13 @@ class DriverAvailabilityPredictor {
     const dayOfWeekFactor = this.calculateDayOfWeekFactor(input.currentTime);
     const weatherFactor = this.calculateWeatherFactor(input.weatherCondition);
     const trafficFactor = this.calculateTrafficFactor(input.trafficLevel);
-    const recentActivityFactor = this.calculateRecentActivityFactor(input.recentLoadCount);
-    const historicalFactor = this.calculateHistoricalFactor(history, input.currentTime);
+    const recentActivityFactor = this.calculateRecentActivityFactor(
+      input.recentLoadCount,
+    );
+    const historicalFactor = this.calculateHistoricalFactor(
+      history,
+      input.currentTime,
+    );
 
     // Weighted combination
     const availabilityProbability =
@@ -122,16 +127,19 @@ class DriverAvailabilityPredictor {
       this.modelWeights.historicalPattern * historicalFactor;
 
     // Calculate confidence based on data availability
-    const confidence = Math.min(0.95, 0.7 + (Math.min(history.length, 100) / 100) * 0.25);
+    const confidence = Math.min(
+      0.95,
+      0.7 + (Math.min(history.length, 100) / 100) * 0.25,
+    );
 
     // Determine recommendation
-    let recommendation: 'HIGH' | 'MEDIUM' | 'LOW' = 'LOW';
-    if (availabilityProbability >= 0.7) recommendation = 'HIGH';
-    else if (availabilityProbability >= 0.4) recommendation = 'MEDIUM';
+    let recommendation: "HIGH" | "MEDIUM" | "LOW" = "LOW";
+    if (availabilityProbability >= 0.7) recommendation = "HIGH";
+    else if (availabilityProbability >= 0.4) recommendation = "MEDIUM";
 
     // Estimate time online
     const estimatedTimeOnline = Math.round(
-      (availabilityProbability * 480 + (1 - availabilityProbability) * 60)
+      availabilityProbability * 480 + (1 - availabilityProbability) * 60,
     );
 
     return {
@@ -195,7 +203,7 @@ class DriverAvailabilityPredictor {
    */
   private calculateTrafficFactor(trafficLevel: number): number {
     // Traffic level 0-100, inverse relationship
-    return Math.max(0.3, 1 - trafficLevel / 100 * 0.7);
+    return Math.max(0.3, 1 - (trafficLevel / 100) * 0.7);
   }
 
   /**
@@ -212,7 +220,10 @@ class DriverAvailabilityPredictor {
   /**
    * Calculate historical pattern factor
    */
-  private calculateHistoricalFactor(history: DriverAvailabilityData[], time: Date): number {
+  private calculateHistoricalFactor(
+    history: DriverAvailabilityData[],
+    time: Date,
+  ): number {
     if (history.length === 0) return 0.5;
 
     // Find similar time slots in history
@@ -220,7 +231,7 @@ class DriverAvailabilityPredictor {
     const dayOfWeek = time.getDay();
 
     const similarRecords = history.filter(
-      (h) => h.timeOfDay === hour && h.dayOfWeek === dayOfWeek
+      (h) => h.timeOfDay === hour && h.dayOfWeek === dayOfWeek,
     );
 
     if (similarRecords.length === 0) return 0.5;
@@ -234,21 +245,34 @@ class DriverAvailabilityPredictor {
  * Express route handler for predictions
  */
 export async function predictDriverAvailability(req: Request, res: Response) {
-  const { driverId, weatherCondition, trafficLevel, recentLoadCount } = req.body;
+  const {
+    driverId,
+    weatherCondition,
+    trafficLevel,
+    recentLoadCount,
+    currentTime,
+  } = req.body ?? {};
 
   if (!driverId) {
     return res.status(400).json({
-      error: 'driverId is required',
+      error: "driverId is required",
     });
   }
 
   try {
+    const predictionTime = currentTime ? new Date(currentTime) : new Date();
+    if (Number.isNaN(predictionTime.getTime())) {
+      return res.status(400).json({
+        error: "currentTime must be a valid date string",
+      });
+    }
+
     const predictor = new DriverAvailabilityPredictor();
 
     const prediction = predictor.predict({
       driverId,
-      currentTime: new Date(),
-      weatherCondition: weatherCondition || 'clear',
+      currentTime: predictionTime,
+      weatherCondition: weatherCondition || "clear",
       trafficLevel: trafficLevel || 0,
       recentLoadCount: recentLoadCount || 0,
     });
@@ -259,8 +283,8 @@ export async function predictDriverAvailability(req: Request, res: Response) {
     });
   } catch (error) {
     res.status(500).json({
-      error: 'Prediction failed',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      error: "Prediction failed",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
@@ -270,51 +294,93 @@ export async function predictDriverAvailability(req: Request, res: Response) {
  */
 export async function getDispatchRecommendations(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   try {
-    // In production, this would query all available drivers
-    // and rank them by availability probability
+    const {
+      targetTime,
+      minAvailability = 0.5,
+      limit = 5,
+      weatherCondition = "clear",
+      trafficLevel = 50,
+    } = req.body ?? {};
 
-    const mockAvailableDrivers = [
-      {
-        driverId: 'driver-1',
-        availabilityProbability: 0.92,
-        estimatedTimeOnline: 420,
-        rating: 4.8,
-      },
-      {
-        driverId: 'driver-2',
-        availabilityProbability: 0.85,
-        estimatedTimeOnline: 360,
-        rating: 4.6,
-      },
-      {
-        driverId: 'driver-3',
-        availabilityProbability: 0.68,
-        estimatedTimeOnline: 240,
-        rating: 4.4,
-      },
+    if (!targetTime) {
+      res.status(400).json({
+        error: "targetTime is required",
+      });
+      return;
+    }
+
+    const parsedTargetTime = new Date(targetTime);
+    if (Number.isNaN(parsedTargetTime.getTime())) {
+      res.status(400).json({
+        error: "targetTime must be a valid date string",
+      });
+      return;
+    }
+
+    // In production, this would query real driver data
+    const mockDriverPool = [
+      { driverId: "driver-1", recentLoadCount: 2 },
+      { driverId: "driver-2", recentLoadCount: 5 },
+      { driverId: "driver-3", recentLoadCount: 1 },
+      { driverId: "driver-4", recentLoadCount: 7 },
+      { driverId: "driver-5", recentLoadCount: 3 },
     ];
 
-    // Sort by availability probability (descending)
-    const recommendations = mockAvailableDrivers.sort(
-      (a, b) => b.availabilityProbability - a.availabilityProbability
+    const predictor = new DriverAvailabilityPredictor();
+    const predictions = mockDriverPool.map((driver) =>
+      predictor.predict({
+        driverId: driver.driverId,
+        currentTime: parsedTargetTime,
+        weatherCondition,
+        trafficLevel,
+        recentLoadCount: driver.recentLoadCount,
+      }),
     );
+
+    const availabilityThreshold = Math.max(
+      0,
+      Math.min(1, Number(minAvailability) || 0),
+    );
+    const maxResults = Math.max(1, Math.floor(Number(limit) || 0));
+
+    const recommendations = predictions
+      .filter(
+        (prediction) =>
+          prediction.availabilityProbability >= availabilityThreshold,
+      )
+      .sort((a, b) => b.availabilityProbability - a.availabilityProbability)
+      .slice(0, maxResults);
 
     res.json({
       success: true,
       data: {
         recommendations,
-        dispatchTimeEstimate: '2.3 minutes', // vs 3.2 minutes without ML
-        improvementFactor: 1.3,
+        filters: {
+          minAvailability: availabilityThreshold,
+          limit: maxResults,
+        },
+        requestedTime: parsedTargetTime.toISOString(),
       },
     });
   } catch (error) {
     res.status(500).json({
-      error: 'Failed to get recommendations',
+      error: "Failed to get recommendations",
     });
   }
+}
+
+/**
+ * Export handler aliases expected by tests and legacy routes
+ */
+export async function predictAvailability(req: Request, res: Response) {
+  return predictDriverAvailability(req, res);
+}
+
+export async function getRecommendations(req: Request, res: Response) {
+  return getDispatchRecommendations(req, res);
 }
 
 export default DriverAvailabilityPredictor;
