@@ -9,25 +9,26 @@
 
 ## 📊 Deployment Readiness Summary
 
-| Component | Status | Details |
-|-----------|--------|---------|
-| **Workspace Setup** | ✅ Complete | pnpm workspaces, `workspace:*` linking, TypeScript config |
-| **Shared Package** | ✅ Complete | CommonJS exports, dist build, path aliases |
-| **Build Scripts** | ✅ Complete | `build:shared`, `build:api`, `build:web`, `build:mobile` |
-| **CI/CD Workflows** | ✅ Complete | 19 GitHub Actions workflows (test, build, security, deploy) |
-| **Fly.io Deployment** | ✅ Complete | Docker build, `fly.toml`, health checks, secrets |
-| **Vercel Deployment** | ✅ Complete | Next.js build, `VERCEL_*` secrets, auto-deploy |
-| **Render Deploy (opt)** | ✅ Complete | API trigger via Render service webhook |
-| **Smoke Tests** | ✅ Complete | `/api/health`, `/` root, custom endpoints, PR comments |
-| **Secrets Management** | ✅ Complete | 12 required secrets, `set-secrets.sh`, `GH_SECRET_COMMANDS.md` |
-| **Documentation** | ✅ Complete | 8 guides, troubleshooting, monitoring, rollback |
-| **Automation** | ✅ Complete | `QUICKSTART.sh`, `VALIDATE.sh`, `DEPLOY_NOW.md` |
+| Component               | Status      | Details                                                        |
+| ----------------------- | ----------- | -------------------------------------------------------------- |
+| **Workspace Setup**     | ✅ Complete | pnpm workspaces, `workspace:*` linking, TypeScript config      |
+| **Shared Package**      | ✅ Complete | CommonJS exports, dist build, path aliases                     |
+| **Build Scripts**       | ✅ Complete | `build:shared`, `build:api`, `build:web`, `build:mobile`       |
+| **CI/CD Workflows**     | ✅ Complete | 19 GitHub Actions workflows (test, build, security, deploy)    |
+| **Fly.io Deployment**   | ✅ Complete | Docker build, `fly.toml`, health checks, secrets               |
+| **Vercel Deployment**   | ✅ Complete | Next.js build, `VERCEL_*` secrets, auto-deploy                 |
+| **Render Deploy (opt)** | ✅ Complete | API trigger via Render service webhook                         |
+| **Smoke Tests**         | ✅ Complete | `/api/health`, `/` root, custom endpoints, PR comments         |
+| **Secrets Management**  | ✅ Complete | 12 required secrets, `set-secrets.sh`, `GH_SECRET_COMMANDS.md` |
+| **Documentation**       | ✅ Complete | 8 guides, troubleshooting, monitoring, rollback                |
+| **Automation**          | ✅ Complete | `QUICKSTART.sh`, `VALIDATE.sh`, `DEPLOY_NOW.md`                |
 
 ---
 
 ## 🚀 What's Ready to Deploy
 
 ### Infrastructure
+
 - **API Server**: Express.js on Fly.io
   - Port: 4000 (configurable)
   - Health check: `/api/health`
@@ -51,6 +52,7 @@
   - Real-time updates
 
 ### Monitoring & Observability
+
 - ✅ Health endpoint checks
 - ✅ Smoke tests (basic + extended)
 - ✅ PR comments with results
@@ -60,6 +62,7 @@
 - ✅ Metrics & alerts (provider dashboards)
 
 ### Security
+
 - ✅ GitHub Secrets for sensitive data (no hardcoded values)
 - ✅ Non-root container user (nodejs:nodejs)
 - ✅ HTTPS enforced (`force_https = true`)
@@ -96,10 +99,13 @@ Before running `bash QUICKSTART.sh`:
 ## 🎯 Deployment Steps (Simple)
 
 ### Step 1: Auto Deploy (All-in-One)
+
 ```bash
 bash QUICKSTART.sh
 ```
+
 This will:
+
 1. Prompt you for secrets
 2. Set them in GitHub
 3. Merge branch to main
@@ -108,12 +114,15 @@ This will:
 **Expected time**: 5 minutes
 
 ### Step 2: Monitor Deployments
+
 Watch GitHub Actions:
+
 ```bash
 open https://github.com/MrMiless44/Infamous-freight-enterprises/actions
 ```
 
 Expected workflows:
+
 - `deploy-fly.yml` → 10-15 min (build + deploy API)
 - `deploy-vercel.yml` → 5-10 min (build + deploy Web)
 - `smoke-tests.yml` → 1-2 min (validate health endpoints)
@@ -122,10 +131,13 @@ Expected workflows:
 **Expected time**: 20-30 minutes
 
 ### Step 3: Validate
+
 ```bash
 bash VALIDATE.sh
 ```
+
 Tests:
+
 - API `/api/health` → should return 200
 - Web `/` → should return 200
 - Protected endpoint → should return 401
@@ -139,6 +151,7 @@ Tests:
 ## 📁 Files Added (Deployment Infrastructure)
 
 ### Workflows (5 files)
+
 - `.github/workflows/deploy-fly.yml` — Fly.io deployment
 - `.github/workflows/deploy-vercel.yml` — Vercel deployment
 - `.github/workflows/deploy-render.yml` — Render trigger (optional)
@@ -146,15 +159,18 @@ Tests:
 - `.github/workflows/pr-smoke-report.yml` — PR commenting
 
 ### Scripts (3 files)
+
 - `QUICKSTART.sh` — Auto setup & merge
 - `VALIDATE.sh` — Post-deploy validation
 - `scripts/set-secrets.sh` — Interactive secret setup
 
 ### Smoke Test Tools (2 files)
+
 - `tools/smoke/check.js` — Basic health checks
 - `tools/smoke/extended_check.js` — Custom endpoint checks
 
 ### Documentation (8 files)
+
 - `DEPLOY_NOW.md` — Quick deploy guide (this uses this)
 - `DEPLOYMENT_README.md` — Full deployment guide
 - `FINAL_DEPLOYMENT_SUMMARY.md` — Comprehensive overview
@@ -170,20 +186,20 @@ Tests:
 
 ## 🔒 Secrets Required (12 Total)
 
-| Secret | Source | Example |
-|--------|--------|---------|
-| `FLY_API_TOKEN` | https://fly.io/user/personal_access_tokens | `foobar123...` |
-| `PROD_API_BASE_URL` | Your domain | `https://api.example.com` |
-| `PROD_WEB_BASE_URL` | Your domain | `https://example.com` |
-| `VERCEL_TOKEN` | https://vercel.com/account/tokens | `... (personal token) ...` |
-| `VERCEL_ORG_ID` | Vercel dashboard | `team_abc123...` |
-| `VERCEL_PROJECT_ID` | Vercel project settings | `prj_xyz789...` |
-| `RENDER_API_KEY` | Render dashboard (optional) | `rnd_abc... (optional)` |
-| `RENDER_SERVICE_ID` | Render service (optional) | `srv_xyz... (optional)` |
-| `DATABASE_URL` | PostgreSQL provider | `postgres://user:pass@host:5432/db` |
-| `JWT_SECRET` | Generate strong random string | `(strong_random_string)` |
-| `REDIS_URL` | Redis provider | `redis://:pass@host:6379` |
-| `SMOKE_ENDPOINTS` | Your APIs (optional) | `/api/auth/login,/api/shipments/create` |
+| Secret              | Source                                     | Example                                 |
+| ------------------- | ------------------------------------------ | --------------------------------------- |
+| `FLY_API_TOKEN`     | https://fly.io/user/personal_access_tokens | `foobar123...`                          |
+| `PROD_API_BASE_URL` | Your domain                                | `https://api.example.com`               |
+| `PROD_WEB_BASE_URL` | Your domain                                | `https://example.com`                   |
+| `VERCEL_TOKEN`      | https://vercel.com/account/tokens          | `... (personal token) ...`              |
+| `VERCEL_ORG_ID`     | Vercel dashboard                           | `team_abc123...`                        |
+| `VERCEL_PROJECT_ID` | Vercel project settings                    | `prj_xyz789...`                         |
+| `RENDER_API_KEY`    | Render dashboard (optional)                | `rnd_abc... (optional)`                 |
+| `RENDER_SERVICE_ID` | Render service (optional)                  | `srv_xyz... (optional)`                 |
+| `DATABASE_URL`      | PostgreSQL provider                        | `postgres://user:pass@host:5432/db`     |
+| `JWT_SECRET`        | Generate strong random string              | `(strong_random_string)`                |
+| `REDIS_URL`         | Redis provider                             | `redis://:pass@host:6379`               |
+| `SMOKE_ENDPOINTS`   | Your APIs (optional)                       | `/api/auth/login,/api/shipments/create` |
 
 ---
 
@@ -192,21 +208,25 @@ Tests:
 When deployment is complete, you should see:
 
 ✅ **GitHub Actions**
+
 - All workflows show green checkmark (✓)
 - No failed jobs
 - Logs show "Deployment successful"
 
 ✅ **Services**
+
 - API accessible at `PROD_API_BASE_URL`
 - Web accessible at `PROD_WEB_BASE_URL`
 - Both return 200 status
 
 ✅ **Health Checks**
+
 - `curl https://api.example.com/api/health` → `{ "status": "ok", ... }`
 - `/` returns full HTML page
 - Smoke tests all pass
 
 ✅ **Monitoring**
+
 - PR #268 has comment with smoke test results
 - No ERROR logs in Fly/Vercel dashboards
 - Services responding within expected latency
@@ -216,11 +236,13 @@ When deployment is complete, you should see:
 ## 🆘 If Something Goes Wrong
 
 ### Pre-deploy issues
+
 - **"bash: QUICKSTART.sh: command not found"** → File path issue; ensure you're in repo root
 - **"gh: command not found"** → Install GitHub CLI from https://cli.github.com/
 - **"Permission denied"** → Make scripts executable: `chmod +x *.sh`
 
 ### Deploy failures
+
 - Check GitHub Actions logs for exact error
 - Verify all secrets are set: `gh secret list --repo MrMiless44/Infamous-freight-enterprises`
 - Check provider logs:
@@ -228,6 +250,7 @@ When deployment is complete, you should see:
   - **Vercel**: Dashboard → Deployments tab → View logs
 
 ### Post-deploy issues
+
 - Run `bash VALIDATE.sh` to test endpoints
 - Manual curl tests: `curl -v https://api.example.com/api/health`
 - Check provider dashboards for errors
@@ -237,12 +260,14 @@ When deployment is complete, you should see:
 ## 📞 Support & Troubleshooting
 
 **Quick Reference Docs**:
+
 - [DEPLOY_NOW.md](DEPLOY_NOW.md) — One-command deploy guide
 - [DEPLOYMENT_README.md](DEPLOYMENT_README.md) — Deploy, monitor, rollback procedures
 - [QUICKSTART_CHECKLIST.md](QUICKSTART_CHECKLIST.md) — Step-by-step setup
 - [SECRETS_CHECKLIST.md](SECRETS_CHECKLIST.md) — Secrets & provider configuration
 
 **Commands to Troubleshoot**:
+
 ```bash
 # List secrets
 gh secret list --repo MrMiless44/Infamous-freight-enterprises
@@ -271,6 +296,7 @@ bash QUICKSTART.sh
 ```
 
 This will:
+
 1. ✅ Set all secrets
 2. ✅ Merge to main
 3. ✅ Trigger all deploy workflows
