@@ -3,7 +3,7 @@
 **Status:** 🟢 Production Ready  
 **Last Updated:** January 2, 2026  
 **Current Branch:** `chore/fix/shared-workspace-ci`  
-**Build Status:** ✅ 100% Complete  
+**Build Status:** ✅ 100% Complete
 
 ---
 
@@ -27,6 +27,7 @@
 **Infamous Freight Enterprises** is a comprehensive logistics and freight management platform built with modern web technologies. The project is organized as a monorepo using pnpm workspaces for efficient dependency management and code sharing.
 
 ### Key Technologies
+
 - **Frontend:** Next.js 14 (React 18, TypeScript)
 - **Backend:** Express.js (Node.js, TypeScript, Prisma ORM)
 - **Mobile:** React Native with Expo
@@ -66,6 +67,7 @@ Infamous-freight-enterprises/
 ```
 
 ### Directory Sizes
+
 ```
 5.1 MB  src/               (all applications & packages)
 1.2 MB  docs/              (documentation)
@@ -80,10 +82,12 @@ Infamous-freight-enterprises/
 ## 🚀 Applications
 
 ### 1. **infamous-freight-web** (Next.js Frontend)
+
 **Location:** `src/apps/web/`  
 **Port:** 3000 (default)  
 **Technology:** Next.js 14, React 18, TypeScript  
 **Scripts:**
+
 ```bash
 pnpm build:web      # Production build
 pnpm web:dev        # Development server
@@ -92,6 +96,7 @@ pnpm test:web       # Run tests
 ```
 
 **Key Features:**
+
 - Server-side rendering (SSR)
 - API integration with Express backend
 - Real-time shipment tracking
@@ -100,6 +105,7 @@ pnpm test:web       # Run tests
 - Performance monitoring (Vercel Analytics)
 
 **Structure:**
+
 ```
 web/
 ├── pages/           ← Next.js pages
@@ -116,10 +122,12 @@ web/
 ---
 
 ### 2. **infamous-freight-api** (Express Backend)
+
 **Location:** `src/apps/api/`  
 **Port:** 4000 (local) / 3001 (Docker)  
 **Technology:** Express.js, Node.js, TypeScript, Prisma ORM  
 **Scripts:**
+
 ```bash
 pnpm build:api          # Compile TypeScript
 pnpm api:dev            # Development server with hot reload
@@ -129,6 +137,7 @@ pnpm prisma:migrate:dev # Database migrations
 ```
 
 **Key Features:**
+
 - RESTful API endpoints
 - JWT authentication with scope-based authorization
 - Rate limiting (general, auth, AI, billing)
@@ -138,6 +147,7 @@ pnpm prisma:migrate:dev # Database migrations
 - Security headers with Helmet
 
 **Structure:**
+
 ```
 api/
 ├── src/
@@ -158,6 +168,7 @@ api/
 ```
 
 **API Routes:**
+
 - `/api/health` - Health check & liveness probe
 - `/api/shipments` - Shipment CRUD operations
 - `/api/users` - User management
@@ -168,9 +179,11 @@ api/
 ---
 
 ### 3. **infamous-freight-mobile** (React Native)
+
 **Location:** `src/apps/mobile/`  
 **Technology:** React Native, Expo, TypeScript  
 **Scripts:**
+
 ```bash
 pnpm build:mobile       # Build mobile app
 pnpm mobile:start       # Start Expo dev server
@@ -180,6 +193,7 @@ pnpm mobile:web         # Web build from RN
 ```
 
 **Key Features:**
+
 - Cross-platform mobile app (iOS/Android)
 - Real-time shipment tracking
 - Push notifications
@@ -187,6 +201,7 @@ pnpm mobile:web         # Web build from RN
 - Native camera integration
 
 **Structure:**
+
 ```
 mobile/
 ├── src/
@@ -208,6 +223,7 @@ mobile/
 ## 📚 Packages (Shared Libraries)
 
 ### **@infamous-freight/shared**
+
 **Location:** `src/packages/shared/`  
 **Type:** TypeScript Utility Package  
 **Output:** CommonJS (dist/)
@@ -215,6 +231,7 @@ mobile/
 **Purpose:** Central repository for types, constants, and utilities shared across all applications.
 
 **Exports:**
+
 ```typescript
 // types.ts
 - Shipment, ShipmentStatus
@@ -242,6 +259,7 @@ mobile/
 ```
 
 **Build Process:**
+
 ```bash
 pnpm build:shared    # Compile TypeScript to dist/
 pnpm test:shared     # Run tests
@@ -249,6 +267,7 @@ pnpm dev:shared      # Watch mode
 ```
 
 **Structure:**
+
 ```
 shared/
 ├── src/
@@ -270,6 +289,7 @@ shared/
 ```
 
 **Dependency Resolution:**
+
 ```json
 // Both api and web import from shared
 "dependencies": {
@@ -282,17 +302,21 @@ shared/
 ## 🧪 Test Suites
 
 ### 1. **E2E Tests** (`tests/e2e/`)
+
 **Framework:** Playwright  
 **Purpose:** End-to-end testing of user workflows
+
 ```bash
 pnpm test:e2e    # Run Playwright tests
 ```
 
 ### 2. **Contract Tests** (`tests/contract/`)
+
 **Framework:** Pact.js  
 **Purpose:** Contract-driven testing between API and clients
 
 ### 3. **Load Testing** (`tests/load/`)
+
 **Framework:** Artillery / Custom Node scripts  
 **Purpose:** Performance and stress testing
 
@@ -302,30 +326,31 @@ pnpm test:e2e    # Run Playwright tests
 
 ### Root Level Configuration Files
 
-| File | Purpose |
-|------|---------|
-| `package.json` | Root workspaces config, shared scripts |
-| `pnpm-workspace.yaml` | Workspace packages definition |
-| `.npmrc` | pnpm configuration (shamefully-hoist, etc.) |
-| `tsconfig.json` | TypeScript configuration with path aliases |
-| `eslint.config.js` | ESLint configuration |
-| `codecov.yml` | Code coverage configuration |
-| `playwright.config.js` | E2E test configuration |
-| `docker-compose.yml` | Production Docker setup |
-| `docker-compose.dev.yml` | Development Docker setup |
-| `docker-compose.prod.yml` | Production variant |
-| `fly.toml` | Fly.io deployment config |
-| `fly.staging.toml` | Staging environment |
-| `fly-multiregion.toml` | Multi-region setup |
-| `vercel.json` | Vercel deployment config |
-| `lighthouserc.json` | Lighthouse CI config |
-| `Dockerfile.fly` | Custom Fly.io Dockerfile |
+| File                      | Purpose                                     |
+| ------------------------- | ------------------------------------------- |
+| `package.json`            | Root workspaces config, shared scripts      |
+| `pnpm-workspace.yaml`     | Workspace packages definition               |
+| `.npmrc`                  | pnpm configuration (shamefully-hoist, etc.) |
+| `tsconfig.json`           | TypeScript configuration with path aliases  |
+| `eslint.config.js`        | ESLint configuration                        |
+| `codecov.yml`             | Code coverage configuration                 |
+| `playwright.config.js`    | E2E test configuration                      |
+| `docker-compose.yml`      | Production Docker setup                     |
+| `docker-compose.dev.yml`  | Development Docker setup                    |
+| `docker-compose.prod.yml` | Production variant                          |
+| `fly.toml`                | Fly.io deployment config                    |
+| `fly.staging.toml`        | Staging environment                         |
+| `fly-multiregion.toml`    | Multi-region setup                          |
+| `vercel.json`             | Vercel deployment config                    |
+| `lighthouserc.json`       | Lighthouse CI config                        |
+| `Dockerfile.fly`          | Custom Fly.io Dockerfile                    |
 
 ### Environment Configuration
 
 **Created Files (100% Auto-Fixes Applied):**
 
 1. **.env.test** (CI Environment)
+
    ```
    NODE_ENV=test
    DATABASE_URL=postgresql://user:pass@localhost:5432/test_db
@@ -337,6 +362,7 @@ pnpm test:e2e    # Run Playwright tests
    ```
 
 2. **src/apps/api/.env.local** (API Development)
+
    ```
    NODE_ENV=development
    DATABASE_URL=postgresql://localhost:5432/freight_dev
@@ -358,12 +384,14 @@ pnpm test:e2e    # Run Playwright tests
 ## 🔄 CI/CD Workflows (25 Total)
 
 ### Core Build & Test Workflows
+
 1. **ci.yml** - Main CI pipeline (lint, test, build)
 2. **ci-cd.yml** - Combined CI/CD workflow
 3. **reusable-build.yml** - Reusable build workflow
 4. **reusable-test.yml** - Reusable test workflow
 
 ### Deployment Workflows
+
 5. **vercel-deploy.yml** - Deploy web to Vercel
 6. **fly-deploy.yml** - Deploy API to Fly.io
 7. **render-deploy.yml** - Deploy to Render
@@ -371,6 +399,7 @@ pnpm test:e2e    # Run Playwright tests
 9. **deploy-pages.yml** - Deploy to GitHub Pages
 
 ### Security & Quality
+
 10. **codeql.yml** - CodeQL security analysis
 11. **codeql-minimal.yml** - Minimal CodeQL
 12. **container-security.yml** - Container scanning
@@ -378,23 +407,27 @@ pnpm test:e2e    # Run Playwright tests
 14. **html-validation.yml** - HTML validation
 
 ### Testing & Performance
+
 15. **e2e.yml** - End-to-end tests
 16. **load-testing.yml** - Load testing
 17. **multi-region-load-testing.yml** - Multi-region load test
 
 ### Infrastructure & Monitoring
+
 18. **docker-build.yml** - Docker image builds
 19. **collect-metrics.yml** - Metrics collection
 20. **external-monitoring.yml** - External monitoring
 21. **ai-failure-analysis.yml** - AI error analysis
 
 ### Utilities
+
 22. **auto-deploy.yml** - Automatic deployments
 23. **auto-pr-test-fix.yml** - Automated PR fixes
 24. **cd.yml** - General CD pipeline
 25. **reusable-deploy.yml** - Reusable deployment
 
 **Key Feature:** All 14+ critical workflows updated with:
+
 ```yaml
 - name: Enable Corepack & pnpm
   run: |
@@ -407,12 +440,14 @@ pnpm test:e2e    # Run Playwright tests
 ## 📚 Documentation Index
 
 ### Essential Guides (Start Here)
+
 - **00_START_HERE.md** - Quick start guide
 - **START_HERE.md** - Alternative start point
 - **README.md** - Project overview
 - **QUICK_REFERENCE_ALL_RECOMMENDATIONS.md** - Quick reference
 
 ### Build & Deployment
+
 - **BUILD_SUCCESS_100_PERCENT.md** - ✅ NEWLY CREATED - Complete build guide
 - **CI_FIXES_SUMMARY.md** - CI workflow fixes
 - **BUILD_COMPLETE.md** - Build status
@@ -420,37 +455,44 @@ pnpm test:e2e    # Run Playwright tests
 - **DEPLOYMENT_GUIDE.md** - Deployment instructions
 
 ### Architecture & Design
+
 - **COMPLETE_REPOSITORY_OVERVIEW.md** - Full repo overview
 - **COMPLETE_IMPLEMENTATION_CHECKLIST.md** - Implementation tasks
 - **ARCHITECTURE.md** (if exists) - System architecture
 
 ### Phase-Based Documentation
+
 - **PHASE_1_DEPLOYMENT_EXECUTION.md** - Phase 1 deployment
 - **PHASE_2_EXECUTION_SUMMARY.md** - Phase 2 summary
 - **PHASE_3_EXECUTION_PLAN.md** - Phase 3 plan
 - **ALL_4_PHASES_MASTER_EXECUTION_PLAN.md** - Full plan
 
 ### Performance & Optimization
+
 - **PERFORMANCE_OPTIMIZATION_GUIDE.md** - Performance tips
 - **BUILD_OPTIMIZATION_GUIDE.md** - Build optimization
 - **DATABASE_OPTIMIZATION_GUIDE.md** - Database tuning
 - **ADVANCED_CACHING_GUIDE.md** - Caching strategies
 
 ### Monitoring & Operations
+
 - **MONITORING_SETUP_GUIDE.md** - Monitoring setup
 - **OPERATIONAL_RUNBOOKS.md** - Ops runbooks
 - **PHASE_2_MONITORING_CHECKLIST.md** - Monitoring checklist
 
 ### Security
+
 - **SECURITY.md** - Security guidelines
 - **SECURITY_AUDIT_RECOMMENDATIONS.md** - Audit results
 
 ### Business & Strategy
+
 - **BUSINESS_POTENTIAL_ANALYSIS_2026.md** - Business analysis
 - **BUSINESS_DOCUMENTATION_INDEX.md** - Business docs
 - **EXECUTIVE_BUSINESS_SUMMARY_2026.md** - Executive summary
 
 ### Additional Resources
+
 - **CONTRIBUTING.md** - Contribution guidelines
 - **CHANGELOG.md** - Version history
 - **LEGAL_NOTICE.md** - Legal information
@@ -463,17 +505,19 @@ pnpm test:e2e    # Run Playwright tests
 ## 📊 Project Statistics
 
 ### Code Metrics
-| Metric | Count |
-|--------|-------|
-| **Total Files** | 954 |
-| **Total Directories** | 196 |
-| **Package.json Files** | 10 |
-| **TypeScript Files** | 10,233+ |
-| **Test Files** | 374+ |
-| **Documentation Files** | 133+ |
-| **CI Workflow Files** | 25 |
+
+| Metric                  | Count   |
+| ----------------------- | ------- |
+| **Total Files**         | 954     |
+| **Total Directories**   | 196     |
+| **Package.json Files**  | 10      |
+| **TypeScript Files**    | 10,233+ |
+| **Test Files**          | 374+    |
+| **Documentation Files** | 133+    |
+| **CI Workflow Files**   | 25      |
 
 ### File Breakdown by Type
+
 ```
 TypeScript (.ts/.tsx)     10,233 files
 JavaScript (.js)          800+ files
@@ -485,6 +529,7 @@ Test files              374+ files
 ```
 
 ### Package Distribution
+
 - **Root Packages:** 1 (root package.json)
 - **Applications:** 3 (api, web, mobile)
 - **Shared Libraries:** 1 (shared types/utils)
@@ -496,6 +541,7 @@ Test files              374+ files
 ## 🚀 Getting Started
 
 ### 1. Installation
+
 ```bash
 # Clone repository
 git clone https://github.com/MrMiless44/Infamous-freight-enterprises.git
@@ -511,6 +557,7 @@ cp src/apps/web/.env.local .env.web
 ```
 
 ### 2. Development
+
 ```bash
 # Start all services
 pnpm dev
@@ -521,6 +568,7 @@ pnpm dev
 ```
 
 ### 3. Building
+
 ```bash
 # Build all packages
 pnpm build
@@ -533,6 +581,7 @@ pnpm build:pages       # Build GitHub Pages
 ```
 
 ### 4. Testing
+
 ```bash
 # Run all tests
 pnpm test
@@ -545,6 +594,7 @@ pnpm test:e2e          # End-to-end tests
 ```
 
 ### 5. Code Quality
+
 ```bash
 # Lint all code
 pnpm lint
@@ -557,6 +607,7 @@ pnpm check:types
 ```
 
 ### 6. Database
+
 ```bash
 # In api directory
 cd src/apps/api
@@ -576,14 +627,16 @@ pnpm prisma:studio
 ## 🌍 Deployment Status
 
 ### Production Deployment Targets
-| Service | Platform | Status | URL |
-|---------|----------|--------|-----|
-| **Web** | Vercel | ✅ Ready | https://infamous-freight-enterprises-[branch].vercel.app |
-| **API** | Fly.io | ✅ Ready | api.[region].fly.dev |
-| **Mobile** | Expo | ✅ Ready | Expo Go / EAS Build |
-| **Docs** | GitHub Pages | ✅ Ready | https://[username].github.io/Infamous-freight-enterprises |
+
+| Service    | Platform     | Status   | URL                                                       |
+| ---------- | ------------ | -------- | --------------------------------------------------------- |
+| **Web**    | Vercel       | ✅ Ready | https://infamous-freight-enterprises-[branch].vercel.app  |
+| **API**    | Fly.io       | ✅ Ready | api.[region].fly.dev                                      |
+| **Mobile** | Expo         | ✅ Ready | Expo Go / EAS Build                                       |
+| **Docs**   | GitHub Pages | ✅ Ready | https://[username].github.io/Infamous-freight-enterprises |
 
 ### Pre-Deployment Checklist
+
 ```
 ✅ All dependencies resolved (workspace:* protocol)
 ✅ CI/CD workflows configured (corepack enabled)
@@ -602,6 +655,7 @@ pnpm prisma:studio
 ## 🔧 Key Commands Reference
 
 ### Workspace Commands
+
 ```bash
 pnpm install              # Install all dependencies
 pnpm build                # Build all packages
@@ -613,6 +667,7 @@ pnpm clean                # Clean all dist folders
 ```
 
 ### Per-Package Commands
+
 ```bash
 pnpm --filter @infamous-freight/shared build
 pnpm --filter @infamous-freight/api dev
@@ -621,6 +676,7 @@ pnpm --filter @infamous-freight/mobile ios
 ```
 
 ### Docker Commands
+
 ```bash
 docker-compose up -d           # Start dev environment
 docker-compose -f docker-compose.prod.yml up -d  # Start prod
@@ -629,6 +685,7 @@ docker-compose logs -f api     # Follow API logs
 ```
 
 ### Git Commands
+
 ```bash
 git checkout chore/fix/shared-workspace-ci  # Current PR branch
 git status                                   # Check uncommitted changes
@@ -640,17 +697,20 @@ git log --oneline -10                        # View commit history
 ## 📞 Support & Resources
 
 ### Documentation
+
 - **README.md** - Project overview
 - **CONTRIBUTING.md** - Contributing guidelines
 - **QUICK_REFERENCE_ALL_RECOMMENDATIONS.md** - Quick answers
 
 ### Key Files to Review
+
 - `package.json` - Root scripts and dependencies
 - `pnpm-workspace.yaml` - Workspace configuration
 - `.github/copilot-instructions.md` - Development guidelines
 - `.github/workflows/ci.yml` - Main CI pipeline
 
 ### Common Issues & Solutions
+
 1. **pnpm not found** → `corepack enable && corepack prepare pnpm@8.15.9 --activate`
 2. **Module not found** → `pnpm install` (ensure workspace linking)
 3. **Build fails** → Check `pnpm build:shared` first (dependency order)
@@ -662,7 +722,7 @@ git log --oneline -10                        # View commit history
 
 **All 100% Build Success Auto-Fixes Applied:**
 
-1. ✅ Workspace linking fixed (workspace:* protocol)
+1. ✅ Workspace linking fixed (workspace:\* protocol)
 2. ✅ Corepack enabled in 14 CI workflows
 3. ✅ Environment files created (.env.test, .env.local)
 4. ✅ TypeScript configuration added

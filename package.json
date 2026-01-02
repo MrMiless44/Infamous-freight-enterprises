@@ -48,6 +48,15 @@
     "docker:rebuild": "docker-compose up -d --build",
     "prepare": "husky install"
   },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "pnpm lint:fix",
+      "pnpm format"
+    ],
+    "*.{json,md}": [
+      "pnpm format"
+    ]
+  },
   "workspaces": [
     "src/apps/*",
     "src/packages/*",

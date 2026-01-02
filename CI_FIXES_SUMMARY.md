@@ -6,11 +6,13 @@
 **PR:** #268
 
 ## 🎯 Objective
+
 Make the repository 100% deployable by fixing critical CI/CD issues, workspace linking, and package configuration.
 
 ## ✅ Fixes Applied
 
 ### 1. **Workspace Package Linking** ✅
+
 - **File:** `src/apps/web/package.json`
   - Changed `@infamous-freight/shared` from `"file:..."` to `"workspace:*"`
   - Enables pnpm to properly resolve shared package at link-time
@@ -24,6 +26,7 @@ Make the repository 100% deployable by fixing critical CI/CD issues, workspace l
   - Added `"private": true` to avoid name collision with workspace API
 
 ### 2. **Shared Package Configuration** ✅
+
 - **File:** `src/packages/shared/package.json`
   - Set `"type": "commonjs"` to match compiled output
   - Added `"files": ["dist"]` to limit published files
@@ -40,9 +43,11 @@ Make the repository 100% deployable by fixing critical CI/CD issues, workspace l
   - Ensures consumers can resolve types at build time
 
 ### 3. **Corepack/pnpm Availability in CI** ✅
+
 All GitHub Actions workflows now include `corepack enable` step after Node setup:
 
 Affected workflows:
+
 - `.github/workflows/ci.yml`
 - `.github/workflows/ci-cd.yml`
 - `.github/workflows/vercel-deploy.yml`
@@ -59,6 +64,7 @@ Affected workflows:
 - `.github/workflows/fly-deploy.yml`
 
 Each workflow now includes:
+
 ```yaml
 - name: Enable Corepack & pnpm
   run: |
@@ -67,7 +73,9 @@ Each workflow now includes:
 ```
 
 ### 4. **CI Fail-Fast Hardening** ✅
+
 Multiple CI workflows updated to set `continue-on-error: false` for critical steps:
+
 - Build steps (API, Web, Shared)
 - Test execution
 - Type checking
@@ -79,6 +87,7 @@ This ensures CI surfaces failures instead of masking them.
 ## 📦 Build Verification
 
 ### Compiled Artifacts Confirmed
+
 - ✅ `src/packages/shared/dist/` - Built and present
   - `index.js` / `index.d.ts` (exports)
   - `types.js` / `types.d.ts`
@@ -92,13 +101,15 @@ This ensures CI surfaces failures instead of masking them.
 ## 🚀 Deployment Readiness
 
 ### Prerequisites Met
+
 ✅ Workspace linking configured correctly  
 ✅ Package exports and types properly declared  
 ✅ Shared package built and distributed  
 ✅ CI pipelines have pnpm available  
-✅ Legacy package renamed to avoid conflicts  
+✅ Legacy package renamed to avoid conflicts
 
 ### Next Steps
+
 1. **Merge PR #268** - All fixes tested and validated
 2. **Run production deployment** - CI/CD pipelines ready for production
 3. **Monitor live endpoints** - Verify API and web deployments
@@ -116,6 +127,7 @@ f3c25bc fix(ci): enable corepack/pnpm in all workflows to prevent 'pnpm not foun
 ## ✨ Result
 
 **100% Deployable Repository:**
+
 - ✅ All packages resolve correctly
 - ✅ All builds complete successfully
 - ✅ CI/CD pipelines have required tooling
