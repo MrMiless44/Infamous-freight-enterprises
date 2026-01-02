@@ -1,6 +1,26 @@
 import React, { useState } from "react";
 import { track } from "@vercel/analytics";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { useApi } from "../hooks/useApi";
+
+let stripePromise: Promise<Stripe | null> | null = null;
+
+async function getStripeClient() {
+  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  if (!publishableKey) {
+    throw new Error("Stripe publishable key is not configured");
+  }
+
+  if (!stripePromise) {
+    stripePromise = loadStripe(publishableKey);
+  }
+
+  const stripe = await stripePromise;
+  if (!stripe) {
+    throw new Error("Unable to initialize Stripe");
+  }
+  return stripe;
+}
 
 export function BillingPanel() {
   const api = useApi();
@@ -9,14 +29,34 @@ export function BillingPanel() {
 
   async function createStripe() {
     try {
-      const res = await api.post("/billing/stripe/session");
+      const res: { sessionId?: string; url?: string } = await api.post(
+        "/billing/stripe/session",
+      );
+      if (!res.sessionId) {
+        throw new Error("Stripe session was not created");
+      }
+
       setStripeSession(res.sessionId);
       track("payment_initiated", {
         method: "stripe",
         sessionId: res.sessionId,
       });
-      if (res.url) {
-        window.location.href = res.url;
+
+      const stripe = await getStripeClient();
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: res.sessionId,
+      });
+
+      if (error) {
+        track("payment_error", {
+          method: "stripe",
+          error: error.message,
+        });
+        if (res.url) {
+          window.location.href = res.url;
+        } else {
+          throw error;
+        }
       }
     } catch (error) {
       track("payment_error", {
