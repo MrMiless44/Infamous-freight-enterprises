@@ -1,0 +1,32 @@
+name: Post-deploy Smoke Tests
+
+on:
+  workflow_run:
+    workflows: ["Deploy API to Fly.io", "Deploy Web to Vercel"]
+    types: [completed]
+
+jobs:
+  smoke-tests:
+    name: Run smoke tests after successful deploys
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run smoke tests
+        env:
+          PROD_API_BASE_URL: ${{ secrets.PROD_API_BASE_URL }}
+          PROD_WEB_BASE_URL: ${{ secrets.PROD_WEB_BASE_URL }}
+        run: node tools/smoke/check.js
