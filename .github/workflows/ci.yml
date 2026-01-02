@@ -40,6 +40,11 @@ jobs:
           node-version: 20
           cache: pnpm
 
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
+
       - name: "Guard: no package-lock.json anywhere"
         run: |
           # Ensure no root-level npm lockfile
