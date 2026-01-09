@@ -401,3 +401,31 @@ model TwoFactorAuth {
   @@index([userId])
   @@index([enabled])
 }
+
+model StripeCustomer {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  stripeCustomerId String   @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model SubscriptionEntitlement {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  plan                 String
+  status               String
+  stripeSubscriptionId String?  @unique
+  stripePriceId        String?
+  currentPeriodEnd     DateTime?
+  featuresJson         Json
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model StripeEvent {
+  id          String   @id @default(cuid())
+  eventId     String   @unique
+  type        String
+  processedAt DateTime @default(now())
+}
