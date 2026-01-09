@@ -217,7 +217,7 @@ export function multiTenantMiddleware(prisma: PrismaClient) {
 /**
  * Feature gate middleware
  */
-export function requireFeature(featureName: string) {
+export function requireFeature(featureKey: string) {
   return async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.header("x-user-id");
     if (!userId) {
@@ -233,11 +233,11 @@ export function requireFeature(featureName: string) {
       return res.status(403).json({ error: "Subscription not active" });
     }
 
-    const features = ent.featuresJson as Record<string, boolean> | null;
-    if (!features?.[featureName]) {
+    const features = ent.featuresJson as any;
+    if (!features?.[featureKey]) {
       return res
         .status(403)
-        .json({ error: `Missing entitlement: ${featureName}` });
+        .json({ error: `Missing entitlement: ${featureKey}` });
     }
 
     return next();
