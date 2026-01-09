@@ -27,6 +27,7 @@ import { customer } from "./routes/customer";
 import { predictions } from "./routes/predictions";
 import { rateLimit } from "./middleware/rateLimit";
 import { auditTrail } from "./middleware/audit";
+import { requireFeature } from "./middleware/multiTenant";
 import errorHandler from "./middleware/errorHandler";
 import { websocketService } from "./services/websocket";
 import { cacheService } from "./services/cache";
@@ -74,6 +75,9 @@ app.use("/api/drivers", driver);
 app.use("/api/fleet", fleet);
 app.use("/api/customers", customer);
 app.use("/api/predictions", predictions);
+app.get("/api/analytics", requireFeature("analytics"), (req, res) =>
+  res.json({ ok: true }),
+);
 app.use(errorHandler);
 
 const apiConfig = config.getApiConfig();
