@@ -1,5 +1,7 @@
 packages:
   - "api"
-  - "web"
-  - "mobile"
   - "packages/*"
+  - "tests/e2e"
+  # Explicitly exclude backups/archives from workspace execution
+  - "!archive/**"
+  - "!**/node_modules/**"
