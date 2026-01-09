@@ -24,6 +24,7 @@ Each ADR follows this structure:
 - [ADR-0004](0004-scope-based-authentication.md) - Scope-Based RBAC Authentication
 - [ADR-0005](0005-prisma-orm.md) - Prisma ORM for Database Management
 - [ADR-0006](0006-synthetic-ai-fallback.md) - Synthetic AI Engine Fallback
+- [ADR-0007](0007-architecture-freeze.md) - Architecture Freeze and Change Control
 
 ## Creating a New ADR
 
