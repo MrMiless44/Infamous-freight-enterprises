@@ -85,7 +85,9 @@ function featuresForPrice(priceId: string) {
 }
 
 function planName(priceId: string) {
-  if ([PRICE.DISPATCH_MONTHLY, PRICE.DISPATCH_ANNUAL].includes(priceId as any)) {
+  if (
+    [PRICE.DISPATCH_MONTHLY, PRICE.DISPATCH_ANNUAL].includes(priceId as any)
+  ) {
     return "AI Dispatch Operator";
   }
   if ([PRICE.FLEET_MONTHLY, PRICE.FLEET_ANNUAL].includes(priceId as any)) {
@@ -94,7 +96,9 @@ function planName(priceId: string) {
   if ([PRICE.OPS_MONTHLY, PRICE.OPS_ANNUAL].includes(priceId as any)) {
     return "Autonomous Ops Suite";
   }
-  if ([PRICE.ENTERPRISE_MONTHLY, PRICE.ENTERPRISE_ANNUAL].includes(priceId as any)) {
+  if (
+    [PRICE.ENTERPRISE_MONTHLY, PRICE.ENTERPRISE_ANNUAL].includes(priceId as any)
+  ) {
     return "Enterprise";
   }
   return "Unknown";
@@ -119,6 +123,35 @@ export const billingWebhook = Router();
 billing.use(requireAuth);
 billing.use(requireScope("billing:write"));
 
+/**
+ * GET /api/billing/me
+ * Returns entitlement + feature flags for current user
+ */
+billing.get("/me", async (req, res) => {
+  try {
+    const userId = requireUserId(req);
+    const ent = await prisma.subscriptionEntitlement.findUnique({
+      where: { userId },
+    });
+
+    return res.json({
+      userId,
+      entitlement: ent
+        ? {
+            plan: ent.plan,
+            status: ent.status,
+            stripePriceId: ent.stripePriceId,
+            stripeSubscriptionId: ent.stripeSubscriptionId,
+            currentPeriodEnd: ent.currentPeriodEnd,
+            features: ent.featuresJson,
+          }
+        : null,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err?.message ?? "Unknown error" });
+  }
+});
+
 const stripeCheckoutHandler: express.RequestHandler = async (req, res) => {
   const stripeConfig = config.getStripeConfig();
   if (!stripeConfig.enabled) {
@@ -137,9 +170,7 @@ const stripeCheckoutHandler: express.RequestHandler = async (req, res) => {
       : undefined);
   const cancelUrl =
     stripeConfig.cancelUrl ??
-    (process.env.APP_URL
-      ? `${process.env.APP_URL}/billing/cancel`
-      : undefined);
+    (process.env.APP_URL ? `${process.env.APP_URL}/billing/cancel` : undefined);
 
   if (!successUrl || !cancelUrl) {
     return res
@@ -336,9 +367,8 @@ billingWebhook.post(
               : invoice.subscription?.id;
           if (!subscriptionId) break;
 
-          const subscription = await createStripeClient().subscriptions.retrieve(
-            subscriptionId,
-          );
+          const subscription =
+            await createStripeClient().subscriptions.retrieve(subscriptionId);
           const userId = subscription.metadata?.userId;
           if (!userId) break;
 
