@@ -1,20 +1,20 @@
 name: CI
 
 on:
-  push:
-    branches: ["main"]
-    paths-ignore:
-      - "archive/**"
   pull_request:
     paths-ignore:
-      - "archive/**"
-
-permissions:
-  contents: read
+      - 'archive/**'
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'archive/**'
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   ci:
@@ -30,26 +30,16 @@ jobs:
         with:
           version: 8
 
-      - name: Setup Node + pnpm cache
+      - name: Setup Node 20 + pnpm cache
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
       - name: Guard: no package-lock.json anywhere
-        run: |
-          if git ls-files '**/package-lock.json' | grep -q .; then
-            echo "ERROR: package-lock.json is tracked. Remove it and use pnpm-lock.yaml only."
-            git ls-files '**/package-lock.json'
-            exit 1
-          fi
-          if find . -name "package-lock.json" -type f | grep -q .; then
-            echo "ERROR: package-lock.json exists in working tree. Delete it."
-            find . -name "package-lock.json" -type f
-            exit 1
-          fi
+        run: ./scripts/guard-no-npm-lockfiles.sh
 
-      - name: Install
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Lint
