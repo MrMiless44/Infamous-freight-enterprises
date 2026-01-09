@@ -122,8 +122,8 @@ app.use(errorHandler);
 attachErrorHandler(app);
 
 const apiConfig = config.getApiConfig();
-const port = apiConfig.port;
-const host = apiConfig.host;
+const port = Number(process.env.PORT ?? apiConfig.port ?? 4000);
+const host = "0.0.0.0";
 
 if (require.main === module) {
   const httpServer = app.listen(port, host, async () => {
