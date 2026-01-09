@@ -1,7 +1,6 @@
 packages:
   - "api"
-  - "packages/shared"
+  - "packages/*"
   - "tests/e2e"
-  # Explicitly exclude backups/archives from workspace execution
   - "!archive/**"
   - "!**/node_modules/**"
