@@ -101,9 +101,14 @@ function planName(priceId: string) {
 }
 
 function requireUserId(req: express.Request) {
+  const headerUserId = req.header("x-user-id");
+  if (headerUserId) {
+    return headerUserId;
+  }
+
   const userId = req.user?.id;
   if (!userId) {
-    throw new Error("User context required for billing checkout.");
+    throw new Error("Missing x-user-id header or authenticated user context.");
   }
   return userId;
 }
@@ -114,21 +119,32 @@ export const billingWebhook = Router();
 billing.use(requireAuth);
 billing.use(requireScope("billing:write"));
 
-billing.post("/stripe/checkout", express.json(), async (req, res) => {
+const stripeCheckoutHandler: express.RequestHandler = async (req, res) => {
   const stripeConfig = config.getStripeConfig();
   if (!stripeConfig.enabled) {
     return res.status(503).json({ error: "Stripe not configured" });
   }
 
-  if (!stripeConfig.successUrl || !stripeConfig.cancelUrl) {
-    return res
-      .status(503)
-      .json({ error: "Stripe success/cancel URLs not configured" });
-  }
-
   const { priceId } = req.body as { priceId?: string };
   if (!priceId) {
     return res.status(400).json({ error: "priceId is required" });
+  }
+
+  const successUrl =
+    stripeConfig.successUrl ??
+    (process.env.APP_URL
+      ? `${process.env.APP_URL}/billing/success?session_id={CHECKOUT_SESSION_ID}`
+      : undefined);
+  const cancelUrl =
+    stripeConfig.cancelUrl ??
+    (process.env.APP_URL
+      ? `${process.env.APP_URL}/billing/cancel`
+      : undefined);
+
+  if (!successUrl || !cancelUrl) {
+    return res
+      .status(503)
+      .json({ error: "Stripe success/cancel URLs not configured" });
   }
 
   try {
@@ -156,15 +172,18 @@ billing.post("/stripe/checkout", express.json(), async (req, res) => {
       subscription_data: {
         metadata: { userId, plan: planName(priceId) },
       },
-      success_url: stripeConfig.successUrl,
-      cancel_url: stripeConfig.cancelUrl,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
     });
 
     return res.status(200).json({ url: session.url, id: session.id });
   } catch (err: any) {
     return res.status(500).json({ error: err?.message ?? "Unknown error" });
   }
-});
+};
+
+billing.post("/stripe/checkout", express.json(), stripeCheckoutHandler);
+billing.post("/checkout", express.json(), stripeCheckoutHandler);
 
 billing.post("/stripe/session", async (req, res, next) => {
   const stripeConfig = config.getStripeConfig();
@@ -215,7 +234,7 @@ billing.post("/stripe/session", async (req, res, next) => {
 });
 
 billingWebhook.post(
-  "/",
+  ["/", "/webhook"],
   express.raw({ type: "application/json" }),
   async (req, res) => {
     const stripeConfig = config.getStripeConfig();
