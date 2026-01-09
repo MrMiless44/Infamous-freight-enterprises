@@ -85,7 +85,9 @@ function featuresForPrice(priceId: string) {
 }
 
 function planName(priceId: string) {
-  if ([PRICE.DISPATCH_MONTHLY, PRICE.DISPATCH_ANNUAL].includes(priceId as any)) {
+  if (
+    [PRICE.DISPATCH_MONTHLY, PRICE.DISPATCH_ANNUAL].includes(priceId as any)
+  ) {
     return "AI Dispatch Operator";
   }
   if ([PRICE.FLEET_MONTHLY, PRICE.FLEET_ANNUAL].includes(priceId as any)) {
@@ -94,7 +96,9 @@ function planName(priceId: string) {
   if ([PRICE.OPS_MONTHLY, PRICE.OPS_ANNUAL].includes(priceId as any)) {
     return "Autonomous Ops Suite";
   }
-  if ([PRICE.ENTERPRISE_MONTHLY, PRICE.ENTERPRISE_ANNUAL].includes(priceId as any)) {
+  if (
+    [PRICE.ENTERPRISE_MONTHLY, PRICE.ENTERPRISE_ANNUAL].includes(priceId as any)
+  ) {
     return "Enterprise";
   }
   return "Unknown";
@@ -137,9 +141,7 @@ const stripeCheckoutHandler: express.RequestHandler = async (req, res) => {
       : undefined);
   const cancelUrl =
     stripeConfig.cancelUrl ??
-    (process.env.APP_URL
-      ? `${process.env.APP_URL}/billing/cancel`
-      : undefined);
+    (process.env.APP_URL ? `${process.env.APP_URL}/billing/cancel` : undefined);
 
   if (!successUrl || !cancelUrl) {
     return res
@@ -184,6 +186,42 @@ const stripeCheckoutHandler: express.RequestHandler = async (req, res) => {
 
 billing.post("/stripe/checkout", express.json(), stripeCheckoutHandler);
 billing.post("/checkout", express.json(), stripeCheckoutHandler);
+
+billing.post("/portal", express.json(), async (req, res) => {
+  const stripeConfig = config.getStripeConfig();
+  if (!stripeConfig.enabled) {
+    return res.status(503).json({ error: "Stripe not configured" });
+  }
+
+  const returnUrl = process.env.APP_URL
+    ? `${process.env.APP_URL}/billing`
+    : stripeConfig.successUrl;
+  if (!returnUrl) {
+    return res
+      .status(503)
+      .json({ error: "Stripe portal return URL not configured" });
+  }
+
+  try {
+    const userId = requireUserId(req);
+    const stripeCustomer = await prisma.stripeCustomer.findUnique({
+      where: { userId },
+    });
+    if (!stripeCustomer) {
+      return res.status(404).json({ error: "No Stripe customer for user" });
+    }
+
+    const stripeClient = createStripeClient();
+    const session = await stripeClient.billingPortal.sessions.create({
+      customer: stripeCustomer.stripeCustomerId,
+      return_url: returnUrl,
+    });
+
+    return res.status(200).json({ url: session.url });
+  } catch (err: any) {
+    return res.status(500).json({ error: err?.message ?? "Unknown error" });
+  }
+});
 
 billing.post("/stripe/session", async (req, res, next) => {
   const stripeConfig = config.getStripeConfig();
@@ -336,9 +374,8 @@ billingWebhook.post(
               : invoice.subscription?.id;
           if (!subscriptionId) break;
 
-          const subscription = await createStripeClient().subscriptions.retrieve(
-            subscriptionId,
-          );
+          const subscription =
+            await createStripeClient().subscriptions.retrieve(subscriptionId);
           const userId = subscription.metadata?.userId;
           if (!userId) break;
 
