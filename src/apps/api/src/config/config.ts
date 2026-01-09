@@ -69,7 +69,10 @@ export class Config {
     const keys = {
       openai: this.requireEnv("OPENAI_API_KEY"),
       anthropic: this.requireEnv("ANTHROPIC_API_KEY"),
-      stripe: this.requireEnv("STRIPE_API_KEY"),
+      stripe: this.requireEnv(
+        "STRIPE_SECRET_KEY",
+        this.getEnv("STRIPE_API_KEY"),
+      ),
       stripeWebhookSecret: this.requireEnv("STRIPE_WEBHOOK_SECRET"),
       paypalClientId: this.requireEnv("PAYPAL_CLIENT_ID"),
       paypalClientSecret: paypalSecret,
