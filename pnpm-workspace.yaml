@@ -1,6 +1,6 @@
 packages:
   - "api"
-  - "packages/*"
+  - "packages/shared"
   - "tests/e2e"
   # Explicitly exclude backups/archives from workspace execution
   - "!archive/**"

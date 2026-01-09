@@ -10,10 +10,10 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit --pretty false",
     "lint": "echo \"(shared) lint not configured\"",
     "test": "echo \"(shared) no tests\"",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist node_modules"
   },
   "devDependencies": {
     "typescript": "^5.5.4"
