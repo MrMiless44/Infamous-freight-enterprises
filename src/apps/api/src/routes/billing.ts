@@ -114,10 +114,16 @@ export const billingWebhook = Router();
 billing.use(requireAuth);
 billing.use(requireScope("billing:write"));
 
-billing.post("/stripe/checkout", async (req, res) => {
+billing.post("/stripe/checkout", express.json(), async (req, res) => {
   const stripeConfig = config.getStripeConfig();
   if (!stripeConfig.enabled) {
     return res.status(503).json({ error: "Stripe not configured" });
+  }
+
+  if (!stripeConfig.successUrl || !stripeConfig.cancelUrl) {
+    return res
+      .status(503)
+      .json({ error: "Stripe success/cancel URLs not configured" });
   }
 
   const { priceId } = req.body as { priceId?: string };
