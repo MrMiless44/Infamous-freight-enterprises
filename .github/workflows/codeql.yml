@@ -1,88 +1,38 @@
-name: "CodeQL Security Scan"
+name: CodeQL
 
 on:
   push:
-    branches: ["main", "develop"]
-    paths:
-      - "src/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/codeql.yml"
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
   schedule:
-    - cron: "0 2 * * 1" # Weekly Monday at 2 AM UTC
-  workflow_dispatch:
+    - cron: "0 6 * * 1"  # weekly
 
 permissions:
   contents: read
-  security-events: write
+  actions: read
+  security-events: write  # REQUIRED for SARIF upload
 
 jobs:
   analyze:
-    name: CodeQL Analysis
+    name: Analyze (JS/TS)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ["javascript-typescript"]
-
+    timeout-minutes: 60
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
+      # For pure JS like your repo, no build is needed.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: ${{ matrix.language }}
+          languages: javascript-typescript
           queries: security-and-quality
-          config-file: ./.github/codeql-config.yml
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8.15.9
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "pnpm"
-
-      - name: Install dependencies
-        env:
-          HUSKY: 0
-        run: |
-          echo "Installing dependencies..."
-          pnpm install --frozen-lockfile --prefer-offline --no-audit || {
-            echo "Frozen lockfile install failed, trying without frozen flag..."
-            pnpm install --prefer-offline --no-audit
-          }
-
-      - name: Build API
-        run: |
-          echo "Building API..."
-          cd src/apps/api && pnpm build || echo "API build completed with warnings"
-        continue-on-error: true
-
-      - name: Build Shared Package
-        run: |
-          echo "Building shared package..."
-          pnpm --filter @infamous-freight/shared build || echo "Shared build completed with warnings"
-        continue-on-error: true
-
-      - name: Build Web
-        run: |
-          echo "Building web app..."
-          cd src/apps/web && pnpm build || echo "Web build completed with warnings"
-        continue-on-error: true
+          build-mode: none  # important for JS-only repos
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "security"
-          wait-for-processing: true
+          category: "/language:javascript"
