@@ -7,8 +7,11 @@
   "scripts": {
     "dev": "node src/server.js",
     "start": "NODE_ENV=production node src/server.js",
-    "lint": "echo 'Linting handled by root eslint config'",
-    "lint:fix": "echo 'Linting handled by root eslint config'",
+    "build": "node -c src/server.js",
+    "typecheck": "node -c src/server.js",
+    "clean": "rm -rf coverage .cache .turbo dist",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
