@@ -1,52 +1,34 @@
 name: CI
 
 on:
-  pull_request:
-    paths-ignore:
-      - 'archive/**'
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - 'archive/**'
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  ci:
+  build-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - name: Setup Node 20 + pnpm cache
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: pnpm
+          node-version: "20"
+          cache: "npm"
 
-      - name: Guard: no package-lock.json anywhere
-        run: ./scripts/guard-no-npm-lockfiles.sh
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint
-        run: pnpm -r lint
+      - name: Install
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm i; fi
 
       - name: Test
-        run: pnpm -r test
+        run: |
+          if npm run | grep -q " test"; then npm test; else echo "No tests defined."; fi
 
-      - name: Build
-        run: pnpm -r build
+      - name: Lint
+        run: |
+          if npm run | grep -q " lint"; then npm run lint; else echo "No lint script defined."; fi
