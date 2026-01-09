@@ -36,7 +36,7 @@ importers:
         specifier: ^1.0.3
         version: 1.0.3
       '@prisma/client':
-        specifier: ^5.11.0
+        specifier: ^5.22.0
         version: 5.22.0(prisma@5.22.0)
       '@sentry/node':
         specifier: ^7.100.0
@@ -136,7 +136,7 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0
       prisma:
-        specifier: ^5.11.0
+        specifier: ^5.22.0
         version: 5.22.0
       supertest:
         specifier: ^7.1.4
