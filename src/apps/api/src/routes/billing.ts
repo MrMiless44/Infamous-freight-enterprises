@@ -123,6 +123,35 @@ export const billingWebhook = Router();
 billing.use(requireAuth);
 billing.use(requireScope("billing:write"));
 
+/**
+ * GET /api/billing/me
+ * Returns entitlement + feature flags for current user
+ */
+billing.get("/me", async (req, res) => {
+  try {
+    const userId = requireUserId(req);
+    const ent = await prisma.subscriptionEntitlement.findUnique({
+      where: { userId },
+    });
+
+    return res.json({
+      userId,
+      entitlement: ent
+        ? {
+            plan: ent.plan,
+            status: ent.status,
+            stripePriceId: ent.stripePriceId,
+            stripeSubscriptionId: ent.stripeSubscriptionId,
+            currentPeriodEnd: ent.currentPeriodEnd,
+            features: ent.featuresJson,
+          }
+        : null,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err?.message ?? "Unknown error" });
+  }
+});
+
 const stripeCheckoutHandler: express.RequestHandler = async (req, res) => {
   const stripeConfig = config.getStripeConfig();
   if (!stripeConfig.enabled) {
