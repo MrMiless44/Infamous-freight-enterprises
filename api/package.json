@@ -24,7 +24,7 @@
     "@infamous-freight/shared": "file:../packages/shared",
     "@json2csv/node": "^7.0.6",
     "@paypal/checkout-server-sdk": "^1.0.3",
-    "@prisma/client": "^5.11.0",
+    "@prisma/client": "^5.22.0",
     "@sentry/node": "^7.100.0",
     "axios": "^1.7.0",
     "compression": "^1.8.1",
@@ -59,7 +59,7 @@
     "jest-junit": "^16.0.0",
     "pino": "^10.1.0",
     "pino-http": "^11.0.0",
-    "prisma": "^5.11.0",
+    "prisma": "^5.22.0",
     "supertest": "^7.1.4"
   }
 }
