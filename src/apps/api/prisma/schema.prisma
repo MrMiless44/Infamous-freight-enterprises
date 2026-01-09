@@ -14,6 +14,9 @@ model Organization {
   name      String
   users     User[]
   webhooks  Webhook[]
+  apiKeys   ApiKey[]
+  documents Document[]
+  jobs      Job[]
   createdAt DateTime    @default(now())
 }
 
@@ -40,6 +43,76 @@ model Invoice {
   vendor         String
   status         String   @default("pending")
   createdAt      DateTime @default(now())
+}
+
+enum ApiKeyRole {
+  admin
+  analyst
+  dispatcher
+}
+
+model ApiKey {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  name           String
+  keyHash        String       @unique
+  role           ApiKeyRole   @default(analyst)
+  lastUsedAt     DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+}
+
+enum DocumentType {
+  invoice
+  rate_conf
+  bol
+  other
+}
+
+model Document {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  type           DocumentType
+  s3Key          String
+  sha256         String
+  bytes          Int
+  mime           String
+  uploadedBy     String?
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId, type])
+}
+
+enum JobType {
+  parse_rate_confirmation
+  audit_invoice
+  detention_detection
+}
+
+enum JobStatus {
+  queued
+  working
+  succeeded
+  failed
+}
+
+model Job {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  type           JobType
+  status         JobStatus    @default(queued)
+  input          Json
+  output         Json?
+  attempts       Int          @default(0)
+  error          Json?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, status])
 }
 
 model AiDecision {
