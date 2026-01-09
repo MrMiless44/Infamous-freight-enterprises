@@ -7,6 +7,7 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import { GraphQLError } from "graphql";
+import { prisma } from "../db/prisma";
 
 /**
  * Tenant context
@@ -217,23 +218,29 @@ export function multiTenantMiddleware(prisma: PrismaClient) {
  * Feature gate middleware
  */
 export function requireFeature(featureName: string) {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.tenant) {
-      return res.status(400).json({
-        success: false,
-        error: "Tenant context not found",
-      });
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.header("x-user-id");
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ error: "Missing x-user-id (replace with real auth)" });
     }
 
-    if (!req.tenant.features.includes(featureName)) {
-      return res.status(403).json({
-        success: false,
-        error: `Feature '${featureName}' not available on ${req.tenant.plan} plan`,
-        upgrade: true,
-      });
+    const ent = await prisma.subscriptionEntitlement.findUnique({
+      where: { userId },
+    });
+    if (!ent || ent.status !== "active") {
+      return res.status(403).json({ error: "Subscription not active" });
     }
 
-    next();
+    const features = ent.featuresJson as Record<string, boolean> | null;
+    if (!features?.[featureName]) {
+      return res
+        .status(403)
+        .json({ error: `Missing entitlement: ${featureName}` });
+    }
+
+    return next();
   };
 }
 
