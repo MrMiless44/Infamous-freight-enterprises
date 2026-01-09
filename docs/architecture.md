@@ -16,6 +16,10 @@ AI agents are first-class system actors, with the UI remaining as a thin, statel
 
 Client (Web / Mobile) → API Gateway → AI Orchestration → Business Logic Engine → Data + Memory Layer → Automation + Jobs
 
+## Architecture Freeze Policy
+
+To stop structural churn, the architecture is frozen and changes to core boundaries require an ADR and approval. See [ADR-0007: Architecture Freeze and Change Control](adr/0007-architecture-freeze.md) for the decision, scope, and allowed changes.
+
 ### Core Responsibilities
 
 - **API Gateway**: Authentication, rate limiting, request normalization, and routing to orchestrated skills.
