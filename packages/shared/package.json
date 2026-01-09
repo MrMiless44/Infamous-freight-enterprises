@@ -5,9 +5,15 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "echo \"(shared) lint not configured\"",
+    "test": "echo \"(shared) no tests\"",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "typescript": "^5.5.4"
