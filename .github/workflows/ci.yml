@@ -2,33 +2,67 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  build-and-test:
+  ci:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    timeout-minutes: 45
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node + pnpm cache
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: 20
+          cache: pnpm
 
-      - name: Install
+      - name: Guard: no package-lock.json anywhere
         run: |
-          if [ -f package-lock.json ]; then npm ci; else npm i; fi
+          if git ls-files '**/package-lock.json' | grep -q .; then
+            echo "ERROR: package-lock.json found. Use pnpm only."
+            git ls-files '**/package-lock.json'
+            exit 1
+          fi
 
-      - name: Test
+      - name: Guard: no committed node_modules
         run: |
-          if npm run | grep -q " test"; then npm test; else echo "No tests defined."; fi
+          if git ls-files '**/node_modules/**' | grep -q .; then
+            echo "ERROR: node_modules tracked in git. Remove it from version control."
+            git ls-files '**/node_modules/**' | head
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: |
-          if npm run | grep -q " lint"; then npm run lint; else echo "No lint script defined."; fi
+        run: pnpm -r lint
+        continue-on-error: false
+
+      - name: Typecheck
+        run: pnpm -r typecheck
+        continue-on-error: false
+
+      - name: Test
+        run: pnpm -r test
+        continue-on-error: false
+
+      - name: Build
+        run: pnpm -r build
+        continue-on-error: false
