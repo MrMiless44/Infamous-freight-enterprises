@@ -120,6 +120,18 @@ function requireUserId(req: express.Request) {
 export const billing = Router();
 export const billingWebhook = Router();
 
+billing.get("/health", async (_req: express.Request, res: express.Response) => {
+  const last = await prisma.stripeEvent.findFirst({
+    orderBy: { processedAt: "desc" },
+    select: { eventId: true, type: true, processedAt: true },
+  });
+
+  res.json({
+    ok: true,
+    lastEvent: last ?? null,
+  });
+});
+
 billing.use(requireAuth);
 billing.use(requireScope("billing:write"));
 
