@@ -34,6 +34,7 @@ import { websocketService } from "./services/websocket";
 import { cacheService } from "./services/cache";
 import { monitoring } from "./routes/monitoring";
 import { tracingMiddleware } from "./services/tracing";
+import { mvp } from "./routes/mvp";
 
 const app = express();
 const httpServer = createServer(app);
@@ -57,6 +58,7 @@ async function initializeServices() {
 app.use(cors());
 app.use("/api/billing/webhook", billingWebhook);
 app.use("/api", express.json());
+app.use("/v1", express.json());
 app.use(tracingMiddleware()); // Phase 3: Distributed tracing
 app.use(rateLimit);
 app.use(auditTrail);
@@ -80,6 +82,7 @@ app.use("/api/predictions", predictions);
 app.get("/api/analytics", requireFeature("analytics"), (req, res) =>
   res.json({ ok: true }),
 );
+app.use("/v1", mvp);
 app.use(errorHandler);
 
 const apiConfig = config.getApiConfig();
