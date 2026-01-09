@@ -103,6 +103,7 @@ app.use("/api", billingRoutes);
 app.use("/api", voiceRoutes);
 app.use("/api", usersRoutes);
 app.use("/api", shipmentsRoutes);
+app.get("/health", (_req, res) => res.status(200).send("ok"));
 
 // CSP Violation Report Handler
 app.post("/api/csp-violation", handleCSPViolation);
