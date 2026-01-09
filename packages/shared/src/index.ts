@@ -1,1 +1,7 @@
-export const SHARED_VERSION = "0.0.1";
+export type UUID = string;
+
+export interface HealthStatus {
+  ok: boolean;
+  service: string;
+  ts: string;
+}
