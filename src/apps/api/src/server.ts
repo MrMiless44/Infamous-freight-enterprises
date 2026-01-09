@@ -19,7 +19,7 @@ import { route } from "./routes/route";
 import { invoices } from "./routes/invoices";
 import { admin } from "./routes/admin";
 import { voice } from "./routes/voice";
-import { billing } from "./routes/billing";
+import { billing, billingWebhook } from "./routes/billing";
 import { dispatch } from "./routes/dispatch";
 import { driver } from "./routes/driver";
 import { fleet } from "./routes/fleet";
@@ -53,6 +53,7 @@ async function initializeServices() {
 }
 
 app.use(cors());
+app.use("/api/billing/webhook", billingWebhook);
 app.use(express.json());
 app.use(tracingMiddleware()); // Phase 3: Distributed tracing
 app.use(rateLimit);
