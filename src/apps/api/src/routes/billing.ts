@@ -85,7 +85,9 @@ function featuresForPrice(priceId: string) {
 }
 
 function planName(priceId: string) {
-  if ([PRICE.DISPATCH_MONTHLY, PRICE.DISPATCH_ANNUAL].includes(priceId as any)) {
+  if (
+    [PRICE.DISPATCH_MONTHLY, PRICE.DISPATCH_ANNUAL].includes(priceId as any)
+  ) {
     return "AI Dispatch Operator";
   }
   if ([PRICE.FLEET_MONTHLY, PRICE.FLEET_ANNUAL].includes(priceId as any)) {
@@ -94,7 +96,9 @@ function planName(priceId: string) {
   if ([PRICE.OPS_MONTHLY, PRICE.OPS_ANNUAL].includes(priceId as any)) {
     return "Autonomous Ops Suite";
   }
-  if ([PRICE.ENTERPRISE_MONTHLY, PRICE.ENTERPRISE_ANNUAL].includes(priceId as any)) {
+  if (
+    [PRICE.ENTERPRISE_MONTHLY, PRICE.ENTERPRISE_ANNUAL].includes(priceId as any)
+  ) {
     return "Enterprise";
   }
   return "Unknown";
@@ -108,13 +112,10 @@ function requireUserId(req: express.Request) {
   return userId;
 }
 
-export const billing = Router();
-export const billingWebhook = Router();
-
-billing.use(requireAuth);
-billing.use(requireScope("billing:write"));
-
-billing.post("/stripe/checkout", express.json(), async (req, res) => {
+async function handleStripeCheckout(
+  req: express.Request,
+  res: express.Response,
+) {
   const stripeConfig = config.getStripeConfig();
   if (!stripeConfig.enabled) {
     return res.status(503).json({ error: "Stripe not configured" });
@@ -164,7 +165,16 @@ billing.post("/stripe/checkout", express.json(), async (req, res) => {
   } catch (err: any) {
     return res.status(500).json({ error: err?.message ?? "Unknown error" });
   }
-});
+}
+
+export const billing = Router();
+export const billingWebhook = Router();
+
+billing.use(requireAuth);
+billing.use(requireScope("billing:write"));
+
+billing.post("/checkout", express.json(), handleStripeCheckout);
+billing.post("/stripe/checkout", express.json(), handleStripeCheckout);
 
 billing.post("/stripe/session", async (req, res, next) => {
   const stripeConfig = config.getStripeConfig();
@@ -317,9 +327,8 @@ billingWebhook.post(
               : invoice.subscription?.id;
           if (!subscriptionId) break;
 
-          const subscription = await createStripeClient().subscriptions.retrieve(
-            subscriptionId,
-          );
+          const subscription =
+            await createStripeClient().subscriptions.retrieve(subscriptionId);
           const userId = subscription.metadata?.userId;
           if (!userId) break;
 
