@@ -54,7 +54,7 @@ async function initializeServices() {
 
 app.use(cors());
 app.use("/api/billing/webhook", billingWebhook);
-app.use(express.json());
+app.use("/api", express.json());
 app.use(tracingMiddleware()); // Phase 3: Distributed tracing
 app.use(rateLimit);
 app.use(auditTrail);
