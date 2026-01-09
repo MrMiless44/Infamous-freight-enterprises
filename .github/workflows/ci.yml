@@ -1,18 +1,16 @@
 name: CI
 
 on:
-  pull_request:
-    paths-ignore:
-      - "archive/**"
-      - "docs/**"
-      - "**.md"
   push:
     branches: ["main"]
     paths-ignore:
       - "archive/**"
-      - "docs/**"
-      - "**.md"
-  workflow_call:
+  pull_request:
+    paths-ignore:
+      - "archive/**"
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -22,8 +20,6 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    permissions:
-      contents: read
 
     steps:
       - name: Checkout
@@ -32,71 +28,35 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8.15.9
+          version: 8
 
-      - name: Setup Node 20 + pnpm cache
+      - name: Setup Node + pnpm cache
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
-      - name: "Guard: no package-lock.json anywhere"
+      - name: Guard: no package-lock.json anywhere
         run: |
-          # Ensure no root-level npm lockfile
-          test ! -f package-lock.json
-
-          # Ensure no tracked package-lock.json files anywhere in the repo
           if git ls-files '**/package-lock.json' | grep -q .; then
-            echo "Error: package-lock.json files found. This repo uses pnpm; please remove npm lockfiles."
+            echo "ERROR: package-lock.json is tracked. Remove it and use pnpm-lock.yaml only."
+            git ls-files '**/package-lock.json'
+            exit 1
+          fi
+          if find . -name "package-lock.json" -type f | grep -q .; then
+            echo "ERROR: package-lock.json exists in working tree. Delete it."
+            find . -name "package-lock.json" -type f
             exit 1
           fi
 
-      - name: Verify pnpm and lockfile
-        run: |
-          echo "pnpm version: $(pnpm --version)"
-          echo "lockfile size: $(wc -c < pnpm-lock.yaml) bytes"
-          echo "lockfile format version: $(head -1 pnpm-lock.yaml)"
-
-      - name: Install (workspace)
-        env:
-          HUSKY: 0
-        run: |
-          # Try with frozen lockfile first
-          pnpm install --frozen-lockfile && exit 0
-
-          # If frozen fails, try with prefer-offline
-          echo "Frozen lockfile install failed, trying with prefer-offline..."
-          pnpm install --prefer-offline && exit 0
-
-          # Last resort - regular install
-          echo "Prefer-offline install failed, trying regular install..."
-          pnpm install
-        continue-on-error: false
-
-      - name: Build Shared Package
-        run: pnpm --filter @infamous-freight/shared build
-        continue-on-error: false
-
-      - name: Generate Prisma Client
-        run: pnpm --filter infamous-freight-api exec prisma generate
-        continue-on-error: true
-
-      - name: Build API
-        run: pnpm --filter infamous-freight-api build
-        continue-on-error: false
-
-      - name: Build Web
-        run: pnpm --filter infamous-freight-web build
-        continue-on-error: false
-
-      - name: Build Mobile
-        run: pnpm --filter infamous-freight-mobile build
-        continue-on-error: true
+      - name: Install
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm lint || echo "Linting completed with warnings"
-        continue-on-error: true
+        run: pnpm -r lint
 
-      - name: Type Check
-        run: pnpm typecheck || echo "Type checking completed with warnings"
-        continue-on-error: true
+      - name: Test
+        run: pnpm -r test
+
+      - name: Build
+        run: pnpm -r build
