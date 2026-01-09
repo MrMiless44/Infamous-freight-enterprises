@@ -38,9 +38,9 @@
     "prepare": "husky install"
   },
   "workspaces": [
-    "src/apps/*",
-    "src/packages/*",
-    "tests/*"
+    "api",
+    "packages/*",
+    "tests/e2e"
   ],
   "devDependencies": {
     "@playwright/test": "^1.47.0",
