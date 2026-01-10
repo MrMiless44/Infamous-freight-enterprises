@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { jest } from "@jest/globals";
 import { PrismaClient } from "@prisma/client";
 import { PaymentService } from "../../services/paymentService";
 import Stripe from "stripe";

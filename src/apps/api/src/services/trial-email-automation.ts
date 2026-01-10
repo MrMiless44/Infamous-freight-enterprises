@@ -1,8 +1,6 @@
 import cron from "node-cron";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../lib/prismaClient";
 import { emailService } from "../services/email";
-
-const prisma = new PrismaClient();
 
 // Email schedule (days into trial)
 const EMAIL_SCHEDULE = {
@@ -50,11 +48,13 @@ export function initializeTrialEmailAutomation() {
         if (!user) continue;
 
         const daysSinceTrial = Math.floor(
-          (Date.now() - subscription.createdAt.getTime()) / (24 * 60 * 60 * 1000)
+          (Date.now() - subscription.createdAt.getTime()) /
+            (24 * 60 * 60 * 1000),
         );
 
         // Check if it's time to send an email
-        const emailMethod = EMAIL_SCHEDULE[daysSinceTrial as keyof typeof EMAIL_SCHEDULE];
+        const emailMethod =
+          EMAIL_SCHEDULE[daysSinceTrial as keyof typeof EMAIL_SCHEDULE];
 
         if (emailMethod) {
           const method = emailService[emailMethod as keyof typeof emailService];
@@ -78,9 +78,12 @@ export function initializeTrialEmailAutomation() {
               regularPrice: "$999",
               freeSavings: "$1,998",
               planName: subscription.tier.toUpperCase(),
-              nextBillingDate: new Date(subscription.currentPeriodEnd).toLocaleDateString(),
+              nextBillingDate: new Date(
+                subscription.currentPeriodEnd,
+              ).toLocaleDateString(),
               amount: `$${subscription.priceMonthly}`,
-              maxTeamMembers: subscription.tier === "professional" ? 10 : "unlimited",
+              maxTeamMembers:
+                subscription.tier === "professional" ? 10 : "unlimited",
               onboardingUrl: `${process.env.WEB_URL}/onboarding`,
               supportUrl: `https://help.infamousfreight.com`,
               tutorialsUrl: `${process.env.WEB_URL}/tutorials`,
@@ -107,7 +110,9 @@ export function initializeTrialEmailAutomation() {
  */
 async function checkAndSendChurnPrevention() {
   try {
-    const inactiveThreshold = new Date(Date.now() - CHURN_CHECK_DAYS * 24 * 60 * 60 * 1000);
+    const inactiveThreshold = new Date(
+      Date.now() - CHURN_CHECK_DAYS * 24 * 60 * 60 * 1000,
+    );
 
     const inactiveSubscriptions = await prisma.subscription.findMany({
       where: {
@@ -170,7 +175,10 @@ async function checkAndSendChurnPrevention() {
  * Manually trigger trial-to-paid sequence for specific subscription
  * Useful for testing or re-sending emails
  */
-export async function triggerTrialEmailSequence(subscriptionId: string, daysSinceTrial: number) {
+export async function triggerTrialEmailSequence(
+  subscriptionId: string,
+  daysSinceTrial: number,
+) {
   try {
     const subscription = await prisma.subscription.findUnique({
       where: { id: subscriptionId },
@@ -191,7 +199,8 @@ export async function triggerTrialEmailSequence(subscriptionId: string, daysSinc
     }
 
     const user = subscription.organization.users[0];
-    const emailMethod = EMAIL_SCHEDULE[daysSinceTrial as keyof typeof EMAIL_SCHEDULE];
+    const emailMethod =
+      EMAIL_SCHEDULE[daysSinceTrial as keyof typeof EMAIL_SCHEDULE];
 
     if (!emailMethod) {
       throw new Error(`No email configured for day ${daysSinceTrial}`);
@@ -221,7 +230,9 @@ export async function triggerTrialEmailSequence(subscriptionId: string, daysSinc
       regularPrice: "$999",
       freeSavings: "$1,998",
       planName: subscription.tier.toUpperCase(),
-      nextBillingDate: new Date(subscription.currentPeriodEnd).toLocaleDateString(),
+      nextBillingDate: new Date(
+        subscription.currentPeriodEnd,
+      ).toLocaleDateString(),
       amount: `$${subscription.priceMonthly}`,
       maxTeamMembers: subscription.tier === "professional" ? 10 : "unlimited",
       onboardingUrl: `${process.env.WEB_URL}/onboarding`,
@@ -262,7 +273,10 @@ export async function getEmailCampaignStats() {
       where: { isOnTrial: false },
     });
 
-    const conversionRate = totalTrials > 0 ? ((convertedToPayment / totalTrials) * 100).toFixed(2) : "0";
+    const conversionRate =
+      totalTrials > 0
+        ? ((convertedToPayment / totalTrials) * 100).toFixed(2)
+        : "0";
 
     const emailStats = await prisma.revenueEvent.groupBy({
       by: ["eventType"],

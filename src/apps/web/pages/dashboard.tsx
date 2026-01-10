@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { track } from "@vercel/analytics";
+import AppLayout from "../components/AppLayout";
 import { AvatarVoice } from "../components/AvatarVoice";
 import { VoicePanel } from "../components/VoicePanel";
 import { BillingPanel } from "../components/BillingPanel";
 import { resolveApiBase } from "../hooks/useApi";
+import styles from "../styles/dashboard.module.css";
 
 export default function Dashboard() {
-  const [status, setStatus] = useState<unknown>(null);
+  const [status, setStatus] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Track page view
     track("dashboard_visited", {
       timestamp: new Date().toISOString(),
     });
@@ -21,11 +22,14 @@ export default function Dashboard() {
       .then((data) => {
         setStatus(data);
         track("api_health_check", {
-          status: data.ok ? "healthy" : "unhealthy",
+          status: (data as any)?.ok ? "healthy" : "unhealthy",
         });
       })
       .catch((error) => {
-        setStatus({ ok: false });
+        setStatus({
+          ok: false,
+          error: error instanceof Error ? error.message : "Unknown",
+        });
         track("api_health_error", {
           error: error instanceof Error ? error.message : "Unknown error",
         });
@@ -33,27 +37,86 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   }, []);
 
+  const isHealthy = useMemo(
+    () => Boolean((status as any)?.ok ?? (status as any)?.status === "ok"),
+    [status],
+  );
+
   return (
-    <main style={{ padding: "2rem" }}>
-      <h1 style={{ fontSize: "2rem" }}>Control Tower</h1>
+    <AppLayout
+      kicker="Live control"
+      title="Control tower"
+      subtitle="Monitor health, send voice commands, and handle billing without jumping tabs."
+    >
+      <section className={styles.grid}>
+        <div className={styles.statusCard}>
+          <div className={styles.statusHeader}>
+            <div>
+              <p className="hero-kicker">System health</p>
+              <h2 className="section-title" style={{ margin: 0 }}>
+                {loading
+                  ? "Checking…"
+                  : isHealthy
+                    ? "All systems go"
+                    : "Needs attention"}
+              </h2>
+            </div>
+            <span className={styles.badge}>
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "10px",
+                  height: "10px",
+                  borderRadius: "999px",
+                  background: loading
+                    ? "#ffc94a"
+                    : isHealthy
+                      ? "#2ee6a8"
+                      : "#ff7b7b",
+                }}
+              />
+              {loading ? "Updating" : isHealthy ? "Healthy" : "Investigate"}
+            </span>
+          </div>
 
-      {loading && <p>Loading status…</p>}
-      {!loading && (
-        <pre
-          style={{
-            background: "#0b0b12",
-            padding: "1rem",
-            borderRadius: "12px",
-            border: "1px solid rgba(255,255,255,0.05)",
-          }}
-        >
-          {JSON.stringify(status, null, 2)}
-        </pre>
-      )}
+          <div className={styles.health}>
+            {loading && <p className="subtle">Pinging API health…</p>}
+            {!loading && (
+              <pre className={styles.codeBlock}>
+                {JSON.stringify(status, null, 2)}
+              </pre>
+            )}
+          </div>
+        </div>
 
-      <VoicePanel />
-      <AvatarVoice />
-      <BillingPanel />
-    </main>
+        <div className="card">
+          <h2 className="section-title">Quick actions</h2>
+          <p className="subtle" style={{ marginTop: "0.25rem" }}>
+            Run the core flows you use most.
+          </p>
+          <div className="timeline" style={{ marginTop: "0.75rem" }}>
+            <span>Send a command</span>
+            <span>Hear driver-safe status</span>
+            <span>Collect a payment</span>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2>Live controls</h2>
+        <p>Voice, coaching, and billing in one place.</p>
+        <div className={styles.panels}>
+          <div className="panel">
+            <VoicePanel />
+          </div>
+          <div className="panel">
+            <AvatarVoice />
+          </div>
+          <div className="panel">
+            <BillingPanel />
+          </div>
+        </div>
+      </section>
+    </AppLayout>
   );
 }

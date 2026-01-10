@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Tests for Driver Availability Predictor
  * Validates prediction accuracy and ML model functionality

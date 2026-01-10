@@ -14,7 +14,7 @@ import config from "./config";
 import { health } from "./routes/health";
 import { auth } from "./routes/auth";
 import { ai } from "./routes/ai";
-import { avatar } from "./routes/avatar";
+import avatarRouter from "./routes/avatar";
 import { route } from "./routes/route";
 import { invoices } from "./routes/invoices";
 import { admin } from "./routes/admin";
@@ -32,6 +32,10 @@ import { websocketService } from "./services/websocket";
 import { cacheService } from "./services/cache";
 import { monitoring } from "./routes/monitoring";
 import { tracingMiddleware } from "./services/tracing";
+import {
+  compressionMiddleware,
+  compressionStatsMiddleware,
+} from "./middleware/compression";
 
 const app = express();
 const httpServer = createServer(app);
@@ -53,6 +57,8 @@ async function initializeServices() {
 }
 
 app.use(cors());
+app.use(compressionMiddleware);
+app.use(compressionStatsMiddleware);
 app.use(express.json());
 app.use(tracingMiddleware()); // Phase 3: Distributed tracing
 app.use(rateLimit);
@@ -62,7 +68,7 @@ app.use("/api/health", health);
 app.use("/api/metrics", monitoring);
 app.use("/api/auth", auth);
 app.use("/api/ai", ai);
-app.use("/api/avatar", avatar);
+app.use("/api/avatar", avatarRouter);
 app.use("/api/route", route);
 app.use("/api/invoices", invoices);
 app.use("/api/admin", admin);
@@ -85,3 +91,7 @@ initializeServices().then(() => {
     console.info("Services ready for WebSocket and caching");
   });
 });
+
+// Export for testing
+export default app;
+export { httpServer };

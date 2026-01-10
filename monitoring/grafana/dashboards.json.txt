@@ -1,0 +1,582 @@
+# Grafana Dashboards Configuration
+# Deploy to Grafana using provisioning API or UI import
+
+## Dashboard 1: API Performance Overview
+## ID: api-overview
+
+{
+  "dashboard": {
+    "title": "API Performance Overview",
+    "tags": ["api", "performance"],
+    "timezone": "browser",
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Request Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{app=\"api\"}[5m])",
+            "legendFormat": "{{method}} {{endpoint}}"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "id": 2,
+        "title": "Response Time (P50, P95, P99)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{app=\"api\"}[5m]))",
+            "legendFormat": "P50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{app=\"api\"}[5m]))",
+            "legendFormat": "P95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{app=\"api\"}[5m]))",
+            "legendFormat": "P99"
+          }
+        ],
+        "yaxes": [
+          { "format": "ms", "label": "Latency" }
+        ],
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "id": 3,
+        "title": "Error Rate (%)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "(rate(http_requests_total{app=\"api\",status=~\"5..\"}[5m]) / rate(http_requests_total{app=\"api\"}[5m])) * 100",
+            "legendFormat": "5xx Error Rate"
+          },
+          {
+            "expr": "(rate(http_requests_total{app=\"api\",status=~\"4..\"}[5m]) / rate(http_requests_total{app=\"api\"}[5m])) * 100",
+            "legendFormat": "4xx Error Rate"
+          }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": { "type": "gt", "params": [5] },
+              "operator": { "type": "and" },
+              "query": { "params": ["A", "5m", "now"] },
+              "reducer": { "type": "avg" },
+              "type": "query"
+            }
+          ],
+          "frequency": "1m",
+          "handler": 1,
+          "name": "High Error Rate Alert",
+          "noDataState": "no_data",
+          "notifications": [{ "uid": "pagerduty" }]
+        },
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+      },
+      {
+        "id": 4,
+        "title": "Active Connections",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "nodejs_active_handles_total{app=\"api\"}",
+            "legendFormat": "Active Handles"
+          },
+          {
+            "expr": "nodejs_active_requests_total{app=\"api\"}",
+            "legendFormat": "Active Requests"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
+      },
+      {
+        "id": 5,
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "nodejs_heap_size_used_bytes{app=\"api\"} / 1024 / 1024",
+            "legendFormat": "Heap Used (MB)"
+          },
+          {
+            "expr": "nodejs_heap_size_total_bytes{app=\"api\"} / 1024 / 1024",
+            "legendFormat": "Heap Total (MB)"
+          }
+        ],
+        "yaxes": [
+          { "format": "MB", "label": "Memory" }
+        ],
+        "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 }
+      },
+      {
+        "id": 6,
+        "title": "CPU Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(process_cpu_seconds_total{app=\"api\"}[5m]) * 100",
+            "legendFormat": "CPU %"
+          }
+        ],
+        "yaxes": [
+          { "format": "percent", "label": "CPU" }
+        ],
+        "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 }
+      }
+    ]
+  }
+}
+
+---
+
+## Dashboard 2: Database Performance
+## ID: database-performance
+
+{
+  "dashboard": {
+    "title": "Database Performance",
+    "tags": ["database", "postgresql"],
+    "timezone": "browser",
+    "refresh": "1m",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Query Duration (P95)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(prisma_client_queries_duration_bucket[5m]))",
+            "legendFormat": "{{operation}}"
+          }
+        ],
+        "yaxes": [
+          { "format": "ms", "label": "Duration" }
+        ],
+        "thresholds": [
+          { "value": 50, "colorMode": "ok" },
+          { "value": 100, "colorMode": "warning" },
+          { "value": 500, "colorMode": "critical" }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "id": 2,
+        "title": "Connection Pool Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "prisma_pool_connections_open",
+            "legendFormat": "Open Connections"
+          },
+          {
+            "expr": "prisma_pool_connections_idle",
+            "legendFormat": "Idle Connections"
+          }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": { "type": "gt", "params": [18] },
+              "operator": { "type": "and" },
+              "query": { "params": ["A", "5m", "now"] },
+              "reducer": { "type": "avg" },
+              "type": "query"
+            }
+          ],
+          "frequency": "1m",
+          "handler": 1,
+          "name": "Connection Pool Near Limit",
+          "noDataState": "no_data",
+          "notifications": [{ "uid": "pagerduty" }]
+        },
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "id": 3,
+        "title": "Slow Queries (>1s)",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "topk(10, prisma_client_queries_duration_bucket{le=\"1\"})",
+            "format": "table"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 8, "w": 24, "h": 8 }
+      },
+      {
+        "id": 4,
+        "title": "Database Size",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "pg_database_size_bytes / 1024 / 1024 / 1024",
+            "legendFormat": "DB Size (GB)"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 }
+      },
+      {
+        "id": 5,
+        "title": "Active Transactions",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "pg_stat_activity_count{state=\"active\"}",
+            "legendFormat": "Active Transactions"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 }
+      }
+    ]
+  }
+}
+
+---
+
+## Dashboard 3: Cache Performance (Redis)
+## ID: cache-performance
+
+{
+  "dashboard": {
+    "title": "Cache Performance (Redis)",
+    "tags": ["cache", "redis"],
+    "timezone": "browser",
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Cache Hit Rate (%)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "(redis_keyspace_hits_total / (redis_keyspace_hits_total + redis_keyspace_misses_total)) * 100",
+            "legendFormat": "Hit Rate %"
+          }
+        ],
+        "yaxes": [
+          { "format": "percent", "label": "Hit Rate", "min": 0, "max": 100 }
+        ],
+        "thresholds": [
+          { "value": 70, "colorMode": "ok" },
+          { "value": 50, "colorMode": "warning" },
+          { "value": 40, "colorMode": "critical" }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": { "type": "lt", "params": [40] },
+              "operator": { "type": "and" },
+              "query": { "params": ["A", "10m", "now"] },
+              "reducer": { "type": "avg" },
+              "type": "query"
+            }
+          ],
+          "frequency": "1m",
+          "handler": 1,
+          "name": "Low Cache Hit Rate",
+          "message": "Cache hit rate below 40% - consider cache warming or TTL tuning",
+          "notifications": [{ "uid": "slack" }]
+        },
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "id": 2,
+        "title": "Cache Operations/sec",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(redis_commands_processed_total[5m])",
+            "legendFormat": "Commands/sec"
+          },
+          {
+            "expr": "rate(redis_keyspace_hits_total[5m])",
+            "legendFormat": "Hits/sec"
+          },
+          {
+            "expr": "rate(redis_keyspace_misses_total[5m])",
+            "legendFormat": "Misses/sec"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "id": 3,
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "redis_memory_used_bytes / 1024 / 1024",
+            "legendFormat": "Used Memory (MB)"
+          },
+          {
+            "expr": "redis_memory_max_bytes / 1024 / 1024",
+            "legendFormat": "Max Memory (MB)"
+          }
+        ],
+        "yaxes": [
+          { "format": "MB", "label": "Memory" }
+        ],
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+      },
+      {
+        "id": 4,
+        "title": "Evicted Keys/min",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(redis_evicted_keys_total[1m]) * 60",
+            "legendFormat": "Evictions/min"
+          }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": { "type": "gt", "params": [50] },
+              "operator": { "type": "and" },
+              "query": { "params": ["A", "5m", "now"] },
+              "reducer": { "type": "avg" },
+              "type": "query"
+            }
+          ],
+          "frequency": "1m",
+          "handler": 1,
+          "name": "High Cache Eviction Rate",
+          "notifications": [{ "uid": "slack" }]
+        },
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
+      },
+      {
+        "id": 5,
+        "title": "Connected Clients",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "redis_connected_clients",
+            "legendFormat": "Connected Clients"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 }
+      },
+      {
+        "id": 6,
+        "title": "Key Count by Type",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "redis_db_keys{db=\"db0\"}",
+            "legendFormat": "Total Keys"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 }
+      }
+    ]
+  }
+}
+
+---
+
+## Dashboard 4: Business Metrics
+## ID: business-metrics
+
+{
+  "dashboard": {
+    "title": "Business Metrics Dashboard",
+    "tags": ["business", "kpis"],
+    "timezone": "browser",
+    "refresh": "5m",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Active Shipments",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "shipments_active_total"
+          }
+        ],
+        "thresholds": [
+          { "value": 0, "color": "red" },
+          { "value": 100, "color": "yellow" },
+          { "value": 500, "color": "green" }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 6, "h": 6 }
+      },
+      {
+        "id": 2,
+        "title": "Revenue Today ($)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(increase(revenue_usd[1d]))"
+          }
+        ],
+        "unit": "currencyUSD",
+        "gridPos": { "x": 6, "y": 0, "w": 6, "h": 6 }
+      },
+      {
+        "id": 3,
+        "title": "New User Signups (24h)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "increase(user_signups_total[24h])"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 0, "w": 6, "h": 6 }
+      },
+      {
+        "id": 4,
+        "title": "Payment Success Rate (%)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "(sum(rate(payments_successful_total[1h])) / sum(rate(payments_attempted_total[1h]))) * 100"
+          }
+        ],
+        "thresholds": [
+          { "value": 90, "color": "red" },
+          { "value": 95, "color": "yellow" },
+          { "value": 98, "color": "green" }
+        ],
+        "unit": "percent",
+        "gridPos": { "x": 18, "y": 0, "w": 6, "h": 6 }
+      },
+      {
+        "id": 5,
+        "title": "Shipment Volume (7 days)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(increase(shipments_created_total[1d]))",
+            "legendFormat": "Shipments Created"
+          },
+          {
+            "expr": "sum(increase(shipments_completed_total[1d]))",
+            "legendFormat": "Shipments Completed"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 6, "w": 12, "h": 8 }
+      },
+      {
+        "id": 6,
+        "title": "Revenue Trend (30 days)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "sum(increase(revenue_usd[1d]))",
+            "legendFormat": "Daily Revenue"
+          }
+        ],
+        "yaxes": [
+          { "format": "currencyUSD", "label": "Revenue" }
+        ],
+        "gridPos": { "x": 12, "y": 6, "w": 12, "h": 8 }
+      },
+      {
+        "id": 7,
+        "title": "Average Delivery Time (hours)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "avg(delivery_time_seconds) / 3600",
+            "legendFormat": "Avg Delivery Time (h)"
+          }
+        ],
+        "yaxes": [
+          { "format": "hours", "label": "Time" }
+        ],
+        "gridPos": { "x": 0, "y": 14, "w": 12, "h": 8 }
+      },
+      {
+        "id": 8,
+        "title": "Customer Satisfaction Score",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "avg(rating_score)",
+            "legendFormat": "Avg Rating (1-5)"
+          }
+        ],
+        "yaxes": [
+          { "format": "none", "label": "Rating", "min": 1, "max": 5 }
+        ],
+        "gridPos": { "x": 12, "y": 14, "w": 12, "h": 8 }
+      }
+    ]
+  }
+}
+
+---
+
+## Deployment Instructions
+
+### Option 1: Grafana UI Import
+1. Log in to Grafana: http://grafana.infamous-freight.com
+2. Click **Dashboards** → **Import**
+3. Copy/paste JSON from each dashboard section above
+4. Click **Load** → **Import**
+
+### Option 2: Provisioning (Automated)
+```yaml
+# monitoring/grafana/provisioning/dashboards.yml
+apiVersion: 1
+
+providers:
+  - name: 'default'
+    orgId: 1
+    folder: 'Infamous Freight'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/provisioning/dashboards
+```
+
+### Option 3: API Upload
+```bash
+# Upload via Grafana API
+curl -X POST \
+  http://admin:admin@grafana.infamous-freight.com/api/dashboards/db \
+  -H "Content-Type: application/json" \
+  -d @api-overview-dashboard.json
+```
+
+## Alert Configuration
+
+### PagerDuty Integration
+```yaml
+# monitoring/grafana/provisioning/notifiers.yml
+notifiers:
+  - name: pagerduty
+    type: pagerduty
+    uid: pagerduty
+    org_id: 1
+    settings:
+      integrationKey: YOUR_PAGERDUTY_KEY
+      autoResolve: true
+      severity: critical
+```
+
+### Slack Integration
+```yaml
+notifiers:
+  - name: slack
+    type: slack
+    uid: slack
+    org_id: 1
+    settings:
+      url: https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
+      recipient: '#alerts'
+      username: Grafana
+```
+
+---
+
+**Last Updated:** 2026-01-10  
+**Owner:** Platform Engineering  
+**Review Frequency:** Monthly

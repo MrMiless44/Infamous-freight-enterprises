@@ -49,9 +49,11 @@ const EMAIL_TEMPLATES = {
   },
 
   trial_engagement: {
-    subject: "We noticed you haven't set up a shipment yet — Here's how (2 min)",
+    subject:
+      "We noticed you haven't set up a shipment yet — Here's how (2 min)",
     title: "Getting Started is Easy",
-    preview: "Quick guide to set up your first shipment and see the platform in action.",
+    preview:
+      "Quick guide to set up your first shipment and see the platform in action.",
     body: `
       <p>Hi {{firstName}},</p>
       <p>We noticed you haven't created a shipment yet. Let us show you how easy it is!</p>
@@ -73,7 +75,8 @@ const EMAIL_TEMPLATES = {
   trial_midpoint_checkpoint: {
     subject: "Midway through your trial! Here's what you're using most",
     title: "Your Infamous Freight Progress",
-    preview: "You've unlocked {{featureCount}} features. See what's working best for you.",
+    preview:
+      "You've unlocked {{featureCount}} features. See what's working best for you.",
     body: `
       <p>Hi {{firstName}},</p>
       <p>You're halfway through your trial! Here's what you've been using:</p>
@@ -102,7 +105,8 @@ const EMAIL_TEMPLATES = {
   },
 
   trial_upgrade_offer_early: {
-    subject: "Special offer: {{discountPercent}}% off your first {{months}} months",
+    subject:
+      "Special offer: {{discountPercent}}% off your first {{months}} months",
     title: "Exclusive Early-Bird Pricing",
     preview:
       "Lock in {{discountPercent}}% savings when you upgrade now. Offer expires in 5 days.",
@@ -123,7 +127,8 @@ const EMAIL_TEMPLATES = {
   },
 
   trial_final_offer: {
-    subject: "Last day of your trial! Final offer: 60 days free when you upgrade",
+    subject:
+      "Last day of your trial! Final offer: 60 days free when you upgrade",
     title: "Don't Miss Out — Final Offer Inside",
     preview: "Get 2 months free when you upgrade in the next 24 hours.",
     body: `
@@ -151,7 +156,8 @@ const EMAIL_TEMPLATES = {
   },
 
   payment_succeeded: {
-    subject: "Welcome {{firstName}}! Your Infamous Freight subscription is active",
+    subject:
+      "Welcome {{firstName}}! Your Infamous Freight subscription is active",
     title: "Your Subscription is Active",
     preview: "You're all set! Here's what's next.",
     body: `
@@ -185,7 +191,8 @@ const EMAIL_TEMPLATES = {
   },
 
   churn_prevention: {
-    subject: "{{firstName}}, we noticed you haven't used Infamous Freight in {{days}} days",
+    subject:
+      "{{firstName}}, we noticed you haven't used Infamous Freight in {{days}} days",
     title: "We Miss You!",
     preview: "Let us help you get the most out of your subscription.",
     body: `
@@ -224,7 +231,8 @@ export class EmailService {
         secure: emailConfig.secure, // true for 465, false for other ports
         auth: {
           user: emailConfig.user,
-          pass: emailConfig.password,
+          // Support both legacy `password` and current `pass` keys
+          pass: emailConfig.password ?? emailConfig.pass,
         },
       });
     }
@@ -238,7 +246,7 @@ export class EmailService {
       email,
       EMAIL_TEMPLATES.trial_welcome,
       context,
-      "trial_welcome"
+      "trial_welcome",
     );
   }
 
@@ -250,7 +258,7 @@ export class EmailService {
       email,
       EMAIL_TEMPLATES.trial_feature_highlight,
       context,
-      "trial_feature_highlight"
+      "trial_feature_highlight",
     );
   }
 
@@ -262,7 +270,7 @@ export class EmailService {
       email,
       EMAIL_TEMPLATES.trial_engagement,
       context,
-      "trial_engagement"
+      "trial_engagement",
     );
   }
 
@@ -274,7 +282,7 @@ export class EmailService {
       email,
       EMAIL_TEMPLATES.trial_midpoint_checkpoint,
       context,
-      "trial_midpoint_checkpoint"
+      "trial_midpoint_checkpoint",
     );
   }
 
@@ -286,7 +294,7 @@ export class EmailService {
       email,
       EMAIL_TEMPLATES.trial_upgrade_offer_early,
       context,
-      "trial_upgrade_offer_early"
+      "trial_upgrade_offer_early",
     );
   }
 
@@ -298,7 +306,7 @@ export class EmailService {
       email,
       EMAIL_TEMPLATES.trial_final_offer,
       context,
-      "trial_final_offer"
+      "trial_final_offer",
     );
   }
 
@@ -310,7 +318,7 @@ export class EmailService {
       email,
       EMAIL_TEMPLATES.payment_succeeded,
       context,
-      "payment_succeeded"
+      "payment_succeeded",
     );
   }
 
@@ -322,7 +330,7 @@ export class EmailService {
       email,
       EMAIL_TEMPLATES.churn_prevention,
       context,
-      "churn_prevention"
+      "churn_prevention",
     );
   }
 
@@ -333,7 +341,7 @@ export class EmailService {
     to: string,
     template: any,
     context: EmailContext,
-    templateId: string
+    templateId: string,
   ) {
     if (!this.transporter) {
       console.warn("Email service not configured. Skipping email:", templateId);
@@ -353,7 +361,9 @@ export class EmailService {
         html: this.wrapHtml(htmlContent),
       });
 
-      console.info(`Email sent: ${templateId} to ${to}`, { messageId: info.messageId });
+      console.info(`Email sent: ${templateId} to ${to}`, {
+        messageId: info.messageId,
+      });
 
       return {
         success: true,

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import styles from "../styles/billing.module.css";
+import styles from "../../styles/billing.module.css";
 
 export default function BillingSuccessPage() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading",
+  );
   const [message, setMessage] = useState("");
   const [subscription, setSubscription] = useState(null);
 
@@ -17,7 +19,7 @@ export default function BillingSuccessPage() {
     const processCheckout = async () => {
       try {
         const { sessionId } = router.query;
-        
+
         if (!sessionId) {
           setStatus("error");
           setMessage("No checkout session found");
@@ -54,7 +56,9 @@ export default function BillingSuccessPage() {
       <div className={styles.container}>
         <div className={styles.card}>
           <h2>Please sign in to continue</h2>
-          <button onClick={() => router.push("/api/auth/signin")}>Sign In</button>
+          <button onClick={() => router.push("/api/auth/signin")}>
+            Sign In
+          </button>
         </div>
       </div>
     );
@@ -93,7 +97,8 @@ export default function BillingSuccessPage() {
                   <strong>Price:</strong> ${subscription.priceMonthly}/month
                 </p>
                 <p>
-                  <strong>Trial Ends:</strong> {new Date(subscription.trialEndsAt).toLocaleDateString()}
+                  <strong>Trial Ends:</strong>{" "}
+                  {new Date(subscription.trialEndsAt).toLocaleDateString()}
                 </p>
               </div>
             )}
@@ -109,16 +114,25 @@ export default function BillingSuccessPage() {
             </div>
 
             <div className={styles.actions}>
-              <button onClick={() => router.push("/dashboard")} className={styles.primary}>
+              <button
+                onClick={() => router.push("/dashboard")}
+                className={styles.primary}
+              >
                 Go to Dashboard
               </button>
-              <button onClick={() => router.push("/")} className={styles.secondary}>
+              <button
+                onClick={() => router.push("/")}
+                className={styles.secondary}
+              >
                 Back to Home
               </button>
             </div>
 
             <p className={styles.support}>
-              Need help? <a href="mailto:support@infamousfreight.com">Contact our support team</a>
+              Need help?{" "}
+              <a href="mailto:support@infamousfreight.com">
+                Contact our support team
+              </a>
             </p>
           </div>
         )}
@@ -130,10 +144,16 @@ export default function BillingSuccessPage() {
             <p>{message}</p>
 
             <div className={styles.actions}>
-              <button onClick={() => router.push("/pricing")} className={styles.primary}>
+              <button
+                onClick={() => router.push("/pricing")}
+                className={styles.primary}
+              >
                 Back to Pricing
               </button>
-              <button onClick={() => router.push("/contact-sales")} className={styles.secondary}>
+              <button
+                onClick={() => router.push("/contact-sales")}
+                className={styles.secondary}
+              >
                 Contact Support
               </button>
             </div>

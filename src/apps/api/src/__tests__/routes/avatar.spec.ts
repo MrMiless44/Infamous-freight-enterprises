@@ -1,6 +1,6 @@
 import request from "supertest";
 import express from "express";
-import { avatarRouter } from "../../routes/avatar";
+import avatarRouter from "../../routes/avatar";
 import { authenticate } from "../../middleware/security";
 
 jest.mock("../../middleware/security");

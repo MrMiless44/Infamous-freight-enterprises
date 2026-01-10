@@ -1,0 +1,141 @@
+.heroGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.heroCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #0c0f1a, #0e1020);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-strong);
+  isolation: isolate;
+}
+
+.heroHighlight {
+  font-size: clamp(2.3rem, 4vw, 3rem);
+  margin: 0.4rem 0 0.75rem;
+  line-height: 1.12;
+}
+
+.heroCopy {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.statItem {
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.statItem h4 {
+  margin: 0 0 0.2rem;
+}
+
+.statItem p {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.cardTitle {
+  margin: 0 0 0.25rem;
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.checklist li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+}
+
+.sectionBlock {
+  margin-top: 2.5rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+}
+
+.sectionHeader p {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.playbook {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.playCard {
+  padding: 1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.playCard h4 {
+  margin: 0 0 0.25rem;
+}
+
+.playCard p {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.gradient {
+  position: absolute;
+  inset: -30% auto auto 30%;
+  width: 280px;
+  height: 280px;
+  filter: blur(90px);
+  background: radial-gradient(circle, #ffcc33, #ff5e62);
+  opacity: 0.25;
+  z-index: 0;
+}
+
+@media (max-width: 720px) {
+  .heroActions {
+    width: 100%;
+  }
+}

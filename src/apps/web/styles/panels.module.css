@@ -1,0 +1,71 @@
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.panelHeader h3 {
+  margin: 0;
+}
+
+.panelBody {
+  margin-top: 0.5rem;
+}
+
+.textarea {
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  background: #0f111d;
+  color: var(--ink);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 110px;
+  resize: vertical;
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.8rem;
+}
+
+.smallSubtle {
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+.result {
+  margin-top: 0.9rem;
+  padding: 0.9rem;
+  border-radius: 12px;
+  background: #0b0b12;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.95rem;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.billingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.badgeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.badgeCard {
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.95rem;
+}

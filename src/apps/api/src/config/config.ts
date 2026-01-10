@@ -128,6 +128,19 @@ export class Config {
     };
   }
 
+  getEmailConfig() {
+    return {
+      enabled: this.getBoolean("EMAIL_SERVICE_ENABLED", false),
+      host: this.getEnv("EMAIL_HOST", "smtp.gmail.com"),
+      port: this.getNumber("EMAIL_PORT", 587),
+      secure: this.getBoolean("EMAIL_SECURE", false),
+      user: this.getEnv("EMAIL_USER", ""),
+      pass: this.getEnv("EMAIL_PASS", ""),
+      password: this.getEnv("EMAIL_PASS", ""),
+      from: this.getEnv("EMAIL_FROM", "noreply@infamous-freight.com"),
+    };
+  }
+
   requireEnv(key: string, defaultValue?: string): string {
     const value = this.env[key];
     if (value === undefined || value === null || value === "") {

@@ -34,15 +34,6 @@ model User {
   createdAt      DateTime       @default(now())
 }
 
-model Invoice {
-  id             String   @id @default(cuid())
-  organizationId String
-  amount         Float
-  vendor         String
-  status         String   @default("pending")
-  createdAt      DateTime @default(now())
-}
-
 model AiDecision {
   id             String   @id @default(cuid())
   organizationId String

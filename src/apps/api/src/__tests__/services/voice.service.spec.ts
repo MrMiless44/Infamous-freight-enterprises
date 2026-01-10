@@ -1,7 +1,15 @@
+// @ts-nocheck
+import { jest } from "@jest/globals";
 import { VoiceService } from "../../services/voiceService";
-import Twilio from "twilio";
 
-jest.mock("twilio");
+jest.mock(
+  "twilio",
+  () => ({
+    __esModule: true,
+    default: jest.fn(),
+  }),
+  { virtual: true },
+);
 
 describe("VoiceService", () => {
   let voiceService: VoiceService;

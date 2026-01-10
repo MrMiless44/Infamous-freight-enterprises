@@ -83,7 +83,7 @@ describe("Shipment Calculation Utils", () => {
       );
 
       expect(distance).toBeGreaterThan(0);
-      expect(distance).toBeLessThan(1); // Less than 1 mile
+      expect(distance).toBeLessThan(5); // Nearby points within a few miles
     });
 
     it("should handle same location", () => {

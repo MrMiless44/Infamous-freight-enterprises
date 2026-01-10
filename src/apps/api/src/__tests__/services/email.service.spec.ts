@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { jest } from "@jest/globals";
 import { EmailNotificationService } from "../../services/emailNotificationService";
 import nodemailer from "nodemailer";
 

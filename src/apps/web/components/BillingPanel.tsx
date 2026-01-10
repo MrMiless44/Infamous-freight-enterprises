@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { track } from "@vercel/analytics";
 import { useApi } from "../hooks/useApi";
+import styles from "../styles/panels.module.css";
 
 export function BillingPanel() {
   const api = useApi();
@@ -46,53 +47,41 @@ export function BillingPanel() {
   }
 
   return (
-    <div
-      style={{
-        marginTop: "2rem",
-        padding: "1rem",
-        borderRadius: "12px",
-        background: "#0b0b12",
-      }}
-    >
-      <h3>Billing</h3>
+    <div>
+      <div className={styles.panelHeader}>
+        <div>
+          <p className="hero-kicker" style={{ marginBottom: "0.15rem" }}>
+            Billing
+          </p>
+          <h3 style={{ margin: 0 }}>Checkout in one tap</h3>
+        </div>
+        <span className="pill">Stripe + PayPal</span>
+      </div>
+      <p className="subtle" style={{ marginTop: "0.35rem" }}>
+        Launch a test checkout to confirm payments end-to-end.
+      </p>
 
-      <button
-        onClick={createStripe}
-        style={{
-          padding: "0.6rem 1.2rem",
-          borderRadius: "999px",
-          background: "linear-gradient(135deg,#a1e3ff,#2eefff)",
-          color: "#050509",
-          border: "none",
-          fontWeight: 600,
-          cursor: "pointer",
-        }}
-      >
-        Purchase w/ Stripe
-      </button>
+      <div className={styles.billingActions}>
+        <button className="primary-btn" onClick={createStripe}>
+          Checkout with Stripe
+        </button>
+        <button className="ghost-btn" onClick={createPayPal}>
+          Pay with PayPal
+        </button>
+      </div>
 
-      <button
-        onClick={createPayPal}
-        style={{
-          marginLeft: "1rem",
-          padding: "0.6rem 1.2rem",
-          borderRadius: "999px",
-          background: "linear-gradient(135deg,#ffe600,#ffad00)",
-          color: "#050509",
-          border: "none",
-          fontWeight: 600,
-          cursor: "pointer",
-        }}
-      >
-        Purchase w/ PayPal
-      </button>
+      <div className={styles.badgeGrid}>
+        <div className={styles.badgeCard}>PCI handled by providers</div>
+        <div className={styles.badgeCard}>Redirect flow returns to app</div>
+        <div className={styles.badgeCard}>Events visible in dashboard</div>
+      </div>
 
       {stripeSession && (
-        <p style={{ marginTop: "1rem" }}>Stripe session: {stripeSession}</p>
+        <p style={{ marginTop: "0.9rem" }}>Stripe session: {stripeSession}</p>
       )}
 
       {paypalOrder && (
-        <p style={{ marginTop: "0.5rem" }}>PayPal order: {paypalOrder}</p>
+        <p style={{ marginTop: "0.35rem" }}>PayPal order: {paypalOrder}</p>
       )}
     </div>
   );

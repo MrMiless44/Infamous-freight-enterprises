@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useApi } from "../hooks/useApi";
+import styles from "../styles/panels.module.css";
 
 export function VoicePanel() {
   const api = useApi();
@@ -21,60 +22,47 @@ export function VoicePanel() {
   }
 
   return (
-    <div
-      style={{
-        marginTop: "2rem",
-        padding: "1rem",
-        borderRadius: "12px",
-        background: "#0b0b12",
-      }}
-    >
-      <h3 style={{ marginTop: 0 }}>Voice / Command Input</h3>
+    <div>
+      <div className={styles.panelHeader}>
+        <div>
+          <p className="hero-kicker" style={{ marginBottom: "0.15rem" }}>
+            Voice / command
+          </p>
+          <h3 style={{ margin: 0 }}>Driver-safe prompts</h3>
+        </div>
+        <span className="pill">Live AI</span>
+      </div>
+      <p className="subtle" style={{ marginTop: "0.35rem" }}>
+        Send concise commands; results return JSON you can act on immediately.
+      </p>
 
-      <textarea
-        value={text}
-        onChange={(event) => setText(event.target.value)}
-        rows={3}
-        style={{
-          width: "100%",
-          borderRadius: "8px",
-          padding: "0.6rem",
-          background: "#111",
-          color: "#fff",
-          border: "1px solid #222",
-        }}
-      />
+      <div className={styles.panelBody}>
+        <textarea
+          className={styles.textarea}
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          placeholder="Example: Reroute load 482 to avoid a 25 minute delay"
+          rows={4}
+        />
 
-      <button
-        onClick={send}
-        disabled={loading}
-        style={{
-          marginTop: "0.8rem",
-          padding: "0.6rem 1.2rem",
-          borderRadius: "999px",
-          background: "linear-gradient(135deg,#ffcc33,#ff3366)",
-          fontWeight: 600,
-          color: "#050509",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        {loading ? "Sending…" : "Send to AI"}
-      </button>
+        <div className={styles.actionRow}>
+          <button
+            className="primary-btn"
+            onClick={send}
+            disabled={loading}
+            style={loading ? { opacity: 0.8, cursor: "wait" } : undefined}
+          >
+            {loading ? "Sending…" : "Send to AI"}
+          </button>
+          <span className={styles.smallSubtle}>
+            Tip: ask for “coach me” or “dispatch update”.
+          </span>
+        </div>
 
-      {result && (
-        <pre
-          style={{
-            marginTop: "1rem",
-            padding: "1rem",
-            background: "#111",
-            borderRadius: "8px",
-            fontSize: "0.85rem",
-          }}
-        >
-          {JSON.stringify(result, null, 2)}
-        </pre>
-      )}
+        {result && (
+          <pre className={styles.result}>{JSON.stringify(result, null, 2)}</pre>
+        )}
+      </div>
     </div>
   );
 }

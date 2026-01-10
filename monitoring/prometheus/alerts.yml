@@ -1,0 +1,518 @@
+# Prometheus Alert Rules
+# Deploy to Prometheus via prometheus.yml configuration
+
+groups:
+  - name: api_alerts
+    interval: 30s
+    rules:
+      # Critical: API Down
+      - alert: APIDown
+        expr: up{job="api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "API service is down"
+          description: "API service {{ $labels.instance }} has been down for more than 1 minute."
+          runbook_url: "https://docs.infamous-freight.com/runbooks/api-down"
+
+      # Critical: High Error Rate
+      - alert: HighErrorRate
+        expr: |
+          (
+            rate(http_requests_total{job="api",status=~"5.."}[5m]) 
+            / rate(http_requests_total{job="api"}[5m])
+          ) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "High 5xx error rate on API"
+          description: "API error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+          runbook_url: "https://docs.infamous-freight.com/runbooks/high-error-rate"
+
+      # Warning: Elevated Error Rate
+      - alert: ElevatedErrorRate
+        expr: |
+          (
+            rate(http_requests_total{job="api",status=~"5.."}[5m]) 
+            / rate(http_requests_total{job="api"}[5m])
+          ) * 100 > 2
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Elevated 5xx error rate on API"
+          description: "API error rate is {{ $value | humanizePercentage }} (threshold: 2%)"
+
+      # Critical: High Latency
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.95, 
+            rate(http_request_duration_seconds_bucket{job="api"}[5m])
+          ) > 0.8
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "High API latency (P95)"
+          description: "API P95 latency is {{ $value | humanizeDuration }} (threshold: 800ms)"
+          runbook_url: "https://docs.infamous-freight.com/runbooks/high-latency"
+
+      # Warning: Elevated Latency
+      - alert: ElevatedLatency
+        expr: |
+          histogram_quantile(0.95, 
+            rate(http_request_duration_seconds_bucket{job="api"}[5m])
+          ) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Elevated API latency (P95)"
+          description: "API P95 latency is {{ $value | humanizeDuration }} (threshold: 500ms)"
+
+      # Warning: Low Request Rate (Possible Outage)
+      - alert: LowRequestRate
+        expr: |
+          rate(http_requests_total{job="api"}[5m]) < 10
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Abnormally low API request rate"
+          description: "API receiving only {{ $value | humanize }} req/s (expected: >100 req/s)"
+
+  - name: database_alerts
+    interval: 30s
+    rules:
+      # Critical: Database Down
+      - alert: DatabaseDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "Database {{ $labels.instance }} has been down for more than 1 minute."
+          runbook_url: "https://docs.infamous-freight.com/runbooks/database-down"
+
+      # Critical: Connection Pool Exhausted
+      - alert: ConnectionPoolExhausted
+        expr: prisma_pool_connections_open >= 18
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Database connection pool near limit"
+          description: "Connection pool usage: {{ $value }}/20 (90% capacity)"
+          runbook_url: "https://docs.infamous-freight.com/runbooks/connection-pool"
+
+      # Warning: High Connection Pool Usage
+      - alert: HighConnectionPoolUsage
+        expr: prisma_pool_connections_open >= 14
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Database connection pool usage high"
+          description: "Connection pool usage: {{ $value }}/20 (70% capacity)"
+
+      # Warning: Slow Queries
+      - alert: SlowQueries
+        expr: |
+          histogram_quantile(0.95, 
+            rate(prisma_client_queries_duration_bucket[5m])
+          ) > 1
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Slow database queries detected"
+          description: "P95 query duration is {{ $value | humanizeDuration }} (threshold: 1s)"
+          runbook_url: "https://docs.infamous-freight.com/runbooks/slow-queries"
+
+      # Critical: Database Disk Usage High
+      - alert: DatabaseDiskUsageHigh
+        expr: |
+          (pg_database_size_bytes / node_filesystem_size_bytes{mountpoint="/data"}) * 100 > 85
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Database disk usage critical"
+          description: "Database using {{ $value | humanizePercentage }} of disk (threshold: 85%)"
+
+      # Warning: Replica Lag
+      - alert: ReplicaLag
+        expr: pg_replication_lag_seconds > 10
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Database replica lagging behind primary"
+          description: "Replica lag is {{ $value | humanizeDuration }} (threshold: 10s)"
+
+  - name: cache_alerts
+    interval: 30s
+    rules:
+      # Critical: Redis Down
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Redis cache is down"
+          description: "Redis instance {{ $labels.instance }} has been down for more than 1 minute."
+          runbook_url: "https://docs.infamous-freight.com/runbooks/redis-down"
+
+      # Warning: Low Cache Hit Rate
+      - alert: LowCacheHitRate
+        expr: |
+          (
+            redis_keyspace_hits_total 
+            / (redis_keyspace_hits_total + redis_keyspace_misses_total)
+          ) * 100 < 40
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Low cache hit rate"
+          description: "Cache hit rate is {{ $value | humanizePercentage }} (threshold: 40%)"
+          runbook_url: "https://docs.infamous-freight.com/runbooks/low-cache-hit-rate"
+
+      # Warning: High Cache Eviction Rate
+      - alert: HighCacheEvictionRate
+        expr: rate(redis_evicted_keys_total[1m]) * 60 > 50
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High cache key eviction rate"
+          description: "Cache evicting {{ $value | humanize }} keys/min (threshold: 50/min)"
+          runbook_url: "https://docs.infamous-freight.com/runbooks/high-eviction-rate"
+
+      # Critical: Redis Memory Usage High
+      - alert: RedisMemoryUsageHigh
+        expr: |
+          (redis_memory_used_bytes / redis_memory_max_bytes) * 100 > 95
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Redis memory usage critical"
+          description: "Redis using {{ $value | humanizePercentage }} of max memory (threshold: 95%)"
+
+      # Warning: Redis Memory Usage Elevated
+      - alert: RedisMemoryUsageElevated
+        expr: |
+          (redis_memory_used_bytes / redis_memory_max_bytes) * 100 > 80
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Redis memory usage elevated"
+          description: "Redis using {{ $value | humanizePercentage }} of max memory (threshold: 80%)"
+
+  - name: business_alerts
+    interval: 1m
+    rules:
+      # Critical: No Active Shipments
+      - alert: NoActiveShipments
+        expr: shipments_active_total == 0
+        for: 15m
+        labels:
+          severity: critical
+          team: operations
+        annotations:
+          summary: "No active shipments in system"
+          description: "System has had 0 active shipments for 15 minutes - possible data pipeline issue"
+
+      # Warning: Low Shipment Creation Rate
+      - alert: LowShipmentCreationRate
+        expr: rate(shipments_created_total[1h]) < 5
+        for: 1h
+        labels:
+          severity: warning
+          team: operations
+        annotations:
+          summary: "Low shipment creation rate"
+          description: "Only {{ $value | humanize }} shipments/hour created (expected: >10/hour)"
+
+      # Critical: Payment Success Rate Low
+      - alert: PaymentSuccessRateLow
+        expr: |
+          (
+            sum(rate(payments_successful_total[1h])) 
+            / sum(rate(payments_attempted_total[1h]))
+          ) * 100 < 95
+        for: 30m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Payment success rate below threshold"
+          description: "Payment success rate is {{ $value | humanizePercentage }} (threshold: 95%)"
+          runbook_url: "https://docs.infamous-freight.com/runbooks/payment-failures"
+
+      # Warning: Low User Signup Rate
+      - alert: LowUserSignupRate
+        expr: increase(user_signups_total[24h]) < 10
+        for: 1h
+        labels:
+          severity: warning
+          team: growth
+        annotations:
+          summary: "Low user signup rate"
+          description: "Only {{ $value | humanize }} signups in last 24h (expected: >50/day)"
+
+  - name: system_alerts
+    interval: 30s
+    rules:
+      # Critical: High CPU Usage
+      - alert: HighCPUUsage
+        expr: |
+          (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m]))) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanizePercentage }} (threshold: 90%)"
+
+      # Warning: Elevated CPU Usage
+      - alert: ElevatedCPUUsage
+        expr: |
+          (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m]))) * 100 > 70
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Elevated CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanizePercentage }} (threshold: 70%)"
+
+      # Critical: High Memory Usage
+      - alert: HighMemoryUsage
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value | humanizePercentage }} (threshold: 90%)"
+
+      # Critical: Disk Space Low
+      - alert: DiskSpaceLow
+        expr: |
+          (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk usage is {{ $value | humanizePercentage }} (threshold: 85%)"
+
+      # Warning: High Network Traffic
+      - alert: HighNetworkTraffic
+        expr: |
+          rate(node_network_transmit_bytes_total[5m]) > 100000000
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High network traffic on {{ $labels.instance }}"
+          description: "Network transmit rate: {{ $value | humanize }}B/s"
+
+  - name: security_alerts
+    interval: 1m
+    rules:
+      # Critical: Repeated Authentication Failures
+      - alert: RepeatedAuthFailures
+        expr: |
+          increase(auth_failures_total{endpoint="/api/auth/login"}[5m]) > 20
+        for: 1m
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "Possible brute force attack detected"
+          description: "{{ $value | humanize }} failed login attempts in 5 minutes from {{ $labels.ip }}"
+          runbook_url: "https://docs.infamous-freight.com/runbooks/brute-force"
+
+      # Warning: Rate Limit Exceeded Frequently
+      - alert: FrequentRateLimitExceeded
+        expr: |
+          increase(rate_limit_exceeded_total[10m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+          team: security
+        annotations:
+          summary: "High rate limit violations"
+          description: "{{ $value | humanize }} rate limit violations in 10 minutes"
+
+      # Critical: JWT Verification Failures Spike
+      - alert: JWTVerificationFailuresSpike
+        expr: |
+          increase(jwt_verification_failures_total[5m]) > 50
+        for: 1m
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "Spike in JWT verification failures"
+          description: "{{ $value | humanize }} JWT verification failures in 5 minutes - possible token theft"
+
+---
+
+# Prometheus Configuration
+# Add to prometheus.yml
+
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+  external_labels:
+    cluster: 'infamous-freight-production'
+    environment: 'production'
+
+# Load alert rules
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Scrape configs
+scrape_configs:
+  # API metrics
+  - job_name: 'api'
+    static_configs:
+      - targets: ['api:4000']
+    metrics_path: /metrics
+
+  # PostgreSQL metrics
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # Redis metrics
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  # Node exporter (system metrics)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+---
+
+# Alertmanager Configuration
+# alertmanager.yml
+
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  receiver: 'pagerduty-critical'
+  
+  routes:
+    # Critical alerts to PagerDuty
+    - match:
+        severity: critical
+      receiver: 'pagerduty-critical'
+      continue: true
+
+    # All alerts to Slack
+    - match_re:
+        severity: (critical|warning)
+      receiver: 'slack-alerts'
+
+    # Business alerts to operations team
+    - match:
+        team: operations
+      receiver: 'slack-operations'
+
+    # Security alerts to security team
+    - match:
+        team: security
+      receiver: 'slack-security'
+
+receivers:
+  # PagerDuty for critical alerts
+  - name: 'pagerduty-critical'
+    pagerduty_configs:
+      - service_key: 'YOUR_PAGERDUTY_SERVICE_KEY'
+        severity: '{{ .GroupLabels.severity }}'
+        description: '{{ .CommonAnnotations.summary }}'
+        details:
+          firing: '{{ .Alerts.Firing | len }}'
+          resolved: '{{ .Alerts.Resolved | len }}'
+          runbook_url: '{{ .CommonAnnotations.runbook_url }}'
+
+  # Slack for all alerts
+  - name: 'slack-alerts'
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+        channel: '#alerts'
+        title: '{{ .GroupLabels.alertname }}'
+        text: '{{ .CommonAnnotations.description }}'
+        color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+
+  # Slack for operations team
+  - name: 'slack-operations'
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+        channel: '#operations-alerts'
+
+  # Slack for security team
+  - name: 'slack-security'
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+        channel: '#security-alerts'
+
+inhibit_rules:
+  # Inhibit warning if critical is firing
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'instance']
+
+---
+
+**Last Updated:** 2026-01-10  
+**Owner:** Platform Engineering  
+**Review Frequency:** Monthly
