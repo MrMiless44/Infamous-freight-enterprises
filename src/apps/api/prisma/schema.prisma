@@ -10,11 +10,12 @@ datasource db {
 }
 
 model Organization {
-  id        String      @id @default(cuid())
-  name      String
-  users     User[]
-  webhooks  Webhook[]
-  createdAt DateTime    @default(now())
+  id            String      @id @default(cuid())
+  name          String
+  users         User[]
+  webhooks      Webhook[]
+  subscriptions Subscription[]
+  createdAt     DateTime    @default(now())
 }
 
 model User {
@@ -400,4 +401,103 @@ model TwoFactorAuth {
 
   @@index([userId])
   @@index([enabled])
+}
+
+// Billing & Revenue Models
+model Subscription {
+  id                String    @id @default(cuid())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  // Stripe/PayPal info
+  stripeCustomerId  String?
+  stripeSubId       String?   @unique
+  paypalSubId       String?   @unique
+  paymentMethod     String    @default("stripe") // "stripe" | "paypal"
+  
+  // Pricing tier
+  tier              String    @default("starter") // "starter" | "professional" | "enterprise"
+  priceMonthly      Float
+  billingCycle      String    @default("monthly") // "monthly" | "annual"
+  
+  // Trial
+  trialEndsAt       DateTime?
+  isOnTrial         Boolean   @default(true)
+  
+  // Status
+  status            String    @default("active") // "active" | "paused" | "cancelled" | "past_due"
+  cancelledAt       DateTime?
+  
+  // Dates
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  invoices          Invoice[]
+  revenueEvents     RevenueEvent[]
+  
+  @@index([organizationId])
+  @@index([stripeCustomerId])
+  @@index([status])
+  @@index([tier])
+}
+
+model Invoice {
+  id                String    @id @default(cuid())
+  subscriptionId    String
+  subscription      Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  organizationId    String
+  
+  // Amount
+  amount            Float
+  currency          String    @default("usd")
+  
+  // Stripe/PayPal IDs
+  stripeInvoiceId   String?   @unique
+  paypalInvoiceId   String?   @unique
+  
+  // Status
+  status            String    @default("draft") // "draft" | "sent" | "paid" | "failed" | "void"
+  paidAt            DateTime?
+  
+  // Line items
+  items             Json      // Array of {description, amount, quantity}
+  
+  // Metadata
+  invoiceNumber     String
+  dueDate           DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@index([subscriptionId])
+  @@index([organizationId])
+  @@index([status])
+  @@unique([organizationId, invoiceNumber])
+}
+
+model RevenueEvent {
+  id                String    @id @default(cuid())
+  subscriptionId    String
+  subscription      Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  organizationId    String
+  
+  // Event type
+  eventType         String    // "trial_started" | "subscription_created" | "payment_succeeded" | "payment_failed" | "subscription_updated" | "subscription_cancelled" | "upgrade" | "downgrade"
+  
+  // Amount
+  amount            Float?
+  
+  // Details
+  description       String?
+  metadata          Json?
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  
+  @@index([subscriptionId])
+  @@index([organizationId])
+  @@index([eventType])
+  @@index([createdAt])
 }
