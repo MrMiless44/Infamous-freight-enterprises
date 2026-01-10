@@ -54,23 +54,23 @@ pnpm --filter @infamous-freight/web build
 
 ### Minimum (Development)
 
-| Component     | Version | Notes                           |
-| ------------- | ------- | ------------------------------- |
-| Node.js       | 20+     | LTS recommended                 |
-| pnpm          | 8.15.9+ | Fast package manager            |
-| PostgreSQL    | 14+     | Can use Docker Compose          |
-| RAM           | 8GB     | 16GB recommended for full dev   |
-| Disk Space    | 5GB     | For node_modules, caches       |
+| Component  | Version | Notes                         |
+| ---------- | ------- | ----------------------------- |
+| Node.js    | 20+     | LTS recommended               |
+| pnpm       | 8.15.9+ | Fast package manager          |
+| PostgreSQL | 14+     | Can use Docker Compose        |
+| RAM        | 8GB     | 16GB recommended for full dev |
+| Disk Space | 5GB     | For node_modules, caches      |
 
 ### Production (Vercel + Docker)
 
-| Component     | Details                      |
-| ------------- | ---------------------------- |
-| Frontend      | Vercel (auto-deploy)         |
-| Backend       | Docker/Railway/Heroku/Fly.io |
-| Database      | PostgreSQL 14+ managed       |
-| Cache         | Redis (optional, for scaling)|
-| CDN           | Vercel Edge Network          |
+| Component | Details                       |
+| --------- | ----------------------------- |
+| Frontend  | Vercel (auto-deploy)          |
+| Backend   | Docker/Railway/Heroku/Fly.io  |
+| Database  | PostgreSQL 14+ managed        |
+| Cache     | Redis (optional, for scaling) |
+| CDN       | Vercel Edge Network           |
 
 ---
 
@@ -219,13 +219,13 @@ pnpm format
 
 ### Automatic Deployments (GitHub Actions)
 
-| Workflow                 | Trigger      | Action                          |
-| ------------------------ | ------------ | ------------------------------- |
-| Quality Checks           | Every push   | Run tests, lint, type check     |
-| CodeQL Security          | Weekly + PR  | Vulnerability scanning          |
-| Docker Build (GHCR)      | Tag push     | Build & push Docker image       |
-| Vercel Deploy (Staging)  | Push to main | Deploy to staging environment   |
-| Vercel Deploy (Prod)     | Tag release  | Deploy to production            |
+| Workflow                | Trigger      | Action                        |
+| ----------------------- | ------------ | ----------------------------- |
+| Quality Checks          | Every push   | Run tests, lint, type check   |
+| CodeQL Security         | Weekly + PR  | Vulnerability scanning        |
+| Docker Build (GHCR)     | Tag push     | Build & push Docker image     |
+| Vercel Deploy (Staging) | Push to main | Deploy to staging environment |
+| Vercel Deploy (Prod)    | Tag release  | Deploy to production          |
 
 ### Manual Deployment
 
@@ -454,16 +454,16 @@ pnpm test -- api/__tests__/health.test.ts
 
 ## Company Information
 
-| Field        | Value                                   |
-| ------------ | --------------------------------------- |
-| Company      | Infæmous Freight                        |
-| Owner        | Santorio Djuan Miles                    |
-| Status       | Sole Proprietor / LLC (Oklahoma)        |
-| License      | Proprietary - All Rights Reserved       |
-| Version      | 2.0.0                                   |
-| Repository   | https://github.com/MrMiless44/...       |
-| Production   | https://infamousfreight.vercel.app      |
-| Support      | [Contact information]                   |
+| Field      | Value                              |
+| ---------- | ---------------------------------- |
+| Company    | Infæmous Freight                   |
+| Owner      | Santorio Djuan Miles               |
+| Status     | Sole Proprietor / LLC (Oklahoma)   |
+| License    | Proprietary - All Rights Reserved  |
+| Version    | 2.0.0                              |
+| Repository | https://github.com/MrMiless44/...  |
+| Production | https://infamousfreight.vercel.app |
+| Support    | [Contact information]              |
 
 ---
 

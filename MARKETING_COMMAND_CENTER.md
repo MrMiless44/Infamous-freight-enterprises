@@ -14,13 +14,14 @@
 **Budget:** $2,000/week ($800/week baseline + optimization)
 
 **Step-by-Step Setup:**
+
 ```
 1. Account Creation
    □ Go to google.com/ads
    □ Create new account or use existing
    □ Billing information
    □ Time zone: UTC
-   
+
 2. Conversion Tracking Setup
    □ Install Google Analytics 4
    □ Create conversion actions:
@@ -28,7 +29,7 @@
      - Form submission
      - Page view: /free-trial
    □ Copy tracking codes
-   
+
 3. Campaign 1: Brand Keywords ($400/week)
    □ Campaign name: "Brand - Core"
    □ Type: Search
@@ -39,7 +40,7 @@
    □ Bid strategy: Target CPA $150
    □ Daily budget: $57
    □ Ad groups: Create 2
-   
+
 4. Campaign 2: Intent Keywords ($600/week)
    □ Campaign name: "Intent - Logistics"
    □ Type: Search
@@ -52,7 +53,7 @@
    □ Bid strategy: Target CPA $100
    □ Daily budget: $86
    □ Ad groups: Create 4
-   
+
 5. Campaign 3: Competitor Keywords ($200/week)
    □ Campaign name: "Competitor"
    □ Type: Search
@@ -62,7 +63,7 @@
      - "vs [Competitor 1]"
    □ Bid strategy: Target CPA $120
    □ Daily budget: $29
-   
+
 6. Campaign 4: Display Network ($800/week)
    □ Campaign name: "Display - Logistics"
    □ Type: Display
@@ -72,7 +73,7 @@
      - Business publications
    □ Budget: $114/day
    □ Audiences: Logistics managers, supply chain professionals
-   
+
 7. Ad Creative (Create 5 variations per campaign)
    Variation 1:
    Headline 1: "Real-Time Freight Tracking"
@@ -80,7 +81,7 @@
    Headline 3: "Free 30-Day Trial"
    Description: "Enterprise-grade tracking with 15-30% cost savings..."
    URL: infamous-freight-enterprises.vercel.app/free-trial
-   
+
    (+ 4 more variations with different value props)
 
 8. Landing Pages
@@ -88,7 +89,7 @@
    □ Form: Name, Email, Company, Phone
    □ Headline: "Get Real-Time Freight Tracking"
    □ CTA: "Start Free Trial"
-   
+
 9. Daily Management
    □ Monitor conversion rates
    □ Adjust bids (weekly)
@@ -97,6 +98,7 @@
 ```
 
 **Weekly Optimization:**
+
 - Review cost per conversion
 - Pause bottom 20% performers
 - Increase bid on top performers
@@ -104,6 +106,7 @@
 - Adjust budget allocation
 
 **Success Metrics:**
+
 - Cost per conversion: <$100
 - Conversion rate: >2%
 - ROAS: >3x
@@ -117,12 +120,13 @@
 **Budget:** $2,000/week
 
 **Step-by-Step Setup:**
+
 ```
 1. Campaign 1: Lead Generation ($1,000/week)
    □ Campaign type: Lead generation form
    □ Objective: Get quality leads
    □ Daily budget: $143
-   
+
    Targeting:
    □ Locations: US, Canada, UK, EU
    □ Job titles: Logistics Manager, Supply Chain Manager, Ops Director
@@ -130,37 +134,37 @@
    □ Company size: 50-10,000 employees
    □ Seniority: Manager and above
    □ Age: 30-65
-   
+
    Creative:
    □ Headline: "Reduce Logistics Costs by 30%"
    □ Description: "Real-time tracking, automated optimization, enterprise security"
    □ Image: Product screenshot or ROI graphic
    □ Form pre-fill fields: Name, Email, Company, Phone
-   
+
 2. Campaign 2: Website Visitors ($1,000/week)
    □ Campaign type: Website visits
    □ Daily budget: $143
    □ Landing page: /linkedin-trial
-   
+
    Targeting:
    □ Same as above
-   
+
    Creative:
    □ 3 variations of images
    □ Headline: Different value prop per variation
    □ Vary copy: Cost savings, ease of use, enterprise features
-   
+
 3. LinkedIn Organic (3-4 posts/week)
    □ Monday: Industry insight (comment on trend)
    □ Wednesday: How-to (5 tips for logistics optimization)
    □ Friday: Customer win (success story)
-   
+
    Posting strategy:
    - Post during peak hours: 8am, 12pm, 5pm
    - Use relevant hashtags: #logistics #supplychain #tech
    - Encourage comments
    - Respond to all comments within 1 hour
-   
+
 4. Employee Advocacy
    □ Share company posts to personal profiles
    □ 5-10 team members sharing
@@ -168,6 +172,7 @@
 ```
 
 **Weekly Optimization:**
+
 - Review lead quality
 - Adjust targeting if CPL >$100
 - Test new headlines
@@ -175,6 +180,7 @@
 - Respond to all lead inquiries within 2 hours
 
 **Success Metrics:**
+
 - Cost per lead: $50-100
 - Lead quality: 70%+ conversion to trial
 - Organic reach: 5,000+/week
@@ -188,17 +194,18 @@
 **Budget:** $1,500/week
 
 **Step-by-Step Setup:**
+
 ```
 1. Campaign Setup
    □ Go to facebook.com/ads
    □ Create business account
    □ Connect Instagram account
-   
+
 2. Campaign 1: Lead Generation Ads ($750/week)
    □ Campaign type: Lead generation
    □ Objective: Collect leads
    □ Daily budget: $107
-   
+
    Targeting:
    □ Locations: US, UK, Canada, Germany, France
    □ Age: 25-65
@@ -206,26 +213,26 @@
    □ Job titles: Logistics (keyword match)
    □ Behaviors: Business decision makers
    □ Lookalike audience: Similar to website visitors
-   
+
    Creative:
    □ Image: Dashboard screenshot, truck photo, success metric
    □ Headline: "Save 30% on Freight Costs"
    □ Description: "Real-time tracking for SMBs and enterprises"
    □ Form: Name, Email, Company, Phone, Company Size
-   
+
 3. Campaign 2: Video Views ($500/week)
    □ Campaign type: Video views
    □ Video: 30-60 second product demo or customer story
    □ Daily budget: $71
    □ Placements: Facebook feed, Instagram feed, Stories
    □ Audience: Same as above
-   
+
 4. Campaign 3: Website Traffic ($250/week)
    □ Campaign type: Website conversions
    □ Landing page: /meta-trial
    □ Daily budget: $36
    □ Audience: Lookalike + warm audiences
-   
+
 5. Instagram Organic Strategy
    □ Post 3x/week
    □ Content types:
@@ -240,6 +247,7 @@
 ```
 
 **Weekly Optimization:**
+
 - Review ad frequency (keep <3x)
 - Pause underperforming creative
 - Test new images/videos
@@ -247,6 +255,7 @@
 - Respond to all comments/messages within 2 hours
 
 **Success Metrics:**
+
 - Cost per lead: $40-80
 - Lead quality: 60%+ conversion
 - Video views: 10,000+
@@ -262,6 +271,7 @@
 **Budget:** $1,000/week (freelance writers, design)
 
 **Blog Strategy:**
+
 ```
 Week 1 Posts (Publish Monday):
 □ Post 1: "The Complete Guide to Real-Time Freight Tracking" (2,500 words)
@@ -308,6 +318,7 @@ Topic Calendar:
 ```
 
 **Blog Post Structure (Template):**
+
 ```
 Title: 60 characters, keyword-rich, benefit-focused
 
@@ -358,6 +369,7 @@ SEO Optimization:
 ```
 
 **Publication Schedule:**
+
 - Monday 8am EST: Publish new post
 - Tuesday 9am: Share on LinkedIn (organic)
 - Wednesday 2pm: Email newsletter
@@ -365,6 +377,7 @@ SEO Optimization:
 - Friday 3pm: Promote in Slack/Discord
 
 **Success Metrics:**
+
 - Blog traffic: 500+/post
 - Time on page: 3+ minutes
 - Bounce rate: <40%
@@ -382,6 +395,7 @@ SEO Optimization:
 **Email Sequences:**
 
 **Sequence 1: Free Trial Onboarding**
+
 ```
 Email 1: Welcome (sent immediately)
 Subject: "Your 30-day free trial is ready"
@@ -435,6 +449,7 @@ Link: /extend-trial or /pricing
 ```
 
 **Sequence 2: Content Downloader**
+
 ```
 Email 1: Welcome + Resource (sent immediately)
 Subject: "Here's your guide: 'Real-Time Tracking ROI Calculator'"
@@ -471,7 +486,8 @@ Content:
 - CTA: "Schedule your demo"
 ```
 
-**Sequence 3: Newsletter (Weekly)** 
+**Sequence 3: Newsletter (Weekly)**
+
 ```
 Subject line: "Your Weekly Logistics Update"
 Content:
@@ -485,13 +501,14 @@ Content:
 Send time: Friday 10am EST
 Frequency: Weekly
 
-Retention: 
+Retention:
 - Monthly value-add: 80/20 (80% helpful content, 20% sales)
 - Unsubscribe rate: Keep <0.5%
 - Open rate target: 20%+
 ```
 
 **Email Marketing Tools:**
+
 - Platform: SendGrid or Klaviyo
 - Segmentation: By behavior, trial status, engagement
 - A/B testing: Subject lines, content, CTA placement
@@ -499,6 +516,7 @@ Retention:
 - Automation: Drip campaigns, behavioral triggers
 
 **Success Metrics:**
+
 - Open rate: 20%+
 - Click rate: 3%+
 - Conversion rate: 5%+
@@ -514,6 +532,7 @@ Retention:
 **Budget:** $0 (in-house production)
 
 **Channel Strategy:**
+
 ```
 Videos to Create (Week 1):
 
@@ -579,11 +598,12 @@ Target: 2-3 videos/week going forward
 ```
 
 **Video Production:**
+
 - Editing software: Adobe Premiere, Final Cut Pro, or DaVinci Resolve
 - Music: Epidemic Sound or AudioJungle (free for YouTube)
 - Thumbnails: Photoshop or Canva (consistent template)
 - Recording: Screen recording (OBS Studio) + voiceover
-- Optimization: 
+- Optimization:
   - Custom thumbnails (every video)
   - Detailed descriptions (250+ words, SEO optimized)
   - Relevant tags (10-15 per video)
@@ -591,6 +611,7 @@ Target: 2-3 videos/week going forward
   - Subtitles (auto-generate + edit for accuracy)
 
 **YouTube SEO:**
+
 - Keywords in title (first 3 words)
 - Keywords in description (first 100 characters)
 - Tags: 10-15 (mix broad and long-tail)
@@ -598,6 +619,7 @@ Target: 2-3 videos/week going forward
 - Engagement: Respond to comments, pin best questions
 
 **Success Metrics:**
+
 - Subscribers: 100+ by Week 4
 - Views: 500+ per video
 - Watch time: 3+ minutes average
@@ -615,6 +637,7 @@ Target: 2-3 videos/week going forward
 **Budget:** $500/week paid promotion
 
 **TikTok Strategy:**
+
 ```
 Video Ideas (5 starter videos):
 
@@ -671,6 +694,7 @@ Paid Promotion:
 ```
 
 **Success Metrics:**
+
 - Followers: 500+ by Week 4
 - Views: 100,000+ total by Week 4
 - Engagement: 10%+
@@ -685,17 +709,18 @@ Paid Promotion:
 **Budget:** $500/month
 
 **Podcast Strategy:**
+
 ```
 Target Podcasts (Tier 1 - 10k+ listeners):
 1. "The Logistics Insider" (15k listeners)
    Contact: host@logisticsinsider.com
    Value: $500-1,000/episode
    Format: Host-read 60-second ad
-   
+
 2. "Supply Chain Now" (20k listeners)
    Contact: sponsor@supplychainnow.com
    Value: $1,000-1,500/episode
-   
+
 3. "Modern Shipper Show" (10k listeners)
    Contact: partnerships@modernshipper.com
    Value: $500-800/episode
@@ -749,7 +774,7 @@ Trial conversions expected: 15-20
 
 Landing Page: /webinar-signup
 Headline: "Free Webinar: 5 Ways Real-Time Tracking Improves Your Bottom Line"
-Body: 
+Body:
 - Speaker bio
 - Topics to be covered
 - "Who should attend" section
@@ -842,6 +867,7 @@ Success metrics:
 **Budget:** $0 (organic) + $200/week for promotion
 
 **Twitter Organic Strategy:**
+
 ```
 Content Mix:
 - 50% Thought leadership / Industry insights
@@ -900,6 +926,7 @@ Paid Promotion:
 ```
 
 **Success Metrics:**
+
 - Followers: 1,000+ by Week 4
 - Tweet engagements: 5,000+/week
 - Impressions: 50,000+/week
@@ -916,6 +943,7 @@ Paid Promotion:
 **Budget:** $750/month (commissions + incentives)
 
 **Influencer Strategy:**
+
 ```
 Tier 1 Influencers (10k-50k followers):
 - Logistics YouTubers
@@ -927,11 +955,11 @@ Target List:
 1. [Name] - @[handle] - Logistics YouTuber (25k followers)
    Engagement rate: 5%
    Audience fit: 95% (supply chain professionals)
-   
+
 2. [Name] - @[handle] - Consultant (15k followers)
    Engagement rate: 8%
    Audience fit: 90%
-   
+
 3-10. [Additional influencers, researched and ranked]
 
 Outreach Email Template:
@@ -1088,6 +1116,7 @@ TOTAL TEAM: 8 roles = 190 hours/week
 ## 🚀 WEEK 1 EXECUTION CHECKLIST
 
 **BEFORE DAY 1:**
+
 ```
 ☐ Marketing lead assigned
 ☐ Budget approved: $10,550/month
@@ -1108,35 +1137,36 @@ TOTAL TEAM: 8 roles = 190 hours/week
 ```
 
 **DAY 1:**
+
 ```
 ☐ Morning: Kickoff meeting (all hands, 30 min)
   - Review goals
   - Assign responsibilities
   - Schedule daily syncs
-  
+
 ☐ Analytics: GA4 fully configured
   ☐ Tracking codes installed
   ☐ Goals created
   ☐ UTM tracking verified
   ☐ Dashboard created
-  
+
 ☐ Landing Pages: Test all 3 variants
   ☐ Mobile responsive
   ☐ Forms working
   ☐ Tracking codes firing
   ☐ Thank you page set up
-  
+
 ☐ Ad Creative: Review all 15 variations
   ☐ Brand consistency
   ☐ CTA clarity
   ☐ File sizes optimized
   ☐ Ready for upload
-  
+
 ☐ Afternoon: Internal testing completed
   - All team members can access platforms
   - Dashboard shared
   - Daily standip scheduled for 9am EST
-  
+
 EOD DELIVERABLES:
 - Kickoff meeting held
 - Analytics verified
@@ -1146,6 +1176,7 @@ EOD DELIVERABLES:
 ```
 
 **DAY 2:**
+
 ```
 ☐ Google Ads: All 4 campaigns live
 ☐ LinkedIn Ads: Both campaigns live
@@ -1161,6 +1192,7 @@ EOD DELIVERABLES:
 ```
 
 **DAY 3:**
+
 ```
 ☐ Google Ads: Monitoring and optimization
 ☐ Landing page analytics: Review first traffic
@@ -1176,6 +1208,7 @@ EOD DELIVERABLES:
 ```
 
 **DAY 4:**
+
 ```
 ☐ Meta ads: All campaigns live
 ☐ LinkedIn organic: 3+ posts scheduled
@@ -1190,6 +1223,7 @@ EOD DELIVERABLES:
 ```
 
 **DAY 5:**
+
 ```
 ☐ First week optimization review
 ☐ Performance data analysis
@@ -1217,4 +1251,3 @@ EOD DELIVERABLES:
 **Infamous Freight Enterprises - Marketing Execution Command Center**
 **Build:** d00034f
 **Ready for deployment with full team authorization**
-

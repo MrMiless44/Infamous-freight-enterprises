@@ -1,6 +1,6 @@
 /**
  * Phase 2 Performance Optimization - API Response Caching Middleware
- * 
+ *
  * Caches GET endpoint responses with intelligent invalidation
  * Expected improvements:
  *   - Cache hit rate: 40% → >70% (+30 pts)
@@ -8,13 +8,13 @@
  *   - Server load: Reduced by 50-60%
  */
 
-import type { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from "express";
 
 interface CacheConfig {
-  ttl: number;              // Time to live in seconds
-  keyPrefix: string;        // Redis key prefix
-  includeQuery: boolean;    // Include query params in cache key
-  includeUser: boolean;     // Include user ID in cache key
+  ttl: number; // Time to live in seconds
+  keyPrefix: string; // Redis key prefix
+  includeQuery: boolean; // Include query params in cache key
+  includeUser: boolean; // Include user ID in cache key
 }
 
 const DEFAULT_TTL = 300; // 5 minutes
@@ -24,21 +24,21 @@ const DEFAULT_TTL = 300; // 5 minutes
  */
 function generateCacheKey(req: Request, config: CacheConfig): string {
   let key = config.keyPrefix;
-  
+
   if (config.includeUser && req.user?.sub) {
     key += `:user:${req.user.sub}`;
   }
-  
+
   if (config.includeQuery && Object.keys(req.query).length > 0) {
     const queryStr = JSON.stringify(req.query);
-    const hash = require('crypto')
-      .createHash('sha256')
+    const hash = require("crypto")
+      .createHash("sha256")
       .update(queryStr)
-      .digest('hex')
+      .digest("hex")
       .slice(0, 8);
     key += `:query:${hash}`;
   }
-  
+
   return key;
 }
 
@@ -48,7 +48,7 @@ function generateCacheKey(req: Request, config: CacheConfig): string {
 export function cacheMiddleware(config: Partial<CacheConfig> = {}) {
   const cacheConfig: CacheConfig = {
     ttl: DEFAULT_TTL,
-    keyPrefix: 'api',
+    keyPrefix: "api",
     includeQuery: true,
     includeUser: false,
     ...config,
@@ -56,7 +56,7 @@ export function cacheMiddleware(config: Partial<CacheConfig> = {}) {
 
   return async (req: Request, res: Response, next: NextFunction) => {
     // Only cache GET requests
-    if (req.method !== 'GET') {
+    if (req.method !== "GET") {
       return next();
     }
 
@@ -71,8 +71,8 @@ export function cacheMiddleware(config: Partial<CacheConfig> = {}) {
       // Try to get from cache
       const cachedData = await redis.get(cacheKey);
       if (cachedData) {
-        res.set('X-Cache', 'HIT');
-        res.set('X-Cache-Key', cacheKey);
+        res.set("X-Cache", "HIT");
+        res.set("X-Cache-Key", cacheKey);
         return res.json(JSON.parse(cachedData));
       }
 
@@ -82,15 +82,16 @@ export function cacheMiddleware(config: Partial<CacheConfig> = {}) {
       // Override json method to cache response
       res.json = function (data: any) {
         // Add cache headers
-        res.set('Cache-Control', `public, max-age=${cacheConfig.ttl}`);
-        res.set('X-Cache', 'MISS');
-        res.set('X-Cache-Key', cacheKey);
+        res.set("Cache-Control", `public, max-age=${cacheConfig.ttl}`);
+        res.set("X-Cache", "MISS");
+        res.set("X-Cache-Key", cacheKey);
 
         // Cache the response
         if (res.statusCode === 200) {
-          redis.setex(cacheKey, cacheConfig.ttl, JSON.stringify(data))
+          redis
+            .setex(cacheKey, cacheConfig.ttl, JSON.stringify(data))
             .catch((err: Error) => {
-              console.error('Cache set error:', err.message);
+              console.error("Cache set error:", err.message);
               // Fail silently - caching error shouldn't break response
             });
         }
@@ -100,7 +101,7 @@ export function cacheMiddleware(config: Partial<CacheConfig> = {}) {
 
       next();
     } catch (error) {
-      console.error('Cache middleware error:', error);
+      console.error("Cache middleware error:", error);
       next(); // Continue on error
     }
   };
@@ -129,10 +130,9 @@ export function invalidateCacheMiddleware(pattern: string) {
       if ([201, 200].includes(res.statusCode)) {
         const redis = req.app.locals.redis;
         if (redis) {
-          clearCache(redis, pattern)
-            .catch((err: Error) => {
-              console.error('Cache invalidation error:', err.message);
-            });
+          clearCache(redis, pattern).catch((err: Error) => {
+            console.error("Cache invalidation error:", err.message);
+          });
         }
       }
 
@@ -148,7 +148,7 @@ export function invalidateCacheMiddleware(pattern: string) {
  */
 export async function warmCache(
   redis: any,
-  endpoints: Array<{ key: string; data: any; ttl?: number }>
+  endpoints: Array<{ key: string; data: any; ttl?: number }>,
 ): Promise<void> {
   for (const { key, data, ttl = DEFAULT_TTL } of endpoints) {
     await redis.setex(key, ttl, JSON.stringify(data));
@@ -161,21 +161,21 @@ export const CACHE_CONFIGS = {
   // 5-minute cache for read-heavy endpoints
   shipments: {
     ttl: 300,
-    keyPrefix: 'cache:shipments',
+    keyPrefix: "cache:shipments",
     includeQuery: true,
     includeUser: false,
   } as CacheConfig,
 
   drivers: {
     ttl: 300,
-    keyPrefix: 'cache:drivers',
+    keyPrefix: "cache:drivers",
     includeQuery: true,
     includeUser: false,
   } as CacheConfig,
 
   routes: {
     ttl: 300,
-    keyPrefix: 'cache:routes',
+    keyPrefix: "cache:routes",
     includeQuery: true,
     includeUser: false,
   } as CacheConfig,
@@ -183,14 +183,14 @@ export const CACHE_CONFIGS = {
   // User-specific caching
   notifications: {
     ttl: 60,
-    keyPrefix: 'cache:notifications',
+    keyPrefix: "cache:notifications",
     includeQuery: false,
     includeUser: true,
   } as CacheConfig,
 
   profile: {
     ttl: 300,
-    keyPrefix: 'cache:profile',
+    keyPrefix: "cache:profile",
     includeQuery: false,
     includeUser: true,
   } as CacheConfig,
@@ -198,7 +198,7 @@ export const CACHE_CONFIGS = {
   // Dashboard/analytics caching
   analytics: {
     ttl: 600, // 10 minutes for aggregated data
-    keyPrefix: 'cache:analytics',
+    keyPrefix: "cache:analytics",
     includeQuery: true,
     includeUser: true,
   } as CacheConfig,
@@ -206,8 +206,8 @@ export const CACHE_CONFIGS = {
 
 // Invalidation patterns for mutations
 export const INVALIDATION_PATTERNS = {
-  shipmentCreate: 'cache:shipments*',
-  shipmentUpdate: 'cache:shipments*',
-  driverUpdate: 'cache:drivers*',
-  analyticsUpdate: 'cache:analytics*',
+  shipmentCreate: "cache:shipments*",
+  shipmentUpdate: "cache:shipments*",
+  driverUpdate: "cache:drivers*",
+  analyticsUpdate: "cache:analytics*",
 };

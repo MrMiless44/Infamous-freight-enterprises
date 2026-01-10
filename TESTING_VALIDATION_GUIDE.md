@@ -285,12 +285,12 @@ echo "Sending $((LIMIT + 50)) requests to trigger rate limit..."
 # Send requests until we hit rate limit
 for i in {1..150}; do
   STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$API_URL")
-  
+
   if [ "$STATUS" == "429" ]; then
     echo "✅ Rate limit triggered at request #$i (429 Too Many Requests)"
     break
   fi
-  
+
   if [ $((i % 10)) -eq 0 ]; then
     echo "  Requests: $i, Status: $STATUS"
   fi
@@ -352,12 +352,12 @@ for endpoint in "${ENDPOINTS[@]}"; do
     TIME=$(curl -s -w '%{time_total}' -o /dev/null "$API_URL$endpoint")
     TIMES+=($TIME)
   done
-  
+
   MIN=$(printf '%s\n' "${TIMES[@]}" | sort -n | head -1)
   MAX=$(printf '%s\n' "${TIMES[@]}" | sort -n | tail -1)
   AVG=$(printf '%s\n' "${TIMES[@]}" | awk '{sum+=$1} END {print sum/NR}')
   P95=$(printf '%s\n' "${TIMES[@]}" | sort -n | awk '{if(NR==int(length)+1-int((length+1)*0.05)) print}')
-  
+
   printf "%-40s | %.3f | %.3f | %.3f | %.3f\n" "$endpoint" "$MIN" "$MAX" "$AVG" "$P95"
 done
 ```
@@ -367,7 +367,7 @@ done
 ```bash
 # Identify slow queries
 docker-compose exec postgres psql -U postgres infamous_freight -c "
-SELECT 
+SELECT
   query,
   calls,
   mean_time,

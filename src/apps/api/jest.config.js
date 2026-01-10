@@ -41,13 +41,13 @@ export default {
     "!src/**/index.ts",
   ],
 
-  // Coverage threshold - Realistic goals based on current 86% coverage
+  // Coverage threshold - Target 100% coverage
   coverageThreshold: {
     global: {
-      branches: 75, // Realistic for complex branching
-      functions: 80, // Most functions covered
-      lines: 85, // High line coverage achievable
-      statements: 85, // Matches lines
+      branches: 95, // Near-complete branch coverage
+      functions: 95, // Near-complete function coverage
+      lines: 95, // Near-complete line coverage
+      statements: 95, // Near-complete statement coverage
     },
   },
 

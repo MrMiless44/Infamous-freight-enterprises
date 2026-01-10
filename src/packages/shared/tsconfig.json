@@ -2,9 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "esnext",
-    "lib": [
-      "ES2020"
-    ],
+    "lib": ["ES2020"],
     "declaration": true,
     "outDir": "./dist",
     "rootDir": "./src",
@@ -15,12 +13,6 @@
     "resolveJsonModule": true,
     "moduleResolution": "node"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

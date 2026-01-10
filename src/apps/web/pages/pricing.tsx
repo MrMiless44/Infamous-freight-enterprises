@@ -69,7 +69,9 @@ interface PricingPageProps {
 
 export default function PricingPage({ session }: PricingPageProps) {
   const router = useRouter();
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(
+    "monthly",
+  );
   const [loading, setLoading] = useState(false);
 
   const handleStartTrial = async (tierId: string) => {
@@ -109,9 +111,11 @@ export default function PricingPage({ session }: PricingPageProps) {
     }
   };
 
-  const getPrice = (tier: typeof PRICING_TIERS[0]) => {
-    const price = billingCycle === "monthly" ? tier.monthlyPrice : tier.annualPrice;
-    const monthlyEquivalent = billingCycle === "annual" ? Math.round((price / 12) * 100) / 100 : price;
+  const getPrice = (tier: (typeof PRICING_TIERS)[0]) => {
+    const price =
+      billingCycle === "monthly" ? tier.monthlyPrice : tier.annualPrice;
+    const monthlyEquivalent =
+      billingCycle === "annual" ? Math.round((price / 12) * 100) / 100 : price;
     return { price, monthlyEquivalent };
   };
 
@@ -119,7 +123,10 @@ export default function PricingPage({ session }: PricingPageProps) {
     <>
       <Head>
         <title>Pricing - Infamous Freight Enterprises</title>
-        <meta name="description" content="Simple, transparent pricing for freight management" />
+        <meta
+          name="description"
+          content="Simple, transparent pricing for freight management"
+        />
       </Head>
 
       <div className={styles.container}>
@@ -155,7 +162,9 @@ export default function PricingPage({ session }: PricingPageProps) {
                 key={tier.id}
                 className={`${styles.card} ${tier.highlighted ? styles.highlighted : ""}`}
               >
-                {tier.highlighted && <div className={styles.badge2}>MOST POPULAR</div>}
+                {tier.highlighted && (
+                  <div className={styles.badge2}>MOST POPULAR</div>
+                )}
 
                 <h3>{tier.name}</h3>
                 <p className={styles.description}>{tier.description}</p>
@@ -175,7 +184,9 @@ export default function PricingPage({ session }: PricingPageProps) {
                 )}
 
                 {/* Trial Info */}
-                <p className={styles.trialInfo}>30-day free trial • No credit card required</p>
+                <p className={styles.trialInfo}>
+                  30-day free trial • No credit card required
+                </p>
 
                 {/* CTA Button */}
                 <button
@@ -206,35 +217,43 @@ export default function PricingPage({ session }: PricingPageProps) {
           <div className={styles.faqItems}>
             <div className={styles.faqItem}>
               <h4>Can I upgrade or downgrade anytime?</h4>
-              <p>Yes! Change your plan or cancel anytime. No long-term contracts.</p>
+              <p>
+                Yes! Change your plan or cancel anytime. No long-term contracts.
+              </p>
             </div>
             <div className={styles.faqItem}>
               <h4>What's included in the free trial?</h4>
               <p>
-                Full access to all features in your chosen tier for 30 days. After the trial ends,
-                you'll be charged the plan price.
+                Full access to all features in your chosen tier for 30 days.
+                After the trial ends, you'll be charged the plan price.
               </p>
             </div>
             <div className={styles.faqItem}>
               <h4>Do you offer discounts for annual billing?</h4>
-              <p>Yes! Pay annually and save 2 months (equivalent to 17% discount).</p>
+              <p>
+                Yes! Pay annually and save 2 months (equivalent to 17%
+                discount).
+              </p>
             </div>
             <div className={styles.faqItem}>
               <h4>Is there a free version?</h4>
-              <p>We offer 30-day free trials on all plans. After that, you'll need a paid subscription.</p>
+              <p>
+                We offer 30-day free trials on all plans. After that, you'll
+                need a paid subscription.
+              </p>
             </div>
             <div className={styles.faqItem}>
               <h4>What's included in API limits?</h4>
               <p>
-                API limits apply to programmatic requests. Web app usage is unlimited regardless of
-                plan.
+                API limits apply to programmatic requests. Web app usage is
+                unlimited regardless of plan.
               </p>
             </div>
             <div className={styles.faqItem}>
               <h4>Can I contact sales for custom plans?</h4>
               <p>
-                Absolutely! Contact our sales team for enterprise features, custom pricing, and
-                dedicated support.
+                Absolutely! Contact our sales team for enterprise features,
+                custom pricing, and dedicated support.
               </p>
             </div>
           </div>
@@ -243,7 +262,10 @@ export default function PricingPage({ session }: PricingPageProps) {
         {/* CTA Section */}
         <section className={styles.ctaSection}>
           <h2>Ready to get started?</h2>
-          <p>Join hundreds of freight companies using Infamous Freight to optimize their operations.</p>
+          <p>
+            Join hundreds of freight companies using Infamous Freight to
+            optimize their operations.
+          </p>
           <button
             className={styles.ctaButton}
             onClick={() => handleStartTrial("professional")}

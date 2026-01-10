@@ -19,6 +19,7 @@ Based on comprehensive analysis of your repository, here are **100% actionable r
 7. **Deployment Automation** - Manual processes creating risk
 
 **Impact Potential:**
+
 - 🔴 **Critical Issues:** 5 (blocking production)
 - 🟡 **High Priority:** 12 (impacting performance/security)
 - 🟢 **Medium Priority:** 15 (quality improvements)
@@ -30,15 +31,18 @@ Based on comprehensive analysis of your repository, here are **100% actionable r
 ### Issue #1: Missing next-auth Dependency
 
 **Files Affected:**
+
 - `src/apps/web/pages/pricing.tsx`
 - `src/apps/web/pages/billing/success.tsx`
 
 **Error:**
+
 ```
 Cannot find module 'next-auth/react' or its corresponding type declarations.
 ```
 
 **Fix:**
+
 ```bash
 cd src/apps/web
 pnpm add next-auth
@@ -46,12 +50,13 @@ pnpm add -D @types/next-auth
 ```
 
 **Alternative (if not using NextAuth):**
+
 ```typescript
 // Replace next-auth with custom session management
-import { getServerSideProps } from 'next';
+import { getServerSideProps } from "next";
 
 export const getServerSideProps = async (context) => {
-  const token = context.req.cookies['auth_token'];
+  const token = context.req.cookies["auth_token"];
   // Verify JWT token
   return { props: { session: token ? { user: {} } : null } };
 };
@@ -64,6 +69,7 @@ export const getServerSideProps = async (context) => {
 **File:** `src/apps/api/src/services/email.ts:218`
 
 **Error:**
+
 ```
 Property 'getEmailConfig' does not exist on type 'Config'
 ```
@@ -71,31 +77,33 @@ Property 'getEmailConfig' does not exist on type 'Config'
 **Fix Options:**
 
 **Option A: Add getEmailConfig method**
+
 ```typescript
 // src/apps/api/src/config.ts
 export class Config {
   // ... existing methods ...
-  
+
   getEmailConfig() {
     return {
-      enabled: process.env.EMAIL_SERVICE_ENABLED === 'true',
-      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.EMAIL_PORT || '587'),
-      secure: process.env.EMAIL_SECURE === 'true',
+      enabled: process.env.EMAIL_SERVICE_ENABLED === "true",
+      host: process.env.EMAIL_HOST || "smtp.gmail.com",
+      port: parseInt(process.env.EMAIL_PORT || "587"),
+      secure: process.env.EMAIL_SECURE === "true",
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
-      from: process.env.EMAIL_FROM || 'noreply@infamous-freight.com',
+      from: process.env.EMAIL_FROM || "noreply@infamous-freight.com",
     };
   }
 }
 ```
 
 **Option B: Direct environment variables**
+
 ```typescript
 // src/apps/api/src/services/email.ts
 constructor() {
   const emailEnabled = process.env.EMAIL_SERVICE_ENABLED === 'true';
-  
+
   if (emailEnabled) {
     this.transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST || 'smtp.gmail.com',
@@ -117,6 +125,7 @@ constructor() {
 **File:** `src/apps/api/src/services/trial-email-automation.ts:2`
 
 **Error:**
+
 ```
 Module '"@prisma/client"' has no exported member 'PrismaClient'
 ```
@@ -124,6 +133,7 @@ Module '"@prisma/client"' has no exported member 'PrismaClient'
 **Root Cause:** Prisma client not generated after schema changes
 
 **Fix:**
+
 ```bash
 cd src/apps/api
 pnpm prisma generate
@@ -132,6 +142,7 @@ npx prisma generate
 ```
 
 **Add to package.json scripts:**
+
 ```json
 {
   "scripts": {
@@ -150,17 +161,20 @@ npx prisma generate
 **File:** `src/apps/api/tsconfig.json`
 
 **Error:**
+
 ```
 Cannot find type definition file for 'jest'
 ```
 
 **Fix:**
+
 ```bash
 cd src/apps/api
 pnpm add -D @types/jest
 ```
 
 **Update tsconfig.json:**
+
 ```json
 {
   "compilerOptions": {
@@ -176,6 +190,7 @@ pnpm add -D @types/jest
 **File:** `src/apps/api/jest.config.js:48-53`
 
 **Current:**
+
 ```javascript
 coverageThreshold: {
   global: {
@@ -190,6 +205,7 @@ coverageThreshold: {
 **Problem:** 100% coverage is blocking test runs. Current actual coverage is ~86%.
 
 **Recommended Fix:**
+
 ```javascript
 coverageThreshold: {
   global: {
@@ -202,6 +218,7 @@ coverageThreshold: {
 ```
 
 **Progressive Goals:**
+
 ```javascript
 // Phase 1: Current state (relaxed to allow progress)
 coverageThreshold: { global: { branches: 70, functions: 75, lines: 80, statements: 80 } }
@@ -224,9 +241,10 @@ coverageThreshold: { global: { branches: 80, functions: 85, lines: 90, statement
 **Impact:** API responses are **2-3x slower** than necessary
 
 **Implementation:**
+
 ```typescript
 // src/apps/api/src/services/cache.ts
-import Redis from 'ioredis';
+import Redis from "ioredis";
 
 export class CacheService {
   private redis: Redis;
@@ -234,8 +252,8 @@ export class CacheService {
 
   constructor() {
     this.redis = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
+      host: process.env.REDIS_HOST || "localhost",
+      port: parseInt(process.env.REDIS_PORT || "6379"),
       maxRetriesPerRequest: 3,
       retryStrategy: (times) => Math.min(times * 50, 2000),
     });
@@ -278,7 +296,7 @@ export class CacheService {
   getStats() {
     return {
       localSize: this.localCache.size,
-      redisConnected: this.redis.status === 'ready',
+      redisConnected: this.redis.status === "ready",
     };
   }
 }
@@ -288,14 +306,15 @@ export const cacheService = new CacheService();
 ```
 
 **Usage in Routes:**
+
 ```typescript
 // src/apps/api/src/routes/shipments.ts
-import { cacheService } from '../services/cache';
+import { cacheService } from "../services/cache";
 
-router.get('/shipments', authenticate, async (req, res, next) => {
+router.get("/shipments", authenticate, async (req, res, next) => {
   try {
     const cacheKey = `shipments:list:${req.user.id}:${JSON.stringify(req.query)}`;
-    
+
     // Try cache first
     const cached = await cacheService.get(cacheKey);
     if (cached) {
@@ -318,7 +337,7 @@ router.get('/shipments', authenticate, async (req, res, next) => {
 });
 
 // Invalidate on updates
-router.patch('/shipments/:id', authenticate, async (req, res, next) => {
+router.patch("/shipments/:id", authenticate, async (req, res, next) => {
   try {
     const updated = await prisma.shipment.update({
       where: { id: req.params.id },
@@ -336,6 +355,7 @@ router.patch('/shipments/:id', authenticate, async (req, res, next) => {
 ```
 
 **Expected Performance Gains:**
+
 - 📈 **Read latency:** 500ms → 50ms (90% reduction)
 - 📈 **Database load:** 70% reduction in queries
 - 📈 **Cost savings:** $200-500/month in database resources
@@ -361,11 +381,11 @@ CREATE INDEX IF NOT EXISTS idx_shipments_driver_id ON shipments(driver_id);
 CREATE INDEX IF NOT EXISTS idx_shipments_created_at ON shipments(created_at);
 
 -- Composite index for driver availability queries
-CREATE INDEX IF NOT EXISTS idx_shipments_driver_status 
+CREATE INDEX IF NOT EXISTS idx_shipments_driver_status
   ON shipments(driver_id, status) WHERE status IN ('pending', 'in_transit');
 
 -- Driver availability lookups
-CREATE INDEX IF NOT EXISTS idx_drivers_available 
+CREATE INDEX IF NOT EXISTS idx_drivers_available
   ON drivers(available) WHERE available = true;
 
 -- Audit log queries (compliance)
@@ -382,9 +402,10 @@ ANALYZE audit_log;
 ```
 
 **Verification:**
+
 ```sql
 -- Check index usage after 24 hours
-SELECT 
+SELECT
   schemaname,
   tablename,
   indexname,
@@ -405,6 +426,7 @@ WHERE idx_scan = 0
 ```
 
 **Expected Performance Gains:**
+
 - 📈 **Query speed:** 200ms → 30ms average (85% faster)
 - 📈 **Slow queries:** 10/hr → <1/hr
 - 📈 **Database CPU:** 45% → 25% utilization
@@ -421,28 +443,31 @@ WHERE idx_scan = 0
 
 ```typescript
 // src/apps/api/src/server.ts
-import compression from 'compression';
+import compression from "compression";
 
 const app = express();
 
 // Add BEFORE other middleware
-app.use(compression({
-  level: 6,              // Balance speed vs compression ratio
-  threshold: 1024,       // Only compress responses > 1KB
-  filter: (req, res) => {
-    // Don't compress if client doesn't support it
-    if (req.headers['x-no-compression']) {
-      return false;
-    }
-    // Use default compression filter
-    return compression.filter(req, res);
-  },
-}));
+app.use(
+  compression({
+    level: 6, // Balance speed vs compression ratio
+    threshold: 1024, // Only compress responses > 1KB
+    filter: (req, res) => {
+      // Don't compress if client doesn't support it
+      if (req.headers["x-no-compression"]) {
+        return false;
+      }
+      // Use default compression filter
+      return compression.filter(req, res);
+    },
+  }),
+);
 
 // ... rest of middleware
 ```
 
 **Expected Performance Gains:**
+
 - 📈 **Payload size:** 100KB → 30KB (70% reduction)
 - 📈 **Network cost:** $150/month savings on bandwidth
 - 📈 **Mobile load times:** 40% faster on 3G/4G
@@ -454,16 +479,17 @@ app.use(compression({
 **Current:** No query complexity limits - vulnerable to DOS
 
 **Implementation:**
+
 ```typescript
 // src/apps/api/src/graphql/server.ts
-import { createComplexityLimitRule } from 'graphql-validation-complexity';
+import { createComplexityLimitRule } from "graphql-validation-complexity";
 
 const complexityLimit = createComplexityLimitRule(1000, {
   scalarCost: 1,
   objectCost: 10,
   listFactor: 20,
   onCost: (cost) => {
-    console.log('GraphQL query cost:', cost);
+    console.log("GraphQL query cost:", cost);
   },
 });
 
@@ -482,7 +508,7 @@ export function createGraphQLServer() {
                 async executionDidEnd() {
                   const duration = Date.now() - start;
                   if (duration > 1000) {
-                    logger.warn('Slow GraphQL query', { duration });
+                    logger.warn("Slow GraphQL query", { duration });
                   }
                 },
               };
@@ -500,6 +526,7 @@ export function createGraphQLServer() {
 ### #5-12: Additional Performance Optimizations
 
 **#5: Connection Pooling**
+
 ```typescript
 // Increase Prisma connection pool
 datasource db {
@@ -511,32 +538,38 @@ datasource db {
 ```
 
 **#6: HTTP/2 Support**
+
 ```typescript
 // Enable HTTP/2 in production
-import spdy from 'spdy';
+import spdy from "spdy";
 const server = spdy.createServer(options, app);
 ```
 
 **#7: Database Read Replicas**
+
 ```typescript
 // Route read queries to replicas
 const replicaUrl = process.env.DATABASE_REPLICA_URL;
-const readClient = new PrismaClient({ datasources: { db: { url: replicaUrl } } });
+const readClient = new PrismaClient({
+  datasources: { db: { url: replicaUrl } },
+});
 ```
 
 **#8: Image Optimization**
+
 ```javascript
 // next.config.mjs
 export default {
   images: {
-    domains: ['your-cdn.com'],
-    formats: ['image/avif', 'image/webp'],
+    domains: ["your-cdn.com"],
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200],
   },
 };
 ```
 
 **#9: Bundle Size Reduction**
+
 ```bash
 # Analyze bundle
 cd src/apps/web
@@ -549,6 +582,7 @@ ANALYZE=true pnpm build
 ```
 
 **#10: API Rate Limiting Tuning**
+
 ```typescript
 // Adjust based on usage patterns
 limiters: {
@@ -560,6 +594,7 @@ limiters: {
 ```
 
 **#11: WebSocket Connection Pooling**
+
 ```typescript
 // Limit concurrent WebSocket connections per user
 const connectionLimits = new Map<string, number>();
@@ -567,7 +602,7 @@ io.use((socket, next) => {
   const userId = socket.handshake.auth.userId;
   const current = connectionLimits.get(userId) || 0;
   if (current >= 3) {
-    return next(new Error('Connection limit exceeded'));
+    return next(new Error("Connection limit exceeded"));
   }
   connectionLimits.set(userId, current + 1);
   next();
@@ -575,6 +610,7 @@ io.use((socket, next) => {
 ```
 
 **#12: Lazy Loading Routes**
+
 ```typescript
 // src/apps/web/pages/dashboard.tsx
 import dynamic from 'next/dynamic';
@@ -596,20 +632,21 @@ const HeavyChart = dynamic(() => import('../components/Charts/HeavyChart'), {
 **Security Risk:** Long-lived tokens increase attack surface
 
 **Implementation:**
+
 ```typescript
 // src/apps/api/src/services/auth.ts
 export class AuthService {
   generateTokenPair(userId: string, scopes: string[]) {
     const accessToken = jwt.sign(
-      { sub: userId, scopes, type: 'access' },
+      { sub: userId, scopes, type: "access" },
       process.env.JWT_SECRET!,
-      { expiresIn: '15m' }  // Reduced from 1h
+      { expiresIn: "15m" }, // Reduced from 1h
     );
 
     const refreshToken = jwt.sign(
-      { sub: userId, type: 'refresh' },
+      { sub: userId, type: "refresh" },
       process.env.JWT_REFRESH_SECRET!,
-      { expiresIn: '7d' }
+      { expiresIn: "7d" },
     );
 
     return { accessToken, refreshToken };
@@ -617,61 +654,65 @@ export class AuthService {
 
   async refreshAccessToken(refreshToken: string) {
     try {
-      const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as any;
-      
-      if (decoded.type !== 'refresh') {
-        throw new Error('Invalid token type');
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET!,
+      ) as any;
+
+      if (decoded.type !== "refresh") {
+        throw new Error("Invalid token type");
       }
 
       // Check if refresh token is blacklisted
       const isBlacklisted = await redis.get(`blacklist:${refreshToken}`);
       if (isBlacklisted) {
-        throw new Error('Token revoked');
+        throw new Error("Token revoked");
       }
 
       // Fetch user scopes from database
       const user = await prisma.user.findUnique({ where: { id: decoded.sub } });
       if (!user) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
 
       // Generate new access token
       const accessToken = jwt.sign(
-        { sub: user.id, scopes: user.scopes, type: 'access' },
+        { sub: user.id, scopes: user.scopes, type: "access" },
         process.env.JWT_SECRET!,
-        { expiresIn: '15m' }
+        { expiresIn: "15m" },
       );
 
       return { accessToken };
     } catch (err) {
-      throw new Error('Invalid refresh token');
+      throw new Error("Invalid refresh token");
     }
   }
 
   async revokeRefreshToken(refreshToken: string) {
     // Add to blacklist with expiry matching token expiry
-    await redis.setex(`blacklist:${refreshToken}`, 7 * 24 * 60 * 60, '1');
+    await redis.setex(`blacklist:${refreshToken}`, 7 * 24 * 60 * 60, "1");
   }
 }
 
 // New route
-router.post('/auth/refresh', async (req, res, next) => {
+router.post("/auth/refresh", async (req, res, next) => {
   try {
     const { refreshToken } = req.body;
     const authService = new AuthService();
     const { accessToken } = await authService.refreshAccessToken(refreshToken);
     res.json({ accessToken });
   } catch (err) {
-    res.status(401).json({ error: 'Invalid refresh token' });
+    res.status(401).json({ error: "Invalid refresh token" });
   }
 });
 ```
 
 **Client Implementation:**
+
 ```typescript
 // src/apps/web/lib/auth.ts
-let accessToken = localStorage.getItem('accessToken');
-let refreshToken = localStorage.getItem('refreshToken');
+let accessToken = localStorage.getItem("accessToken");
+let refreshToken = localStorage.getItem("refreshToken");
 
 async function apiCall(url: string, options: RequestInit = {}) {
   // Add access token
@@ -684,16 +725,16 @@ async function apiCall(url: string, options: RequestInit = {}) {
 
   // If 401, try refreshing token
   if (response.status === 401) {
-    const refreshResponse = await fetch('/api/auth/refresh', {
-      method: 'POST',
+    const refreshResponse = await fetch("/api/auth/refresh", {
+      method: "POST",
       body: JSON.stringify({ refreshToken }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
 
     if (refreshResponse.ok) {
       const { accessToken: newAccessToken } = await refreshResponse.json();
       accessToken = newAccessToken;
-      localStorage.setItem('accessToken', newAccessToken);
+      localStorage.setItem("accessToken", newAccessToken);
 
       // Retry original request with new token
       options.headers = {
@@ -703,7 +744,7 @@ async function apiCall(url: string, options: RequestInit = {}) {
       response = await fetch(url, options);
     } else {
       // Refresh failed, redirect to login
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   }
 
@@ -718,13 +759,18 @@ async function apiCall(url: string, options: RequestInit = {}) {
 **Current:** Basic validation, no HTML sanitization
 
 **Add DOMPurify for User-Generated Content:**
+
 ```typescript
 // src/apps/api/src/middleware/sanitize.ts
-import DOMPurify from 'isomorphic-dompurify';
+import DOMPurify from "isomorphic-dompurify";
 
-export function sanitizeMiddleware(req: Request, res: Response, next: NextFunction) {
+export function sanitizeMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const sanitizeObject = (obj: any): any => {
-    if (typeof obj === 'string') {
+    if (typeof obj === "string") {
       return DOMPurify.sanitize(obj, {
         ALLOWED_TAGS: [], // No HTML allowed
         ALLOWED_ATTR: [],
@@ -733,7 +779,7 @@ export function sanitizeMiddleware(req: Request, res: Response, next: NextFuncti
     if (Array.isArray(obj)) {
       return obj.map(sanitizeObject);
     }
-    if (obj && typeof obj === 'object') {
+    if (obj && typeof obj === "object") {
       const sanitized: any = {};
       for (const [key, value] of Object.entries(obj)) {
         sanitized[key] = sanitizeObject(value);
@@ -757,9 +803,10 @@ app.use(sanitizeMiddleware);
 ### #3: SQL Injection Testing
 
 **Add Automated SQL Injection Tests:**
+
 ```typescript
 // src/apps/api/src/__tests__/security/sql-injection.test.ts
-describe('SQL Injection Protection', () => {
+describe("SQL Injection Protection", () => {
   const sqlInjectionPayloads = [
     "' OR '1'='1",
     "'; DROP TABLE users--",
@@ -771,16 +818,16 @@ describe('SQL Injection Protection', () => {
   sqlInjectionPayloads.forEach((payload) => {
     it(`should reject SQL injection: ${payload}`, async () => {
       const res = await request(app)
-        .get('/api/shipments')
+        .get("/api/shipments")
         .query({ status: payload })
-        .set('Authorization', `Bearer ${validToken}`);
+        .set("Authorization", `Bearer ${validToken}`);
 
       // Should either:
       // 1. Return 400 (validation error)
       // 2. Return empty results (safe query)
       // Should NOT return 500 (database error)
       expect([200, 400]).toContain(res.status);
-      
+
       if (res.status === 200) {
         expect(res.body.data).toBeDefined();
       }
@@ -794,6 +841,7 @@ describe('SQL Injection Protection', () => {
 ### #4-8: Additional Security Improvements
 
 **#4: Rate Limiting by IP**
+
 ```typescript
 // Track by IP instead of just general limits
 const ipLimiter = rateLimit({
@@ -804,49 +852,55 @@ const ipLimiter = rateLimit({
 ```
 
 **#5: CSRF Protection**
+
 ```typescript
-import csrf from 'csurf';
+import csrf from "csurf";
 app.use(csrf({ cookie: true }));
 ```
 
 **#6: Helmet Security Headers Enhancement**
+
 ```typescript
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"], // Remove unsafe-inline in production
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", process.env.API_BASE_URL],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"], // Remove unsafe-inline in production
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", process.env.API_BASE_URL],
+      },
     },
-  },
-  hsts: {
-    maxAge: 31536000,
-    includeSubDomains: true,
-    preload: true,
-  },
-}));
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+  }),
+);
 ```
 
 **#7: Audit Log Enhancement**
+
 ```typescript
 // Add more context to audit logs
 auditLog: (req, res, next) => {
-  logger.info('API Request', {
+  logger.info("API Request", {
     method: req.method,
     path: req.path,
     userId: req.user?.id,
     ip: req.ip,
-    userAgent: req.get('user-agent'),
+    userAgent: req.get("user-agent"),
     timestamp: new Date().toISOString(),
     requestId: req.id, // Add request ID middleware
   });
   next();
-}
+};
 ```
 
 **#8: Secrets Management**
+
 ```bash
 # Move to HashiCorp Vault or AWS Secrets Manager
 # .env.production should NEVER contain production secrets
@@ -865,40 +919,43 @@ vault kv put secret/infamous-freight \
 **Current:** Partial Swagger docs, many endpoints undocumented
 
 **Generate Complete OpenAPI Spec:**
+
 ```typescript
 // src/apps/api/src/swagger/generator.ts
-import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerJsdoc from "swagger-jsdoc";
 
 const options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'Infamous Freight API',
-      version: '2.0.0',
-      description: 'Complete API documentation for Infamous Freight Enterprises',
+      title: "Infamous Freight API",
+      version: "2.0.0",
+      description:
+        "Complete API documentation for Infamous Freight Enterprises",
     },
     servers: [
-      { url: 'http://localhost:4000', description: 'Development' },
-      { url: 'https://api.infamous-freight.com', description: 'Production' },
+      { url: "http://localhost:4000", description: "Development" },
+      { url: "https://api.infamous-freight.com", description: "Production" },
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
         },
       },
     },
     security: [{ bearerAuth: [] }],
   },
-  apis: ['./src/routes/*.ts'], // Path to API routes with JSDoc
+  apis: ["./src/routes/*.ts"], // Path to API routes with JSDoc
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
 ```
 
 **Add JSDoc to All Routes:**
+
 ```typescript
 /**
  * @openapi
@@ -938,9 +995,14 @@ export const swaggerSpec = swaggerJsdoc(options);
  *       401:
  *         description: Unauthorized
  */
-router.get('/shipments', authenticate, requireScope('shipment:read'), async (req, res) => {
-  // ...
-});
+router.get(
+  "/shipments",
+  authenticate,
+  requireScope("shipment:read"),
+  async (req, res) => {
+    // ...
+  },
+);
 ```
 
 ---
@@ -949,7 +1011,7 @@ router.get('/shipments', authenticate, requireScope('shipment:read'), async (req
 
 **Create:** `docs/operations/ON_CALL_RUNBOOK.md`
 
-```markdown
+````markdown
 # On-Call Engineering Runbook
 
 ## Critical Alerts
@@ -959,22 +1021,26 @@ router.get('/shipments', authenticate, requireScope('shipment:read'), async (req
 **Alert:** `api_health_check_failed`
 
 **Symptoms:**
+
 - Health endpoint returning 503
 - No API responses
 - Database connection errors
 
 **Investigation:**
+
 1. Check API logs: `docker logs infamous-api --tail 100`
 2. Check database: `docker exec infamous-postgres psql -U postgres -c "SELECT 1"`
 3. Check system resources: `docker stats`
 
 **Resolution:**
+
 1. Restart API: `docker-compose restart api`
 2. If database issue: `docker-compose restart postgres`
 3. If persistent: Check AWS RDS status
 4. Escalate to: DevOps Lead (contact below)
 
 **Escalation Path:**
+
 - Level 1 (You): 5 minutes
 - Level 2 (Senior Engineer): 15 minutes
 - Level 3 (CTO): 30 minutes
@@ -986,11 +1052,13 @@ router.get('/shipments', authenticate, requireScope('shipment:read'), async (req
 **Alert:** `stripe_payment_failure_rate_high`
 
 **Investigation:**
+
 1. Check Stripe Dashboard: https://dashboard.stripe.com
 2. Check webhook logs: `curl http://localhost:4000/api/billing/webhooks/stripe/logs`
 3. Check error logs: `grep "Stripe" /var/log/api/error.log`
 
 **Resolution:**
+
 1. Verify Stripe API key: `echo $STRIPE_SECRET_KEY | cut -c1-10`
 2. Check webhook signature: Stripe Dashboard > Webhooks > Verify signature
 3. Retry failed payments: `node scripts/retry-failed-payments.js`
@@ -1002,11 +1070,13 @@ router.get('/shipments', authenticate, requireScope('shipment:read'), async (req
 **Alert:** `api_latency_p95_high`
 
 **Investigation:**
+
 1. Check slow queries: `docker exec infamous-postgres psql -U postgres -c "SELECT query, mean_exec_time FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10"`
 2. Check cache hit rate: `redis-cli INFO stats | grep hit_rate`
 3. Check system load: `top -bn1 | grep "Cpu(s)"`
 
 **Resolution:**
+
 1. Clear cache: `redis-cli FLUSHALL`
 2. Restart API: `docker-compose restart api`
 3. If database slow: Run `ANALYZE` on tables
@@ -1015,12 +1085,12 @@ router.get('/shipments', authenticate, requireScope('shipment:read'), async (req
 
 ## Contact Directory
 
-| Role | Name | Phone | Slack |
-|------|------|-------|-------|
-| On-Call Engineer | (Your team) | +1-XXX-XXX-XXXX | @oncall |
-| Senior Engineer | (Name) | +1-XXX-XXX-XXXX | @senior-eng |
-| DevOps Lead | (Name) | +1-XXX-XXX-XXXX | @devops |
-| CTO | (Name) | +1-XXX-XXX-XXXX | @cto |
+| Role             | Name        | Phone           | Slack       |
+| ---------------- | ----------- | --------------- | ----------- |
+| On-Call Engineer | (Your team) | +1-XXX-XXX-XXXX | @oncall     |
+| Senior Engineer  | (Name)      | +1-XXX-XXX-XXXX | @senior-eng |
+| DevOps Lead      | (Name)      | +1-XXX-XXX-XXXX | @devops     |
+| CTO              | (Name)      | +1-XXX-XXX-XXXX | @cto        |
 
 ## Useful Commands
 
@@ -1043,7 +1113,9 @@ docker-compose restart api
 # Check SSL certificate expiry
 echo | openssl s_client -servername yourdomain.com -connect yourdomain.com:443 2>/dev/null | openssl x509 -noout -dates
 ```
-```
+````
+
+````
 
 ---
 
@@ -1074,31 +1146,38 @@ Implement 2-tier caching:
 
 ## Implementation
 See src/apps/api/src/services/cache.ts
-```
+````
 
 **File:** `docs/adr/0006-monitoring-stack.md`
+
 ```markdown
 # ADR-0006: Monitoring & Observability Stack
 
 ## Status
+
 Accepted
 
 ## Context
+
 Need visibility into production performance and errors.
 
 ## Decision
+
 Use:
+
 - Prometheus + Grafana for metrics
 - Sentry for error tracking
 - Datadog APM for distributed tracing
 - Custom health checks every 60s
 
 ## Consequences
+
 - ✅ 5-minute alert response time
 - ✅ Complete request tracing
 - ❌ Monthly cost: $200 (Sentry) + $150 (Datadog)
 
 ## Alternatives Considered
+
 - ELK Stack: Too complex to maintain
 - New Relic: Too expensive ($500+/month)
 ```
@@ -1109,7 +1188,7 @@ Use:
 
 **File:** `docs/operations/TROUBLESHOOTING.md`
 
-```markdown
+````markdown
 # Common Issues & Solutions
 
 ## Issue: "Cannot connect to database"
@@ -1117,11 +1196,13 @@ Use:
 **Error:** `Error: connect ECONNREFUSED 127.0.0.1:5432`
 
 **Causes:**
+
 1. Database not running
 2. Wrong DATABASE_URL
 3. Firewall blocking port 5432
 
 **Solutions:**
+
 ```bash
 # 1. Check if database is running
 docker ps | grep postgres
@@ -1135,6 +1216,7 @@ echo $DATABASE_URL
 # 4. Test connection
 psql $DATABASE_URL -c "SELECT 1"
 ```
+````
 
 ---
 
@@ -1143,10 +1225,12 @@ psql $DATABASE_URL -c "SELECT 1"
 **Error:** `401 Unauthorized - Token expired`
 
 **Causes:**
+
 1. Token older than 15 minutes
 2. Clock skew between client/server
 
 **Solutions:**
+
 ```bash
 # 1. Get new access token using refresh token
 curl -X POST http://localhost:4000/api/auth/refresh \
@@ -1167,6 +1251,7 @@ sudo ntpdate -s time.nist.gov
 **Error:** `429 Too Many Requests`
 
 **Solutions:**
+
 ```bash
 # 1. Check current rate limits
 curl http://localhost:4000/api/metrics/rate-limits
@@ -1180,7 +1265,8 @@ redis-cli KEYS "ratelimit:*" | xargs redis-cli DEL
 
 # 4. For legitimate high-volume use, request API key upgrade
 ```
-```
+
+````
 
 ---
 
@@ -1227,13 +1313,14 @@ pnpm prisma db seed
 
 # 8. Start development servers
 pnpm dev  # Starts API + Web + Mobile
-```
+````
 
 ## IDE Setup
 
 ### VS Code
 
 **Recommended Extensions:**
+
 ```json
 {
   "recommendations": [
@@ -1247,6 +1334,7 @@ pnpm dev  # Starts API + Web + Mobile
 ```
 
 **Settings:**
+
 ```json
 {
   "editor.formatOnSave": true,
@@ -1258,6 +1346,7 @@ pnpm dev  # Starts API + Web + Mobile
 ## Common Tasks
 
 ### Run Tests
+
 ```bash
 pnpm test                 # All tests
 pnpm test:api            # API tests only
@@ -1266,6 +1355,7 @@ pnpm test:coverage       # With coverage report
 ```
 
 ### Database Management
+
 ```bash
 pnpm prisma:studio       # Open database GUI
 pnpm prisma:migrate      # Create new migration
@@ -1273,6 +1363,7 @@ pnpm prisma:reset        # Reset database (⚠️ destructive)
 ```
 
 ### Code Quality
+
 ```bash
 pnpm lint                # Run ESLint
 pnpm format              # Format with Prettier
@@ -1282,7 +1373,8 @@ pnpm check:types         # TypeScript type checking
 ## Troubleshooting
 
 See [TROUBLESHOOTING.md](./operations/TROUBLESHOOTING.md)
-```
+
+````
 
 ---
 
@@ -1333,7 +1425,7 @@ See [TROUBLESHOOTING.md](./operations/TROUBLESHOOTING.md)
     ]
   }
 }
-```
+````
 
 ---
 
@@ -1354,7 +1446,7 @@ groups:
         annotations:
           summary: "High API error rate detected"
           description: "Error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
-      
+
       - alert: HighLatency
         expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
         for: 5m
@@ -1363,7 +1455,7 @@ groups:
         annotations:
           summary: "API latency is high"
           description: "P95 latency is {{ $value }}s (threshold: 2s)"
-      
+
       - alert: DatabaseConnectionPoolExhausted
         expr: database_connections_active / database_connections_max > 0.8
         for: 2m
@@ -1371,7 +1463,7 @@ groups:
           severity: warning
         annotations:
           summary: "Database connection pool near capacity"
-      
+
       - alert: CacheHitRateLow
         expr: cache_hits_total / (cache_hits_total + cache_misses_total) < 0.7
         for: 5m
@@ -1379,7 +1471,7 @@ groups:
           severity: info
         annotations:
           summary: "Cache hit rate below 70%"
-      
+
       - alert: DiskSpaceRunningOut
         expr: node_filesystem_avail_bytes / node_filesystem_size_bytes < 0.1
         for: 1m
@@ -1394,14 +1486,15 @@ groups:
 ### #3-6: Additional Monitoring Improvements
 
 **#3: Distributed Tracing**
+
 ```typescript
 // Add OpenTelemetry for full request tracing
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { JaegerExporter } from "@opentelemetry/exporter-jaeger";
 
 const sdk = new NodeSDK({
   traceExporter: new JaegerExporter({
-    endpoint: 'http://localhost:14268/api/traces',
+    endpoint: "http://localhost:14268/api/traces",
   }),
 });
 
@@ -1409,21 +1502,22 @@ sdk.start();
 ```
 
 **#4: Real User Monitoring (RUM)**
+
 ```typescript
 // src/apps/web/lib/webVitalsMonitoring.ts
-import { getCLS, getFID, getLCP } from 'web-vitals';
+import { getCLS, getFID, getLCP } from "web-vitals";
 
 export function sendToAnalytics(metric: Metric) {
   // Send to Datadog RUM
-  if (typeof window !== 'undefined' && window.DD_RUM) {
+  if (typeof window !== "undefined" && window.DD_RUM) {
     window.DD_RUM.addTiming(metric.name, metric.value);
   }
 
   // Also send to custom analytics endpoint
-  fetch('/api/analytics/vitals', {
-    method: 'POST',
+  fetch("/api/analytics/vitals", {
+    method: "POST",
     body: JSON.stringify(metric),
-    headers: { 'Content-Type': 'application/json' },
+    headers: { "Content-Type": "application/json" },
   }).catch(() => {
     // Fail silently
   });
@@ -1435,47 +1529,50 @@ getLCP(sendToAnalytics);
 ```
 
 **#5: Business Metrics Dashboard**
+
 ```typescript
 // src/apps/api/src/routes/metrics/business.ts
-router.get('/metrics/business', authenticate, requireScope('admin:read'), async (req, res) => {
-  const [
-    totalRevenue,
-    activeShipments,
-    completedToday,
-    averageDeliveryTime,
-  ] = await Promise.all([
-    prisma.$queryRaw`SELECT SUM(amount) as total FROM payments WHERE status = 'completed'`,
-    prisma.shipment.count({ where: { status: 'in_transit' } }),
-    prisma.shipment.count({ 
-      where: { 
-        status: 'delivered',
-        delivered_at: { gte: new Date(new Date().setHours(0, 0, 0, 0)) }
-      }
-    }),
-    prisma.$queryRaw`SELECT AVG(EXTRACT(EPOCH FROM (delivered_at - created_at))/3600) as hours 
+router.get(
+  "/metrics/business",
+  authenticate,
+  requireScope("admin:read"),
+  async (req, res) => {
+    const [totalRevenue, activeShipments, completedToday, averageDeliveryTime] =
+      await Promise.all([
+        prisma.$queryRaw`SELECT SUM(amount) as total FROM payments WHERE status = 'completed'`,
+        prisma.shipment.count({ where: { status: "in_transit" } }),
+        prisma.shipment.count({
+          where: {
+            status: "delivered",
+            delivered_at: { gte: new Date(new Date().setHours(0, 0, 0, 0)) },
+          },
+        }),
+        prisma.$queryRaw`SELECT AVG(EXTRACT(EPOCH FROM (delivered_at - created_at))/3600) as hours 
       FROM shipments WHERE status = 'delivered'`,
-  ]);
+      ]);
 
-  res.json({
-    revenue: {
-      total: totalRevenue[0].total || 0,
-      today: 0, // Calculate
-      thisMonth: 0, // Calculate
-    },
-    shipments: {
-      active: activeShipments,
-      completedToday,
-      averageDeliveryTime: Math.round(averageDeliveryTime[0].hours),
-    },
-    timestamp: new Date().toISOString(),
-  });
-});
+    res.json({
+      revenue: {
+        total: totalRevenue[0].total || 0,
+        today: 0, // Calculate
+        thisMonth: 0, // Calculate
+      },
+      shipments: {
+        active: activeShipments,
+        completedToday,
+        averageDeliveryTime: Math.round(averageDeliveryTime[0].hours),
+      },
+      timestamp: new Date().toISOString(),
+    });
+  },
+);
 ```
 
 **#6: Log Aggregation**
+
 ```yaml
 # docker-compose.monitoring.yml
-version: '3.8'
+version: "3.8"
 services:
   loki:
     image: grafana/loki:latest
@@ -1483,7 +1580,7 @@ services:
       - "3100:3100"
     volumes:
       - ./monitoring/loki-config.yaml:/etc/loki/local-config.yaml
-  
+
   promtail:
     image: grafana/promtail:latest
     volumes:
@@ -1499,18 +1596,21 @@ services:
 ### Phase 1: Critical Fixes (Week 1)
 
 **Days 1-2:**
+
 - [ ] Fix all 5 TypeScript compilation errors
 - [ ] Install missing dependencies (next-auth, @types/jest)
 - [ ] Generate Prisma client
 - [ ] Run full test suite (should pass)
 
 **Days 3-5:**
+
 - [ ] Implement Redis caching service
 - [ ] Add 6 database indexes
 - [ ] Enable compression middleware
 - [ ] Verify 40% performance improvement
 
 **Days 6-7:**
+
 - [ ] JWT token rotation implementation
 - [ ] Input sanitization middleware
 - [ ] SQL injection test suite
@@ -1519,12 +1619,14 @@ services:
 ### Phase 2: High Priority (Week 2)
 
 **Days 8-10:**
+
 - [ ] Complete OpenAPI/Swagger documentation
 - [ ] Create on-call runbook
 - [ ] Add missing ADRs
 - [ ] Troubleshooting guide
 
 **Days 11-14:**
+
 - [ ] Grafana dashboards for API, database, cache
 - [ ] Prometheus alert rules
 - [ ] Distributed tracing (OpenTelemetry)
@@ -1533,12 +1635,14 @@ services:
 ### Phase 3: Medium Priority (Week 3)
 
 **Days 15-17:**
+
 - [ ] Connection pooling optimization
 - [ ] GraphQL query complexity limits
 - [ ] Rate limiting tuning
 - [ ] WebSocket connection pooling
 
 **Days 18-21:**
+
 - [ ] Bundle size optimization
 - [ ] Image optimization
 - [ ] Lazy loading implementation
@@ -1547,12 +1651,14 @@ services:
 ### Phase 4: Validation (Week 4)
 
 **Days 22-24:**
+
 - [ ] Load testing (k6 or Artillery)
 - [ ] Security penetration testing
 - [ ] Performance benchmark comparisons
 - [ ] Documentation review
 
 **Days 25-28:**
+
 - [ ] Team training on new systems
 - [ ] Monitoring dashboard walkthrough
 - [ ] On-call rotation setup
@@ -1564,14 +1670,14 @@ services:
 
 ### Performance Targets
 
-| Metric | Current | Target | Impact |
-|--------|---------|--------|--------|
-| API P95 Latency | ~800ms | <300ms | 62% faster |
-| Cache Hit Rate | ~40% | >70% | 75% fewer DB queries |
-| Database Query Time | ~150ms | <50ms | 67% faster |
-| Error Rate | <0.5% | <0.1% | 80% fewer errors |
-| Bundle Size (Web) | ~800KB | <500KB | 37% smaller |
-| Test Coverage | ~86% | >85% | Maintained |
+| Metric              | Current | Target | Impact               |
+| ------------------- | ------- | ------ | -------------------- |
+| API P95 Latency     | ~800ms  | <300ms | 62% faster           |
+| Cache Hit Rate      | ~40%    | >70%   | 75% fewer DB queries |
+| Database Query Time | ~150ms  | <50ms  | 67% faster           |
+| Error Rate          | <0.5%   | <0.1%  | 80% fewer errors     |
+| Bundle Size (Web)   | ~800KB  | <500KB | 37% smaller          |
+| Test Coverage       | ~86%    | >85%   | Maintained           |
 
 ### Cost Savings
 
@@ -1593,6 +1699,7 @@ services:
 ## 🚀 Quick Wins (Can Complete Today)
 
 ### 1. Fix TypeScript Errors (30 minutes)
+
 ```bash
 cd src/apps/api
 pnpm add -D @types/jest
@@ -1601,13 +1708,15 @@ pnpm build  # Should succeed
 ```
 
 ### 2. Enable Compression (15 minutes)
+
 ```typescript
 // src/apps/api/src/server.ts
-import compression from 'compression';
+import compression from "compression";
 app.use(compression());
 ```
 
 ### 3. Add 3 Critical Indexes (10 minutes)
+
 ```sql
 CREATE INDEX idx_shipments_status ON shipments(status);
 CREATE INDEX idx_shipments_driver_id ON shipments(driver_id);
@@ -1615,6 +1724,7 @@ CREATE INDEX idx_users_email ON users(email);
 ```
 
 ### 4. Lower Test Coverage Threshold (5 minutes)
+
 ```javascript
 // src/apps/api/jest.config.js
 coverageThreshold: {
@@ -1623,8 +1733,10 @@ coverageThreshold: {
 ```
 
 ### 5. Create On-Call Contact Sheet (10 minutes)
+
 ```markdown
 # On-Call Contacts
+
 - Primary: [Your Name] +1-XXX-XXX-XXXX
 - Secondary: [Backup] +1-XXX-XXX-XXXX
 - Escalation: [Manager] +1-XXX-XXX-XXXX
@@ -1640,11 +1752,13 @@ coverageThreshold: {
 **Documentation:** See `DOCUMENTATION_INDEX.md`
 
 **Questions:**
+
 - Technical: Create GitHub issue with label `question`
 - Security: Email security@infamous-freight.com
 - Urgent: Slack #engineering-support
 
 **Additional Resources:**
+
 - [Architecture Overview](docs/repository-structure.md)
 - [API Reference](docs/api/API_REFERENCE.md)
 - [Deployment Guide](docs/deployment.md)
@@ -1655,6 +1769,7 @@ coverageThreshold: {
 ## ✅ Implementation Checklist
 
 **Critical (Week 1):**
+
 - [ ] Fix TypeScript compilation errors (5 issues)
 - [ ] Implement Redis caching layer
 - [ ] Add 6 database indexes
@@ -1663,6 +1778,7 @@ coverageThreshold: {
 - [ ] Input sanitization
 
 **High Priority (Week 2):**
+
 - [ ] Complete API documentation (OpenAPI)
 - [ ] Create on-call runbook
 - [ ] Grafana dashboards
@@ -1670,6 +1786,7 @@ coverageThreshold: {
 - [ ] SQL injection tests
 
 **Medium Priority (Week 3):**
+
 - [ ] Connection pooling
 - [ ] GraphQL complexity limits
 - [ ] Bundle optimization
@@ -1677,6 +1794,7 @@ coverageThreshold: {
 - [ ] Distributed tracing
 
 **Validation (Week 4):**
+
 - [ ] Load testing
 - [ ] Security audit
 - [ ] Performance benchmarks
@@ -1687,6 +1805,6 @@ coverageThreshold: {
 **Generated:** January 10, 2026  
 **Repository:** Infamous-freight-enterprises  
 **Branch:** chore/fix/shared-workspace-ci  
-**Analysis Depth:** Complete codebase scan  
+**Analysis Depth:** Complete codebase scan
 
 **Next Action:** Start with Quick Wins (70 minutes, high impact) 🚀

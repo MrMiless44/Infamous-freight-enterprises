@@ -9,11 +9,13 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 ## 🎯 Quick Start
 
 ### Option 1: Run All Phases (Recommended)
+
 ```bash
 ./scripts/deploy-revenue-system.sh
 ```
 
 ### Option 2: Run Individual Phases
+
 ```bash
 # Phase 1: Set up Stripe, PayPal, SendGrid accounts
 ./scripts/revenue-deployment/phase1-setup-accounts.sh
@@ -37,6 +39,7 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 ## 📦 What's Included
 
 ### Deployment Scripts
+
 - **phase1-setup-accounts.sh** - Create payment processor accounts
 - **phase2-configure-environment.sh** - Environment setup & migrations
 - **phase3-deploy-frontend.sh** - Frontend deployment & testing
@@ -46,6 +49,7 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 - **deploy-revenue-system.sh** - Master script (runs all phases)
 
 ### Documentation
+
 - **REVENUE_DASHBOARD_GUIDE.md** - Dashboard usage and KPI explanations
 - **REVENUE_OPERATIONS_RUNBOOK.md** - Troubleshooting and procedures
 - **REVENUE_SUCCESS_METRICS.md** - Success criteria and tracking
@@ -54,6 +58,7 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 ## 🔧 Prerequisites
 
 ### Required Accounts
+
 - [ ] Stripe account (test mode to start)
 - [ ] PayPal developer account
 - [ ] SendGrid or SMTP email service
@@ -61,6 +66,7 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 - [ ] Hosting platform (Vercel/Fly.io/Railway)
 
 ### Required Tools
+
 - [ ] Node.js 18+ and pnpm
 - [ ] PostgreSQL client (psql)
 - [ ] Git
@@ -70,7 +76,9 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 ## 📖 Phase Details
 
 ### Phase 1: Payment Infrastructure Setup (8 hours)
+
 **What it does:**
+
 - Guides you through Stripe account creation
 - Sets up webhook endpoints
 - Creates Stripe products (3 pricing tiers)
@@ -78,12 +86,15 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 - Sets up email service (SendGrid/Mailgun/SMTP)
 
 **Outputs:**
+
 - Stripe API keys
 - PayPal credentials
 - Email service credentials
 
 ### Phase 2: Environment Configuration (6 hours)
+
 **What it does:**
+
 - Creates .env.production file
 - Updates environment variables
 - Runs database migrations
@@ -91,11 +102,14 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 - Restarts services
 
 **Outputs:**
+
 - .env.production (with all credentials)
 - Database tables (Subscription, Invoice, RevenueEvent)
 
 ### Phase 3: Frontend Deployment (10 hours)
+
 **What it does:**
+
 - Verifies all required files exist
 - Builds Next.js application
 - Starts local test server
@@ -104,12 +118,15 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 - Deploys to production (Vercel/Docker/Manual)
 
 **Outputs:**
+
 - Production pricing page
 - Success confirmation page
 - Verified checkout flow
 
 ### Phase 4: Payment Flow Verification (8 hours)
+
 **What it does:**
+
 - Tests email service connectivity
 - Verifies email templates
 - Tests end-to-end payment flow
@@ -119,12 +136,15 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 - Tests email automation scheduler
 
 **Outputs:**
+
 - Verified payment flows
 - Test subscriptions in database
 - Confirmed email delivery
 
 ### Phase 5: Production Launch (16 hours)
+
 **What it does:**
+
 - Enables Stripe LIVE mode
 - Enables PayPal production environment
 - Deploys to production
@@ -134,12 +154,15 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 - Processes final production test
 
 **Outputs:**
+
 - Live payment system accepting real money
 - Production deployment complete
 - Monitoring active
 
 ### Phase 6: Monitoring & Documentation (ongoing)
+
 **What it does:**
+
 - Creates revenue dashboard guide
 - Creates operations runbook
 - Sets up monitoring alerts
@@ -147,21 +170,22 @@ This directory contains 6 comprehensive deployment phases that take you from zer
 - Generates master deployment script
 
 **Outputs:**
+
 - Complete documentation suite
 - Monitoring configuration
 - Operational procedures
 
 ## 📊 Expected Timeline
 
-| Phase | Duration | Can Start |
-|-------|----------|-----------|
-| Phase 1 | 8 hours | Immediately |
-| Phase 2 | 6 hours | After Phase 1 |
-| Phase 3 | 10 hours | After Phase 2 |
-| Phase 4 | 8 hours | After Phase 3 |
-| Phase 5 | 16 hours | After Phase 4 |
-| Phase 6 | 2 hours | After Phase 5 |
-| **Total** | **48 hours** | |
+| Phase     | Duration     | Can Start     |
+| --------- | ------------ | ------------- |
+| Phase 1   | 8 hours      | Immediately   |
+| Phase 2   | 6 hours      | After Phase 1 |
+| Phase 3   | 10 hours     | After Phase 2 |
+| Phase 4   | 8 hours      | After Phase 3 |
+| Phase 5   | 16 hours     | After Phase 4 |
+| Phase 6   | 2 hours      | After Phase 5 |
+| **Total** | **48 hours** |               |
 
 ## 🎯 Success Criteria
 
@@ -173,20 +197,23 @@ After completing all phases:
 ✅ Pricing page deployed  
 ✅ Checkout flow tested  
 ✅ Monitoring active  
-✅ Documentation complete  
+✅ Documentation complete
 
 ## 🚨 Troubleshooting
 
 ### Script won't execute
+
 ```bash
 chmod +x scripts/revenue-deployment/*.sh
 chmod +x scripts/deploy-revenue-system.sh
 ```
 
 ### Missing credentials
+
 All credentials are collected interactively. If skipped, you'll be prompted to enter them manually in later phases.
 
 ### Database migration fails
+
 ```bash
 cd api
 pnpm prisma migrate reset
@@ -195,7 +222,9 @@ pnpm prisma generate
 ```
 
 ### Email service not working
+
 Check your credentials in .env:
+
 - SendGrid: SENDGRID_API_KEY
 - SMTP: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD
 
@@ -209,6 +238,7 @@ Check your credentials in .env:
 ## 🤝 Support
 
 If you encounter issues:
+
 1. Check the REVENUE_OPERATIONS_RUNBOOK.md
 2. Review error logs in /var/log/
 3. Contact: billing@infamousfreight.com
@@ -216,36 +246,42 @@ If you encounter issues:
 ## 📈 What Happens After Launch
 
 ### First 24 Hours
+
 - Monitor Stripe dashboard for transactions
 - Check email delivery rates (>95%)
 - Watch error logs
 - Verify webhook events processing
 
 ### First Week
+
 - Track trial signups (target: 25-50)
 - Monitor conversion rate
 - Review email open rates
 - Test support response time
 
 ### First Month
+
 - Achieve $2,500-$5,000 MRR
 - 30-50 paying customers
 - <15% churn rate
-- >10% conversion rate
+- > 10% conversion rate
 
 ## 💰 Revenue Projections
 
 ### 30 Days
+
 - **Signups:** 500+ trials
 - **Conversions:** 30-50 customers
 - **MRR:** $2,500-$5,000
 
 ### Year 1 (Conservative)
+
 - **Customers:** 500
 - **Annual Revenue:** $2.0M-$2.5M
 - **Break-even:** Month 4
 
 ### Year 1 (Optimistic)
+
 - **Customers:** 1,200
 - **Annual Revenue:** $6.0M-$8.0M
 - **Break-even:** Month 2

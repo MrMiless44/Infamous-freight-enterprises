@@ -34,15 +34,29 @@ describe("RouteOptimizer", () => {
       expect(result.cost).toBeGreaterThan(0);
     });
 
-    it.skip("should apply traffic multipliers correctly", () => {
-      // TODO: Fix this test - jest.spyOn doesn't work with VM modules
+    it("should apply traffic multipliers correctly", () => {
+      // Fixed: Test traffic multipliers without VM module spy
       const start = { lat: 40.7128, lng: -74.006, name: "Start" };
       const end = { lat: 40.758, lng: -73.9855, name: "End" };
 
-      const result = optimizer.optimizeRoute(start, end);
+      // Test during peak hour (mock system time)
+      const peakHourDate = new Date("2024-01-10T08:00:00");
+      jest.useFakeTimers().setSystemTime(peakHourDate);
 
-      // Peak hour should take longer
-      expect(result.estimatedTime).toBeGreaterThan(10);
+      const peakResult = optimizer.optimizeRoute(start, end);
+
+      // Test during off-peak hour
+      const offPeakDate = new Date("2024-01-10T14:00:00");
+      jest.setSystemTime(offPeakDate);
+
+      const offPeakResult = optimizer.optimizeRoute(start, end);
+
+      // Peak hour should take longer due to traffic multiplier
+      expect(peakResult.estimatedTime).toBeGreaterThan(
+        offPeakResult.estimatedTime,
+      );
+
+      jest.useRealTimers();
     });
   });
 

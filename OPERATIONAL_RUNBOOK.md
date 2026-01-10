@@ -154,6 +154,7 @@ node_filesystem_avail_bytes
 ### Alert Rules
 
 **Critical Alerts (Page immediately):**
+
 - API down (no responses for 5 minutes)
 - Database down
 - Error rate > 5%
@@ -161,6 +162,7 @@ node_filesystem_avail_bytes
 - Memory usage > 90%
 
 **Warning Alerts (Notify channel):**
+
 - API response time p95 > 2 seconds
 - Cache hit rate < 80%
 - Database slow queries > 10
@@ -183,12 +185,14 @@ node_filesystem_avail_bytes
 **Access:** https://sentry.io/organizations/infamous-freight/
 
 **Setup:**
+
 - Errors are automatically sent from API and Web app
 - Group similar errors together
 - Set release version: 2.0.0
 - Create alerts for high-error-rate releases
 
 **Daily Review:**
+
 ```bash
 # Check for new error patterns
 # Review stack traces for common issues
@@ -203,6 +207,7 @@ node_filesystem_avail_bytes
 ### Horizontal Scaling
 
 **Scale API instances:**
+
 ```bash
 # Scale to 3 API instances
 docker-compose -f docker-compose.production.yml up -d --scale api=3
@@ -215,6 +220,7 @@ curl http://localhost:3001/api/metrics | grep request_count
 ```
 
 **Load Balancing:**
+
 - Docker Compose automatically load-balances across instances
 - Requests distributed via round-robin
 - Configure sticky sessions for stateful operations
@@ -222,6 +228,7 @@ curl http://localhost:3001/api/metrics | grep request_count
 ### Performance Tuning
 
 **Database Query Optimization:**
+
 ```bash
 # Identify slow queries
 docker-compose exec postgres psql -U postgres infamous_freight -c "
@@ -239,6 +246,7 @@ CREATE INDEX idx_shipments_user_id ON shipments(user_id);
 ```
 
 **Cache Optimization:**
+
 ```bash
 # Monitor cache hit rate
 docker-compose exec redis redis-cli INFO stats | grep hits
@@ -251,6 +259,7 @@ docker-compose exec redis redis-cli FLUSHALL
 ```
 
 **Database Connection Pooling:**
+
 ```bash
 # Check active connections
 docker-compose exec postgres psql -U postgres -c "
@@ -269,6 +278,7 @@ SELECT datname, count(*) FROM pg_stat_activity GROUP BY datname;
 ### Automated Backups
 
 **Daily Backup Schedule:**
+
 ```bash
 # Add to crontab (runs daily at 2 AM)
 0 2 * * * docker-compose -f /workspaces/Infamous-freight-enterprises/docker-compose.production.yml exec -T postgres pg_dump -U postgres infamous_freight | gzip > /backups/backup-$(date +\%Y\%m\%d).sql.gz
@@ -278,6 +288,7 @@ docker-compose exec postgres pg_dump -U postgres infamous_freight | gzip > /back
 ```
 
 **Backup Verification:**
+
 ```bash
 # Check backup size
 ls -lh /backups/
@@ -311,6 +322,7 @@ docker-compose -f docker-compose.production.yml up -d
 ### Redis Persistence
 
 **Redis snapshots:**
+
 ```bash
 # Manual snapshot
 docker-compose exec redis redis-cli BGSAVE
@@ -328,6 +340,7 @@ docker-compose exec redis redis-cli LASTSAVE
 ### API Service Issues
 
 **API not responding:**
+
 ```bash
 # 1. Check if running
 docker-compose -f docker-compose.production.yml ps api
@@ -346,6 +359,7 @@ curl http://localhost:3001/api/health
 ```
 
 **High response time:**
+
 ```bash
 # 1. Check database performance
 docker-compose exec postgres psql -U postgres infamous_freight -c "
@@ -366,6 +380,7 @@ docker-compose -f docker-compose.production.yml up -d --scale api=3
 ### Database Issues
 
 **Connection pool exhausted:**
+
 ```bash
 # Check active connections
 docker-compose exec postgres psql -U postgres -c "
@@ -385,11 +400,12 @@ WHERE state = 'idle' AND state_change < NOW() - INTERVAL '30 minutes';
 ```
 
 **High disk usage:**
+
 ```bash
 # Check table sizes
 docker-compose exec postgres psql -U postgres infamous_freight -c "
-SELECT schemaname, tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) 
-FROM pg_tables 
+SELECT schemaname, tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename))
+FROM pg_tables
 ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
 LIMIT 10;
 "
@@ -408,6 +424,7 @@ DELETE FROM shipment_history WHERE created_at < NOW() - INTERVAL '1 year';
 ### Cache Issues
 
 **Redis memory high:**
+
 ```bash
 # Check memory usage
 docker-compose exec redis redis-cli INFO memory
@@ -420,6 +437,7 @@ docker-compose exec redis redis-cli EVICT
 ```
 
 **Cache hit rate low:**
+
 ```bash
 # Monitor cache usage
 docker-compose exec redis redis-cli --stat
@@ -428,7 +446,7 @@ docker-compose exec redis redis-cli --stat
 docker-compose exec redis redis-cli KEYS '*' | wc -l
 
 # Increase cache size
-# In docker-compose.production.yml: 
+# In docker-compose.production.yml:
 # redis:
 #   command: redis-server --maxmemory 2gb --maxmemory-policy allkeys-lru
 ```
@@ -574,8 +592,8 @@ docker-compose exec postgres psql -U postgres infamous_freight -c "ANALYZE;"
 
 # Check for table bloat
 docker-compose exec postgres psql -U postgres infamous_freight -c "
-SELECT schemaname, tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) 
-FROM pg_tables 
+SELECT schemaname, tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename))
+FROM pg_tables
 ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 "
 ```
@@ -619,18 +637,21 @@ cat /etc/logrotate.d/docker-compose-logs
 ## 📞 SUPPORT ESCALATION
 
 ### Level 1: Monitoring & Alerts
+
 - Check Grafana dashboards
 - Review Sentry error tracking
 - Check Datadog RUM
 - Run health check script
 
 ### Level 2: Operational Support
+
 - Reference DEPLOYMENT_COMMANDS.md
 - Review MONITORING_PRODUCTION.md
 - Check database performance
 - Verify API responses
 
 ### Level 3: Emergency Engineering
+
 - Execute rollback procedures
 - Contact on-call engineer
 - Initiate incident response

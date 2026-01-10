@@ -1,16 +1,16 @@
 /**
  * Phase 3 Feature 3: Real-time GPS Tracking
- * 
+ *
  * WebSocket-based real-time location tracking with geofencing
  * Stores location history in TimescaleDB for time-series queries
  * Provides ETA calculation and arrival notifications
- * 
+ *
  * Deployment: Days 5-6 of Phase 3
  * Update Frequency: 5 seconds (configurable)
  * Business Impact: Better customer visibility, regulatory compliance
  */
 
-import type { Request, Response } from 'express';
+import type { Request, Response } from "express";
 
 interface LocationUpdate {
   driverId: string;
@@ -29,7 +29,7 @@ interface Geofence {
   latitude: number;
   longitude: number;
   radiusMeters: number;
-  type: 'pickup' | 'delivery' | 'warehouse' | 'restricted';
+  type: "pickup" | "delivery" | "warehouse" | "restricted";
 }
 
 interface ETACalculation {
@@ -68,7 +68,7 @@ class GPSTrackingManager {
    */
   updateDriverLocation(update: LocationUpdate): {
     geofenceEvents: Array<{
-      type: 'enter' | 'exit';
+      type: "enter" | "exit";
       geofence: Geofence;
     }>;
     speedAlert?: boolean;
@@ -76,7 +76,7 @@ class GPSTrackingManager {
     const previousLocation = this.activeDrivers.get(update.driverId);
     this.activeDrivers.set(update.driverId, update);
 
-    const events: Array<{ type: 'enter' | 'exit'; geofence: Geofence }> = [];
+    const events: Array<{ type: "enter" | "exit"; geofence: Geofence }> = [];
 
     // Check geofence transitions
     for (const geofence of this.geofences.values()) {
@@ -86,9 +86,9 @@ class GPSTrackingManager {
         : false;
 
       if (currentInGeofence && !previousInGeofence) {
-        events.push({ type: 'enter', geofence });
+        events.push({ type: "enter", geofence });
       } else if (!currentInGeofence && previousInGeofence) {
-        events.push({ type: 'exit', geofence });
+        events.push({ type: "exit", geofence });
       }
     }
 
@@ -123,7 +123,7 @@ class GPSTrackingManager {
    */
   calculateETA(
     driverId: string,
-    destination: { lat: number; lng: number }
+    destination: { lat: number; lng: number },
   ): ETACalculation | null {
     const currentLocation = this.activeDrivers.get(driverId);
     if (!currentLocation) return null;
@@ -131,7 +131,7 @@ class GPSTrackingManager {
     // Haversine distance
     const distance = this.haversineDistance(
       { lat: currentLocation.latitude, lng: currentLocation.longitude },
-      destination
+      destination,
     );
 
     // Estimate based on current speed and traffic
@@ -142,7 +142,9 @@ class GPSTrackingManager {
     const estimatedMinutes = Math.round(baseTimeMinutes * trafficFactor);
 
     const estimatedArrival = new Date();
-    estimatedArrival.setMinutes(estimatedArrival.getMinutes() + estimatedMinutes);
+    estimatedArrival.setMinutes(
+      estimatedArrival.getMinutes() + estimatedMinutes,
+    );
 
     // Confidence based on speed consistency (if stationary = low confidence)
     const confidence = currentLocation.speed > 10 ? 0.85 : 0.5;
@@ -166,7 +168,7 @@ class GPSTrackingManager {
    */
   getLocationHistory(
     driverId: string,
-    loadId: string
+    loadId: string,
   ): LocationHistory | undefined {
     const history = this.locationHistory.get(driverId);
     return history?.find((h) => h.loadId === loadId);
@@ -201,7 +203,7 @@ class GPSTrackingManager {
    */
   private haversineDistance(
     loc1: { lat: number; lng: number },
-    loc2: { lat: number; lng: number }
+    loc2: { lat: number; lng: number },
   ): number {
     const R = 6371; // Earth radius in km
     const dLat = ((loc2.lat - loc1.lat) * Math.PI) / 180;
@@ -231,12 +233,15 @@ class GPSTrackingManager {
 /**
  * GPS tracking API handlers
  */
-export async function updateLocation(req: Request, res: Response): Promise<void> {
+export async function updateLocation(
+  req: Request,
+  res: Response,
+): Promise<void> {
   const { driverId, latitude, longitude, speed, heading, accuracy } = req.body;
 
   if (!driverId || latitude === undefined || longitude === undefined) {
     res.status(400).json({
-      error: 'driverId, latitude, and longitude are required',
+      error: "driverId, latitude, and longitude are required",
     });
     return;
   }
@@ -259,12 +264,12 @@ export async function updateLocation(req: Request, res: Response): Promise<void>
         driverId,
         received: true,
         geofenceEvents: events.geofenceEvents,
-        speedAlert: events.speedAlert ? 'Driver exceeding speed limit' : null,
+        speedAlert: events.speedAlert ? "Driver exceeding speed limit" : null,
       },
     });
   } catch (error) {
     res.status(500).json({
-      error: 'Location update failed',
+      error: "Location update failed",
     });
   }
 }
@@ -275,9 +280,13 @@ export async function updateLocation(req: Request, res: Response): Promise<void>
 export async function getETA(req: Request, res: Response): Promise<void> {
   const { driverId, destinationLat, destinationLng } = req.body;
 
-  if (!driverId || destinationLat === undefined || destinationLng === undefined) {
+  if (
+    !driverId ||
+    destinationLat === undefined ||
+    destinationLng === undefined
+  ) {
     res.status(400).json({
-      error: 'driverId, destinationLat, and destinationLng are required',
+      error: "driverId, destinationLat, and destinationLng are required",
     });
     return;
   }
@@ -291,7 +300,7 @@ export async function getETA(req: Request, res: Response): Promise<void> {
 
     if (!eta) {
       res.status(404).json({
-        error: 'Driver location not found',
+        error: "Driver location not found",
       });
       return;
     }
@@ -302,7 +311,7 @@ export async function getETA(req: Request, res: Response): Promise<void> {
     });
   } catch (error) {
     res.status(500).json({
-      error: 'ETA calculation failed',
+      error: "ETA calculation failed",
     });
   }
 }
@@ -310,7 +319,10 @@ export async function getETA(req: Request, res: Response): Promise<void> {
 /**
  * Get active drivers (for map display)
  */
-export async function getActiveDrivers(req: Request, res: Response): Promise<void> {
+export async function getActiveDrivers(
+  req: Request,
+  res: Response,
+): Promise<void> {
   try {
     const tracker = new GPSTrackingManager();
     const drivers = tracker.getActiveDrivers();
@@ -333,7 +345,7 @@ export async function getActiveDrivers(req: Request, res: Response): Promise<voi
     });
   } catch (error) {
     res.status(500).json({
-      error: 'Failed to fetch active drivers',
+      error: "Failed to fetch active drivers",
     });
   }
 }

@@ -1,16 +1,16 @@
 /**
  * Phase 2 Performance Optimization - Load Testing Framework
- * 
+ *
  * Simulates 100 concurrent requests to measure:
  *   - Response time (p95 < 1.2s target, currently ~2.0s)
  *   - Throughput (target 500+ RPS, currently ~300)
  *   - Error rates (target < 0.1%)
  *   - Database query performance
- * 
+ *
  * Run: npx ts-node load-test.ts
  */
 
-import http from 'http';
+import http from "http";
 
 interface LoadTestConfig {
   baseUrl: string;
@@ -40,9 +40,7 @@ class LoadTester {
 
   constructor(config: LoadTestConfig) {
     this.config = config;
-    this.results = new Map(
-      config.endpoints.map((endpoint) => [endpoint, []])
-    );
+    this.results = new Map(config.endpoints.map((endpoint) => [endpoint, []]));
   }
 
   /**
@@ -53,13 +51,13 @@ class LoadTester {
       const requestStartTime = Date.now();
 
       const req = http.get(url, { timeout: this.config.timeout }, (res) => {
-        let data = '';
+        let data = "";
 
-        res.on('data', (chunk) => {
+        res.on("data", (chunk) => {
           data += chunk;
         });
 
-        res.on('end', () => {
+        res.on("end", () => {
           const responseTime = Date.now() - requestStartTime;
           if (res.statusCode === 200) {
             resolve(responseTime);
@@ -69,10 +67,10 @@ class LoadTester {
         });
       });
 
-      req.on('error', reject);
-      req.on('timeout', () => {
+      req.on("error", reject);
+      req.on("timeout", () => {
         req.destroy();
-        reject(new Error('Request timeout'));
+        reject(new Error("Request timeout"));
       });
     });
   }
@@ -81,7 +79,7 @@ class LoadTester {
    * Run load test
    */
   async run(): Promise<LoadTestResult[]> {
-    console.log('🔥 Starting Phase 2 Load Test...\n');
+    console.log("🔥 Starting Phase 2 Load Test...\n");
     console.log(`Configuration:`);
     console.log(`  Concurrent requests: ${this.config.concurrentRequests}`);
     console.log(`  Total requests: ${this.config.totalRequests}`);
@@ -109,10 +107,14 @@ class LoadTester {
     let successCount = 0;
     let errorCount = 0;
 
-    for (let i = 0; i < endpointIndices.length; i += this.config.concurrentRequests) {
+    for (
+      let i = 0;
+      i < endpointIndices.length;
+      i += this.config.concurrentRequests
+    ) {
       const batch = endpointIndices.slice(
         i,
-        i + this.config.concurrentRequests
+        i + this.config.concurrentRequests,
       );
       const promises = batch.map((idx) => {
         const endpoint = this.config.endpoints[idx];
@@ -134,9 +136,14 @@ class LoadTester {
       await Promise.all(promises);
 
       // Progress indicator
-      const progress = Math.min(i + this.config.concurrentRequests, endpointIndices.length);
+      const progress = Math.min(
+        i + this.config.concurrentRequests,
+        endpointIndices.length,
+      );
       const percentage = ((progress / endpointIndices.length) * 100).toFixed(1);
-      console.log(`Progress: ${percentage}% (${progress}/${endpointIndices.length})`);
+      console.log(
+        `Progress: ${percentage}% (${progress}/${endpointIndices.length})`,
+      );
     }
 
     const totalTime = (Date.now() - this.startTime) / 1000;
@@ -170,9 +177,9 @@ class LoadTester {
    * Print results with emoji indicators
    */
   static printResults(results: LoadTestResult[]): void {
-    console.log('═'.repeat(100));
-    console.log('📊 LOAD TEST RESULTS');
-    console.log('═'.repeat(100) + '\n');
+    console.log("═".repeat(100));
+    console.log("📊 LOAD TEST RESULTS");
+    console.log("═".repeat(100) + "\n");
 
     let totalSuccessCount = 0;
     let totalRequestCount = 0;
@@ -185,35 +192,49 @@ class LoadTester {
 
       const avgStatus =
         result.avgResponseTime < 100
-          ? '🟢'
+          ? "🟢"
           : result.avgResponseTime < 500
-            ? '🟡'
-            : '🔴';
+            ? "🟡"
+            : "🔴";
       const p95Status =
         result.p95ResponseTime < 1200
-          ? '🟢'
+          ? "🟢"
           : result.p95ResponseTime < 2000
-            ? '🟡'
-            : '🔴';
+            ? "🟡"
+            : "🔴";
 
       console.log(`Endpoint: ${result.endpoint}`);
-      console.log(`  Requests:   ${result.totalRequests} (Success: ${result.successCount}, Errors: ${result.errorCount})`);
-      console.log(`  Avg Time:   ${avgStatus} ${result.avgResponseTime.toFixed(0)}ms`);
-      console.log(`  Min/Max:    ${result.minResponseTime.toFixed(0)}ms / ${result.maxResponseTime.toFixed(0)}ms`);
-      console.log(`  P95 Time:   ${p95Status} ${result.p95ResponseTime.toFixed(0)}ms (target: <1200ms)`);
+      console.log(
+        `  Requests:   ${result.totalRequests} (Success: ${result.successCount}, Errors: ${result.errorCount})`,
+      );
+      console.log(
+        `  Avg Time:   ${avgStatus} ${result.avgResponseTime.toFixed(0)}ms`,
+      );
+      console.log(
+        `  Min/Max:    ${result.minResponseTime.toFixed(0)}ms / ${result.maxResponseTime.toFixed(0)}ms`,
+      );
+      console.log(
+        `  P95 Time:   ${p95Status} ${result.p95ResponseTime.toFixed(0)}ms (target: <1200ms)`,
+      );
       console.log(`  Throughput: ${result.throughputRps.toFixed(2)} RPS`);
-      console.log('');
+      console.log("");
     }
 
-    console.log('═'.repeat(100));
-    console.log('SUMMARY');
-    console.log('═'.repeat(100));
+    console.log("═".repeat(100));
+    console.log("SUMMARY");
+    console.log("═".repeat(100));
     console.log(`Total Requests:     ${totalRequestCount}`);
-    console.log(`Success Rate:       ${((totalSuccessCount / totalRequestCount) * 100).toFixed(2)}%`);
+    console.log(
+      `Success Rate:       ${((totalSuccessCount / totalRequestCount) * 100).toFixed(2)}%`,
+    );
     console.log(`Total Throughput:   ${totalThroughput.toFixed(2)} RPS`);
-    console.log(`\n✅ Target (500+ RPS): ${totalThroughput >= 500 ? '🟢 PASSED' : '🔴 NEEDS IMPROVEMENT'}`);
-    console.log(`✅ Target (p95 < 1.2s): ${results.every((r) => r.p95ResponseTime < 1200) ? '🟢 PASSED' : '🔴 NEEDS IMPROVEMENT'}`);
-    console.log('═'.repeat(100) + '\n');
+    console.log(
+      `\n✅ Target (500+ RPS): ${totalThroughput >= 500 ? "🟢 PASSED" : "🔴 NEEDS IMPROVEMENT"}`,
+    );
+    console.log(
+      `✅ Target (p95 < 1.2s): ${results.every((r) => r.p95ResponseTime < 1200) ? "🟢 PASSED" : "🔴 NEEDS IMPROVEMENT"}`,
+    );
+    console.log("═".repeat(100) + "\n");
   }
 }
 
@@ -222,18 +243,18 @@ class LoadTester {
  */
 async function runLoadTest(): Promise<void> {
   const config: LoadTestConfig = {
-    baseUrl: process.env.API_URL || 'http://localhost:4000/api',
+    baseUrl: process.env.API_URL || "http://localhost:4000/api",
     concurrentRequests: 10,
     totalRequests: 1000,
     timeout: 5000,
     endpoints: [
-      '/shipments',
-      '/drivers',
-      '/routes',
-      '/analytics',
-      '/notifications',
-      '/profile',
-      '/health',
+      "/shipments",
+      "/drivers",
+      "/routes",
+      "/analytics",
+      "/notifications",
+      "/profile",
+      "/health",
     ],
   };
 
@@ -243,7 +264,7 @@ async function runLoadTest(): Promise<void> {
     const results = await tester.run();
     LoadTester.printResults(results);
   } catch (error) {
-    console.error('Load test failed:', error);
+    console.error("Load test failed:", error);
     process.exit(1);
   }
 }

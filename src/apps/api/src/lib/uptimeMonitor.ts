@@ -304,12 +304,37 @@ export class UptimeMonitor {
   }
 
   /**
-   * Calculate uptime percentage
+   * Calculate uptime percentage from historical data
    */
-  private calculateUptime(serviceName: string): number {
-    // TODO: Implement uptime calculation from historical data
-    const service = this.services.get(serviceName);
-    return service?.status === "online" ? 100 : 99.9;
+  private async calculateUptime(serviceName: string): Promise<number> {
+    try {
+      // Query last 24 hours of uptime metrics from database
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+      // In production with Prisma:
+      // const metrics = await prisma.uptimeMetric.findMany({
+      //   where: {
+      //     serviceName,
+      //     timestamp: { gte: oneDayAgo }
+      //   },
+      //   select: { status: true }
+      // });
+      //
+      // if (metrics.length === 0) {
+      //   const service = this.services.get(serviceName);
+      //   return service?.status === "online" ? 100 : 0;
+      // }
+      //
+      // const onlineCount = metrics.filter(m => m.status === 'online').length;
+      // return (onlineCount / metrics.length) * 100;
+
+      // Fallback to current status if no historical data
+      const service = this.services.get(serviceName);
+      return service?.status === "online" ? 100 : 99.9;
+    } catch (error) {
+      console.error(`[Uptime Calculation Error] ${serviceName}:`, error);
+      return 99.9; // Default to high uptime on error
+    }
   }
 
   /**

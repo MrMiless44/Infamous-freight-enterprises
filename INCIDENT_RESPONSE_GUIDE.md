@@ -8,12 +8,12 @@
 
 ## 📋 INCIDENT SEVERITY MATRIX
 
-| Severity | Impact | Response Time | Examples |
-|----------|--------|----------------|----------|
-| **Critical** | Total outage, no users can access | 5 min | API down, Database down, All errors |
-| **High** | Partial outage, some users affected | 15 min | 50%+ error rate, Login broken |
-| **Medium** | Degraded performance, workaround exists | 1 hour | Slow API responses, Cache issues |
-| **Low** | Minor issue, no user impact | 4 hours | Log errors, Unused code warnings |
+| Severity     | Impact                                  | Response Time | Examples                            |
+| ------------ | --------------------------------------- | ------------- | ----------------------------------- |
+| **Critical** | Total outage, no users can access       | 5 min         | API down, Database down, All errors |
+| **High**     | Partial outage, some users affected     | 15 min        | 50%+ error rate, Login broken       |
+| **Medium**   | Degraded performance, workaround exists | 1 hour        | Slow API responses, Cache issues    |
+| **Low**      | Minor issue, no user impact             | 4 hours       | Log errors, Unused code warnings    |
 
 ---
 
@@ -24,6 +24,7 @@
 **Detection:** No response from http://localhost:3001/api/health
 
 **Immediate Action (First 2 minutes):**
+
 ```bash
 # 1. Verify service status
 docker-compose -f docker-compose.production.yml ps api
@@ -39,6 +40,7 @@ git log --oneline -5
 ```
 
 **Root Cause Analysis:**
+
 ```bash
 # Memory leak?
 docker stats api --no-stream
@@ -57,6 +59,7 @@ docker-compose exec api env | grep DATABASE_URL
 ```
 
 **Recovery Steps:**
+
 ```bash
 # Option 1: Restart service
 docker-compose -f docker-compose.production.yml restart api
@@ -75,6 +78,7 @@ curl http://localhost:3001/api/health
 ```
 
 **Post-Recovery:**
+
 ```bash
 # Monitor for 10 minutes
 watch -n 5 'docker-compose -f docker-compose.production.yml ps api && curl http://localhost:3001/api/health'
@@ -90,6 +94,7 @@ docker-compose -f docker-compose.production.yml logs api | grep ERROR | wc -l
 **Detection:** Database connection timeout, pool exhausted
 
 **Immediate Action:**
+
 ```bash
 # 1. Check if database is running
 docker-compose -f docker-compose.production.yml ps postgres
@@ -111,6 +116,7 @@ SELECT pg_size_pretty(pg_database_size('infamous_freight'));
 ```
 
 **Root Cause Analysis:**
+
 ```bash
 # Connection pool exhausted?
 docker-compose exec postgres psql -U postgres -c "
@@ -135,6 +141,7 @@ SELECT pg_database_size('infamous_freight') as size;
 ```
 
 **Recovery Steps:**
+
 ```bash
 # Option 1: Kill idle connections
 docker-compose exec postgres psql -U postgres -c "
@@ -164,6 +171,7 @@ docker-compose exec postgres psql -U postgres -c "SELECT COUNT(*) FROM shipments
 **Detection:** Error rate spike in Grafana or Sentry
 
 **Immediate Action:**
+
 ```bash
 # 1. Identify error pattern
 docker-compose -f docker-compose.production.yml logs api | grep ERROR | head -20
@@ -179,6 +187,7 @@ docker-compose -f docker-compose.production.yml logs api | grep ERROR | wc -l
 ```
 
 **Root Cause Analysis:**
+
 ```bash
 # Database issues?
 curl -s http://localhost:3001/api/health | jq '.database'
@@ -198,6 +207,7 @@ git diff HEAD~1 HEAD -- src/routes
 ```
 
 **Recovery Steps:**
+
 ```bash
 # Option 1: Clear cache if it's cache-related
 docker-compose exec redis redis-cli FLUSHALL
@@ -226,6 +236,7 @@ watch -n 5 'docker-compose -f docker-compose.production.yml logs api --since 1m 
 **Detection:** Grafana alert or slow user reports
 
 **Investigation:**
+
 ```bash
 # 1. Check database slow queries
 docker-compose exec postgres psql -U postgres infamous_freight -c "
@@ -244,10 +255,11 @@ docker stats api postgres redis --no-stream
 ```
 
 **Solutions:**
+
 ```bash
 # Option 1: Add database indexes
 docker-compose exec postgres psql -U postgres infamous_freight -c "
-CREATE INDEX CONCURRENTLY idx_shipments_status_created 
+CREATE INDEX CONCURRENTLY idx_shipments_status_created
 ON shipments(status, created_at);
 "
 
@@ -271,6 +283,7 @@ docker-compose -f docker-compose.production.yml restart api
 **Detection:** Multiple 401/403 errors, users can't log in
 
 **Investigation:**
+
 ```bash
 # 1. Check JWT secret is loaded
 docker-compose exec api env | grep JWT_SECRET
@@ -288,6 +301,7 @@ curl http://localhost:3001/api/health | jq '.stripe'
 ```
 
 **Recovery:**
+
 ```bash
 # Option 1: Verify JWT secret
 echo $JWT_SECRET
@@ -317,6 +331,7 @@ UPDATE users SET verified = true WHERE email = 'test@example.com';
 **Detection:** Grafana alert or manual check shows <20% free space
 
 **Investigation:**
+
 ```bash
 # Check disk usage
 docker-compose exec postgres psql -U postgres infamous_freight -c "
@@ -335,6 +350,7 @@ ORDER BY waste_pct DESC LIMIT 10;
 ```
 
 **Solutions:**
+
 ```bash
 # Option 1: Vacuum and analyze
 docker-compose exec postgres psql -U postgres infamous_freight -c "
@@ -368,6 +384,7 @@ docker-compose -f docker-compose.production.yml up -d postgres
 **Detection:** Docker stats show high memory, Grafana alert
 
 **Investigation:**
+
 ```bash
 # Check which service using most memory
 docker stats --no-stream | sort -k4 -hr
@@ -381,6 +398,7 @@ docker-compose exec api npm run analyze:heap
 ```
 
 **Solutions:**
+
 ```bash
 # Option 1: Restart service
 docker-compose -f docker-compose.production.yml restart api
@@ -464,9 +482,9 @@ done
 # Database query performance
 echo "Top 10 slowest queries:"
 docker-compose exec postgres psql -U postgres infamous_freight -c "
-SELECT query, calls, mean_time 
-FROM pg_stat_statements 
-ORDER BY mean_time DESC 
+SELECT query, calls, mean_time
+FROM pg_stat_statements
+ORDER BY mean_time DESC
 LIMIT 10;
 " | column -t
 
@@ -479,13 +497,13 @@ docker-compose exec redis redis-cli INFO stats | grep -E "hits|misses"
 
 ## 📞 ESCALATION CONTACTS
 
-| Issue | Primary | Secondary | Notes |
-|-------|---------|-----------|-------|
-| **API Down** | Backend Lead | DevOps | Page immediately |
-| **Database Down** | Database Admin | Backend Lead | Critical priority |
-| **High Error Rate** | On-Call Engineer | Backend Lead | Check Sentry first |
-| **Performance** | Performance Engineer | DevOps | Check metrics first |
-| **Security** | Security Lead | DevOps | Verify and isolate |
+| Issue               | Primary              | Secondary    | Notes               |
+| ------------------- | -------------------- | ------------ | ------------------- |
+| **API Down**        | Backend Lead         | DevOps       | Page immediately    |
+| **Database Down**   | Database Admin       | Backend Lead | Critical priority   |
+| **High Error Rate** | On-Call Engineer     | Backend Lead | Check Sentry first  |
+| **Performance**     | Performance Engineer | DevOps       | Check metrics first |
+| **Security**        | Security Lead        | DevOps       | Verify and isolate  |
 
 ---
 

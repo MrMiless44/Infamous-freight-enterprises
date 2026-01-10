@@ -8,7 +8,7 @@ describe("Performance Tests", () => {
   describe("GPS Tracking Performance", () => {
     it("should handle 100 location updates in under 1 second", async () => {
       const { updateLocation } = await import("../services/gpsTracking");
-      
+
       const startTime = Date.now();
       const promises = [];
 
@@ -16,8 +16,8 @@ describe("Performance Tests", () => {
         const req = {
           body: {
             driverId: `driver-${i}`,
-            latitude: 40.7128 + (i * 0.001),
-            longitude: -74.006 + (i * 0.001),
+            latitude: 40.7128 + i * 0.001,
+            longitude: -74.006 + i * 0.001,
             speed: 60,
           },
         };
@@ -36,8 +36,9 @@ describe("Performance Tests", () => {
     });
 
     it("should calculate ETA for 50 drivers concurrently", async () => {
-      const { getETA, updateLocation } = await import("../services/gpsTracking");
-      
+      const { getETA, updateLocation } =
+        await import("../services/gpsTracking");
+
       // First, add some locations
       for (let i = 0; i < 50; i++) {
         const req = {
@@ -84,7 +85,7 @@ describe("Performance Tests", () => {
   describe("Route Optimizer Performance", () => {
     it("should optimize 20 routes in under 2 seconds", async () => {
       const { optimizeRoute } = await import("../services/routeOptimizer");
-      
+
       const startTime = Date.now();
       const promises = [];
 
@@ -92,7 +93,7 @@ describe("Performance Tests", () => {
         const req = {
           body: {
             start: { lat: 40.7128, lng: -74.006 },
-            end: { lat: 40.758 + (i * 0.01), lng: -73.9855 + (i * 0.01) },
+            end: { lat: 40.758 + i * 0.01, lng: -73.9855 + i * 0.01 },
           },
         };
         const res = {
@@ -111,10 +112,10 @@ describe("Performance Tests", () => {
 
     it("should handle multi-stop optimization with 15 stops", async () => {
       const { optimizeMultiStop } = await import("../services/routeOptimizer");
-      
+
       const stops = Array.from({ length: 15 }, (_, i) => ({
-        lat: 40.7128 + (i * 0.01),
-        lng: -74.006 + (i * 0.01),
+        lat: 40.7128 + i * 0.01,
+        lng: -74.006 + i * 0.01,
       }));
 
       const req = {
@@ -139,7 +140,7 @@ describe("Performance Tests", () => {
   describe("Memory Usage", () => {
     it("should not leak memory during repeated operations", async () => {
       const { updateLocation } = await import("../services/gpsTracking");
-      
+
       const initialMemory = process.memoryUsage().heapUsed;
 
       // Perform 1000 operations
@@ -177,7 +178,7 @@ describe("Performance Tests", () => {
   describe("Throughput", () => {
     it("should handle sustained load of 500 requests", async () => {
       const { getActiveDrivers } = await import("../services/gpsTracking");
-      
+
       const startTime = Date.now();
       const promises = [];
 

@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/apps/mobile/**'
-      - 'src/packages/shared/**'
+      - "src/apps/mobile/**"
+      - "src/packages/shared/**"
   workflow_dispatch:
   workflow_call:
 

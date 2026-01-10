@@ -11,6 +11,7 @@
 ## Key Metrics to Monitor
 
 ### Cache Performance
+
 ```bash
 # Check Redis info
 redis-cli INFO stats
@@ -23,6 +24,7 @@ redis-cli INFO memory | grep used_memory_human
 ```
 
 ### Database Performance
+
 ```bash
 # Check slow queries
 docker exec infamous-postgres psql -U infamous_user -d infamous_freight -c \
@@ -38,6 +40,7 @@ docker exec infamous-postgres psql -U infamous_user -d infamous_freight -c \
 ```
 
 ### API Performance
+
 ```bash
 # Check response times
 curl -w "@curl-format.txt" http://localhost:4000/api/health
@@ -50,6 +53,7 @@ docker logs infamous-api | grep "ERROR" | wc -l
 ```
 
 ### System Resources
+
 ```bash
 # Memory and CPU
 docker stats infamous-api
@@ -66,6 +70,7 @@ docker exec infamous-api netstat -an | grep ESTABLISHED | wc -l
 ## Monitoring Checklist
 
 ### Every 30 minutes (Hours 0-4)
+
 - [ ] Grafana dashboard: All metrics green
 - [ ] Cache hit rate: >70%
 - [ ] Error rate: <0.1%
@@ -76,6 +81,7 @@ docker exec infamous-api netstat -an | grep ESTABLISHED | wc -l
 - [ ] Application logs: No ERROR entries
 
 ### Every 2 hours (Hours 4-12)
+
 - [ ] Review overall trends
 - [ ] Check database query times
 - [ ] Verify persistence (RDB/AOF)
@@ -83,6 +89,7 @@ docker exec infamous-api netstat -an | grep ESTABLISHED | wc -l
 - [ ] Check disk space
 
 ### Every 4 hours (Hours 12-24)
+
 - [ ] Final stability check
 - [ ] Aggregate metrics collection
 - [ ] Prepare completion report
@@ -92,9 +99,11 @@ docker exec infamous-api netstat -an | grep ESTABLISHED | wc -l
 ## Troubleshooting Common Issues
 
 ### Cache Hit Rate Below 60%
+
 **Symptoms**: Performance degradation, high database load
 
 **Diagnosis**:
+
 ```bash
 # Check cache size
 redis-cli INFO memory
@@ -107,15 +116,18 @@ redis-cli KEYS '*' | sort | uniq -c
 ```
 
 **Solutions**:
+
 1. Increase Redis maxmemory
 2. Check cache invalidation logic
 3. Verify TTL settings
 4. Monitor for cache stampedes
 
 ### High Error Rate (>1%)
+
 **Symptoms**: Increased 5xx errors, slower responses
 
 **Diagnosis**:
+
 ```bash
 # Check error logs
 docker logs infamous-api | tail -100
@@ -128,15 +140,18 @@ redis-cli PING
 ```
 
 **Solutions**:
+
 1. Check database connection pool
 2. Verify Redis availability
 3. Review recent deployments
 4. Check disk space
 
 ### High Memory Usage (>80%)
+
 **Symptoms**: Slow requests, potential OOM kills
 
 **Diagnosis**:
+
 ```bash
 # Check Redis memory
 redis-cli INFO memory
@@ -149,15 +164,18 @@ docker exec infamous-api ps aux | grep node
 ```
 
 **Solutions**:
+
 1. Check for memory leaks in code
 2. Increase container memory limits
 3. Monitor garbage collection
 4. Optimize query caching
 
 ### Database Query Timeout
+
 **Symptoms**: Slow API responses, timeouts
 
 **Diagnosis**:
+
 ```bash
 # Check long-running queries
 docker exec infamous-postgres psql -U infamous_user -d infamous_freight -c \
@@ -169,6 +187,7 @@ docker exec infamous-postgres psql -U infamous_user -d infamous_freight -c \
 ```
 
 **Solutions**:
+
 1. Kill long-running queries (if safe)
 2. Verify indexes are being used
 3. Check for table locks
@@ -206,14 +225,14 @@ docker logs infamous-api
 
 ### After Phase 2 Optimization
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| API Response (p95) | <1,200ms | 1,095ms | ✅ GOOD |
-| Cache Hit Rate | >70% | 78% | ✅ EXCELLENT |
-| Throughput | 500+ RPS | 985 RPS | ✅ EXCELLENT |
-| Error Rate | <0.1% | 0% | ✅ PERFECT |
-| Memory Usage | <80% | 52% | ✅ GOOD |
-| CPU Usage | <75% | 38% | ✅ GOOD |
+| Metric             | Target   | Current | Status       |
+| ------------------ | -------- | ------- | ------------ |
+| API Response (p95) | <1,200ms | 1,095ms | ✅ GOOD      |
+| Cache Hit Rate     | >70%     | 78%     | ✅ EXCELLENT |
+| Throughput         | 500+ RPS | 985 RPS | ✅ EXCELLENT |
+| Error Rate         | <0.1%    | 0%      | ✅ PERFECT   |
+| Memory Usage       | <80%     | 52%     | ✅ GOOD      |
+| CPU Usage          | <75%     | 38%     | ✅ GOOD      |
 
 ---
 
@@ -243,21 +262,25 @@ Database Connections > 100  → CRITICAL
 ## Grafana Dashboard Queries
 
 ### Cache Hit Rate
+
 ```promql
 rate(cache_hits_total[5m]) / (rate(cache_hits_total[5m]) + rate(cache_misses_total[5m]))
 ```
 
 ### API Response Time (p95)
+
 ```promql
 histogram_quantile(0.95, http_request_duration_seconds_bucket)
 ```
 
 ### Throughput (RPS)
+
 ```promql
 rate(http_requests_total[1m])
 ```
 
 ### Error Rate
+
 ```promql
 rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
 ```
@@ -282,5 +305,5 @@ rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
 
 ---
 
-*Last Updated: December 30, 2025*  
-*Phase 2 Status: ✅ COMPLETE*
+_Last Updated: December 30, 2025_  
+_Phase 2 Status: ✅ COMPLETE_

@@ -24,7 +24,9 @@ describe("Security Middleware", () => {
       authenticate(req as any, res as any, next);
 
       // Either next is called or error response is sent
-      expect(next.mock.calls.length + res.status.mock.calls.length).toBeGreaterThan(0);
+      expect(
+        next.mock.calls.length + res.status.mock.calls.length,
+      ).toBeGreaterThan(0);
     });
 
     it("should reject request without authorization header", () => {

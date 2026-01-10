@@ -57,7 +57,12 @@ predictions.post(
   validate,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { driverId, weatherCondition = "clear", trafficLevel = 50, recentLoadCount = 0 } = req.body;
+      const {
+        driverId,
+        weatherCondition = "clear",
+        trafficLevel = 50,
+        recentLoadCount = 0,
+      } = req.body;
 
       // Get driver data from database
       const driver = await prisma.driver.findUnique({
@@ -255,7 +260,9 @@ predictions.post(
   "/routes/optimize",
   restrictTo("ADMIN", "DISPATCHER"),
   [
-    body("waypoints").isArray({ min: 2 }).withMessage("At least 2 waypoints required"),
+    body("waypoints")
+      .isArray({ min: 2 })
+      .withMessage("At least 2 waypoints required"),
   ],
   validate,
   async (req: Request, res: Response, next: NextFunction) => {
@@ -272,7 +279,10 @@ predictions.post(
       // Optimize route based on number of waypoints
       let optimizedRoute;
       if (waypoints.length === 2) {
-        optimizedRoute = routeOptimizer.optimizeRoute(waypoints[0], waypoints[1]);
+        optimizedRoute = routeOptimizer.optimizeRoute(
+          waypoints[0],
+          waypoints[1],
+        );
       } else {
         optimizedRoute = routeOptimizer.optimizeMultiStop(waypoints);
       }
@@ -373,7 +383,14 @@ predictions.post(
       } = req.body;
 
       // Update driver location
-      gpsTracker.updateDriverLocation(driverId, latitude, longitude, speed, heading, accuracy);
+      gpsTracker.updateDriverLocation(
+        driverId,
+        latitude,
+        longitude,
+        speed,
+        heading,
+        accuracy,
+      );
 
       // Store location history
       await prisma.locationHistory.create({
@@ -399,7 +416,11 @@ predictions.post(
       for (const geofence of geofences) {
         const inGeofence = gpsTracker.isInGeofence(
           { lat: latitude, lng: longitude },
-          { lat: geofence.latitude, lng: geofence.longitude, radiusMeters: geofence.radiusMeters },
+          {
+            lat: geofence.latitude,
+            lng: geofence.longitude,
+            radiusMeters: geofence.radiusMeters,
+          },
         );
 
         if (inGeofence) {
@@ -415,7 +436,8 @@ predictions.post(
       }
 
       // Check speed alerts
-      const speedAlert = speed > 120 ? { exceeded: true, speed, limit: 120 } : null;
+      const speedAlert =
+        speed > 120 ? { exceeded: true, speed, limit: 120 } : null;
 
       res.json({
         success: true,
@@ -474,7 +496,9 @@ predictions.post(
       });
 
       if (!lastLocation) {
-        return res.status(404).json({ error: "No location history found for driver" });
+        return res
+          .status(404)
+          .json({ error: "No location history found for driver" });
       }
 
       // Calculate ETA

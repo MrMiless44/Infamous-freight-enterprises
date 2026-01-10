@@ -1,223 +1,1012 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="166" failures="0" errors="0" time="58.257">
-  <testsuite name="Shipment Calculation Utils" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:34" time="11.701" tests="17">
-    <testcase classname="Shipment Calculation Utils › calculateShippingPrice" name="should calculate local delivery price" time="0.019">
+<testsuites name="jest tests" tests="305" failures="27" errors="0" time="77.349">
+  <testsuite name="Business Metrics Service" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:42" time="1.506" tests="24">
+    <testcase classname="Business Metrics Service › Revenue Metrics" name="should calculate MRR" time="0.009">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › calculateShippingPrice" name="should calculate regional delivery price" time="0.002">
+    <testcase classname="Business Metrics Service › Revenue Metrics" name="should calculate ARR" time="0.002">
+    </testcase>
+    <testcase classname="Business Metrics Service › Revenue Metrics" name="should track revenue growth" time="0.001">
+    </testcase>
+    <testcase classname="Business Metrics Service › Customer Metrics" name="should calculate customer acquisition cost" time="0.001">
+    </testcase>
+    <testcase classname="Business Metrics Service › Customer Metrics" name="should calculate customer lifetime value" time="0.006">
+    </testcase>
+    <testcase classname="Business Metrics Service › Customer Metrics" name="should track churn rate" time="0.002">
+    </testcase>
+    <testcase classname="Business Metrics Service › Customer Metrics" name="should calculate retention rate" time="0.001">
+    </testcase>
+    <testcase classname="Business Metrics Service › Operational Metrics" name="should track shipments per day" time="0.001">
+    </testcase>
+    <testcase classname="Business Metrics Service › Operational Metrics" name="should calculate on-time delivery rate" time="0.001">
+    </testcase>
+    <testcase classname="Business Metrics Service › Operational Metrics" name="should track average delivery time" time="0.003">
+    </testcase>
+    <testcase classname="Business Metrics Service › Driver Metrics" name="should track driver utilization" time="0.001">
+    </testcase>
+    <testcase classname="Business Metrics Service › Driver Metrics" name="should calculate average driver rating" time="0">
+    </testcase>
+    <testcase classname="Business Metrics Service › Driver Metrics" name="should track miles per driver" time="0">
+    </testcase>
+    <testcase classname="Business Metrics Service › Financial Health" name="should calculate gross margin" time="0">
+    </testcase>
+    <testcase classname="Business Metrics Service › Financial Health" name="should calculate burn rate" time="0">
+    </testcase>
+    <testcase classname="Business Metrics Service › Financial Health" name="should calculate runway" time="0.001">
+    </testcase>
+    <testcase classname="Business Metrics Service › Growth Metrics" name="should track DAU (Daily Active Users)" time="0.003">
+    </testcase>
+    <testcase classname="Business Metrics Service › Growth Metrics" name="should track MAU (Monthly Active Users)" time="0">
+    </testcase>
+    <testcase classname="Business Metrics Service › Growth Metrics" name="should calculate DAU/MAU ratio" time="0">
+    </testcase>
+    <testcase classname="Business Metrics Service › Product Metrics" name="should track feature adoption" time="0">
+    </testcase>
+    <testcase classname="Business Metrics Service › Product Metrics" name="should measure NPS (Net Promoter Score)" time="0">
+    </testcase>
+    <testcase classname="Business Metrics Service › Product Metrics" name="should track time to value" time="0">
+    </testcase>
+    <testcase classname="Business Metrics Service › Forecasting" name="should forecast next month revenue" time="0">
+    </testcase>
+    <testcase classname="Business Metrics Service › Forecasting" name="should predict customer count" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Gamification Service" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:45" time="1.263" tests="19">
+    <testcase classname="Gamification Service › Points System" name="should award points for shipment completion" time="0.006">
+    </testcase>
+    <testcase classname="Gamification Service › Points System" name="should award bonus for on-time delivery" time="0.001">
+    </testcase>
+    <testcase classname="Gamification Service › Points System" name="should track total points" time="0.005">
+    </testcase>
+    <testcase classname="Gamification Service › Achievements" name="should unlock achievement on milestone" time="0.001">
+    </testcase>
+    <testcase classname="Gamification Service › Achievements" name="should track achievement progress" time="0.007">
+    </testcase>
+    <testcase classname="Gamification Service › Achievements" name="should list all achievements" time="0">
+    </testcase>
+    <testcase classname="Gamification Service › Leaderboards" name="should rank drivers by points" time="0.001">
+    </testcase>
+    <testcase classname="Gamification Service › Leaderboards" name="should support regional leaderboards" time="0">
+    </testcase>
+    <testcase classname="Gamification Service › Leaderboards" name="should reset leaderboards monthly" time="0">
+    </testcase>
+    <testcase classname="Gamification Service › Badges" name="should award badge for fuel efficiency" time="0.001">
+    </testcase>
+    <testcase classname="Gamification Service › Badges" name="should display badge collection" time="0">
+    </testcase>
+    <testcase classname="Gamification Service › Streaks" name="should track consecutive days active" time="0">
+    </testcase>
+    <testcase classname="Gamification Service › Streaks" name="should break streak on missed day" time="0.001">
+    </testcase>
+    <testcase classname="Gamification Service › Levels" name="should calculate driver level from XP" time="0">
+    </testcase>
+    <testcase classname="Gamification Service › Levels" name="should unlock features at levels" time="0">
+    </testcase>
+    <testcase classname="Gamification Service › Challenges" name="should create weekly challenge" time="0">
+    </testcase>
+    <testcase classname="Gamification Service › Challenges" name="should complete challenge" time="0">
+    </testcase>
+    <testcase classname="Gamification Service › Rewards" name="should redeem points for rewards" time="0.001">
+    </testcase>
+    <testcase classname="Gamification Service › Rewards" name="should track redemption history" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Auth Service" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:47" time="1.474" tests="20">
+    <testcase classname="Auth Service › Token Generation" name="should generate JWT token" time="0.004">
+    </testcase>
+    <testcase classname="Auth Service › Token Generation" name="should include user claims" time="0">
+    </testcase>
+    <testcase classname="Auth Service › Token Generation" name="should set expiration time" time="0">
+    </testcase>
+    <testcase classname="Auth Service › Token Validation" name="should validate valid token" time="0">
+    </testcase>
+    <testcase classname="Auth Service › Token Validation" name="should reject expired token" time="0.001">
+    </testcase>
+    <testcase classname="Auth Service › Token Validation" name="should reject malformed token" time="0">
+    </testcase>
+    <testcase classname="Auth Service › Password Hashing" name="should hash passwords" time="0.001">
+    </testcase>
+    <testcase classname="Auth Service › Password Hashing" name="should verify passwords" time="0.001">
+    </testcase>
+    <testcase classname="Auth Service › Password Hashing" name="should reject incorrect passwords" time="0">
+    </testcase>
+    <testcase classname="Auth Service › Refresh Tokens" name="should generate refresh token" time="0">
+    </testcase>
+    <testcase classname="Auth Service › Refresh Tokens" name="should exchange refresh token for access token" time="0.001">
+    </testcase>
+    <testcase classname="Auth Service › Refresh Tokens" name="should invalidate refresh token on logout" time="0">
+    </testcase>
+    <testcase classname="Auth Service › Two-Factor Authentication" name="should generate TOTP secret" time="0">
+    </testcase>
+    <testcase classname="Auth Service › Two-Factor Authentication" name="should verify TOTP code" time="0.022">
+    </testcase>
+    <testcase classname="Auth Service › Two-Factor Authentication" name="should reject invalid TOTP code" time="0">
+    </testcase>
+    <testcase classname="Auth Service › Session Management" name="should create session" time="0">
+    </testcase>
+    <testcase classname="Auth Service › Session Management" name="should destroy session on logout" time="0.001">
+    </testcase>
+    <testcase classname="Auth Service › Session Management" name="should cleanup expired sessions" time="0.003">
+    </testcase>
+    <testcase classname="Auth Service › OAuth Integration" name="should handle Google OAuth" time="0.001">
+    </testcase>
+    <testcase classname="Auth Service › OAuth Integration" name="should handle GitHub OAuth" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="Analytics Service" errors="0" failures="15" skipped="0" timestamp="2026-01-10T11:04:50" time="1.333" tests="15">
+    <testcase classname="Analytics Service › Event Tracking" name="should track shipment created events" time="0.004">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Event Tracking" name="should track user login events" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Event Tracking" name="should batch events for performance" time="0.001">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Metrics Collection" name="should calculate daily active users" time="0.001">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Metrics Collection" name="should calculate monthly recurring revenue" time="0.001">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Metrics Collection" name="should track conversion funnel" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › User Behavior Analytics" name="should track user session duration" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › User Behavior Analytics" name="should identify power users" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › User Behavior Analytics" name="should calculate user retention" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Revenue Analytics" name="should calculate customer lifetime value" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Revenue Analytics" name="should calculate churn rate" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Revenue Analytics" name="should forecast revenue" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Performance Analytics" name="should track API response times" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Performance Analytics" name="should identify slow endpoints" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Analytics Service › Performance Analytics" name="should calculate error rates" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/analytics.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="Cache Service" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:52" time="1.14" tests="20">
+    <testcase classname="Cache Service › Set and Get" name="should cache and retrieve data" time="0.012">
+    </testcase>
+    <testcase classname="Cache Service › Set and Get" name="should handle missing keys" time="0.001">
+    </testcase>
+    <testcase classname="Cache Service › Set and Get" name="should support TTL" time="0.001">
+    </testcase>
+    <testcase classname="Cache Service › Delete" name="should delete cached item" time="0.001">
+    </testcase>
+    <testcase classname="Cache Service › Delete" name="should handle delete of non-existent key" time="0">
+    </testcase>
+    <testcase classname="Cache Service › Pattern Matching" name="should find keys by pattern" time="0">
+    </testcase>
+    <testcase classname="Cache Service › Pattern Matching" name="should delete by pattern" time="0">
+    </testcase>
+    <testcase classname="Cache Service › Atomic Operations" name="should increment counter" time="0">
+    </testcase>
+    <testcase classname="Cache Service › Atomic Operations" name="should decrement counter" time="0.001">
+    </testcase>
+    <testcase classname="Cache Service › Lists" name="should push to list" time="0.001">
+    </testcase>
+    <testcase classname="Cache Service › Lists" name="should pop from list" time="0">
+    </testcase>
+    <testcase classname="Cache Service › Lists" name="should get list length" time="0">
+    </testcase>
+    <testcase classname="Cache Service › Sets" name="should add to set" time="0.001">
+    </testcase>
+    <testcase classname="Cache Service › Sets" name="should check membership" time="0.001">
+    </testcase>
+    <testcase classname="Cache Service › Sets" name="should get set size" time="0">
+    </testcase>
+    <testcase classname="Cache Service › Hash Operations" name="should set hash field" time="0.001">
+    </testcase>
+    <testcase classname="Cache Service › Hash Operations" name="should get hash field" time="0">
+    </testcase>
+    <testcase classname="Cache Service › Hash Operations" name="should get all hash fields" time="0">
+    </testcase>
+    <testcase classname="Cache Service › Performance" name="should handle high throughput" time="0.001">
+    </testcase>
+    <testcase classname="Cache Service › Performance" name="should batch operations" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Audit Service" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:53" time="0.947" tests="14">
+    <testcase classname="Audit Service › Audit Logging" name="should log user actions" time="0.011">
+    </testcase>
+    <testcase classname="Audit Service › Audit Logging" name="should log authentication events" time="0.003">
+    </testcase>
+    <testcase classname="Audit Service › Audit Logging" name="should log data modifications" time="0.002">
+    </testcase>
+    <testcase classname="Audit Service › Query Audit Logs" name="should filter by user" time="0.001">
+    </testcase>
+    <testcase classname="Audit Service › Query Audit Logs" name="should filter by action type" time="0.001">
+    </testcase>
+    <testcase classname="Audit Service › Query Audit Logs" name="should filter by date range" time="0">
+    </testcase>
+    <testcase classname="Audit Service › Compliance" name="should support data retention policies" time="0.041">
+    </testcase>
+    <testcase classname="Audit Service › Compliance" name="should support data export for compliance" time="0">
+    </testcase>
+    <testcase classname="Audit Service › Compliance" name="should support anonymization" time="0.001">
+    </testcase>
+    <testcase classname="Audit Service › Security Audits" name="should detect suspicious activity" time="0.001">
+    </testcase>
+    <testcase classname="Audit Service › Security Audits" name="should alert on privilege escalation" time="0.001">
+    </testcase>
+    <testcase classname="Audit Service › Security Audits" name="should track data access" time="0">
+    </testcase>
+    <testcase classname="Audit Service › Performance" name="should handle high volume logging" time="0.001">
+    </testcase>
+    <testcase classname="Audit Service › Performance" name="should batch log writes" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Export Service" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:54" time="0.787" tests="16">
+    <testcase classname="Export Service › CSV Export" name="should export data to CSV" time="0.01">
+    </testcase>
+    <testcase classname="Export Service › CSV Export" name="should handle empty data" time="0.001">
+    </testcase>
+    <testcase classname="Export Service › CSV Export" name="should escape special characters" time="0.001">
+    </testcase>
+    <testcase classname="Export Service › JSON Export" name="should export data to JSON" time="0.001">
+    </testcase>
+    <testcase classname="Export Service › JSON Export" name="should handle nested objects" time="0.001">
+    </testcase>
+    <testcase classname="Export Service › PDF Export" name="should export data to PDF" time="0">
+    </testcase>
+    <testcase classname="Export Service › PDF Export" name="should include charts" time="0.001">
+    </testcase>
+    <testcase classname="Export Service › Excel Export" name="should export to Excel format" time="0.001">
+    </testcase>
+    <testcase classname="Export Service › Excel Export" name="should support multiple sheets" time="0">
+    </testcase>
+    <testcase classname="Export Service › Excel Export" name="should format cells" time="0">
+    </testcase>
+    <testcase classname="Export Service › Streaming Exports" name="should stream large datasets" time="0.001">
+    </testcase>
+    <testcase classname="Export Service › Streaming Exports" name="should handle backpressure" time="0">
+    </testcase>
+    <testcase classname="Export Service › Scheduled Exports" name="should schedule daily exports" time="0.001">
+    </testcase>
+    <testcase classname="Export Service › Scheduled Exports" name="should email export results" time="0.001">
+    </testcase>
+    <testcase classname="Export Service › Compression" name="should compress large exports" time="0.001">
+    </testcase>
+    <testcase classname="Export Service › Compression" name="should support zip format" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Email Service" errors="0" failures="11" skipped="0" timestamp="2026-01-10T11:04:55" time="0.753" tests="11">
+    <testcase classname="Email Service › Send Email" name="should send welcome email" time="0.009">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Email Service › Send Email" name="should send shipment notification" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Email Service › Send Email" name="should send invoice email" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Email Service › Email Templates" name="should render welcome template" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Email Service › Email Templates" name="should handle missing template data" time="0.003">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Email Service › Batch Emails" name="should send bulk emails" time="0.001">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Email Service › Batch Emails" name="should handle failures gracefully" time="0.002">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Email Service › Email Validation" name="should validate email addresses" time="0.005">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Email Service › Email Validation" name="should reject invalid emails" time="0.001">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Email Service › Email Queue" name="should queue emails for later delivery" time="0">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="Email Service › Email Queue" name="should process email queue" time="0.001">
+      <failure>ReferenceError: require is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/services/email.test.ts:8:5)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusHook (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:281:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:246:5)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="Shipment Calculation Utils" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:55" time="0.304" tests="17">
+    <testcase classname="Shipment Calculation Utils › calculateShippingPrice" name="should calculate local delivery price" time="0.007">
+    </testcase>
+    <testcase classname="Shipment Calculation Utils › calculateShippingPrice" name="should calculate regional delivery price" time="0.001">
     </testcase>
     <testcase classname="Shipment Calculation Utils › calculateShippingPrice" name="should calculate national delivery price" time="0.001">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › calculateShippingPrice" name="should apply weight surcharge" time="0">
+    <testcase classname="Shipment Calculation Utils › calculateShippingPrice" name="should apply weight surcharge" time="0.002">
     </testcase>
     <testcase classname="Shipment Calculation Utils › calculateShippingPrice" name="should apply distance surcharge" time="0.001">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › calculateDistance" name="should calculate distance between two points" time="0.007">
+    <testcase classname="Shipment Calculation Utils › calculateDistance" name="should calculate distance between two points" time="0.002">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › calculateDistance" name="should handle same location" time="0">
+    <testcase classname="Shipment Calculation Utils › calculateDistance" name="should handle same location" time="0.001">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › calculateDistance" name="should calculate long distances" time="0">
+    <testcase classname="Shipment Calculation Utils › calculateDistance" name="should calculate long distances" time="0.001">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › calculateDeliveryTime" name="should estimate delivery time for local" time="0.001">
+    <testcase classname="Shipment Calculation Utils › calculateDeliveryTime" name="should estimate delivery time for local" time="0">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › calculateDeliveryTime" name="should estimate delivery time for regional" time="0.008">
+    <testcase classname="Shipment Calculation Utils › calculateDeliveryTime" name="should estimate delivery time for regional" time="0.001">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › calculateDeliveryTime" name="should account for service type" time="0">
+    <testcase classname="Shipment Calculation Utils › calculateDeliveryTime" name="should account for service type" time="0.001">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › formatAddress" name="should format address correctly" time="0.007">
+    <testcase classname="Shipment Calculation Utils › formatAddress" name="should format address correctly" time="0.001">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › formatAddress" name="should handle missing fields" time="0">
+    <testcase classname="Shipment Calculation Utils › formatAddress" name="should handle missing fields" time="0.001">
     </testcase>
     <testcase classname="Shipment Calculation Utils › validateEmail" name="should validate correct email" time="0.001">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › validateEmail" name="should reject invalid emails" time="0.008">
+    <testcase classname="Shipment Calculation Utils › validateEmail" name="should reject invalid emails" time="0.001">
     </testcase>
     <testcase classname="Shipment Calculation Utils › validatePhone" name="should validate US phone numbers" time="0">
     </testcase>
-    <testcase classname="Shipment Calculation Utils › validatePhone" name="should reject invalid phone numbers" time="0.003">
+    <testcase classname="Shipment Calculation Utils › validatePhone" name="should reject invalid phone numbers" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="Security Utilities" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:45" time="1.051" tests="11">
-    <testcase classname="Security Utilities › encryptData and decryptData" name="should encrypt and decrypt data" time="0.008">
+  <testsuite name="Security Utilities" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:56" time="1.633" tests="11">
+    <testcase classname="Security Utilities › encryptData and decryptData" name="should encrypt and decrypt data" time="0.021">
     </testcase>
-    <testcase classname="Security Utilities › encryptData and decryptData" name="should produce different ciphers for same data" time="0.003">
+    <testcase classname="Security Utilities › encryptData and decryptData" name="should produce different ciphers for same data" time="0.002">
     </testcase>
-    <testcase classname="Security Utilities › encryptData and decryptData" name="should handle special characters" time="0.001">
+    <testcase classname="Security Utilities › encryptData and decryptData" name="should handle special characters" time="0.003">
     </testcase>
-    <testcase classname="Security Utilities › generateToken" name="should generate unique tokens" time="0.001">
+    <testcase classname="Security Utilities › generateToken" name="should generate unique tokens" time="0">
     </testcase>
     <testcase classname="Security Utilities › generateToken" name="should generate tokens of correct length" time="0.001">
     </testcase>
     <testcase classname="Security Utilities › generateToken" name="should generate valid hex strings" time="0.001">
     </testcase>
-    <testcase classname="Security Utilities › hashPassword and verifyPassword" name="should hash password" time="0.043">
+    <testcase classname="Security Utilities › hashPassword and verifyPassword" name="should hash password" time="0.068">
     </testcase>
-    <testcase classname="Security Utilities › hashPassword and verifyPassword" name="should verify correct password" time="0.063">
+    <testcase classname="Security Utilities › hashPassword and verifyPassword" name="should verify correct password" time="0.109">
     </testcase>
-    <testcase classname="Security Utilities › hashPassword and verifyPassword" name="should reject incorrect password" time="0.1">
+    <testcase classname="Security Utilities › hashPassword and verifyPassword" name="should reject incorrect password" time="0.086">
     </testcase>
-    <testcase classname="Security Utilities › hashPassword and verifyPassword" name="should produce different hashes for same password" time="0.101">
+    <testcase classname="Security Utilities › hashPassword and verifyPassword" name="should produce different hashes for same password" time="0.1">
     </testcase>
-    <testcase classname="Security Utilities › hashPassword and verifyPassword" name="should handle special characters in password" time="0.104">
-    </testcase>
-  </testsuite>
-  <testsuite name="Driver Availability Predictor API Handlers" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:46" time="0.511" tests="11">
-    <testcase classname="Driver Availability Predictor API Handlers › predictAvailability" name="should predict driver availability successfully" time="0.076">
-    </testcase>
-    <testcase classname="Driver Availability Predictor API Handlers › predictAvailability" name="should return 400 if driverId is missing" time="0.006">
-    </testcase>
-    <testcase classname="Driver Availability Predictor API Handlers › predictAvailability" name="should handle different weather conditions" time="0.005">
-    </testcase>
-    <testcase classname="Driver Availability Predictor API Handlers › predictAvailability" name="should handle high traffic levels" time="0.001">
-    </testcase>
-    <testcase classname="Driver Availability Predictor API Handlers › predictAvailability" name="should include confidence score" time="0.003">
-    </testcase>
-    <testcase classname="Driver Availability Predictor API Handlers › getRecommendations" name="should return driver recommendations" time="0.003">
-    </testcase>
-    <testcase classname="Driver Availability Predictor API Handlers › getRecommendations" name="should return 400 if targetTime is missing" time="0">
-    </testcase>
-    <testcase classname="Driver Availability Predictor API Handlers › getRecommendations" name="should filter by minimum availability threshold" time="0.003">
-    </testcase>
-    <testcase classname="Driver Availability Predictor API Handlers › getRecommendations" name="should respect limit parameter" time="0.003">
-    </testcase>
-    <testcase classname="Driver Availability Predictor API Handlers › Error Handling" name="should handle prediction errors gracefully" time="0">
-    </testcase>
-    <testcase classname="Driver Availability Predictor API Handlers › Error Handling" name="should handle recommendation errors gracefully" time="0">
+    <testcase classname="Security Utilities › hashPassword and verifyPassword" name="should handle special characters in password" time="0.039">
     </testcase>
   </testsuite>
-  <testsuite name="Formatter Utilities" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:47" time="0.546" tests="19">
-    <testcase classname="Formatter Utilities › formatCurrency" name="should format USD currency" time="0.013">
+  <testsuite name="Rate Limiting Load Tests" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:57" time="1.109" tests="5">
+    <testcase classname="Rate Limiting Load Tests" name="should export runLoadTest function" time="0.002">
     </testcase>
-    <testcase classname="Formatter Utilities › formatCurrency" name="should format EUR currency" time="0.003">
-    </testcase>
-    <testcase classname="Formatter Utilities › formatCurrency" name="should handle zero amount" time="0">
-    </testcase>
-    <testcase classname="Formatter Utilities › formatCurrency" name="should handle large amounts" time="0">
-    </testcase>
-    <testcase classname="Formatter Utilities › formatDate" name="should format date correctly" time="0.028">
-    </testcase>
-    <testcase classname="Formatter Utilities › formatDate" name="should support different formats" time="0.001">
-    </testcase>
-    <testcase classname="Formatter Utilities › formatDate" name="should handle ISO format" time="0.001">
-    </testcase>
-    <testcase classname="Formatter Utilities › formatPhoneNumber" name="should format US phone number" time="0.001">
-    </testcase>
-    <testcase classname="Formatter Utilities › formatPhoneNumber" name="should handle phone with country code" time="0.004">
-    </testcase>
-    <testcase classname="Formatter Utilities › formatPhoneNumber" name="should handle already formatted numbers" time="0.001">
-    </testcase>
-    <testcase classname="Formatter Utilities › formatPhoneNumber" name="should handle short numbers" time="0">
-    </testcase>
-    <testcase classname="Formatter Utilities › parseCSV" name="should parse simple CSV" time="0.002">
-    </testcase>
-    <testcase classname="Formatter Utilities › parseCSV" name="should handle quoted fields" time="0">
-    </testcase>
-    <testcase classname="Formatter Utilities › parseCSV" name="should handle empty lines" time="0.002">
-    </testcase>
-    <testcase classname="Formatter Utilities › stringToSlug" name="should convert to lowercase slug" time="0.001">
-    </testcase>
-    <testcase classname="Formatter Utilities › stringToSlug" name="should remove special characters" time="0">
-    </testcase>
-    <testcase classname="Formatter Utilities › stringToSlug" name="should replace spaces with hyphens" time="0.003">
-    </testcase>
-    <testcase classname="Formatter Utilities › stringToSlug" name="should handle multiple spaces" time="0">
-    </testcase>
-    <testcase classname="Formatter Utilities › stringToSlug" name="should handle hyphens" time="0.001">
-    </testcase>
-  </testsuite>
-  <testsuite name="VoiceService" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:47" time="0.549" tests="10">
-    <testcase classname="VoiceService › ingestVoiceCall" name="should ingest voice call" time="0.023">
-    </testcase>
-    <testcase classname="VoiceService › ingestVoiceCall" name="should validate phone number" time="0.045">
-    </testcase>
-    <testcase classname="VoiceService › transcribeAudio" name="should transcribe audio successfully" time="0.002">
-    </testcase>
-    <testcase classname="VoiceService › transcribeAudio" name="should handle different languages" time="0.001">
-    </testcase>
-    <testcase classname="VoiceService › transcribeAudio" name="should handle transcription errors" time="0.001">
-    </testcase>
-    <testcase classname="VoiceService › processVoiceCommand" name="should process voice command" time="0">
-    </testcase>
-    <testcase classname="VoiceService › processVoiceCommand" name="should extract parameters from command" time="0.001">
-    </testcase>
-    <testcase classname="VoiceService › initiateCall" name="should initiate outbound call" time="0">
-    </testcase>
-    <testcase classname="VoiceService › recordCall" name="should record call" time="0.001">
-    </testcase>
-    <testcase classname="VoiceService › getCallHistory" name="should retrieve call history" time="0.001">
-    </testcase>
-  </testsuite>
-  <testsuite name="Rate Limiting Load Tests" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:48" time="0.798" tests="5">
-    <testcase classname="Rate Limiting Load Tests" name="should export runLoadTest function" time="0.017">
-    </testcase>
-    <testcase classname="Rate Limiting Load Tests" name="should export runLoadTestSuite function" time="0.011">
+    <testcase classname="Rate Limiting Load Tests" name="should export runLoadTestSuite function" time="0">
     </testcase>
     <testcase classname="Rate Limiting Load Tests" name="should export analyzeRateLimitCompliance function" time="0.001">
     </testcase>
-    <testcase classname="Rate Limiting Load Tests" name="should export exampleRateLimitingTests function" time="0">
+    <testcase classname="Rate Limiting Load Tests" name="should export exampleRateLimitingTests function" time="0.001">
     </testcase>
-    <testcase classname="Rate Limiting Load Tests" name="analyzeRateLimitCompliance should identify compliant tests" time="0.016">
+    <testcase classname="Rate Limiting Load Tests" name="analyzeRateLimitCompliance should identify compliant tests" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="EmailNotificationService" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:49" time="0.771" tests="7">
-    <testcase classname="EmailNotificationService › sendShipmentNotification" name="should send shipment creation email" time="0.009">
+  <testsuite name="EmailNotificationService" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:59" time="0.385" tests="7">
+    <testcase classname="EmailNotificationService › sendShipmentNotification" name="should send shipment creation email" time="0.012">
     </testcase>
-    <testcase classname="EmailNotificationService › sendShipmentNotification" name="should send delivery confirmation email" time="0">
+    <testcase classname="EmailNotificationService › sendShipmentNotification" name="should send delivery confirmation email" time="0.003">
     </testcase>
-    <testcase classname="EmailNotificationService › sendInvoiceEmail" name="should send invoice to customer" time="0.003">
+    <testcase classname="EmailNotificationService › sendInvoiceEmail" name="should send invoice to customer" time="0.004">
     </testcase>
-    <testcase classname="EmailNotificationService › sendInvoiceEmail" name="should validate email address" time="0.051">
+    <testcase classname="EmailNotificationService › sendInvoiceEmail" name="should validate email address" time="0.034">
     </testcase>
     <testcase classname="EmailNotificationService › sendAlertEmail" name="should send alert email" time="0.001">
     </testcase>
-    <testcase classname="EmailNotificationService › sendBulkEmail" name="should send emails to multiple recipients" time="0.004">
+    <testcase classname="EmailNotificationService › sendBulkEmail" name="should send emails to multiple recipients" time="0">
     </testcase>
     <testcase classname="EmailNotificationService › queueEmail" name="should queue email for later delivery" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="GPSTrackingManager" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:50" time="0.697" tests="19">
-    <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should store driver location" time="0.015">
+  <testsuite name="GPSTrackingManager" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:04:59" time="0.674" tests="19">
+    <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should store driver location" time="0.007">
     </testcase>
-    <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should track multiple location updates" time="0.009">
+    <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should track multiple location updates" time="0.002">
     </testcase>
     <testcase classname="GPSTrackingManager › updateDriverLocation()" name="should trigger speed alerts for excessive speed" time="0.001">
     </testcase>
     <testcase classname="GPSTrackingManager › calculateETA()" name="should calculate ETA based on current location" time="0.002">
     </testcase>
-    <testcase classname="GPSTrackingManager › calculateETA()" name="should handle stationary drivers with lower confidence" time="0">
+    <testcase classname="GPSTrackingManager › calculateETA()" name="should handle stationary drivers with lower confidence" time="0.001">
     </testcase>
-    <testcase classname="GPSTrackingManager › calculateETA()" name="should return null for unknown driver" time="0">
+    <testcase classname="GPSTrackingManager › calculateETA()" name="should return null for unknown driver" time="0.001">
     </testcase>
-    <testcase classname="GPSTrackingManager › getLocationHistory()" name="should retrieve location history for a load" time="0.001">
+    <testcase classname="GPSTrackingManager › getLocationHistory()" name="should retrieve location history for a load" time="0.002">
     </testcase>
-    <testcase classname="GPSTrackingManager › getActiveDrivers()" name="should return all active drivers" time="0.002">
+    <testcase classname="GPSTrackingManager › getActiveDrivers()" name="should return all active drivers" time="0.001">
     </testcase>
-    <testcase classname="GPSTrackingManager › geofencing" name="should register geofences" time="0.001">
+    <testcase classname="GPSTrackingManager › geofencing" name="should register geofences" time="0.002">
     </testcase>
-    <testcase classname="GPSTrackingManager › geofencing" name="should detect geofence entry" time="0.001">
+    <testcase classname="GPSTrackingManager › geofencing" name="should detect geofence entry" time="0.009">
     </testcase>
-    <testcase classname="GPSTrackingManager › storeLocationHistory()" name="should store location history" time="0.004">
+    <testcase classname="GPSTrackingManager › storeLocationHistory()" name="should store location history" time="0">
     </testcase>
-    <testcase classname="GPSTrackingManager › storeLocationHistory()" name="should store multiple histories for same driver" time="0.003">
+    <testcase classname="GPSTrackingManager › storeLocationHistory()" name="should store multiple histories for same driver" time="0">
     </testcase>
-    <testcase classname="GPSTrackingManager › storeLocationHistory()" name="should return undefined for non-existent history" time="0.006">
+    <testcase classname="GPSTrackingManager › storeLocationHistory()" name="should return undefined for non-existent history" time="0.003">
     </testcase>
     <testcase classname="GPSTrackingManager › geofence exit detection" name="should detect geofence exit" time="0.001">
     </testcase>
     <testcase classname="GPSTrackingManager › geofence exit detection" name="should handle driver with no previous location" time="0">
     </testcase>
-    <testcase classname="GPSTrackingManager › calculateETA() traffic factors" name="should apply peak hour traffic factor" time="0.004">
+    <testcase classname="GPSTrackingManager › calculateETA() traffic factors" name="should apply peak hour traffic factor" time="0">
     </testcase>
-    <testcase classname="GPSTrackingManager › calculateETA() traffic factors" name="should use minimum speed for stationary vehicles" time="0.002">
+    <testcase classname="GPSTrackingManager › calculateETA() traffic factors" name="should use minimum speed for stationary vehicles" time="0.004">
     </testcase>
-    <testcase classname="GPSTrackingManager › performance" name="should handle high-frequency updates" time="0.001">
+    <testcase classname="GPSTrackingManager › performance" name="should handle high-frequency updates" time="0.003">
     </testcase>
-    <testcase classname="GPSTrackingManager › edge cases" name="should handle invalid coordinates gracefully" time="0">
+    <testcase classname="GPSTrackingManager › edge cases" name="should handle invalid coordinates gracefully" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="GPS Tracking API Handlers" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:50" time="0.399" tests="15">
-    <testcase classname="GPS Tracking API Handlers › updateLocation" name="should update driver location successfully" time="0.014">
+  <testsuite name="RouteOptimizer" errors="0" failures="1" skipped="0" timestamp="2026-01-10T11:05:00" time="0.427" tests="19">
+    <testcase classname="RouteOptimizer › optimizeRoute()" name="should optimize simple two-point route" time="0.01">
     </testcase>
-    <testcase classname="GPS Tracking API Handlers › updateLocation" name="should return 400 if driverId is missing" time="0.002">
+    <testcase classname="RouteOptimizer › optimizeRoute()" name="should calculate fuel and cost estimates" time="0.001">
+    </testcase>
+    <testcase classname="RouteOptimizer › optimizeRoute()" name="should apply traffic multipliers correctly" time="0.002">
+      <failure>ReferenceError: jest is not defined
+    at Object.&lt;anonymous&gt; (/workspaces/Infamous-freight-enterprises/src/apps/api/src/__tests__/routeOptimizer.test.ts:44:7)
+    at Promise.then.completed (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+    at _runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+    at run (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/workspaces/Infamous-freight-enterprises/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)</failure>
+    </testcase>
+    <testcase classname="RouteOptimizer › optimizeMultiStop()" name="should optimize multi-stop delivery route" time="0.002">
+    </testcase>
+    <testcase classname="RouteOptimizer › optimizeMultiStop()" name="should achieve efficiency improvement" time="0.004">
+    </testcase>
+    <testcase classname="RouteOptimizer › optimizeMultiStop()" name="should handle large number of stops" time="0.002">
+    </testcase>
+    <testcase classname="RouteOptimizer › compareRoutes()" name="should compare multiple route options" time="0.003">
+    </testcase>
+    <testcase classname="RouteOptimizer › distance calculations" name="should calculate distance accurately in routes" time="0">
+    </testcase>
+    <testcase classname="RouteOptimizer › performance" name="should optimize route in under 500ms" time="0.002">
+    </testcase>
+    <testcase classname="RouteOptimizer › edge cases and validation" name="should handle routes with same start and end" time="0.003">
+    </testcase>
+    <testcase classname="RouteOptimizer › edge cases and validation" name="should handle routes with very close waypoints" time="0.012">
+    </testcase>
+    <testcase classname="RouteOptimizer › edge cases and validation" name="should calculate fuel for long routes" time="0.004">
+    </testcase>
+    <testcase classname="RouteOptimizer › edge cases and validation" name="should optimize routes without names" time="0.003">
+    </testcase>
+    <testcase classname="RouteOptimizer › edge cases and validation" name="should handle empty alternatives in compareRoutes" time="0">
+    </testcase>
+    <testcase classname="RouteOptimizer › edge cases and validation" name="should sort alternatives by estimated time" time="0.001">
+    </testcase>
+    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should handle single stop" time="0.004">
+    </testcase>
+    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should optimize with many stops" time="0.003">
+    </testcase>
+    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should calculate efficiency improvement" time="0">
+    </testcase>
+    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should handle stops with duplicate locations" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Route Optimizer API Handlers" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:05:00" time="0.362" tests="17">
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should optimize a simple route successfully" time="0.006">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should optimize route with waypoints" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should return 400 if start is missing" time="0.003">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should return 400 if end is missing" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should format time estimate correctly" time="0.002">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should handle errors gracefully" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should handle internal server errors" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should optimize multi-stop route successfully" time="0.003">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if start is missing" time="0.002">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if stops is missing" time="0.002">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if stops is not an array" time="0.003">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if stops array is empty" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle single stop" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle many stops" time="0.002">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle errors gracefully" time="0.001">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should calculate efficiency percentage" time="0">
+    </testcase>
+    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle internal server errors" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="VoiceService" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:05:00" time="0.314" tests="10">
+    <testcase classname="VoiceService › ingestVoiceCall" name="should ingest voice call" time="0.009">
+    </testcase>
+    <testcase classname="VoiceService › ingestVoiceCall" name="should validate phone number" time="0.031">
+    </testcase>
+    <testcase classname="VoiceService › transcribeAudio" name="should transcribe audio successfully" time="0.001">
+    </testcase>
+    <testcase classname="VoiceService › transcribeAudio" name="should handle different languages" time="0.003">
+    </testcase>
+    <testcase classname="VoiceService › transcribeAudio" name="should handle transcription errors" time="0.001">
+    </testcase>
+    <testcase classname="VoiceService › processVoiceCommand" name="should process voice command" time="0.002">
+    </testcase>
+    <testcase classname="VoiceService › processVoiceCommand" name="should extract parameters from command" time="0.003">
+    </testcase>
+    <testcase classname="VoiceService › initiateCall" name="should initiate outbound call" time="0.001">
+    </testcase>
+    <testcase classname="VoiceService › recordCall" name="should record call" time="0">
+    </testcase>
+    <testcase classname="VoiceService › getCallHistory" name="should retrieve call history" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="Formatter Utilities" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:05:01" time="0.458" tests="19">
+    <testcase classname="Formatter Utilities › formatCurrency" name="should format USD currency" time="0.039">
+    </testcase>
+    <testcase classname="Formatter Utilities › formatCurrency" name="should format EUR currency" time="0.001">
+    </testcase>
+    <testcase classname="Formatter Utilities › formatCurrency" name="should handle zero amount" time="0.001">
+    </testcase>
+    <testcase classname="Formatter Utilities › formatCurrency" name="should handle large amounts" time="0.001">
+    </testcase>
+    <testcase classname="Formatter Utilities › formatDate" name="should format date correctly" time="0.032">
+    </testcase>
+    <testcase classname="Formatter Utilities › formatDate" name="should support different formats" time="0.003">
+    </testcase>
+    <testcase classname="Formatter Utilities › formatDate" name="should handle ISO format" time="0.001">
+    </testcase>
+    <testcase classname="Formatter Utilities › formatPhoneNumber" name="should format US phone number" time="0.001">
+    </testcase>
+    <testcase classname="Formatter Utilities › formatPhoneNumber" name="should handle phone with country code" time="0.001">
+    </testcase>
+    <testcase classname="Formatter Utilities › formatPhoneNumber" name="should handle already formatted numbers" time="0.003">
+    </testcase>
+    <testcase classname="Formatter Utilities › formatPhoneNumber" name="should handle short numbers" time="0.001">
+    </testcase>
+    <testcase classname="Formatter Utilities › parseCSV" name="should parse simple CSV" time="0.001">
+    </testcase>
+    <testcase classname="Formatter Utilities › parseCSV" name="should handle quoted fields" time="0">
+    </testcase>
+    <testcase classname="Formatter Utilities › parseCSV" name="should handle empty lines" time="0">
+    </testcase>
+    <testcase classname="Formatter Utilities › stringToSlug" name="should convert to lowercase slug" time="0">
+    </testcase>
+    <testcase classname="Formatter Utilities › stringToSlug" name="should remove special characters" time="0.001">
+    </testcase>
+    <testcase classname="Formatter Utilities › stringToSlug" name="should replace spaces with hyphens" time="0">
+    </testcase>
+    <testcase classname="Formatter Utilities › stringToSlug" name="should handle multiple spaces" time="0.001">
+    </testcase>
+    <testcase classname="Formatter Utilities › stringToSlug" name="should handle hyphens" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Performance Tests" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:05:01" time="0.872" tests="6">
+    <testcase classname="Performance Tests › GPS Tracking Performance" name="should handle 100 location updates in under 1 second" time="0.025">
+    </testcase>
+    <testcase classname="Performance Tests › GPS Tracking Performance" name="should calculate ETA for 50 drivers concurrently" time="0.01">
+    </testcase>
+    <testcase classname="Performance Tests › Route Optimizer Performance" name="should optimize 20 routes in under 2 seconds" time="0.011">
+    </testcase>
+    <testcase classname="Performance Tests › Route Optimizer Performance" name="should handle multi-stop optimization with 15 stops" time="0.009">
+    </testcase>
+    <testcase classname="Performance Tests › Memory Usage" name="should not leak memory during repeated operations" time="0.113">
+    </testcase>
+    <testcase classname="Performance Tests › Throughput" name="should handle sustained load of 500 requests" time="0.037">
+    </testcase>
+  </testsuite>
+  <testsuite name="Driver Availability Predictor API Handlers" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:05:02" time="0.714" tests="11">
+    <testcase classname="Driver Availability Predictor API Handlers › predictAvailability" name="should predict driver availability successfully" time="0.013">
+    </testcase>
+    <testcase classname="Driver Availability Predictor API Handlers › predictAvailability" name="should return 400 if driverId is missing" time="0.006">
+    </testcase>
+    <testcase classname="Driver Availability Predictor API Handlers › predictAvailability" name="should handle different weather conditions" time="0.005">
+    </testcase>
+    <testcase classname="Driver Availability Predictor API Handlers › predictAvailability" name="should handle high traffic levels" time="0.003">
+    </testcase>
+    <testcase classname="Driver Availability Predictor API Handlers › predictAvailability" name="should include confidence score" time="0.001">
+    </testcase>
+    <testcase classname="Driver Availability Predictor API Handlers › getRecommendations" name="should return driver recommendations" time="0.001">
+    </testcase>
+    <testcase classname="Driver Availability Predictor API Handlers › getRecommendations" name="should return 400 if targetTime is missing" time="0.001">
+    </testcase>
+    <testcase classname="Driver Availability Predictor API Handlers › getRecommendations" name="should filter by minimum availability threshold" time="0.001">
+    </testcase>
+    <testcase classname="Driver Availability Predictor API Handlers › getRecommendations" name="should respect limit parameter" time="0.006">
+    </testcase>
+    <testcase classname="Driver Availability Predictor API Handlers › Error Handling" name="should handle prediction errors gracefully" time="0.001">
+    </testcase>
+    <testcase classname="Driver Availability Predictor API Handlers › Error Handling" name="should handle recommendation errors gracefully" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="GPS Tracking API Handlers" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:05:03" time="0.439" tests="15">
+    <testcase classname="GPS Tracking API Handlers › updateLocation" name="should update driver location successfully" time="0.01">
+    </testcase>
+    <testcase classname="GPS Tracking API Handlers › updateLocation" name="should return 400 if driverId is missing" time="0.001">
     </testcase>
     <testcase classname="GPS Tracking API Handlers › updateLocation" name="should return 400 if latitude is missing" time="0.001">
     </testcase>
@@ -227,137 +1016,46 @@
     </testcase>
     <testcase classname="GPS Tracking API Handlers › updateLocation" name="should report speed alerts" time="0.001">
     </testcase>
-    <testcase classname="GPS Tracking API Handlers › getETA" name="should calculate ETA for driver" time="0.002">
+    <testcase classname="GPS Tracking API Handlers › getETA" name="should calculate ETA for driver" time="0.001">
     </testcase>
     <testcase classname="GPS Tracking API Handlers › getETA" name="should return 400 if driverId is missing" time="0.001">
     </testcase>
-    <testcase classname="GPS Tracking API Handlers › getETA" name="should return 400 if destination is missing" time="0.001">
+    <testcase classname="GPS Tracking API Handlers › getETA" name="should return 400 if destination is missing" time="0">
     </testcase>
-    <testcase classname="GPS Tracking API Handlers › getETA" name="should return 404 if driver not found" time="0.001">
+    <testcase classname="GPS Tracking API Handlers › getETA" name="should return 404 if driver not found" time="0.003">
     </testcase>
     <testcase classname="GPS Tracking API Handlers › getActiveDrivers" name="should return list of active drivers" time="0.001">
     </testcase>
-    <testcase classname="GPS Tracking API Handlers › getActiveDrivers" name="should format driver data correctly" time="0.002">
+    <testcase classname="GPS Tracking API Handlers › getActiveDrivers" name="should format driver data correctly" time="0">
     </testcase>
     <testcase classname="GPS Tracking API Handlers › Error Handling" name="updateLocation should handle errors gracefully" time="0">
     </testcase>
-    <testcase classname="GPS Tracking API Handlers › Error Handling" name="getETA should handle calculation errors" time="0">
+    <testcase classname="GPS Tracking API Handlers › Error Handling" name="getETA should handle calculation errors" time="0.003">
     </testcase>
     <testcase classname="GPS Tracking API Handlers › Error Handling" name="getActiveDrivers should handle retrieval errors" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="Performance Tests" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:51" time="0.528" tests="6">
-    <testcase classname="Performance Tests › GPS Tracking Performance" name="should handle 100 location updates in under 1 second" time="0.027">
+  <testsuite name="DriverAvailabilityPredictor" errors="0" failures="0" skipped="0" timestamp="2026-01-10T11:05:03" time="0.471" tests="9">
+    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should have proper type definitions" time="0.005">
     </testcase>
-    <testcase classname="Performance Tests › GPS Tracking Performance" name="should calculate ETA for 50 drivers concurrently" time="0.01">
+    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should have proper prediction input type" time="0.001">
     </testcase>
-    <testcase classname="Performance Tests › Route Optimizer Performance" name="should optimize 20 routes in under 2 seconds" time="0.016">
+    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should validate prediction result structure" time="0.004">
     </testcase>
-    <testcase classname="Performance Tests › Route Optimizer Performance" name="should handle multi-stop optimization with 15 stops" time="0.006">
+    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate weather conditions" time="0.001">
     </testcase>
-    <testcase classname="Performance Tests › Memory Usage" name="should not leak memory during repeated operations" time="0.107">
+    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate traffic levels" time="0.005">
     </testcase>
-    <testcase classname="Performance Tests › Throughput" name="should handle sustained load of 500 requests" time="0.075">
+    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate time of day ranges" time="0.026">
     </testcase>
-  </testsuite>
-  <testsuite name="DriverAvailabilityPredictor" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:51" time="0.379" tests="9">
-    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should have proper type definitions" time="0.007">
+    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support HIGH recommendation" time="0.013">
     </testcase>
-    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should have proper prediction input type" time="0.002">
+    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support MEDIUM recommendation" time="0.001">
     </testcase>
-    <testcase classname="DriverAvailabilityPredictor › prediction types" name="should validate prediction result structure" time="0.005">
-    </testcase>
-    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate weather conditions" time="0.019">
-    </testcase>
-    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate traffic levels" time="0.001">
-    </testcase>
-    <testcase classname="DriverAvailabilityPredictor › business logic validation" name="should validate time of day ranges" time="0.013">
-    </testcase>
-    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support HIGH recommendation" time="0.002">
-    </testcase>
-    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support MEDIUM recommendation" time="0.002">
-    </testcase>
-    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support LOW recommendation" time="0">
+    <testcase classname="DriverAvailabilityPredictor › recommendation levels" name="should support LOW recommendation" time="0.002">
     </testcase>
   </testsuite>
-  <testsuite name="RouteOptimizer" errors="0" failures="0" skipped="1" timestamp="2026-01-10T10:21:52" time="0.572" tests="19">
-    <testcase classname="RouteOptimizer › optimizeRoute()" name="should optimize simple two-point route" time="0.003">
-    </testcase>
-    <testcase classname="RouteOptimizer › optimizeRoute()" name="should calculate fuel and cost estimates" time="0.001">
-    </testcase>
-    <testcase classname="RouteOptimizer › optimizeRoute()" name="should apply traffic multipliers correctly" time="0">
-      <skipped/>
-    </testcase>
-    <testcase classname="RouteOptimizer › optimizeMultiStop()" name="should optimize multi-stop delivery route" time="0.001">
-    </testcase>
-    <testcase classname="RouteOptimizer › optimizeMultiStop()" name="should achieve efficiency improvement" time="0.002">
-    </testcase>
-    <testcase classname="RouteOptimizer › optimizeMultiStop()" name="should handle large number of stops" time="0.001">
-    </testcase>
-    <testcase classname="RouteOptimizer › compareRoutes()" name="should compare multiple route options" time="0.004">
-    </testcase>
-    <testcase classname="RouteOptimizer › distance calculations" name="should calculate distance accurately in routes" time="0.006">
-    </testcase>
-    <testcase classname="RouteOptimizer › performance" name="should optimize route in under 500ms" time="0.001">
-    </testcase>
-    <testcase classname="RouteOptimizer › edge cases and validation" name="should handle routes with same start and end" time="0.002">
-    </testcase>
-    <testcase classname="RouteOptimizer › edge cases and validation" name="should handle routes with very close waypoints" time="0.001">
-    </testcase>
-    <testcase classname="RouteOptimizer › edge cases and validation" name="should calculate fuel for long routes" time="0.001">
-    </testcase>
-    <testcase classname="RouteOptimizer › edge cases and validation" name="should optimize routes without names" time="0.001">
-    </testcase>
-    <testcase classname="RouteOptimizer › edge cases and validation" name="should handle empty alternatives in compareRoutes" time="0.001">
-    </testcase>
-    <testcase classname="RouteOptimizer › edge cases and validation" name="should sort alternatives by estimated time" time="0.004">
-    </testcase>
-    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should handle single stop" time="0.001">
-    </testcase>
-    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should optimize with many stops" time="0.002">
-    </testcase>
-    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should calculate efficiency improvement" time="0.001">
-    </testcase>
-    <testcase classname="RouteOptimizer › multi-stop optimization with waypoints" name="should handle stops with duplicate locations" time="0">
-    </testcase>
-  </testsuite>
-  <testsuite name="Route Optimizer API Handlers" errors="0" failures="0" skipped="0" timestamp="2026-01-10T10:21:52" time="0.55" tests="17">
-    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should optimize a simple route successfully" time="0.022">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should optimize route with waypoints" time="0.006">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should return 400 if start is missing" time="0.004">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should return 400 if end is missing" time="0.011">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should format time estimate correctly" time="0.001">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should handle errors gracefully" time="0.003">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeRoute" name="should handle internal server errors" time="0.003">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should optimize multi-stop route successfully" time="0.002">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if start is missing" time="0.001">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if stops is missing" time="0.005">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if stops is not an array" time="0">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should return 400 if stops array is empty" time="0.002">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle single stop" time="0.002">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle many stops" time="0.002">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle errors gracefully" time="0.002">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should calculate efficiency percentage" time="0">
-    </testcase>
-    <testcase classname="Route Optimizer API Handlers › optimizeMultiStop" name="should handle internal server errors" time="0.001">
-    </testcase>
-  </testsuite>
-  <testsuite name="Rate Limiter Integration Tests" errors="0" failures="0" skipped="1" timestamp="2026-01-10T10:22:28" time="0.436" tests="1">
+  <testsuite name="Rate Limiter Integration Tests" errors="0" failures="0" skipped="1" timestamp="2026-01-10T11:05:43" time="0.517" tests="1">
     <testcase classname="Rate Limiter Integration Tests" name="skipped in CI environment" time="0">
       <skipped/>
     </testcase>

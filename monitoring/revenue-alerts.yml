@@ -8,20 +8,20 @@ alerts:
     notification: pagerduty
     message: "Payment failure rate above 10%"
     runbook: "REVENUE_OPERATIONS_RUNBOOK.md#mass-payment-failures"
-    
+
   - name: email_delivery_failure
     condition: email_delivery_rate < 0.90
     severity: critical
     notification: pagerduty
     message: "Email delivery rate below 90%"
     runbook: "REVENUE_OPERATIONS_RUNBOOK.md#email-service-down"
-    
+
   - name: api_error_rate_high
     condition: api_error_rate > 0.05
     severity: critical
     notification: pagerduty
     message: "API error rate above 5%"
-    
+
   # High Priority Alerts (Slack)
   - name: high_churn_rate
     condition: churn_rate > 0.20
@@ -29,21 +29,21 @@ alerts:
     notification: slack
     channel: "#revenue-alerts"
     message: "Churn rate above 20%"
-    
+
   - name: low_conversion_rate
     condition: conversion_rate < 0.08
     severity: high
     notification: slack
     channel: "#revenue-alerts"
     message: "Conversion rate below 8%"
-    
+
   - name: mrr_declined
     condition: mrr_week_over_week_change < -0.05
     severity: high
     notification: slack
     channel: "#revenue-alerts"
     message: "MRR declined >5% week-over-week"
-    
+
   # Medium Priority Alerts (Email)
   - name: trial_signup_decline
     condition: trial_signups_week_over_week < -0.20
@@ -51,14 +51,14 @@ alerts:
     notification: email
     recipients: ["growth@infamousfreight.com"]
     message: "Trial signups declined >20% week-over-week"
-    
+
   - name: webhook_processing_delay
     condition: webhook_processing_time > 5000
     severity: medium
     notification: email
     recipients: ["engineering@infamousfreight.com"]
     message: "Webhook processing time >5s"
-    
+
   # Info Notifications (Slack)
   - name: mrr_milestone
     condition: mrr in [5000, 10000, 25000, 50000, 100000]
@@ -66,7 +66,7 @@ alerts:
     notification: slack
     channel: "#celebrations"
     message: "🎉 MRR milestone reached: ${{mrr}}"
-    
+
   - name: customer_milestone
     condition: active_customers in [25, 50, 100, 250, 500, 1000]
     severity: info
@@ -83,15 +83,15 @@ queries:
         NULLIF(COUNT(*) FILTER (WHERE "eventType" IN ('payment_succeeded', 'payment_failed')), 0)
       FROM "RevenueEvent"
       WHERE "createdAt" > NOW() - INTERVAL '1 day';
-    schedule: "*/15 * * * *"  # Every 15 minutes
-    
+    schedule: "*/15 * * * *" # Every 15 minutes
+
   email_delivery_rate:
     sql: |
       SELECT delivery_rate 
       FROM email_stats 
       WHERE date = CURRENT_DATE;
-    schedule: "0 * * * *"  # Every hour
-    
+    schedule: "0 * * * *" # Every hour
+
   churn_rate:
     sql: |
       SELECT 
@@ -99,20 +99,20 @@ queries:
         NULLIF(COUNT(*), 0) * 100
       FROM "Subscription"
       WHERE "createdAt" < NOW() - INTERVAL '30 days';
-    schedule: "0 0 * * *"  # Daily
-    
+    schedule: "0 0 * * *" # Daily
+
   conversion_rate:
     sql: |
       SELECT 
         CAST(COUNT(*) FILTER (WHERE "isOnTrial" = false) AS FLOAT) / 
         NULLIF(COUNT(*), 0) * 100
       FROM "Subscription";
-    schedule: "0 */6 * * *"  # Every 6 hours
-    
+    schedule: "0 */6 * * *" # Every 6 hours
+
   mrr:
     sql: |
       SELECT SUM("priceMonthly") 
       FROM "Subscription" 
       WHERE status = 'active' 
         AND "isOnTrial" = false;
-    schedule: "0 */6 * * *"  # Every 6 hours
+    schedule: "0 */6 * * *" # Every 6 hours

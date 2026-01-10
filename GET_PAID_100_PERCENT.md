@@ -10,6 +10,7 @@
 ## 📊 EXECUTIVE SUMMARY
 
 This guide shows **exactly how to convert 500+ trial signups into $2-5k/month recurring revenue** using:
+
 - 3-tier pricing strategy (Starter $99-299, Professional $599-999, Enterprise custom)
 - Stripe + PayPal payment processing
 - Automated trial-to-paid conversion flow
@@ -17,6 +18,7 @@ This guide shows **exactly how to convert 500+ trial signups into $2-5k/month re
 - Customer retention for 90%+ lifetime value
 
 **Expected Financial Impact:**
+
 - 500 trials → 50 customers (10% conversion) = $2-5k MRR
 - Year 1 revenue: $2M-10M (1,000-2,000 customers)
 - Break-even: Month 3-4
@@ -30,6 +32,7 @@ This guide shows **exactly how to convert 500+ trial signups into $2-5k/month re
 
 **Target Market:** SMBs, small logistics companies  
 **Features:**
+
 - 10 active shipments (upgradable to 50)
 - Real-time tracking (30-day data retention)
 - Basic reporting (PDF export)
@@ -38,15 +41,18 @@ This guide shows **exactly how to convert 500+ trial signups into $2-5k/month re
 - Mobile app access
 
 **Perfect for:**
+
 - Regional shippers
 - Small 3PL companies
 - Growing e-commerce fulfillment
 
 **Pricing Option 1:** Monthly at $99
+
 - Low commitment, high churn risk
 - Best for: Trial users converting immediately
 
 **Pricing Option 2:** Annual at $899 (save $291)
+
 - 25% discount incentive
 - Locks in customers for 12 months
 - Better for: Committed customers
@@ -57,6 +63,7 @@ This guide shows **exactly how to convert 500+ trial signups into $2-5k/month re
 
 **Target Market:** Mid-market, growing companies  
 **Features:**
+
 - Unlimited active shipments
 - Real-time tracking (1-year data retention)
 - Advanced reporting (custom reports, charts)
@@ -69,19 +76,23 @@ This guide shows **exactly how to convert 500+ trial signups into $2-5k/month re
 - Team accounts (up to 5 users)
 
 **Perfect for:**
+
 - Mid-sized logistics companies
 - E-commerce platforms
 - 3PL companies with 100+ daily shipments
 
 **Pricing Option 1:** Monthly at $599
+
 - Flexible commitment
 - Trial → Professional common path
 
 **Pricing Option 2:** Annual at $5,990 (save $1,198)
+
 - 20% discount
 - Standard enterprise standard
 
 **Pricing Option 3:** Annual Prepaid at $5,390 (save $1,798)
+
 - 25% discount for upfront payment
 - Best cash flow
 
@@ -91,6 +102,7 @@ This guide shows **exactly how to convert 500+ trial signups into $2-5k/month re
 
 **Target Market:** Enterprise, large logistics networks  
 **Features:**
+
 - Everything in Professional, plus:
 - Unlimited everything (shipments, API calls, users)
 - Custom reporting + business intelligence
@@ -105,6 +117,7 @@ This guide shows **exactly how to convert 500+ trial signups into $2-5k/month re
 - Custom features & development
 
 **Perfect for:**
+
 - Fortune 500 companies
 - Large logistics networks
 - Global shipping companies
@@ -112,6 +125,7 @@ This guide shows **exactly how to convert 500+ trial signups into $2-5k/month re
 **Pricing:** Custom quotes based on volume
 
 **Typical pricing:** $2,000-10,000+/month
+
 - Negotiated case-by-case
 - Volume discounts
 - Multi-year contracts (10% discount)
@@ -155,6 +169,7 @@ AVERAGE REVENUE PER USER (ARPU): $2,670/year
 **Setup steps:**
 
 1. **Create Stripe account**
+
    ```
    Go to: stripe.com
    Sign up with business email
@@ -163,10 +178,11 @@ AVERAGE REVENUE PER USER (ARPU): $2,670/year
    ```
 
 2. **Generate API keys**
+
    ```
    Publishable key: pk_live_[your_key]
    Secret key: sk_live_[your_key]
-   
+
    Store in environment variables:
    STRIPE_PUBLIC_KEY=pk_live_...
    STRIPE_SECRET_KEY=sk_live_...
@@ -174,45 +190,47 @@ AVERAGE REVENUE PER USER (ARPU): $2,670/year
    ```
 
 3. **Create products in Stripe Dashboard**
+
    ```
    Product 1: Starter Monthly
    ├─ Price: $99/month (recurring)
    ├─ Billing cycle: Monthly
    ├─ Trial: 30 days (free)
-   
+
    Product 2: Starter Annual
    ├─ Price: $899/year (recurring)
    ├─ Billing cycle: Annual
    ├─ Trial: 30 days (free)
-   
+
    Product 3: Professional Monthly
    ├─ Price: $599/month (recurring)
    ├─ Billing cycle: Monthly
    ├─ Trial: 30 days (free)
-   
+
    Product 4: Professional Annual
    ├─ Price: $5,990/year (recurring)
    ├─ Billing cycle: Annual
    ├─ Trial: 30 days (free)
-   
+
    + 5 more products for other pricing options
    ```
 
 4. **Code implementation (Node.js/Express)**
+
    ```javascript
    // api/src/routes/billing.js
-   
-   const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-   
+
+   const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
    // Create checkout session
-   router.post('/checkout', authenticate, async (req, res, next) => {
+   router.post("/checkout", authenticate, async (req, res, next) => {
      try {
        const { priceId } = req.body; // e.g., price_1234567890
-       
+
        const session = await stripe.checkout.sessions.create({
          customer_email: req.user.email,
-         mode: 'subscription',
-         payment_method_types: ['card'],
+         mode: "subscription",
+         payment_method_types: ["card"],
          line_items: [
            {
              price: priceId,
@@ -229,73 +247,78 @@ AVERAGE REVENUE PER USER (ARPU): $2,670/year
            },
          },
        });
-       
+
        res.json({ sessionId: session.id, url: session.url });
      } catch (err) {
        next(err);
      }
    });
-   
+
    // Webhook to handle subscription events
-   router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-     const sig = req.headers['stripe-signature'];
-     
-     try {
-       const event = stripe.webhooks.constructEvent(
-         req.body,
-         sig,
-         process.env.STRIPE_WEBHOOK_SECRET
-       );
-       
-       switch (event.type) {
-         case 'customer.subscription.created':
-           // User subscribed - activate premium features
-           await activateSubscription(event.data.object);
-           break;
-         case 'customer.subscription.updated':
-           // User upgraded/downgraded
-           await updateSubscription(event.data.object);
-           break;
-         case 'customer.subscription.deleted':
-           // User canceled - deactivate premium
-           await cancelSubscription(event.data.object);
-           break;
-         case 'invoice.paid':
-           // Payment successful - send receipt
-           await sendInvoicePaidEmail(event.data.object);
-           break;
-         case 'invoice.payment_failed':
-           // Payment failed - send retry email
-           await sendPaymentFailedEmail(event.data.object);
-           break;
+   router.post(
+     "/webhook",
+     express.raw({ type: "application/json" }),
+     async (req, res) => {
+       const sig = req.headers["stripe-signature"];
+
+       try {
+         const event = stripe.webhooks.constructEvent(
+           req.body,
+           sig,
+           process.env.STRIPE_WEBHOOK_SECRET,
+         );
+
+         switch (event.type) {
+           case "customer.subscription.created":
+             // User subscribed - activate premium features
+             await activateSubscription(event.data.object);
+             break;
+           case "customer.subscription.updated":
+             // User upgraded/downgraded
+             await updateSubscription(event.data.object);
+             break;
+           case "customer.subscription.deleted":
+             // User canceled - deactivate premium
+             await cancelSubscription(event.data.object);
+             break;
+           case "invoice.paid":
+             // Payment successful - send receipt
+             await sendInvoicePaidEmail(event.data.object);
+             break;
+           case "invoice.payment_failed":
+             // Payment failed - send retry email
+             await sendPaymentFailedEmail(event.data.object);
+             break;
+         }
+
+         res.json({ received: true });
+       } catch (err) {
+         next(err);
        }
-       
-       res.json({ received: true });
-     } catch (err) {
-       next(err);
-     }
-   });
+     },
+   );
    ```
 
 5. **Frontend checkout (Next.js/React)**
+
    ```typescript
    // web/components/PricingCheckout.tsx
-   
+
    export default function PricingCheckout({ priceId }) {
      const [loading, setLoading] = useState(false);
-     
+
      const handleCheckout = async () => {
        setLoading(true);
-       
+
        try {
          const res = await fetch('/api/billing/checkout', {
            method: 'POST',
            headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify({ priceId }),
          });
-         
+
          const { sessionId } = await res.json();
-         
+
          // Redirect to Stripe checkout
          const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
          await stripe.redirectToCheckout({ sessionId });
@@ -305,7 +328,7 @@ AVERAGE REVENUE PER USER (ARPU): $2,670/year
          setLoading(false);
        }
      };
-     
+
      return (
        <button onClick={handleCheckout} disabled={loading}>
          {loading ? 'Processing...' : 'Start Free Trial'}
@@ -319,6 +342,7 @@ AVERAGE REVENUE PER USER (ARPU): $2,670/year
 **Why both?** Different customers prefer different methods (12% use PayPal exclusively)
 
 1. **Create PayPal Business account**
+
    ```
    Go to: developer.paypal.com
    Create app
@@ -326,6 +350,7 @@ AVERAGE REVENUE PER USER (ARPU): $2,670/year
    ```
 
 2. **Subscription setup in PayPal**
+
    ```
    // Same billing cycles as Stripe
    // Billing plans created in PayPal dashboard
@@ -333,32 +358,34 @@ AVERAGE REVENUE PER USER (ARPU): $2,670/year
    ```
 
 3. **Code implementation**
+
    ```javascript
    // api/src/routes/billing.paypal.js
-   
-   const paypal = require('@paypal/checkout-server-sdk');
-   
+
+   const paypal = require("@paypal/checkout-server-sdk");
+
    // Create subscription
-   router.post('/paypal/subscribe', authenticate, async (req, res, next) => {
+   router.post("/paypal/subscribe", authenticate, async (req, res, next) => {
      try {
        const { planId } = req.body;
-       
+
        const request = new paypal.orders.OrdersCreateRequest();
-       request.headers.prefer = 'return=representation';
+       request.headers.prefer = "return=representation";
        request.body = {
-         intent: 'SUBSCRIPTION',
+         intent: "SUBSCRIPTION",
          payer: {
            email_address: req.user.email,
          },
          plan_id: planId,
          custom_id: req.user.sub,
        };
-       
+
        const order = await paypalClient.execute(request);
-       
+
        res.json({
          orderId: order.result.id,
-         approvalLink: order.result.links.find(link => link.rel === 'approve').href,
+         approvalLink: order.result.links.find((link) => link.rel === "approve")
+           .href,
        });
      } catch (err) {
        next(err);
@@ -369,6 +396,7 @@ AVERAGE REVENUE PER USER (ARPU): $2,670/year
 ### PAYMENT SECURITY
 
 **PCI Compliance:**
+
 - ✅ Never handle raw card data (use Stripe/PayPal)
 - ✅ HTTPS only (TLS 1.2+)
 - ✅ All transactions encrypted
@@ -376,6 +404,7 @@ AVERAGE REVENUE PER USER (ARPU): $2,670/year
 - ✅ PCI-DSS compliance maintained
 
 **Fraud prevention:**
+
 - 3D Secure (Secure 2.0) enabled
 - Velocity checks: Max 3 failed attempts/hour
 - CVV required for all transactions
@@ -411,6 +440,7 @@ Year 1 Customers: 50+ ✅
 ### TRIAL USER JOURNEY
 
 **Day 0-1: Signup & Onboarding**
+
 ```
 Email 1: Welcome to Infamous Freight
 ├─ Subject: "Welcome [Name] - Your 30-Day Free Trial"
@@ -706,7 +736,7 @@ CREATE INDEX idx_revenue_events_date ON revenue_events(effective_date);
 
 ```sql
 -- Monthly Recurring Revenue (MRR)
-SELECT 
+SELECT
   DATE_TRUNC('month', NOW())::DATE as month,
   COUNT(DISTINCT user_id) as active_subscribers,
   SUM(amount_cents)::FLOAT / 100 as total_mrr,
@@ -717,7 +747,7 @@ AND subscription_start_date <= NOW()
 AND (current_period_end IS NULL OR current_period_end > NOW());
 
 -- Churn Rate (monthly)
-SELECT 
+SELECT
   DATE_TRUNC('month', canceled_at)::DATE as month,
   COUNT(*) as canceled_subs,
   (
@@ -739,7 +769,7 @@ WHERE canceled_at IS NOT NULL
 GROUP BY DATE_TRUNC('month', canceled_at);
 
 -- Trial Conversion Rate
-SELECT 
+SELECT
   COUNT(CASE WHEN status IN ('active', 'past_due') THEN 1 END) as converted,
   COUNT(*) as total_trials,
   ROUND(
@@ -750,7 +780,7 @@ FROM subscriptions
 WHERE trial_start_date IS NOT NULL;
 
 -- Revenue by plan
-SELECT 
+SELECT
   plan_id,
   COUNT(DISTINCT user_id) as subscribers,
   SUM(amount_cents)::FLOAT / 100 as total_monthly_revenue,
@@ -767,7 +797,7 @@ GROUP BY plan_id
 ORDER BY total_monthly_revenue DESC;
 
 -- Customer Lifetime Value forecast
-SELECT 
+SELECT
   plan_id,
   ROUND(AVG(amount_cents)::FLOAT / 100, 2) as avg_monthly_value,
   ROUND(
@@ -786,6 +816,7 @@ GROUP BY plan_id;
 ### PREVENT CHURN (Keep customers paying)
 
 **Monthly "health check" email:**
+
 ```
 Email: [1st of every month]
 Subject: "[Name], here's your Infamous Freight summary"
@@ -805,6 +836,7 @@ Content:
 ```
 
 **Engagement scoring:**
+
 ```
 Each customer gets a "health score" (0-100):
 
@@ -828,6 +860,7 @@ Low engagement (<40):
 ```
 
 **Churn risk mitigation:**
+
 ```
 IF churn_risk_detected THEN:
 
@@ -917,6 +950,7 @@ Email 3: [Day 14] "Last chance: Get 50% off upgrade before [date]"
 ## 🎯 REVENUE TARGETS (30-DAY EXECUTION)
 
 ### WEEK 1: Foundation
+
 ```
 Trial signups: 25-50 (from marketing)
 Trial conversions: 0-2 (expected: early birds)
@@ -926,6 +960,7 @@ Focus: Get trials activated, track metrics
 ```
 
 ### WEEK 2: Initial conversions
+
 ```
 Trial signups: 100+ cumulative
 Trial conversions: 3-8 (Day 14-25 triggers activating)
@@ -935,6 +970,7 @@ Focus: Email sequences activating, engagement metrics
 ```
 
 ### WEEK 3: Conversion push
+
 ```
 Trial signups: 200+ cumulative
 Trial conversions: 15-25 (Day 21-28 offers working)
@@ -944,6 +980,7 @@ Focus: Offer optimization, high-value prospects
 ```
 
 ### WEEK 4: Optimization
+
 ```
 Trial signups: 500+ cumulative
 Trial conversions: 50+ (30% conversion = 15-50 expected)
@@ -1111,6 +1148,7 @@ Day 30: Full revenue analysis
 ## 🎓 REVENUE OPTIMIZATION TACTICS
 
 ### Early-stage (Month 1-3):
+
 - Focus on activation metrics
 - Optimize email sequences
 - Test different offers ($99 vs $199 for Starter)
@@ -1118,6 +1156,7 @@ Day 30: Full revenue analysis
 - Build case studies from early customers
 
 ### Growth-stage (Month 4-12):
+
 - Implement automatic upsells
 - Launch annual plans with incentives
 - Create enterprise sales process
@@ -1125,6 +1164,7 @@ Day 30: Full revenue analysis
 - Build partner referral program
 
 ### Scale-stage (Year 2+):
+
 - Implement dynamic pricing
 - Develop add-on products
 - Create marketplace/integrations
@@ -1138,4 +1178,3 @@ Day 30: Full revenue analysis
 **Next Step:** Deploy Stripe → Configure trial emails → Enable checkout → Watch revenue flow in
 
 **Expected Result:** 500 trials → 50-100 customers → $2-5k MRR in 30 days ✅
-

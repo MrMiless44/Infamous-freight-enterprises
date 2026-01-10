@@ -212,7 +212,7 @@ billing.post("/checkout", async (req, res, next) => {
   try {
     const { tier = "professional", billingCycle = "monthly" } = req.body;
     const userId = req.user?.sub as string;
-    
+
     if (!userId) {
       return res.status(401).json({ error: "Unauthorized" });
     }
@@ -227,7 +227,8 @@ billing.post("/checkout", async (req, res, next) => {
 
     const stripe = createStripeClient();
     const plan = PLANS[tier as keyof typeof PLANS];
-    const price = billingCycle === "monthly" ? plan.monthlyPrice : plan.annualPrice;
+    const price =
+      billingCycle === "monthly" ? plan.monthlyPrice : plan.annualPrice;
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -277,7 +278,7 @@ billing.post("/checkout", async (req, res, next) => {
 billing.get("/subscriptions", async (req, res, next) => {
   try {
     const organizationId = req.user?.org_id as string;
-    
+
     if (!organizationId) {
       return res.status(401).json({ error: "Unauthorized" });
     }
@@ -346,7 +347,8 @@ billing.post("/webhook/stripe", async (req, res, next) => {
           stripeCustomerId: session.customer as string,
           stripeSubId: session.subscription as string,
           tier: metadata.tier,
-          priceMonthly: PLANS[metadata.tier as keyof typeof PLANS].monthlyPrice / 100,
+          priceMonthly:
+            PLANS[metadata.tier as keyof typeof PLANS].monthlyPrice / 100,
           billingCycle: metadata.billingCycle,
           status: "active",
           isOnTrial: true,
@@ -472,7 +474,10 @@ billing.get("/revenue/metrics", async (req, res, next) => {
       },
     });
 
-    const mrr = activeSubscriptions.reduce((sum, sub) => sum + sub.priceMonthly, 0);
+    const mrr = activeSubscriptions.reduce(
+      (sum, sub) => sum + sub.priceMonthly,
+      0,
+    );
 
     // Get churn rate (30 days)
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -484,9 +489,10 @@ billing.get("/revenue/metrics", async (req, res, next) => {
       },
     });
 
-    const churnRate = activeSubscriptions.length > 0
-      ? (cancelledCount / (activeSubscriptions.length + cancelledCount)) * 100
-      : 0;
+    const churnRate =
+      activeSubscriptions.length > 0
+        ? (cancelledCount / (activeSubscriptions.length + cancelledCount)) * 100
+        : 0;
 
     // Get trial conversion rate
     const trials = await prisma.subscription.findMany({
@@ -501,11 +507,12 @@ billing.get("/revenue/metrics", async (req, res, next) => {
       },
     });
 
-    const conversionRate = trials.length > 0 ? (conversions / trials.length) * 100 : 0;
+    const conversionRate =
+      trials.length > 0 ? (conversions / trials.length) * 100 : 0;
 
     // Get LTV
     const avgLifetime = 36; // 36 months
-    const ltv = mrr > 0 ? (mrr * avgLifetime) : 0;
+    const ltv = mrr > 0 ? mrr * avgLifetime : 0;
 
     // Get CAC
     const cac = 300; // $300 from GET_PAID_100_PERCENT.md

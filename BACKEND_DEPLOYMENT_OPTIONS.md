@@ -9,12 +9,14 @@
 Railway is the fastest way to deploy your Express.js backend.
 
 ### Prerequisites
+
 - GitHub account (already have)
 - Railway account (free): https://railway.app
 
 ### Step-by-Step Deployment
 
 1. **Connect Repository to Railway**
+
    ```bash
    # Visit Railway and click "New Project"
    # Select "Deploy from GitHub"
@@ -23,6 +25,7 @@ Railway is the fastest way to deploy your Express.js backend.
    ```
 
 2. **Set Environment Variables**
+
    ```bash
    # In Railway dashboard → Project Settings → Variables
    DATABASE_URL=postgresql://user:pass@host:5432/infamousfreight
@@ -32,12 +35,14 @@ Railway is the fastest way to deploy your Express.js backend.
    ```
 
 3. **Configure Start Command**
+
    ```bash
    # Railway auto-detects from package.json
    # Should use: node src/server.js
    ```
 
 4. **Deploy**
+
    ```bash
    # Push to main branch
    git push origin main
@@ -51,6 +56,7 @@ Railway is the fastest way to deploy your Express.js backend.
    ```
 
 ### Pros
+
 - ✅ Easiest setup
 - ✅ Auto-deploys from GitHub
 - ✅ Free tier available
@@ -58,6 +64,7 @@ Railway is the fastest way to deploy your Express.js backend.
 - ✅ Built-in PostgreSQL database option
 
 ### Cons
+
 - Limited free tier
 - Requires Railway account
 
@@ -68,17 +75,20 @@ Railway is the fastest way to deploy your Express.js backend.
 Fly.io offers excellent performance and is production-ready.
 
 ### Prerequisites
+
 - Fly.io account: https://fly.io
 - Flyctl CLI: `brew install flyctl`
 
 ### Step-by-Step Deployment
 
 1. **Login to Fly.io**
+
    ```bash
    flyctl auth login
    ```
 
 2. **Launch Application**
+
    ```bash
    # From repository root
    flyctl launch
@@ -90,6 +100,7 @@ Fly.io offers excellent performance and is production-ready.
    ```
 
 3. **Configure Environment Variables**
+
    ```bash
    flyctl secrets set DATABASE_URL="postgresql://..."
    flyctl secrets set JWT_SECRET="your-secret"
@@ -97,6 +108,7 @@ Fly.io offers excellent performance and is production-ready.
    ```
 
 4. **Deploy**
+
    ```bash
    flyctl deploy
    # OR push to trigger auto-deploy:
@@ -111,6 +123,7 @@ Fly.io offers excellent performance and is production-ready.
    ```
 
 ### Pros
+
 - ✅ Excellent performance globally
 - ✅ Free tier available
 - ✅ Built-in PostgreSQL
@@ -118,6 +131,7 @@ Fly.io offers excellent performance and is production-ready.
 - ✅ Very reliable
 
 ### Cons
+
 - Requires CLI tool
 - Steeper learning curve than Railway
 
@@ -128,28 +142,33 @@ Fly.io offers excellent performance and is production-ready.
 Heroku is still popular for quick deployments (note: free tier ended).
 
 ### Prerequisites
+
 - Heroku account: https://heroku.com
 - Heroku CLI: `brew install heroku`
 
 ### Step-by-Step Deployment
 
 1. **Login to Heroku**
+
    ```bash
    heroku login
    ```
 
 2. **Create Application**
+
    ```bash
    heroku create infamous-freight-api
    # Or use dashboard
    ```
 
 3. **Add PostgreSQL Database**
+
    ```bash
    heroku addons:create heroku-postgresql:essential-0
    ```
 
 4. **Set Environment Variables**
+
    ```bash
    heroku config:set JWT_SECRET="your-secret-key"
    heroku config:set AI_PROVIDER="synthetic"
@@ -158,6 +177,7 @@ Heroku is still popular for quick deployments (note: free tier ended).
    ```
 
 5. **Deploy**
+
    ```bash
    # Deploy from Git
    git push heroku main
@@ -172,12 +192,14 @@ Heroku is still popular for quick deployments (note: free tier ended).
    ```
 
 ### Pros
+
 - ✅ Very straightforward
 - ✅ Built-in Postgres
 - ✅ Auto-deploys from Git push
 - ✅ Good documentation
 
 ### Cons
+
 - Paid tier (Dynos are not free anymore)
 - Can be expensive for 24/7 apps
 - Less control over infrastructure
@@ -189,6 +211,7 @@ Heroku is still popular for quick deployments (note: free tier ended).
 Deploy using Docker Compose to your own server or VPS.
 
 ### Prerequisites
+
 - Docker & Docker Compose installed on your server
 - Ubuntu/Linux server with SSH access (DigitalOcean, AWS, Linode, etc.)
 - PostgreSQL server (included in docker-compose)
@@ -196,6 +219,7 @@ Deploy using Docker Compose to your own server or VPS.
 ### Step-by-Step Deployment
 
 1. **Copy Files to Server**
+
    ```bash
    # From your local machine
    scp -r .github/ docker-compose.prod.yml .env.production user@server:~/app/
@@ -204,12 +228,14 @@ Deploy using Docker Compose to your own server or VPS.
    ```
 
 2. **SSH into Server**
+
    ```bash
    ssh user@server
    cd ~/app
    ```
 
 3. **Create .env.production**
+
    ```bash
    cat > .env.production << 'EOF'
    DATABASE_URL=postgresql://postgres:password@db:5432/infamousfreight
@@ -221,6 +247,7 @@ Deploy using Docker Compose to your own server or VPS.
    ```
 
 4. **Build and Run**
+
    ```bash
    docker-compose -f docker-compose.prod.yml up -d
    # Verify services running:
@@ -228,26 +255,29 @@ Deploy using Docker Compose to your own server or VPS.
    ```
 
 5. **Check Health**
+
    ```bash
    curl http://localhost:4000/api/health
    # Should return: {"status":"ok","database":"connected"}
    ```
 
 6. **Setup Reverse Proxy (Nginx)**
+
    ```bash
    # Install Nginx
    sudo apt install nginx
-   
+
    # Configure as reverse proxy
    sudo nano /etc/nginx/sites-available/default
    ```
 
    Add this config:
+
    ```nginx
    server {
        listen 80;
        server_name your-domain.com;
-       
+
        location / {
            proxy_pass http://localhost:4000;
            proxy_http_version 1.1;
@@ -270,12 +300,14 @@ Deploy using Docker Compose to your own server or VPS.
    ```
 
 ### Pros
+
 - ✅ Complete control
 - ✅ No vendor lock-in
 - ✅ Can be very affordable
 - ✅ Full customization
 
 ### Cons
+
 - ⚠️ You manage the server
 - ⚠️ Responsible for uptime/security
 - ⚠️ More complex setup
@@ -287,11 +319,13 @@ Deploy using Docker Compose to your own server or VPS.
 Deploy to AWS for enterprise reliability.
 
 ### Prerequisites
+
 - AWS account
 - AWS CLI configured
 - Elastic Beanstalk EB CLI
 
 ### Quick Deploy
+
 ```bash
 # Install EB CLI
 pip install awsebcli
@@ -312,43 +346,48 @@ git push
 
 ## Comparison Table
 
-| Feature | Railway | Fly.io | Heroku | Docker | AWS |
-|---------|---------|--------|--------|--------|-----|
-| Setup Time | ⚡ 5 min | ⚡ 10 min | ⚡ 10 min | ⏱️ 30 min | ⏱️ 45 min |
-| Ease | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
-| Cost | 💰 $5-50/mo | 💰 Free tier | 💰 $50+/mo | 💰 $3-20/mo | 💰 $10-100+/mo |
-| Performance | ⚡ Very Good | ⚡ Excellent | ⚡ Good | ⚡⚡ Excellent | ⚡⚡ Excellent |
-| Control | 🔒 Limited | 🔒 Good | 🔒 Limited | 🔓 Full | 🔓 Full |
-| Reliability | ✅ 99.9% | ✅ 99.99% | ✅ 99.95% | ⚠️ Depends | ✅ 99.99%+ |
-| Postgres | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| Auto-scale | ✅ Yes | ✅ Yes | ✅ Yes | ⚠️ Manual | ✅ Yes |
+| Feature     | Railway      | Fly.io       | Heroku     | Docker         | AWS            |
+| ----------- | ------------ | ------------ | ---------- | -------------- | -------------- |
+| Setup Time  | ⚡ 5 min     | ⚡ 10 min    | ⚡ 10 min  | ⏱️ 30 min      | ⏱️ 45 min      |
+| Ease        | ⭐⭐⭐⭐⭐   | ⭐⭐⭐⭐     | ⭐⭐⭐⭐   | ⭐⭐⭐         | ⭐⭐           |
+| Cost        | 💰 $5-50/mo  | 💰 Free tier | 💰 $50+/mo | 💰 $3-20/mo    | 💰 $10-100+/mo |
+| Performance | ⚡ Very Good | ⚡ Excellent | ⚡ Good    | ⚡⚡ Excellent | ⚡⚡ Excellent |
+| Control     | 🔒 Limited   | 🔒 Good      | 🔒 Limited | 🔓 Full        | 🔓 Full        |
+| Reliability | ✅ 99.9%     | ✅ 99.99%    | ✅ 99.95%  | ⚠️ Depends     | ✅ 99.99%+     |
+| Postgres    | ✅ Yes       | ✅ Yes       | ✅ Yes     | ✅ Yes         | ✅ Yes         |
+| Auto-scale  | ✅ Yes       | ✅ Yes       | ✅ Yes     | ⚠️ Manual      | ✅ Yes         |
 
 ---
 
 ## Quick Decision Guide
 
 **Choose Railway if:**
+
 - You want the fastest setup
 - You're comfortable with their pricing
 - You want simplicity
 
 **Choose Fly.io if:**
+
 - You want excellent global performance
 - You want great free tier
 - You're willing to learn CLI
 
 **Choose Heroku if:**
+
 - You want traditional PaaS
 - You're willing to pay premium
 - You value stability
 
 **Choose Docker if:**
+
 - You want full control
 - You have server access
 - You prefer cost savings
 - You want to learn DevOps
 
 **Choose AWS if:**
+
 - You need enterprise features
 - You want to consolidate services
 - You need compliance certifications
@@ -387,6 +426,7 @@ curl -X POST https://your-api-url/api/auth/login \
 ## Troubleshooting
 
 ### "Database connection refused"
+
 ```bash
 # 1. Verify DATABASE_URL environment variable is set
 # 2. Check database service is running
@@ -395,6 +435,7 @@ curl -X POST https://your-api-url/api/auth/login \
 ```
 
 ### "Port already in use"
+
 ```bash
 # Change port in .env
 API_PORT=4001
@@ -402,6 +443,7 @@ API_PORT=4001
 ```
 
 ### "Cannot find module '@prisma/client'"
+
 ```bash
 # Rebuild Prisma client
 pnpm prisma generate

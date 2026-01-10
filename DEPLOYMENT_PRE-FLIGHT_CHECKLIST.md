@@ -549,7 +549,7 @@ docker-compose -f docker-compose.production.yml logs -f api | grep -i "error\|wa
 **Approved By**:
 
 - Technical Lead: **\*\*\*\***\_\_**\*\*\*\*** Date: **\_\_**
-- Operations: ****\*\*****\_\_****\*\***** Date: **\_\_**
+- Operations: \***\*\*\*\*\***\_\_\***\*\*\*\*\*** Date: **\_\_**
 
 ---
 
