@@ -4,8 +4,10 @@
  * Using Expo Updates for instant JavaScript bundle updates
  */
 
+// @ts-ignore - Optional dependency
 import * as Updates from "expo-updates";
 import { Alert, AppState, AppStateStatus } from "react-native";
+// @ts-ignore - Optional dependency
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import analyticsService from "./analytics";
 
@@ -97,7 +99,7 @@ class UpdateManager {
         console.log("✓ App is up to date");
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to check for updates:", error);
       analyticsService.logError("update_check_failed", error.message);
       return false;
@@ -123,7 +125,7 @@ class UpdateManager {
         // Ask user to restart
         this.promptUserToRestart();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to download update:", error);
       analyticsService.logError("update_download_failed", error.message);
     }

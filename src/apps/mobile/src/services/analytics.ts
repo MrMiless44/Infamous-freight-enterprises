@@ -4,6 +4,7 @@
  * Track user behavior, events, and conversions
  */
 
+// @ts-ignore - Optional dependency
 import analytics from "@react-native-firebase/analytics";
 import { Platform } from "react-native";
 

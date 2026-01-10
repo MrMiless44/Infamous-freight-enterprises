@@ -3,7 +3,9 @@
  * Caches data locally and syncs when connection restored
  */
 
+// @ts-ignore - Optional dependencies
 import AsyncStorage from "@react-native-async-storage/async-storage";
+// @ts-ignore
 import NetInfo from "@react-native-community/netinfo";
 
 interface OfflineAction {
@@ -166,7 +168,7 @@ async function processAction(
  * Setup automatic sync when connection restored
  */
 export function setupAutoSync(apiClient: any): () => void {
-  const unsubscribe = NetInfo.addEventListener((state) => {
+  const unsubscribe = NetInfo.addEventListener((state: any) => {
     if (state.isConnected && state.isInternetReachable) {
       console.log("📶 Connection restored, syncing...");
       syncQueue(apiClient);

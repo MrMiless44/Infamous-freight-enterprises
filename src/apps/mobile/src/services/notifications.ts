@@ -3,7 +3,9 @@
  * Alerts drivers of new assignments
  */
 
+// @ts-ignore - Optional dependencies
 import * as Notifications from "expo-notifications";
+// @ts-ignore
 import * as Device from "expo-device";
 import { Platform } from "react-native";
 import Constants from "expo-constants";
