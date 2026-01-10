@@ -44,12 +44,20 @@ jobs:
         run: pnpm install --frozen-lockfile
         continue-on-error: false
 
+      - name: Build shared package
+        run: pnpm --filter @infamous-freight/shared build
+        continue-on-error: false
+
+      - name: Pack shared package (smoke test)
+        run: pnpm --filter @infamous-freight/shared pack --pack-destination /tmp
+        continue-on-error: false
+
       - name: Lint (fail-safe)
         run: pnpm lint
         continue-on-error: false
 
       - name: Type check (fail-safe)
-        run: pnpm check:types || pnpm typecheck
+        run: pnpm check:types
         continue-on-error: false
 
       - name: Publish results
@@ -119,6 +127,10 @@ jobs:
         run: |
           pnpm --filter infamous-freight-api exec prisma generate
           pnpm --filter infamous-freight-api exec prisma migrate deploy || true
+
+      - name: Verify Prisma Client artifacts
+        run: git diff --stat --exit-code src/apps/api/prisma
+        continue-on-error: false
 
       - name: Run tests (parallel)
         env:

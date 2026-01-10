@@ -9,6 +9,14 @@ interface DriverQuery {
   limit?: string;
 }
 
+/**
+ * Get all drivers for the authenticated organization with pagination
+ * @param {Request} req - Express request with optional query params (isAvailable, page, limit)
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express error handler
+ * @returns {Promise<void>} JSON response with drivers array and pagination metadata
+ * @throws {AppError} If database query fails or invalid pagination params
+ */
 export async function getDrivers(
   req: Request<object, object, object, DriverQuery>,
   res: Response,

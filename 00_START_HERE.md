@@ -24,6 +24,15 @@ Your repository has been **comprehensively fixed, documented, and verified as pr
 
 ---
 
+## ⚡ Developer Quick Start
+
+Run the most-used workflows right away:
+- `pnpm dev` — start all apps in parallel
+- `pnpm dev:api` — start the API locally (default 4000/3001 Docker)
+- `pnpm dev:web` — start the Next.js web app on 3000
+
+---
+
 ## 🔧 WHAT WAS FIXED
 
 ### 6 Critical Issues Resolved

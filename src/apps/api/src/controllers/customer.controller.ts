@@ -3,6 +3,14 @@ import { AppError } from "../middleware/validate";
 import * as aiCustomerService from "../services/aiCustomer.service";
 import { prisma } from "../db/prisma";
 
+/**
+ * Get all customers for the authenticated organization
+ * @param {Request} req - Express request object with authenticated user
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express error handler
+ * @returns {Promise<void>} JSON response with array of customers
+ * @throws {AppError} If database query fails
+ */
 export async function getCustomers(
   req: Request,
   res: Response,
@@ -34,6 +42,14 @@ export async function getCustomers(
   }
 }
 
+/**
+ * Get a single customer by ID
+ * @param {Request} req - Express request with params.id (customer ID)
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express error handler
+ * @returns {Promise<void>} JSON response with customer object and related data
+ * @throws {AppError} If customer not found (404) or database error
+ */
 export async function getCustomerById(
   req: Request,
   res: Response,

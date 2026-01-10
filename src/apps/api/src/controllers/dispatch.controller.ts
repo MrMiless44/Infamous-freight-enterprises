@@ -26,6 +26,14 @@ interface LoadQuery {
   limit?: string;
 }
 
+/**
+ * Get all loads (shipments) for the authenticated organization with optional filtering
+ * @param {Request} req - Express request with optional query params (status, page, limit)
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express error handler
+ * @returns {Promise<void>} JSON response with loads array, pagination, and total count
+ * @throws {AppError} If database query fails or status filter is invalid
+ */
 export async function getLoads(
   req: Request<object, object, object, LoadQuery>,
   res: Response,
@@ -298,8 +306,7 @@ export async function assignLoad(
           decision: "LOAD_ASSIGNMENT",
           reasoning: `ML prediction: ${mlPrediction.prediction.recommendation} (${(mlPrediction.prediction.availabilityProbability * 100).toFixed(1)}% confidence). ${aiRecommendation.reasoning}`,
           confidence:
-            (mlPrediction.prediction.confidence +
-              aiRecommendation.confidence) /
+            (mlPrediction.prediction.confidence + aiRecommendation.confidence) /
             2,
           humanApproved: false,
         },
@@ -357,12 +364,15 @@ export async function assignLoad(
       data: {
         load: updatedLoad,
         aiDecision,
-        mlPrediction: mlPrediction ? {
-          driverId: mlPrediction.driver.id,
-          driverName: `${mlPrediction.driver.user.firstName} ${mlPrediction.driver.user.lastName}`,
-          availabilityScore: mlPrediction.prediction.availabilityProbability,
-          confidence: mlPrediction.prediction.confidence,
-        } : null,
+        mlPrediction: mlPrediction
+          ? {
+              driverId: mlPrediction.driver.id,
+              driverName: `${mlPrediction.driver.user.firstName} ${mlPrediction.driver.user.lastName}`,
+              availabilityScore:
+                mlPrediction.prediction.availabilityProbability,
+              confidence: mlPrediction.prediction.confidence,
+            }
+          : null,
       },
     });
   } catch (error) {

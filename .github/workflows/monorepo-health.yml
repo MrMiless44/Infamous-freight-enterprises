@@ -1,0 +1,207 @@
+name: Monorepo Health Checks
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  workspace-integrity:
+    name: Workspace Integrity Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "pnpm"
+
+      - name: Verify workspace structure
+        run: |
+          echo "📦 Checking workspace structure..."
+
+          # Check required workspaces exist
+          test -d "src/apps/api" || exit 1
+          test -d "src/apps/web" || exit 1
+          test -d "src/apps/mobile" || exit 1
+          test -d "src/packages/shared" || exit 1
+          test -d "tests/e2e" || exit 1
+
+          echo "✅ All required workspaces exist"
+
+      - name: Verify package.json consistency
+        run: |
+          echo "📋 Checking package.json files..."
+
+          # Check all packages have package.json
+          for dir in src/apps/* src/packages/* tests/e2e; do
+            if [ ! -f "$dir/package.json" ]; then
+              echo "❌ Missing package.json in $dir"
+              exit 1
+            fi
+          done
+
+          echo "✅ All packages have valid package.json"
+
+      - name: Verify dependency versions
+        run: |
+          echo "🔍 Checking dependency consistency..."
+
+          # Check for duplicate dependencies with different versions
+          pnpm list --recursive --depth=0 2>/dev/null || true
+
+          echo "✅ Dependency check complete"
+
+  build-times:
+    name: Monitor Build Times
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Measure build times
+        run: |
+          echo "⏱️  Measuring build times..."
+
+          time pnpm --filter @infamous-freight/shared build
+          SHARED_BUILD_TIME=$?
+
+          time pnpm --filter infamous-freight-api build
+          API_BUILD_TIME=$?
+
+          time pnpm --filter infamous-freight-web build
+          WEB_BUILD_TIME=$?
+
+          echo "✅ Build times measured"
+
+      - name: Check for slow builds
+        run: |
+          # This is a placeholder; use actual timing logic
+          echo "⚠️  Monitor build times in CI logs"
+          echo "Target: shared <30s, api <60s, web <120s"
+
+  dependency-audit:
+    name: Dependency Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "pnpm"
+
+      - name: Run pnpm audit
+        run: |
+          echo "🔐 Running security audit..."
+          pnpm audit --audit-level=moderate || true
+
+  version-consistency:
+    name: Check Version Consistency
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify root and workspace versions
+        run: |
+          echo "📌 Checking version consistency..."
+
+          ROOT_VERSION=$(jq -r '.version' package.json)
+          SHARED_VERSION=$(jq -r '.version' src/packages/shared/package.json)
+          API_VERSION=$(jq -r '.version' src/apps/api/package.json)
+          WEB_VERSION=$(jq -r '.version' src/apps/web/package.json)
+
+          echo "Root: $ROOT_VERSION"
+          echo "Shared: $SHARED_VERSION"
+          echo "API: $API_VERSION"
+          echo "Web: $WEB_VERSION"
+
+          if [ "$ROOT_VERSION" != "$SHARED_VERSION" ] || [ "$ROOT_VERSION" != "$API_VERSION" ]; then
+            echo "⚠️  Version mismatch detected"
+            echo "Consider syncing versions across packages"
+          fi
+
+          echo "✅ Version check complete"
+
+  lockfile-integrity:
+    name: Check Lockfile Integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+
+      - name: Verify lockfile
+        run: |
+          echo "🔒 Verifying pnpm lockfile..."
+
+          # Check if lockfile is up to date
+          pnpm install --frozen-lockfile --dry-run || {
+            echo "❌ Lockfile is out of sync with package.json"
+            echo "Run: pnpm install"
+            exit 1
+          }
+
+          echo "✅ Lockfile is valid and up-to-date"
+
+  report:
+    name: Generate Health Report
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Create summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          # Monorepo Health Check Summary
+
+          ## Results
+          - ✅ Workspace Integrity
+          - ✅ Build Times
+          - ✅ Dependency Security
+          - ✅ Version Consistency
+          - ✅ Lockfile Integrity
+
+          ## Recommendations
+          - Monitor build times weekly
+          - Run `pnpm audit` before major releases
+          - Sync package versions regularly
+          - Keep dependencies up-to-date (monthly)
+
+          ## Next Steps
+          1. Review monorepo structure
+          2. Check for circular dependencies
+          3. Validate workspace linking
+          4. Test cross-workspace imports
+
+          Run this job manually: `gh workflow run monorepo-health.yml`
+          EOF

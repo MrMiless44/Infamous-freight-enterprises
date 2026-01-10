@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"remote.autoForwardPortsFallback": 0,
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"typescript.enablePromptUseWorkspaceTsdk": true,
+		"files.associations": {
+			".env.example": "dotenv",
+			".env.local": "dotenv",
+			".lintstagedrc": "json"
+		},
+		"github.codespaces.defaultExtensions": [
+			"GitHub.copilot",
+			"GitHub.codespaces",
+			"GitHub.vscode-pull-request-github",
+			"Github.copilot"
+		],
+		"terminal.integrated.stickyScroll.enabled": false,
+		"terminal.integrated.suggest.enabled": false,
+		"prisma.pinToPrisma6": true,
+		"typescript.experimental.useTsgo": true,
+		"typescript.implementationsCodeLens.enabled": true,
+		"typescript.implementationsCodeLens.showOnAllClassMethods": true,
+		"typescript.implementationsCodeLens.showOnInterfaceMethods": true,
+		"typescript.preferGoToSourceDefinition": true,
+		"typescript.referencesCodeLens.enabled": true,
+		"typescript.referencesCodeLens.showOnAllFunctions": true,
+		"terminal.integrated.accessibleViewFocusOnCommandExecution": true
+	}
+}

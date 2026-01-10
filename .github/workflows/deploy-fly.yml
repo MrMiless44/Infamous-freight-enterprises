@@ -3,7 +3,14 @@ name: Deploy API to Fly.io
 on:
   push:
     branches: [main]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Build image only (no release)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
 
 jobs:
   build-and-deploy:
@@ -13,16 +20,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+
+      - name: Setup Node.js with pnpm cache
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: pnpm
 
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build shared package (once)
+        run: pnpm --filter @infamous-freight/shared build
+
+      - name: Pack shared package (smoke test)
+        run: pnpm --filter @infamous-freight/shared pack --pack-destination /tmp
+
+      - name: Generate Prisma Client
+        run: pnpm --filter infamous-freight-api exec prisma generate
+
+      - name: Verify Prisma Client artifacts
+        run: git diff --stat --exit-code src/apps/api/prisma
 
       - name: Build API
         run: pnpm run build:api
@@ -32,4 +59,29 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         with:
-          args: deploy --config fly.toml --remote-only
+          args: >-
+            deploy --config fly.toml --remote-only
+            ${{ inputs.dry-run == 'true' && '--build-only' || '' }}
+
+      - name: Smoke check (health)
+        if: inputs.dry-run != 'true'
+        run: |
+          # Wait briefly for app to come up
+          sleep 10
+          HEALTH_URL="${{ secrets.FLY_HEALTH_URL || 'https://infamous-freight-api.fly.dev/health' }}"
+          echo "Pinging $HEALTH_URL"
+          status=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL")
+          if [ "$status" != "200" ]; then
+            echo "Health check failed with status $status"
+            exit 1
+          fi
+          echo "Health check passed"
+
+      - name: Notify webhook (optional)
+        if: inputs.dry-run != 'true' && secrets.DEPLOY_WEBHOOK_URL != ''
+        env:
+          WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+        run: |
+          JOB_STATUS=${{ job.status }}
+          payload="{\"text\": \"Fly deploy ${GITHUB_REPOSITORY}@${GITHUB_REF} finished with status ${JOB_STATUS}\"}"
+          curl -s -X POST -H 'Content-Type: application/json' -d "$payload" "$WEBHOOK_URL"

@@ -37,6 +37,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "pnpm --filter './src/{apps,packages}/*' --parallel typecheck",
+    "check:types": "pnpm run typecheck",
     "clean": "pnpm --filter './src/{apps,packages}/*' clean && rm -rf node_modules",
     "prisma:generate": "pnpm --filter infamous-freight-api prisma:generate",
     "prisma:migrate": "pnpm --filter infamous-freight-api prisma:migrate",
@@ -46,6 +47,10 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
     "docker:rebuild": "docker-compose up -d --build",
+    "port:kill:web": "lsof -ti:3000 | xargs kill -9 2>/dev/null || echo '✓ Port 3000 is free'",
+    "port:kill:api": "lsof -ti:4000 | xargs kill -9 2>/dev/null || echo '✓ Port 4000 is free'",
+    "port:kill:all": "pnpm run port:kill:web && pnpm run port:kill:api && echo '✓ All ports freed'",
+    "setup:local": "bash scripts/setup-local.sh",
     "prepare": "husky install"
   },
   "lint-staged": {

@@ -45,7 +45,29 @@ run_lint_staged() {
   fi
 }
 
-if validate_workflows && run_lint_staged; then
+rebuild_shared_if_needed() {
+  echo "📦 Checking for shared library changes..."
+  CHANGED_FILES=$(git diff --cached --name-only)
+  
+  if echo "$CHANGED_FILES" | grep -qE "src/packages/shared/src/(types|constants|utils|env)\.(ts|js)"; then
+    echo "📦 Shared library types detected. Rebuilding..."
+    if ensure_pnpm; then
+      (cd "$REPO_ROOT" && pnpm --filter @infamous-freight/shared build)
+      if [ $? -ne 0 ]; then
+        echo "❌ Shared library build failed. Aborting commit."
+        return 1
+      fi
+      echo "✅ Shared library rebuilt successfully."
+      # Stage the dist files
+      git add "src/packages/shared/dist/"
+    else
+      return 1
+    fi
+  fi
+  return 0
+}
+
+if validate_workflows && run_lint_staged && rebuild_shared_if_needed; then
   echo "✅ Pre-commit checks passed!"
 else
   echo "❌ Pre-commit checks failed. Commit aborted."

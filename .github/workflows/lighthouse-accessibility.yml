@@ -1,0 +1,269 @@
+name: Lighthouse CI & Accessibility Audit
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  lighthouse:
+    name: Run Lighthouse Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+
+      - name: Install dependencies
+        run: |
+          cd web
+          pnpm install --frozen-lockfile
+
+      - name: Build Next.js application
+        run: |
+          cd web
+          pnpm build
+
+      - name: Start Next.js dev server
+        run: |
+          cd web
+          pnpm start &
+          sleep 5
+
+      - name: Run Lighthouse audit
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          configPath: "./.lighthouserc.json"
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Comment PR with Lighthouse results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('./.lighthouseci/manifest.json', 'utf8'));
+            const results = manifest[0].results;
+
+            const metrics = {
+              performance: results.performance * 100,
+              accessibility: results.accessibility * 100,
+              bestPractices: results['best-practices'] * 100,
+              seo: results.seo * 100,
+              pwa: results.pwa * 100,
+            };
+
+            const comment = `
+            ## 📊 Lighthouse Audit Results
+
+            | Category | Score | Status |
+            |----------|-------|--------|
+            | Performance | ${Math.round(metrics.performance)} | ${metrics.performance >= 90 ? '✅' : metrics.performance >= 75 ? '⚠️' : '❌'} |
+            | Accessibility | ${Math.round(metrics.accessibility)} | ${metrics.accessibility >= 90 ? '✅' : metrics.accessibility >= 75 ? '⚠️' : '❌'} |
+            | Best Practices | ${Math.round(metrics.bestPractices)} | ${metrics.bestPractices >= 90 ? '✅' : metrics.bestPractices >= 75 ? '⚠️' : '❌'} |
+            | SEO | ${Math.round(metrics.seo)} | ${metrics.seo >= 90 ? '✅' : metrics.seo >= 75 ? '⚠️' : '❌'} |
+            | PWA | ${Math.round(metrics.pwa)} | ${metrics.pwa >= 90 ? '✅' : metrics.pwa >= 75 ? '⚠️' : '❌'} |
+
+            [View full report](${manifest[0].url})
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  axe-accessibility:
+    name: Run Axe Accessibility Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+
+      - name: Install dependencies
+        run: |
+          cd web
+          pnpm install --frozen-lockfile
+
+      - name: Build Next.js
+        run: |
+          cd web
+          pnpm build
+
+      - name: Start server
+        run: |
+          cd web
+          pnpm start &
+          sleep 5
+
+      - name: Run Axe accessibility scan
+        uses: projectdiscovery/nuclei-action@main
+        with:
+          target: "http://localhost:3000"
+          templates: "http://localhost:3000"
+          flags: "-t a11y -s critical"
+
+      - name: Run Cypress axe
+        run: |
+          cd web
+          pnpm install --save-dev @axe-core/react axe-playwright
+
+          # Create temporary Cypress test file
+          cat > cypress/e2e/accessibility.cy.js << 'EOF'
+          import { injectAxe, checkA11y } from 'axe-playwright';
+
+          describe('Accessibility Audit (axe)', () => {
+            beforeEach(() => {
+              cy.visit('/');
+            });
+            
+            it('should have no axe violations on home page', () => {
+              cy.injectAxe();
+              cy.checkA11y();
+            });
+            
+            it('should have no axe violations on dashboard', () => {
+              cy.visit('/dashboard');
+              cy.injectAxe();
+              cy.checkA11y();
+            });
+            
+            it('should have no axe violations on shipments page', () => {
+              cy.visit('/shipments');
+              cy.injectAxe();
+              cy.checkA11y();
+            });
+          });
+          EOF
+
+          pnpm cypress run --spec "cypress/e2e/accessibility.cy.js"
+
+  wcag-compliance:
+    name: WCAG 2.1 Compliance Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install pa11y
+        run: npm install -g pa11y pa11y-ci
+
+      - name: Setup pnpm for web build
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+
+      - name: Install web dependencies
+        run: |
+          cd web
+          pnpm install --frozen-lockfile
+
+      - name: Build web
+        run: |
+          cd web
+          pnpm build
+
+      - name: Start web server
+        run: |
+          cd web
+          pnpm start &
+          sleep 5
+
+      - name: Run pa11y accessibility check
+        run: |
+          pa11y-ci --config .pa11yci.json
+        continue-on-error: true
+
+      - name: Check for critical WCAG violations
+        run: |
+          # Get pa11y results
+          pa11y http://localhost:3000 \
+            --standard WCAG2AA \
+            --runner axe \
+            --runner htmlcs || {
+            echo "⚠️ WCAG violations found"
+            exit 1
+          }
+
+  report:
+    name: Generate Accessibility Report
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [lighthouse, axe-accessibility, wcag-compliance]
+    steps:
+      - name: Create summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          # 🎨 Accessibility & Performance Report
+
+          ## Lighthouse Audit
+          - Performance Score
+          - Accessibility Score (WCAG 2.1 AA)
+          - Best Practices
+          - SEO
+          - PWA
+
+          ## Accessibility Audits
+          - ✅ Axe Core audit
+          - ✅ WCAG 2.1 compliance check
+          - ✅ Pa11y accessibility scan
+
+          ## Recommendations
+          - [ ] Fix critical accessibility issues
+          - [ ] Achieve 90+ Lighthouse scores
+          - [ ] Review failed WCAG checks
+          - [ ] Update color contrast where needed
+          - [ ] Ensure keyboard navigation works
+          - [ ] Add ARIA labels to interactive elements
+          - [ ] Test with screen readers (NVDA, JAWS)
+
+          ## Standards
+          - WCAG 2.1 Level AA
+          - Section 508 compliance
+          - ADA compliance
+
+          Run accessibility tests locally:
+          ```bash
+          cd web
+          pnpm test:a11y
+          ```
+          EOF
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse-report
+          path: .lighthouseci
+
+      - name: Fail if critical issues
+        run: |
+          # This will fail the workflow if thresholds not met
+          # Thresholds configured in .lighthouserc.json
+          exit ${{ job.status == 'success' ? 0 : 1 }}

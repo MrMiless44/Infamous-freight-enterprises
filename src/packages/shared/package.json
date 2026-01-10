@@ -19,6 +19,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "echo 'TypeScript linting handled by root eslint config'",
+    "typecheck": "tsc --noEmit",
     "test": "jest"
   },
   "dependencies": {

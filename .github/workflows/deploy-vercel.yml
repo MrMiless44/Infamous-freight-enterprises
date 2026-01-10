@@ -3,7 +3,14 @@ name: Deploy Web to Vercel
 on:
   push:
     branches: [main]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      skip-deploy:
+        description: "Skip Vercel deploy (build only)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
 
 jobs:
   build-and-deploy:
@@ -13,25 +20,62 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.9
+
+      - name: Setup Node.js with pnpm cache
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: pnpm
 
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.9 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build shared package (once)
+        run: pnpm --filter @infamous-freight/shared build
+
+      - name: Pack shared package (smoke test)
+        run: pnpm --filter @infamous-freight/shared pack --pack-destination /tmp
 
       - name: Build Web
         run: pnpm run build:web
 
       - name: Deploy to Vercel
+        if: inputs.skip-deploy != 'true'
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: web
+          working-directory: src/apps/web
           prod: true
+
+      - name: Smoke check (homepage)
+        if: inputs.skip-deploy != 'true'
+        run: |
+          sleep 5
+          URL="${{ secrets.VERCEL_HEALTH_URL || 'https://infamous-freight-enterprises.vercel.app' }}"
+          echo "Checking $URL"
+          status=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+          if [ "$status" != "200" ]; then
+            echo "Health check failed with status $status"
+            exit 1
+          fi
+          echo "Health check passed"
+
+      - name: Notify webhook (optional)
+        if: inputs.skip-deploy != 'true' && secrets.DEPLOY_WEBHOOK_URL != ''
+        env:
+          WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+        run: |
+          JOB_STATUS=${{ job.status }}
+          payload="{\"text\": \"Vercel deploy ${GITHUB_REPOSITORY}@${GITHUB_REF} finished with status ${JOB_STATUS}\"}"
+          curl -s -X POST -H 'Content-Type: application/json' -d "$payload" "$WEBHOOK_URL"
