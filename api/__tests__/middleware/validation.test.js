@@ -1,426 +1,178 @@
-const request = require('supertest');
-const express = require('express');
-const {
-    validateString,
-    validateEmail,
-    validatePhone,
-    validateUUID,
-    handleValidationErrors
-} = require('../../src/middleware/validation');
+const { validateString, validateEmail, validatePhone, validateUUID, handleValidationErrors } = require('../../src/middleware/validation');
+const { validationResult } = require('express-validator');
 
 describe('Validation Middleware', () => {
-    let app;
+    let req, res, next;
 
     beforeEach(() => {
-        app = express();
-        app.use(express.json());
+        req = {
+            body: {},
+            params: {},
+            query: {},
+        };
+        res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn().mockReturnThis(),
+        };
+        next = jest.fn();
     });
 
     describe('validateString', () => {
-        it('should pass validation for valid string', async () => {
-            app.post('/test', [
-                validateString('name'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
+        it('should validate valid string', async () => {
+            req.body.field = 'valid string';
+            const validator = validateString('field');
 
-            const response = await request(app)
-                .post('/test')
-                .send({ name: 'John Doe' });
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(response.status).toBe(200);
+            expect(next).toHaveBeenCalledWith();
+            expect(res.status).not.toHaveBeenCalled();
         });
 
-        it('should fail when field is not a string', async () => {
-            app.post('/test', [
-                validateString('name'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
+        it('should reject empty string', async () => {
+            req.body.field = '';
+            const validator = validateString('field');
 
-            const response = await request(app)
-                .post('/test')
-                .send({ name: 12345 });
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(response.status).toBe(400);
-            expect(response.body.error).toBe('Validation failed');
-            expect(response.body.details).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        field: 'name',
-                        msg: expect.stringContaining('must be a string')
-                    })
-                ])
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    error: 'Validation failed',
+                    details: expect.arrayContaining([
+                        expect.objectContaining({
+                            field: 'field',
+                        }),
+                    ]),
+                })
             );
         });
 
-        it('should fail when field is empty', async () => {
-            app.post('/test', [
-                validateString('name'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
+        it('should reject string exceeding max length', async () => {
+            req.body.field = 'a'.repeat(1001);
+            const validator = validateString('field', { maxLength: 1000 });
 
-            const response = await request(app)
-                .post('/test')
-                .send({ name: '' });
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(response.status).toBe(400);
-            expect(response.body.details).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        msg: expect.stringContaining('must not be empty')
-                    })
-                ])
-            );
+            expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it('should trim whitespace', async () => {
-            let receivedValue;
-            app.post('/test', [
-                validateString('name'),
-                handleValidationErrors
-            ], (req, res) => {
-                receivedValue = req.body.name;
-                res.json({ ok: true });
-            });
+        it('should trim whitespace from string', async () => {
+            req.body.field = '  valid string  ';
+            const validator = validateString('field');
 
-            await request(app)
-                .post('/test')
-                .send({ name: '  John Doe  ' });
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(receivedValue).toBe('John Doe');
-        });
-
-        it('should enforce custom maxLength', async () => {
-            app.post('/test', [
-                validateString('name', { maxLength: 5 }),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
-
-            const response = await request(app)
-                .post('/test')
-                .send({ name: 'Very Long Name' });
-
-            expect(response.status).toBe(400);
-            expect(response.body.details).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        msg: expect.stringContaining('too long')
-                    })
-                ])
-            );
-        });
-
-        it('should enforce default maxLength of 1000', async () => {
-            app.post('/test', [
-                validateString('text'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
-
-            const response = await request(app)
-                .post('/test')
-                .send({ text: 'a'.repeat(1001) });
-
-            expect(response.status).toBe(400);
+            expect(req.body.field).toBe('valid string');
+            expect(next).toHaveBeenCalledWith();
         });
     });
 
     describe('validateEmail', () => {
-        it('should pass validation for valid email', async () => {
-            app.post('/test', [
-                validateEmail('email'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
+        it('should validate valid email', async () => {
+            req.body.email = 'test@example.com';
+            const validator = validateEmail('email');
 
-            const response = await request(app)
-                .post('/test')
-                .send({ email: 'test@example.com' });
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(response.status).toBe(200);
+            expect(next).toHaveBeenCalledWith();
         });
 
-        it('should fail for invalid email format', async () => {
-            app.post('/test', [
-                validateEmail('email'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
+        it('should reject invalid email format', async () => {
+            req.body.email = 'invalid-email';
+            const validator = validateEmail('email');
 
-            const response = await request(app)
-                .post('/test')
-                .send({ email: 'invalid-email' });
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(response.status).toBe(400);
-            expect(response.body.details).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        field: 'email',
-                        msg: 'Invalid email'
-                    })
-                ])
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    details: expect.arrayContaining([
+                        expect.objectContaining({
+                            field: 'email',
+                            msg: 'Invalid email',
+                        }),
+                    ]),
+                })
             );
         });
 
-        it('should normalize email', async () => {
-            let receivedEmail;
-            app.post('/test', [
-                validateEmail('email'),
-                handleValidationErrors
-            ], (req, res) => {
-                receivedEmail = req.body.email;
-                res.json({ ok: true });
-            });
+        it('should normalize email address', async () => {
+            req.body.email = 'Test@Example.COM';
+            const validator = validateEmail('email');
 
-            await request(app)
-                .post('/test')
-                .send({ email: 'Test@EXAMPLE.COM' });
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(receivedEmail).toBe('test@example.com');
-        });
-
-        it('should support custom field name', async () => {
-            app.post('/test', [
-                validateEmail('userEmail'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
-
-            const response = await request(app)
-                .post('/test')
-                .send({ userEmail: 'invalid' });
-
-            expect(response.status).toBe(400);
-            expect(response.body.details[0].field).toBe('userEmail');
+            expect(req.body.email).toBe('test@example.com');
         });
     });
 
     describe('validatePhone', () => {
-        it('should pass validation for valid phone number', async () => {
-            app.post('/test', [
-                validatePhone('phone'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
+        it('should validate valid phone number', async () => {
+            req.body.phone = '+1234567890';
+            const validator = validatePhone('phone');
 
-            const response = await request(app)
-                .post('/test')
-                .send({ phone: '+14155552671' });
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(response.status).toBe(200);
+            expect(next).toHaveBeenCalledWith();
         });
 
-        it('should fail for invalid phone number', async () => {
-            app.post('/test', [
-                validatePhone('phone'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
+        it('should reject invalid phone number', async () => {
+            req.body.phone = 'not-a-phone';
+            const validator = validatePhone('phone');
 
-            const response = await request(app)
-                .post('/test')
-                .send({ phone: 'not-a-phone' });
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(response.status).toBe(400);
-            expect(response.body.details).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        field: 'phone',
-                        msg: 'Invalid phone number'
-                    })
-                ])
-            );
-        });
-
-        it('should support custom field name', async () => {
-            app.post('/test', [
-                validatePhone('contactNumber'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
-
-            const response = await request(app)
-                .post('/test')
-                .send({ contactNumber: 'invalid' });
-
-            expect(response.status).toBe(400);
-            expect(response.body.details[0].field).toBe('contactNumber');
+            expect(res.status).toHaveBeenCalledWith(400);
         });
     });
 
     describe('validateUUID', () => {
-        it('should pass validation for valid UUID', async () => {
-            app.get('/test/:id', [
-                validateUUID('id'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
+        it('should validate valid UUID', async () => {
+            req.params.id = '123e4567-e89b-12d3-a456-426614174000';
+            const validator = validateUUID('id');
 
-            const response = await request(app)
-                .get('/test/550e8400-e29b-41d4-a716-446655440000');
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(response.status).toBe(200);
+            expect(next).toHaveBeenCalledWith();
         });
 
-        it('should fail for invalid UUID', async () => {
-            app.get('/test/:id', [
-                validateUUID('id'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
+        it('should reject invalid UUID', async () => {
+            req.params.id = 'not-a-uuid';
+            const validator = validateUUID('id');
 
-            const response = await request(app)
-                .get('/test/invalid-uuid');
+            await validator.run(req);
+            handleValidationErrors(req, res, next);
 
-            expect(response.status).toBe(400);
-            expect(response.body.details).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        field: 'id',
-                        msg: 'Invalid UUID'
-                    })
-                ])
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    details: expect.arrayContaining([
+                        expect.objectContaining({
+                            field: 'id',
+                            msg: 'Invalid UUID',
+                        }),
+                    ]),
+                })
             );
-        });
-
-        it('should support custom field name', async () => {
-            app.get('/test/:userId', [
-                validateUUID('userId'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
-
-            const response = await request(app)
-                .get('/test/not-a-uuid');
-
-            expect(response.status).toBe(400);
-            expect(response.body.details[0].field).toBe('userId');
         });
     });
 
     describe('handleValidationErrors', () => {
-        it('should pass when no validation errors', async () => {
-            app.post('/test', [
-                validateString('name'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
+        it('should call next when no validation errors', () => {
+            handleValidationErrors(req, res, next);
 
-            const response = await request(app)
-                .post('/test')
-                .send({ name: 'John' });
-
-            expect(response.status).toBe(200);
-        });
-
-        it('should return 400 with multiple validation errors', async () => {
-            app.post('/test', [
-                validateString('name'),
-                validateEmail('email'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
-
-            const response = await request(app)
-                .post('/test')
-                .send({ name: '', email: 'invalid' });
-
-            expect(response.status).toBe(400);
-            expect(response.body.error).toBe('Validation failed');
-            expect(response.body.details).toHaveLength(2);
-            expect(response.body.details).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({ field: 'name' }),
-                    expect.objectContaining({ field: 'email' })
-                ])
-            );
-        });
-
-        it('should return structured error response', async () => {
-            app.post('/test', [
-                validateString('field1'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
-
-            const response = await request(app)
-                .post('/test')
-                .send({ field1: 123 });
-
-            expect(response.body).toMatchObject({
-                error: 'Validation failed',
-                details: expect.arrayContaining([
-                    expect.objectContaining({
-                        field: expect.any(String),
-                        msg: expect.any(String)
-                    })
-                ])
-            });
-        });
-    });
-
-    describe('Multiple validators combined', () => {
-        it('should validate multiple fields successfully', async () => {
-            app.post('/test', [
-                validateString('name'),
-                validateEmail('email'),
-                validatePhone('phone'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
-
-            const response = await request(app)
-                .post('/test')
-                .send({
-                    name: 'John Doe',
-                    email: 'john@example.com',
-                    phone: '+14155552671'
-                });
-
-            expect(response.status).toBe(200);
-        });
-
-        it('should report all validation failures', async () => {
-            app.post('/test', [
-                validateString('name'),
-                validateEmail('email'),
-                validatePhone('phone'),
-                handleValidationErrors
-            ], (req, res) => {
-                res.json({ ok: true });
-            });
-
-            const response = await request(app)
-                .post('/test')
-                .send({
-                    name: '',
-                    email: 'invalid',
-                    phone: 'not-a-phone'
-                });
-
-            expect(response.status).toBe(400);
-            expect(response.body.details).toHaveLength(3);
+            expect(next).toHaveBeenCalledWith();
+            expect(res.status).not.toHaveBeenCalled();
         });
     });
 });

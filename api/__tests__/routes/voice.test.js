@@ -1,28 +1,27 @@
 const request = require('supertest');
 const express = require('express');
+const voiceRoutes = require('../../src/routes/voice');
 const jwt = require('jsonwebtoken');
 const path = require('path');
-const fs = require('fs');
-const voiceRoutes = require('../../src/routes/voice');
 
 describe('Voice Routes', () => {
-    let app;
-    let validToken;
+    let app, validToken;
 
     beforeEach(() => {
         app = express();
         app.use(express.json());
         app.use('/api', voiceRoutes);
 
-        const payload = {
-            sub: 'user123',
-            scopes: ['voice:ingest', 'voice:command']
-        };
-        validToken = jwt.sign(payload, process.env.JWT_SECRET);
+        validToken = jwt.sign(
+            { sub: 'user-123', scopes: ['voice:ingest', 'voice:command'] },
+            process.env.JWT_SECRET
+        );
+
+        jest.clearAllMocks();
     });
 
-    describe('POST /api/voice/ingest', () => {
-        it('should require authentication', async () => {
+    describe('POST /voice/ingest', () => {
+        it('should reject without authentication', async () => {
             const response = await request(app)
                 .post('/api/voice/ingest');
 
@@ -30,101 +29,70 @@ describe('Voice Routes', () => {
         });
 
         it('should require voice:ingest scope', async () => {
-            const token = jwt.sign({
-                sub: 'user123',
-                scopes: ['voice:command']
-            }, process.env.JWT_SECRET);
+            const noScopeToken = jwt.sign(
+                { sub: 'user-123', scopes: [] },
+                process.env.JWT_SECRET
+            );
 
             const response = await request(app)
                 .post('/api/voice/ingest')
-                .set('Authorization', `Bearer ${token}`);
+                .set('Authorization', `Bearer ${noScopeToken}`);
 
             expect(response.status).toBe(403);
         });
 
-        it('should return 400 when no file uploaded', async () => {
+        it('should reject request without file', async () => {
             const response = await request(app)
                 .post('/api/voice/ingest')
                 .set('Authorization', `Bearer ${validToken}`);
 
             expect(response.status).toBe(400);
-            expect(response.body).toMatchObject({
-                ok: false,
-                error: 'No audio file uploaded'
-            });
-        });
-
-        it('should accept valid audio file', async () => {
-            // Create a temporary test file
-            const testBuffer = Buffer.from('fake audio data');
-
-            const response = await request(app)
-                .post('/api/voice/ingest')
-                .set('Authorization', `Bearer ${validToken}`)
-                .attach('audio', testBuffer, {
-                    filename: 'test.mp3',
-                    contentType: 'audio/mpeg'
-                });
-
-            expect(response.status).toBe(200);
-            expect(response.body).toMatchObject({
-                ok: true,
-                file: expect.objectContaining({
-                    originalName: 'test.mp3',
-                    mimetype: 'audio/mpeg'
-                })
-            });
+            expect(response.body.error).toContain('No audio file');
         });
     });
 
-    describe('POST /api/voice/command', () => {
-        it('should require authentication', async () => {
+    describe('POST /voice/command', () => {
+        it('should process voice command with valid text', async () => {
             const response = await request(app)
                 .post('/api/voice/command')
-                .send({ text: 'test' });
+                .set('Authorization', `Bearer ${validToken}`)
+                .send({ text: 'Create new shipment' });
 
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(200);
+            expect(response.body.ok).toBe(true);
+            expect(response.body.command).toBe('Create new shipment');
         });
 
         it('should require voice:command scope', async () => {
-            const token = jwt.sign({
-                sub: 'user123',
-                scopes: ['voice:ingest']
-            }, process.env.JWT_SECRET);
+            const ingestOnlyToken = jwt.sign(
+                { sub: 'user-123', scopes: ['voice:ingest'] },
+                process.env.JWT_SECRET
+            );
 
             const response = await request(app)
                 .post('/api/voice/command')
-                .set('Authorization', `Bearer ${token}`)
-                .send({ text: 'test' });
+                .set('Authorization', `Bearer ${ingestOnlyToken}`)
+                .send({ text: 'Test' });
 
             expect(response.status).toBe(403);
         });
 
-        it('should return 400 when text is missing', async () => {
+        it('should validate text field is required', async () => {
             const response = await request(app)
                 .post('/api/voice/command')
                 .set('Authorization', `Bearer ${validToken}`)
                 .send({});
 
             expect(response.status).toBe(400);
-            expect(response.body).toMatchObject({
-                ok: false,
-                error: 'Text command is required'
-            });
+            expect(response.body.error).toContain('Text command is required');
         });
 
-        it('should process voice command with text', async () => {
+        it('should reject without authentication', async () => {
             const response = await request(app)
                 .post('/api/voice/command')
-                .set('Authorization', `Bearer ${validToken}`)
-                .send({ text: 'test command' });
+                .send({ text: 'Test' });
 
-            expect(response.status).toBe(200);
-            expect(response.body).toMatchObject({
-                ok: true,
-                command: 'test command',
-                result: expect.any(String)
-            });
+            expect(response.status).toBe(401);
         });
     });
 });

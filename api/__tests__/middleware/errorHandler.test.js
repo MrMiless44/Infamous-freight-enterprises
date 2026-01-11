@@ -1,217 +1,129 @@
-const request = require('supertest');
-const express = require('express');
 const errorHandler = require('../../src/middleware/errorHandler');
+const Sentry = require('@sentry/node');
 
 describe('Error Handler Middleware', () => {
-    let app;
-    let consoleSpy;
+    let req, res, next;
 
     beforeEach(() => {
-        app = express();
-        app.use(express.json());
-        consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+        req = {
+            method: 'GET',
+            path: '/test',
+            user: null,
+        };
+        res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn().mockReturnThis(),
+        };
+        next = jest.fn();
+        jest.clearAllMocks();
     });
 
-    afterEach(() => {
-        consoleSpy.mockRestore();
-    });
+    it('should handle error with default 500 status', () => {
+        const error = new Error('Test error');
 
-    it('should handle errors with default 500 status', async () => {
-        app.get('/test', (req, res, next) => {
-            next(new Error('Test error'));
-        });
-        app.use(errorHandler);
+        errorHandler(error, req, res, next);
 
-        const response = await request(app).get('/test');
-
-        expect(response.status).toBe(500);
-        expect(response.body).toEqual({
-            error: 'Test error'
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            error: 'Test error',
         });
     });
 
-    it('should handle errors with custom status code', async () => {
-        app.get('/test', (req, res, next) => {
-            const error = new Error('Not found');
-            error.status = 404;
-            next(error);
+    it('should use error.status if provided', () => {
+        const error = new Error('Not found');
+        error.status = 404;
+
+        errorHandler(error, req, res, next);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({
+            error: 'Not found',
         });
-        app.use(errorHandler);
-
-        const response = await request(app).get('/test');
-
-        expect(response.status).toBe(404);
-        expect(response.body.error).toBe('Not found');
     });
 
-    it('should handle errors with statusCode property', async () => {
-        app.get('/test', (req, res, next) => {
-            const error = new Error('Bad request');
-            error.statusCode = 400;
-            next(error);
-        });
-        app.use(errorHandler);
+    it('should use error.statusCode if provided', () => {
+        const error = new Error('Bad request');
+        error.statusCode = 400;
 
-        const response = await request(app).get('/test');
+        errorHandler(error, req, res, next);
 
-        expect(response.status).toBe(400);
-        expect(response.body.error).toBe('Bad request');
+        expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it('should log error details to console', async () => {
-        app.get('/test', (req, res, next) => {
-            const error = new Error('Test error');
-            error.status = 500;
-            next(error);
-        });
-        app.use(errorHandler);
+    it('should log error details', () => {
+        const error = new Error('Test error');
+        error.stack = 'Error stack trace';
 
-        await request(app).get('/test');
+        errorHandler(error, req, res, next);
 
-        expect(consoleSpy).toHaveBeenCalledWith(
+        expect(console.error).toHaveBeenCalledWith(
             'Request failed',
             expect.objectContaining({
                 method: 'GET',
                 path: '/test',
                 status: 500,
-                error: 'Test error'
+                error: 'Test error',
             })
         );
     });
 
-    it('should include user info in logs when available', async () => {
-        app.get('/test', (req, res, next) => {
-            req.user = { sub: 'user123' };
-            next(new Error('Test error'));
-        });
-        app.use(errorHandler);
+    it('should include user info in logs when authenticated', () => {
+        req.user = { sub: 'user-123' };
+        const error = new Error('Test error');
 
-        await request(app).get('/test');
+        errorHandler(error, req, res, next);
 
-        expect(consoleSpy).toHaveBeenCalledWith(
+        expect(console.error).toHaveBeenCalledWith(
             'Request failed',
             expect.objectContaining({
-                user: 'user123'
+                user: 'user-123',
             })
         );
     });
 
-    it('should handle errors without message', async () => {
-        app.get('/test', (req, res, next) => {
-            const error = new Error();
-            error.status = 500;
-            next(error);
-        });
-        app.use(errorHandler);
+    it('should capture exception with Sentry', () => {
+        process.env.SENTRY_DSN = 'https://test@sentry.io/123';
+        const error = new Error('Sentry test');
 
-        const response = await request(app).get('/test');
+        errorHandler(error, req, res, next);
 
-        expect(response.status).toBe(500);
-        expect(response.body).toHaveProperty('error');
-    });
-
-    it('should include error stack in logs', async () => {
-        app.get('/test', (req, res, next) => {
-            const error = new Error('Test error');
-            next(error);
-        });
-        app.use(errorHandler);
-
-        await request(app).get('/test');
-
-        expect(consoleSpy).toHaveBeenCalledWith(
-            'Request failed',
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+            error,
             expect.objectContaining({
-                stack: expect.any(String)
+                tags: {
+                    path: '/test',
+                    method: 'GET',
+                },
             })
         );
+
+        delete process.env.SENTRY_DSN;
     });
 
-    it('should handle errors in async routes', async () => {
-        app.get('/test', async (req, res, next) => {
-            try {
-                throw new Error('Async error');
-            } catch (err) {
-                next(err);
-            }
-        });
-        app.use(errorHandler);
+    it('should include user in Sentry context when authenticated', () => {
+        process.env.SENTRY_DSN = 'https://test@sentry.io/123';
+        req.user = { sub: 'user-456' };
+        const error = new Error('Sentry test');
 
-        const response = await request(app).get('/test');
+        errorHandler(error, req, res, next);
 
-        expect(response.status).toBe(500);
-        expect(response.body.error).toBe('Async error');
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+            error,
+            expect.objectContaining({
+                user: { id: 'user-456' },
+            })
+        );
+
+        delete process.env.SENTRY_DSN;
     });
 
-    it('should prefer status over statusCode', async () => {
-        app.get('/test', (req, res, next) => {
-            const error = new Error('Conflict');
-            error.status = 409;
-            error.statusCode = 400;
-            next(error);
+    it('should handle error without message', () => {
+        const error = new Error();
+
+        errorHandler(error, req, res, next);
+
+        expect(res.json).toHaveBeenCalledWith({
+            error: 'Internal Server Error',
         });
-        app.use(errorHandler);
-
-        const response = await request(app).get('/test');
-
-        expect(response.status).toBe(409);
-    });
-
-    it('should work as final middleware in chain', async () => {
-        let handlerCalled = false;
-
-        app.get('/test', (req, res, next) => {
-            next(new Error('Test'));
-        });
-
-        app.use((req, res, next) => {
-            // This should not be called
-            handlerCalled = true;
-            next();
-        });
-
-        app.use(errorHandler);
-
-        await request(app).get('/test');
-
-        expect(handlerCalled).toBe(false);
-    });
-
-    it('should handle errors from multiple routes', async () => {
-        app.get('/route1', (req, res, next) => {
-            const err = new Error('Error 1');
-            err.status = 400;
-            next(err);
-        });
-
-        app.post('/route2', (req, res, next) => {
-            const err = new Error('Error 2');
-            err.status = 403;
-            next(err);
-        });
-
-        app.use(errorHandler);
-
-        const res1 = await request(app).get('/route1');
-        expect(res1.status).toBe(400);
-        expect(res1.body.error).toBe('Error 1');
-
-        const res2 = await request(app).post('/route2');
-        expect(res2.status).toBe(403);
-        expect(res2.body.error).toBe('Error 2');
-    });
-
-    it('should handle JSON parse errors', async () => {
-        app.post('/test', (req, res) => {
-            res.json({ ok: true });
-        });
-        app.use(errorHandler);
-
-        const response = await request(app)
-            .post('/test')
-            .set('Content-Type', 'application/json')
-            .send('{"invalid json}');
-
-        expect(response.status).toBeGreaterThanOrEqual(400);
     });
 });

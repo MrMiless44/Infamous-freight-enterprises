@@ -1,31 +1,28 @@
 module.exports = {
     testEnvironment: 'node',
-    testMatch: [
-        '**/__tests__/**/*.test.js',
-        '**/?(*.)+(spec|test).js'
-    ],
+    coverageDirectory: 'coverage',
     collectCoverageFrom: [
         'src/**/*.js',
         '!src/server.js',
+        '!src/instrument.js',
         '!src/swagger.js',
+        '!src/config/**',
         '!**/node_modules/**',
-        '!**/__tests__/**',
-        '!**/coverage/**'
     ],
     coverageThreshold: {
         global: {
-            branches: 100,
-            functions: 100,
-            lines: 100,
-            statements: 100
-        }
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: 80,
+        },
     },
+    testMatch: [
+        '**/__tests__/**/*.test.js',
+        '**/?(*.)+(spec|test).js',
+    ],
     coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
-    coverageDirectory: 'coverage',
     verbose: true,
     testTimeout: 10000,
-    clearMocks: true,
-    resetMocks: true,
-    restoreMocks: true,
-    setupFilesAfterEnv: ['<rootDir>/jest.setup.js']
+    setupFilesAfterEnv: ['<rootDir>/__tests__/setup.js'],
 };

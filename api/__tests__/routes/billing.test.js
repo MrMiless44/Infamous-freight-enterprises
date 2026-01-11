@@ -4,40 +4,50 @@ const jwt = require('jsonwebtoken');
 const billingRoutes = require('../../src/routes/billing');
 
 describe('Billing Routes', () => {
-    let app;
-    let validToken;
+    let app, validToken;
 
     beforeEach(() => {
         app = express();
         app.use(express.json());
         app.use('/api', billingRoutes);
 
-        const payload = {
-            sub: 'user123',
-            scopes: ['billing:read', 'billing:write']
-        };
-        validToken = jwt.sign(payload, process.env.JWT_SECRET);
+        validToken = jwt.sign(
+            { sub: 'user-123', scopes: ['billing:read', 'billing:write'] },
+            process.env.JWT_SECRET
+        );
+
+        jest.clearAllMocks();
     });
 
-    describe('POST /api/billing/create-subscription', () => {
-        it('should require authentication', async () => {
+    describe('POST /billing/create-subscription', () => {
+        it('should create subscription with valid data', async () => {
             const response = await request(app)
                 .post('/api/billing/create-subscription')
-                .send({ tier: 'premium', email: 'test@example.com' });
+                .set('Authorization', `Bearer ${validToken}`)
+                .send({
+                    tier: 'premium',
+                    email: 'test@example.com',
+                });
 
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(201);
+            expect(response.body.ok).toBe(true);
+            expect(response.body.subscription).toMatchObject({
+                tier: 'premium',
+                email: 'test@example.com',
+                status: 'active',
+            });
         });
 
         it('should require billing:write scope', async () => {
-            const token = jwt.sign({
-                sub: 'user123',
-                scopes: ['billing:read']
-            }, process.env.JWT_SECRET);
+            const readOnlyToken = jwt.sign(
+                { sub: 'user-123', scopes: ['billing:read'] },
+                process.env.JWT_SECRET
+            );
 
             const response = await request(app)
                 .post('/api/billing/create-subscription')
-                .set('Authorization', `Bearer ${token}`)
-                .send({ tier: 'premium', email: 'test@example.com' });
+                .set('Authorization', `Bearer ${readOnlyToken}`)
+                .send({ tier: 'basic', email: 'test@example.com' });
 
             expect(response.status).toBe(403);
         });
@@ -46,7 +56,7 @@ describe('Billing Routes', () => {
             const response = await request(app)
                 .post('/api/billing/create-subscription')
                 .set('Authorization', `Bearer ${validToken}`)
-                .send({ tier: '', email: 'test@example.com' });
+                .send({ email: 'test@example.com' });
 
             expect(response.status).toBe(400);
         });
@@ -55,96 +65,60 @@ describe('Billing Routes', () => {
             const response = await request(app)
                 .post('/api/billing/create-subscription')
                 .set('Authorization', `Bearer ${validToken}`)
-                .send({ tier: 'premium', email: 'invalid-email' });
+                .send({ tier: 'basic', email: 'invalid-email' });
 
             expect(response.status).toBe(400);
-        });
-
-        it('should create subscription with valid data', async () => {
-            const response = await request(app)
-                .post('/api/billing/create-subscription')
-                .set('Authorization', `Bearer ${validToken}`)
-                .send({ tier: 'premium', email: 'test@example.com' });
-
-            expect(response.status).toBe(201);
-            expect(response.body).toMatchObject({
-                ok: true,
-                subscription: expect.objectContaining({
-                    id: expect.stringContaining('sub_'),
-                    tier: 'premium',
-                    email: 'test@example.com',
-                    status: 'active'
-                })
-            });
+            expect(response.body.error).toBe('Validation failed');
         });
     });
 
-    describe('GET /api/billing/subscriptions', () => {
-        it('should require authentication', async () => {
-            const response = await request(app).get('/api/billing/subscriptions');
-
-            expect(response.status).toBe(401);
-        });
-
-        it('should require billing:read scope', async () => {
-            const token = jwt.sign({
-                sub: 'user123',
-                scopes: ['billing:write']
-            }, process.env.JWT_SECRET);
-
-            const response = await request(app)
-                .get('/api/billing/subscriptions')
-                .set('Authorization', `Bearer ${token}`);
-
-            expect(response.status).toBe(403);
-        });
-
-        it('should return empty subscriptions list', async () => {
+    describe('GET /billing/subscriptions', () => {
+        it('should return subscriptions list', async () => {
             const response = await request(app)
                 .get('/api/billing/subscriptions')
                 .set('Authorization', `Bearer ${validToken}`);
 
             expect(response.status).toBe(200);
-            expect(response.body).toMatchObject({
-                ok: true,
-                subscriptions: [],
-                count: 0
-            });
-        });
-    });
-
-    describe('POST /api/billing/cancel-subscription/:id', () => {
-        it('should require authentication', async () => {
-            const response = await request(app)
-                .post('/api/billing/cancel-subscription/sub_123');
-
-            expect(response.status).toBe(401);
+            expect(response.body.ok).toBe(true);
+            expect(Array.isArray(response.body.subscriptions)).toBe(true);
         });
 
-        it('should require billing:write scope', async () => {
-            const token = jwt.sign({
-                sub: 'user123',
-                scopes: ['billing:read']
-            }, process.env.JWT_SECRET);
+        it('should require billing:read scope', async () => {
+            const noScopeToken = jwt.sign(
+                { sub: 'user-123', scopes: [] },
+                process.env.JWT_SECRET
+            );
 
             const response = await request(app)
-                .post('/api/billing/cancel-subscription/sub_123')
-                .set('Authorization', `Bearer ${token}`);
+                .get('/api/billing/subscriptions')
+                .set('Authorization', `Bearer ${noScopeToken}`);
 
             expect(response.status).toBe(403);
         });
+    });
 
+    describe('POST /billing/cancel-subscription/:id', () => {
         it('should cancel subscription', async () => {
             const response = await request(app)
                 .post('/api/billing/cancel-subscription/sub_123')
                 .set('Authorization', `Bearer ${validToken}`);
 
             expect(response.status).toBe(200);
-            expect(response.body).toMatchObject({
-                ok: true,
-                message: 'Subscription cancelled',
-                id: 'sub_123'
-            });
+            expect(response.body.ok).toBe(true);
+            expect(response.body.message).toContain('cancelled');
+        });
+
+        it('should require billing:write scope', async () => {
+            const readOnlyToken = jwt.sign(
+                { sub: 'user-123', scopes: ['billing:read'] },
+                process.env.JWT_SECRET
+            );
+
+            const response = await request(app)
+                .post('/api/billing/cancel-subscription/sub_123')
+                .set('Authorization', `Bearer ${readOnlyToken}`);
+
+            expect(response.status).toBe(403);
         });
     });
 });

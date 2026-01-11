@@ -4,94 +4,89 @@ const jwt = require('jsonwebtoken');
 const usersRoutes = require('../../src/routes/users');
 
 describe('Users Routes', () => {
-    let app;
-    let validToken;
+    let app, validToken;
 
     beforeEach(() => {
         app = express();
         app.use(express.json());
         app.use('/api', usersRoutes);
 
-        const payload = {
-            sub: 'user123',
-            email: 'test@example.com',
-            role: 'user',
-            scopes: ['users:read', 'users:write']
-        };
-        validToken = jwt.sign(payload, process.env.JWT_SECRET);
+        validToken = jwt.sign(
+            { sub: 'user-123', email: 'test@example.com', role: 'user', scopes: ['users:read', 'users:write'] },
+            process.env.JWT_SECRET
+        );
+
+        jest.clearAllMocks();
     });
 
-    describe('GET /api/users/me', () => {
-        it('should require authentication', async () => {
-            const response = await request(app).get('/api/users/me');
-
-            expect(response.status).toBe(401);
-        });
-
-        it('should require users:read scope', async () => {
-            const token = jwt.sign({
-                sub: 'user123',
-                scopes: ['other:scope']
-            }, process.env.JWT_SECRET);
-
-            const response = await request(app)
-                .get('/api/users/me')
-                .set('Authorization', `Bearer ${token}`);
-
-            expect(response.status).toBe(403);
-        });
-
+    describe('GET /users/me', () => {
         it('should return current user profile', async () => {
             const response = await request(app)
                 .get('/api/users/me')
                 .set('Authorization', `Bearer ${validToken}`);
 
             expect(response.status).toBe(200);
-            expect(response.body).toMatchObject({
-                ok: true,
-                user: {
-                    id: 'user123',
-                    email: 'test@example.com',
-                    role: 'user',
-                    scopes: ['users:read', 'users:write']
-                }
+            expect(response.body.ok).toBe(true);
+            expect(response.body.user).toMatchObject({
+                id: 'user-123',
+                email: 'test@example.com',
+                role: 'user',
             });
         });
-    });
 
-    describe('PATCH /api/users/me', () => {
-        it('should require authentication', async () => {
-            const response = await request(app)
-                .patch('/api/users/me')
-                .send({ name: 'New Name' });
-
-            expect(response.status).toBe(401);
-        });
-
-        it('should require users:write scope', async () => {
-            const token = jwt.sign({
-                sub: 'user123',
-                scopes: ['users:read']
-            }, process.env.JWT_SECRET);
+        it('should require users:read scope', async () => {
+            const noScopeToken = jwt.sign(
+                { sub: 'user-123', scopes: [] },
+                process.env.JWT_SECRET
+            );
 
             const response = await request(app)
-                .patch('/api/users/me')
-                .set('Authorization', `Bearer ${token}`)
-                .send({ name: 'New Name' });
+                .get('/api/users/me')
+                .set('Authorization', `Bearer ${noScopeToken}`);
 
             expect(response.status).toBe(403);
         });
 
-        it('should validate name max length', async () => {
+        it('should require authentication', async () => {
+            const response = await request(app).get('/api/users/me');
+
+            expect(response.status).toBe(401);
+        });
+    });
+
+    describe('PATCH /users/me', () => {
+        it('should update user profile with valid data', async () => {
             const response = await request(app)
                 .patch('/api/users/me')
                 .set('Authorization', `Bearer ${validToken}`)
-                .send({ name: 'a'.repeat(101) });
+                .send({
+                    name: 'Updated Name',
+                    email: 'updated@example.com',
+                });
 
-            expect(response.status).toBe(400);
+            expect(response.status).toBe(200);
+            expect(response.body.ok).toBe(true);
+            expect(response.body.user).toMatchObject({
+                name: 'Updated Name',
+                email: 'updated@example.com',
+            });
         });
 
-        it('should validate email format', async () => {
+        it('should require users:write scope', async () => {
+            const readOnlyToken = jwt.sign(
+                { sub: 'user-123', scopes: ['users:read'] },
+                process.env.JWT_SECRET
+            );
+
+            const response = await request(app)
+                .patch('/api/users/me')
+                .set('Authorization', `Bearer ${readOnlyToken}`)
+                .send({ name: 'Test' });
+
+            expect(response.status).toBe(403);
+        });
+
+        it('should validate email format when provided', async () => {
             const response = await request(app)
                 .patch('/api/users/me')
                 .set('Authorization', `Bearer ${validToken}`)
@@ -100,70 +95,52 @@ describe('Users Routes', () => {
             expect(response.status).toBe(400);
         });
 
-        it('should update user profile with valid data', async () => {
+        it('should allow updating name only', async () => {
             const response = await request(app)
                 .patch('/api/users/me')
                 .set('Authorization', `Bearer ${validToken}`)
-                .send({ name: 'John Doe', email: 'john@example.com' });
+                .send({ name: 'Just Name' });
 
             expect(response.status).toBe(200);
-            expect(response.body).toMatchObject({
-                ok: true,
-                user: {
-                    id: 'user123',
-                    name: 'John Doe',
-                    email: 'john@example.com'
-                }
-            });
-        });
-
-        it('should accept partial updates', async () => {
-            const response = await request(app)
-                .patch('/api/users/me')
-                .set('Authorization', `Bearer ${validToken}`)
-                .send({ name: 'John Only' });
-
-            expect(response.status).toBe(200);
-            expect(response.body.user.name).toBe('John Only');
+            expect(response.body.user.name).toBe('Just Name');
         });
     });
 
-    describe('GET /api/users', () => {
-        it('should require authentication', async () => {
-            const response = await request(app).get('/api/users');
-
-            expect(response.status).toBe(401);
-        });
-
-        it('should require admin scope', async () => {
-            const token = jwt.sign({
-                sub: 'user123',
-                scopes: ['users:read', 'users:write']
-            }, process.env.JWT_SECRET);
-
-            const response = await request(app)
-                .get('/api/users')
-                .set('Authorization', `Bearer ${token}`);
-
-            expect(response.status).toBe(403);
-        });
-
-        it('should list users for admin', async () => {
-            const adminToken = jwt.sign({
-                sub: 'admin123',
-                scopes: ['admin']
-            }, process.env.JWT_SECRET);
+    describe('GET /users', () => {
+        it('should return users list for admin', async () => {
+            const adminToken = jwt.sign(
+                { sub: 'admin-123', role: 'admin', scopes: ['admin'] },
+                process.env.JWT_SECRET
+            );
 
             const response = await request(app)
                 .get('/api/users')
                 .set('Authorization', `Bearer ${adminToken}`);
 
             expect(response.status).toBe(200);
-            expect(response.body).toMatchObject({
-                ok: true,
-                users: [],
-                count: 0
-            });
+            expect(response.body.ok).toBe(true);
+            expect(Array.isArray(response.body.users)).toBe(true);
+        });
+
+        it('should reject non-admin users', async () => {
+            const response = await request(app)
+                .get('/api/users')
+                .set('Authorization', `Bearer ${validToken}`);
+
+            expect(response.status).toBe(403);
+        });
+
+        it('should require admin scope', async () => {
+            const noAdminToken = jwt.sign(
+                { sub: 'user-123', scopes: ['users:read'] },
+                process.env.JWT_SECRET
+            );
+
+            const response = await request(app)
+                .get('/api/users')
+                .set('Authorization', `Bearer ${noAdminToken}`);
+
+            expect(response.status).toBe(403);
         });
     });
 });
