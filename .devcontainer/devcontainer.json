@@ -3,11 +3,19 @@
   "image": "mcr.microsoft.com/devcontainers/base:alpine",
   "remoteUser": "vscode",
   "features": {},
-  "postCreateCommand": "apk update && apk add --no-cache git rsync python3",
-  "forwardPorts": [8080],
+  "postCreateCommand": "sh -c 'apk update && apk add --no-cache git rsync python3 && find /usr/local/bin -name node -exec chmod +x {} \\; 2>/dev/null || true'",
+  "forwardPorts": [3000, 3001, 8080],
   "portsAttributes": {
+    "3000": {
+      "label": "Client Dev Server",
+      "onAutoForward": "notify"
+    },
+    "3001": {
+      "label": "API Server",
+      "onAutoForward": "notify"
+    },
     "8080": {
-      "label": "Local Web Server",
+      "label": "Static Server",
       "onAutoForward": "notify"
     }
   },
@@ -16,9 +24,15 @@
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",
         "files.exclude": {
-          "**/.DS_Store": true
+          "**/.DS_Store": true,
+          "**/node_modules": true
         }
-      }
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-vscode.makefile-tools"
+      ]
     }
   }
 }
