@@ -1,0 +1,89 @@
+/* Minimal modern styles */
+:root {
+  --bg: #0f172a;
+  --surface: #111827;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --primary: #4f46e5;
+  --primary-contrast: #ffffff;
+  --card: #1f2937;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: linear-gradient(180deg, var(--bg), #0b1224);
+  color: var(--text);
+}
+
+.container {
+  max-width: 960px;
+  padding: 0 20px;
+  margin: 0 auto;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  background: rgba(17,24,39,0.7);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #283245;
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.site-header h1 { font-size: 20px; margin: 14px 0; }
+.site-header nav a {
+  color: var(--muted);
+  text-decoration: none;
+  margin-left: 16px;
+}
+.site-header nav a:hover { color: var(--text); }
+
+.hero {
+  padding: 72px 0;
+  text-align: center;
+}
+.hero h2 { font-size: 36px; margin: 0 0 12px; }
+.hero p { color: var(--muted); margin: 0 0 20px; }
+.hero button {
+  background: var(--primary);
+  color: var(--primary-contrast);
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hero button:hover { filter: brightness(1.1); }
+
+.features { padding: 40px 0; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid #273246;
+  border-radius: 12px;
+  padding: 16px;
+}
+.card h3 { margin: 0 0 8px; }
+.card p { margin: 0; color: var(--muted); }
+
+.getting-started { padding: 40px 0; }
+.getting-started ol { color: var(--muted); }
+.getting-started code {
+  background: #0b1326;
+  border: 1px solid #243049;
+  color: var(--text);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.site-footer { padding: 20px 0; border-top: 1px solid #283245; color: var(--muted); }

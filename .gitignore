@@ -1,0 +1,23 @@
+# OS + editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Node / tooling
+node_modules/
+dist/
+.cache/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build artifacts
+*.tmp
+*.swp
+
+# GitHub Pages worktree
+gh-pages/

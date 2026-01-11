@@ -1,0 +1,24 @@
+{
+  "name": "Deploy Site (Alpine)",
+  "image": "mcr.microsoft.com/devcontainers/base:alpine",
+  "remoteUser": "vscode",
+  "features": {},
+  "postCreateCommand": "apk update && apk add --no-cache git rsync python3",
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Local Web Server",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "files.exclude": {
+          "**/.DS_Store": true
+        }
+      }
+    }
+  }
+}

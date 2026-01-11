@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Deploy Site</title>
+  <meta name="description" content="Minimal static site scaffold with deployment" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>Deploy Site</h1>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#getting-started">Getting Started</a>
+        <a href="#footer">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h2>Fast, simple static site</h2>
+      <p>A modern scaffold ready to deploy to GitHub Pages or any static host.</p>
+      <button id="cta">Say Hello</button>
+    </div>
+  </section>
+
+  <section id="features" class="features">
+    <div class="container grid">
+      <div class="card">
+        <h3>Zero Build</h3>
+        <p>Pure HTML/CSS/JS. No bundlers or frameworks needed.</p>
+      </div>
+      <div class="card">
+        <h3>Easy Deploy</h3>
+        <p>GitHub Actions workflow and a local deploy script included.</p>
+      </div>
+      <div class="card">
+        <h3>Portable</h3>
+        <p>Host anywhere: GitHub Pages, Netlify, Vercel, S3, or your server.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="getting-started" class="getting-started">
+    <div class="container">
+      <h2>Getting Started</h2>
+      <ol>
+        <li>Customize this page in <code>index.html</code>.</li>
+        <li>Edit styles in <code>assets/style.css</code>.</li>
+        <li>Add interactivity in <code>assets/script.js</code>.</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer id="footer" class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Deploy Site. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>
