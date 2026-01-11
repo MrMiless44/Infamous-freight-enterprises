@@ -1,0 +1,20 @@
+# E2E Test Results
+playwright-report/
+test-results/
+test-results.json
+test-results.xml
+
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+
+# Screenshots and videos
+*.png
+*.webm
+
+# Traces
+trace.zip
+
+# Environment
+.env
+.env.local
