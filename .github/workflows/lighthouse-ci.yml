@@ -1,12 +1,30 @@
-name: Lighthouse CI
+name: 🚀 Lighthouse CI - Performance 100%
 
 on:
   push:
-    branches:
-      - main
+    branches: [main, develop]
+    paths:
+      - 'web/**'
+      - '.github/workflows/lighthouse-ci.yml'
+      - '.lighthouserc*.json'
   pull_request:
-    branches:
-      - main
+    branches: [main, develop]
+  schedule:
+    # Daily performance audit at 2 AM UTC
+    - cron: '0 2 * * *'
+    # Weekly comprehensive audit on Monday
+    - cron: '0 3 * * 1'
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  pages: write
+  id-token: write
 
 jobs:
   lighthouse:
