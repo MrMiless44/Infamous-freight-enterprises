@@ -1,10 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "pnpm --filter infamous-freight-web build",
-  "devCommand": "pnpm --filter infamous-freight-web dev",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "outputDirectory": "src/apps/web/.next",
+  "framework": null,
+  "buildCommand": "cd client && npm install && npm run build",
+  "devCommand": "cd client && npm run dev",
+  "installCommand": "npm install",
+  "outputDirectory": "client/dist",
   "ignoreCommand": "git diff HEAD^ HEAD --quiet . ':(exclude)src/apps/api/**' ':(exclude)archive/**'",
   "github": {
     "silent": false,

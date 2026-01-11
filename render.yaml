@@ -1,0 +1,50 @@
+# Render.com Configuration - Global Deployment
+services:
+  # Static Site (Client)
+  - type: web
+    name: infamous-freight-web
+    env: static
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: ./client/dist
+    pullRequestPreviewsEnabled: true
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: NODE_ENV
+        value: production
+
+  # API Server (if needed)
+  - type: web
+    name: infamous-freight-api
+    env: node
+    buildCommand: cd api && npm install
+    startCommand: cd api && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+    autoDeploy: true
+    
+databases:
+  - name: infamous-freight-db
+    databaseName: infamous_freight
+    user: postgres
+    plan: free

@@ -1,0 +1,51 @@
+# Cloudflare Pages Configuration - Global Edge Network
+name = "infamous-freight-enterprises"
+type = "webpack"
+account_id = ""
+workers_dev = true
+route = ""
+zone_id = ""
+
+[site]
+  bucket = "./client/dist"
+  entry-point = "workers-site"
+
+[env.production]
+  name = "infamous-freight-enterprises-production"
+  route = "infamous-freight.com/*"
+
+[env.staging]
+  name = "infamous-freight-enterprises-staging"
+
+# Build configuration
+[build]
+  command = "cd client && npm install && npm run build"
+  cwd = "."
+  watch_dir = "client"
+
+[build.upload]
+  format = "service-worker"
+  dir = "./client/dist"
+  main = "./client/dist/index.html"
+
+# Deploy configuration
+[[build.upload.rules]]
+  type = "Text"
+  globs = ["**/*.html"]
+  fallthrough = true
+
+[[build.upload.rules]]
+  type = "Text"
+  globs = ["**/*.js"]
+
+[[build.upload.rules]]
+  type = "Text"
+  globs = ["**/*.css"]
+
+# Compatibility settings
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Global CDN configuration
+[placement]
+  mode = "smart"
