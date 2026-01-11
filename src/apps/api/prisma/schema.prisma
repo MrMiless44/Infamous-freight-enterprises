@@ -502,3 +502,40 @@ model StripeEvent {
   type        String
   processedAt DateTime @default(now())
 }
+
+// Payment Processing - 100% to merchant
+model Payment {
+  id                       String   @id @default(cuid())
+  userId                   String
+  stripePaymentIntentId    String   @unique
+  amount                   Float
+  currency                 String   @default("usd")
+  status                   String   @default("pending") // pending, succeeded, failed
+  description              String?
+  metadata                 String?  // JSON string
+  type                     String   @default("ONE_TIME")
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+}
+
+// Subscriptions - 100% revenue to merchant
+model Subscription {
+  id                       String   @id @default(cuid())
+  userId                   String
+  stripeSubscriptionId     String   @unique
+  stripeCustomerId         String
+  stripePriceId            String
+  status                   String   @default("active") // active, cancelled, past_due
+  currentPeriodStart       DateTime?
+  currentPeriodEnd         DateTime?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+}
