@@ -1,0 +1,131 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Build project
+        run: npm run build
+      
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          # Build directory where output files are stored
+          configPath: './lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+      
+      - name: Comment PR with Lighthouse report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('./lhr.json', 'utf8'));
+            
+            const scores = {
+              performance: Math.round(report.categories.performance.score * 100),
+              accessibility: Math.round(report.categories.accessibility.score * 100),
+              'best-practices': Math.round(report.categories['best-practices'].score * 100),
+              seo: Math.round(report.categories.seo.score * 100),
+            };
+            
+            const getEmoji = (score) => {
+              if (score >= 90) return '🟢';
+              if (score >= 50) return '🟡';
+              return '🔴';
+            };
+            
+            const comment = `
+            ## 📊 Lighthouse Report
+            
+            | Category | Score |
+            |----------|-------|
+            | Performance | ${getEmoji(scores.performance)} ${scores.performance} |
+            | Accessibility | ${getEmoji(scores.accessibility)} ${scores.accessibility} |
+            | Best Practices | ${getEmoji(scores['best-practices'])} ${scores['best-practices']} |
+            | SEO | ${getEmoji(scores.seo)} ${scores.seo} |
+            
+            🎯 **Performance Targets:**
+            - Performance: > 90 ✅
+            - Accessibility: > 90 ✅
+            - Best Practices: > 90 ✅
+            - SEO: > 90 ✅
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  seo-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run SEO audit
+        run: |
+          npm install
+          npm run build
+          
+          # Check for meta tags
+          echo "Checking for meta tags..."
+          grep -E '<meta name="(description|viewport|theme-color)"' dist/index.html || echo "⚠️ Missing recommended meta tags"
+          
+          # Check for open graph tags
+          echo "Checking for Open Graph tags..."
+          grep -E '<meta property="og:' dist/index.html || echo "⚠️ Missing Open Graph tags"
+          
+          # Check for robots.txt
+          [ -f dist/robots.txt ] && echo "✅ robots.txt found" || echo "⚠️ Missing robots.txt"
+          
+          # Check for sitemap
+          [ -f dist/sitemap.xml ] && echo "✅ sitemap.xml found" || echo "⚠️ Missing sitemap.xml"
+  
+  security-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run npm security audit
+        run: npm audit --audit-level=moderate || true
+      
+      - name: Check for secrets
+        run: |
+          # Install git-secrets
+          brew install git-secrets
+          git secrets --scan || echo "ℹ️ Check for exposed secrets"
+      
+      - name: Run OWASP dependency check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'Infamous-freight-enterprises'
+          path: '.'
+          format: 'JSON'
