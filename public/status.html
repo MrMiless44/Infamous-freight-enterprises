@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infamous Freight System Status</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 16px;
+    }
+
+    .last-updated {
+      margin-top: 10px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .overall-status {
+      text-align: center;
+      padding: 30px;
+      margin-bottom: 40px;
+      border-radius: 8px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .status-healthy {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-degraded {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-down {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .platforms {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .platform-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .platform-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .platform-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .platform-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .status-indicator {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .indicator-operational {
+      background: #28a745;
+      box-shadow: 0 0 10px rgba(40, 167, 69, 0.6);
+    }
+
+    .indicator-degraded {
+      background: #ffc107;
+      box-shadow: 0 0 10px rgba(255, 193, 7, 0.6);
+    }
+
+    .indicator-down {
+      background: #dc3545;
+      box-shadow: 0 0 10px rgba(220, 53, 69, 0.6);
+    }
+
+    .platform-details {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .platform-url {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #999;
+      word-break: break-all;
+    }
+
+    .platform-url a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .platform-url a:hover {
+      text-decoration: underline;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .metric {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 6px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .metric-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .incidents {
+      margin-top: 40px;
+    }
+
+    .incidents h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .incident {
+      border-left: 4px solid #ffc107;
+      background: #fffbf0;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+
+    .incident-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .incident-time {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+      font-size: 14px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 Infamous Freight System Status</h1>
+      <p>Real-time monitoring of all deployment platforms</p>
+      <div class="last-updated" id="lastUpdated">
+        Checking status...
+      </div>
+    </div>
+
+    <div class="content">
+      <div id="statusContent" class="loading">
+        <div class="spinner"></div>
+        <p>Loading platform status...</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Updates every 30 seconds • <a href="https://github.com/MrMiless44/Infamous-freight-enterprises" target="_blank" style="color: #667eea;">View Repository</a></p>
+    </div>
+  </div>
+
+  <script>
+    const PLATFORMS = [
+      {
+        name: 'GitHub Pages',
+        url: 'https://mrmiles44.github.io/Infamous-freight-enterprises/',
+        healthCheck: 'https://mrmiles44.github.io/Infamous-freight-enterprises/',
+        description: 'Primary static site deployment',
+      },
+      {
+        name: 'Vercel',
+        url: 'https://infamous-freight-enterprises.vercel.app',
+        healthCheck: 'https://infamous-freight-enterprises.vercel.app',
+        description: '70+ edge locations globally',
+      },
+      {
+        name: 'Netlify',
+        url: 'https://infamous-freight.netlify.app',
+        healthCheck: 'https://infamous-freight.netlify.app',
+        description: '6 global CDN zones',
+      },
+      {
+        name: 'Cloudflare Pages',
+        url: 'https://infamous-freight-enterprises.pages.dev',
+        healthCheck: 'https://infamous-freight-enterprises.pages.dev',
+        description: '310+ cities, 120+ countries',
+      },
+      {
+        name: 'Render',
+        url: 'https://infamous-freight.onrender.com',
+        healthCheck: 'https://infamous-freight.onrender.com',
+        description: '5 global regions',
+      },
+    ];
+
+    let platformStatus = {};
+    let incidents = [];
+
+    async function checkPlatformStatus(platform) {
+      const startTime = Date.now();
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+        const response = await fetch(platform.healthCheck, {
+          method: 'HEAD',
+          mode: 'no-cors', // Required for cross-origin requests
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        const responseTime = Date.now() - startTime;
+
+        // no-cors mode doesn't give us status, so we assume success if no error
+        return {
+          status: 'operational',
+          responseTime,
+          message: 'All systems operational',
+        };
+      } catch (error) {
+        const responseTime = Date.now() - startTime;
+        
+        if (error.name === 'AbortError') {
+          return {
+            status: 'degraded',
+            responseTime,
+            message: 'Timeout - slow response',
+          };
+        }
+
+        return {
+          status: 'down',
+          responseTime,
+          message: error.message || 'Connection failed',
+        };
+      }
+    }
+
+    async function checkAllPlatforms() {
+      const checks = PLATFORMS.map(async (platform) => {
+        const result = await checkPlatformStatus(platform);
+        platformStatus[platform.name] = result;
+        return result;
+      });
+
+      await Promise.all(checks);
+      updateUI();
+    }
+
+    function getOverallStatus() {
+      const statuses = Object.values(platformStatus);
+      const downCount = statuses.filter(s => s.status === 'down').length;
+      const degradedCount = statuses.filter(s => s.status === 'degraded').length;
+
+      if (downCount >= 3) return 'down';
+      if (downCount >= 1 || degradedCount >= 2) return 'degraded';
+      return 'healthy';
+    }
+
+    function updateUI() {
+      const overall = getOverallStatus();
+      const operationalCount = Object.values(platformStatus).filter(s => s.status === 'operational').length;
+      
+      const statusMessages = {
+        healthy: `✅ All Systems Operational (${operationalCount}/${PLATFORMS.length})`,
+        degraded: `⚠️ Partial System Degradation (${operationalCount}/${PLATFORMS.length} operational)`,
+        down: `🚨 Major Service Disruption (${operationalCount}/${PLATFORMS.length} operational)`,
+      };
+
+      let html = `
+        <div class="overall-status status-${overall}">
+          ${statusMessages[overall]}
+        </div>
+
+        <div class="platforms">
+          ${PLATFORMS.map(platform => {
+            const status = platformStatus[platform.name] || { status: 'checking', message: 'Checking...' };
+            return `
+              <div class="platform-card">
+                <div class="platform-header">
+                  <div class="platform-name">${platform.name}</div>
+                  <div class="status-indicator indicator-${status.status}"></div>
+                </div>
+                <div class="platform-details">
+                  <div><strong>Status:</strong> ${status.message}</div>
+                  ${status.responseTime ? `<div><strong>Response:</strong> ${status.responseTime}ms</div>` : ''}
+                  <div><strong>Coverage:</strong> ${platform.description}</div>
+                </div>
+                <div class="platform-url">
+                  <a href="${platform.url}" target="_blank">${platform.url}</a>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        ${incidents.length > 0 ? `
+          <div class="incidents">
+            <h2>Recent Incidents</h2>
+            ${incidents.map(incident => `
+              <div class="incident">
+                <div class="incident-title">${incident.title}</div>
+                <div>${incident.message}</div>
+                <div class="incident-time">${incident.time}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      `;
+
+      document.getElementById('statusContent').innerHTML = html;
+      document.getElementById('lastUpdated').textContent = 
+        `Last updated: ${new Date().toLocaleTimeString()}`;
+    }
+
+    // Initial check
+    checkAllPlatforms();
+
+    // Update every 30 seconds
+    setInterval(checkAllPlatforms, 30000);
+
+    // Also check when page becomes visible again
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        checkAllPlatforms();
+      }
+    });
+  </script>
+</body>
+</html>
