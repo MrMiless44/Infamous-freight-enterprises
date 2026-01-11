@@ -3,11 +3,12 @@ const { version } = require("../../package.json");
 const { prisma } = require("../db/prisma");
 const { getStats: getCacheStats } = require("../services/cache");
 const { getConnectedClientsCount } = require("../services/websocket");
+const { auditLog } = require("../middleware/security");
 
 const router = express.Router();
 
 // Basic health check
-router.get("/health", (_req, res) => {
+router.get("/health", auditLog, (_req, res) => {
   res.json({
     status: "ok",
     service: "infamous-freight-api",
@@ -19,7 +20,7 @@ router.get("/health", (_req, res) => {
 });
 
 // Detailed health check with service dependencies
-router.get("/health/detailed", async (_req, res) => {
+router.get("/health/detailed", auditLog, async (_req, res) => {
   const checks = {
     api: { status: "healthy", message: "API is running" },
     database: { status: "unknown", message: "Not checked" },
@@ -101,7 +102,7 @@ router.get("/health/detailed", async (_req, res) => {
 });
 
 // Readiness check (for Kubernetes/orchestration)
-router.get("/health/ready", async (_req, res) => {
+router.get("/health/ready", auditLog, async (_req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
     res.json({ status: "ready" });
@@ -114,7 +115,7 @@ router.get("/health/ready", async (_req, res) => {
 });
 
 // Liveness check (for Kubernetes/orchestration)
-router.get("/health/live", (_req, res) => {
+router.get("/health/live", auditLog, (_req, res) => {
   res.json({ status: "alive" });
 });
 

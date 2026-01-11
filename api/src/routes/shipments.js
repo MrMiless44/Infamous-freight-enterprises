@@ -1,6 +1,7 @@
 const express = require("express");
 const { prisma } = require("../db/prisma");
 const {
+  limiters,
   authenticate,
   requireScope,
   auditLog,
@@ -17,6 +18,7 @@ const router = express.Router();
 // Get all shipments with optional filtering
 router.get(
   "/shipments",
+  limiters.general,
   authenticate,
   requireScope("shipments:read"),
   auditLog,
@@ -55,6 +57,7 @@ router.get(
 // Get shipment by ID
 router.get(
   "/shipments/:id",
+  limiters.general,
   authenticate,
   requireScope("shipments:read"),
   auditLog,
@@ -88,6 +91,7 @@ router.get(
 // Create shipment with transaction
 router.post(
   "/shipments",
+  limiters.general,
   authenticate,
   requireScope("shipments:write"),
   auditLog,
@@ -167,6 +171,7 @@ router.post(
 // Update shipment status with transaction
 router.patch(
   "/shipments/:id",
+  limiters.general,
   authenticate,
   requireScope("shipments:write"),
   auditLog,
@@ -237,6 +242,7 @@ router.patch(
 // Delete shipment
 router.delete(
   "/shipments/:id",
+  limiters.general,
   authenticate,
   requireScope("shipments:write"),
   auditLog,
@@ -259,6 +265,7 @@ router.delete(
 // Export shipments
 router.get(
   "/shipments/export/:format",
+  limiters.general,
   authenticate,
   requireScope("shipments:read"),
   auditLog,
